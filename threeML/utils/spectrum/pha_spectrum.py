@@ -1,10 +1,6 @@
-from __future__ import division
-
-import collections
-import os
-from builtins import range
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import astropy.io.fits as fits
 import numpy as np
@@ -24,14 +20,12 @@ log = setup_logger(__name__)
 
 _required_keywords = {}
 _required_keywords["observed"] = (
-    "mission:TELESCOP,instrument:INSTRUME,filter:FILTER,"
-    + "exposure:EXPOSURE,backfile:BACKFILE,"
-    + "respfile:RESPFILE,"
-    + "ancrfile:ANCRFILE,hduclass:HDUCLASS,"
-    + "hduclas1:HDUCLAS1,poisserr:POISSERR,"
-    + "chantype:CHANTYPE,detchans:DETCHANS,"
-    "backscal:BACKSCAL"
-).split(",")
+    "mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+    "exposure:EXPOSURE,backfile:BACKFILE," + "respfile:RESPFILE," +
+    "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
+    "hduclas1:HDUCLAS1,poisserr:POISSERR," +
+    "chantype:CHANTYPE,detchans:DETCHANS,"
+    "backscal:BACKSCAL").split(",")
 
 # python types, not fits
 _required_keyword_types = {"POISSERR": bool}
@@ -59,14 +53,35 @@ _might_be_columns["background"] = ("EXPOSURE,BACKSCAL").split(",")
 _valid_input_types = (str, Path, PHAII)
 
 
+
+@dataclass(frozen=True)
+class _PHAInfo:
+    """
+    A container to hold all the gathered information
+    """
+    
+    counts: Iterable[float]
+    rates: Iterable[float]
+    exposure: Iterable[float]
+    is_poisson: bool
+    rsp: InstrumentResponse
+    gathered_keywords: Dict[str, Any]
+    quality: Quality
+    file_name: str
+    tstart: Optional[Union[float, Iterable[float]]]
+    tstop: Optional[Union[float, Iterable[float]]]
+    rate_errors: Optional[Iterable[float]]
+    sys_errors: Optional[Iterable[float]]                  
+    count_errors: Optional[Iterable[float]]
+
 def _read_pha_or_pha2_file(
     pha_file_or_instance: Union[str, Path, PHAII],
     spectrum_number: Optional[int] = None,
     file_type: str = "observed",
-    rsp_file: Optional[str] = None,
+    rsp_file: Optional[Union[str, InstrumentResponse]] = None,
     arf_file: Optional[str] = None,
     treat_as_time_series: bool = False,
-) -> Dict[str, Any]:
+) -> _PHAInfo:
     """
     A function to extract information from pha and pha2 files. It is kept separate because the same method is
     used for reading time series (MUCH faster than building a lot of individual spectra) and single spectra.
@@ -126,10 +141,14 @@ def _read_pha_or_pha2_file(
 
         raise RuntimeError()
 
-    assert file_type.lower() in [
+    if not file_type.lower() in [
         "observed",
         "background",
-    ], "Unrecognized filetype keyword value"
+    ]:
+
+        log.error("Unrecognized filetype keyword value")
+
+        raise RuntimeError()
 
     file_type = file_type.lower()
 
@@ -137,7 +156,7 @@ def _read_pha_or_pha2_file(
 
         HDUidx = pha_file_or_instance.index_of("SPECTRUM")
 
-    except:
+    except KeyError:
 
         log.error(
             f"The input file {file_name} is not in PHA format")
@@ -150,6 +169,7 @@ def _read_pha_or_pha2_file(
     spectrum = pha_file_or_instance[HDUidx]
 
     data = spectrum.data
+
     header = spectrum.header
 
     # We don't support yet the rescaling
@@ -273,18 +293,22 @@ def _read_pha_or_pha2_file(
         )
 
     # Determine if this is a PHA I or PHA II
+
     if len(data.field(data_column_name).shape) == 2:
 
-        typeII = True
+        is_typeII_file = True
 
         if spectrum_number == None and not treat_as_time_series:
+
+            log.error("This is a PHA Type II file. You have to provide a spectrum number")
+            
             raise RuntimeError(
                 "This is a PHA Type II file. You have to provide a spectrum number"
             )
 
     else:
 
-        typeII = False
+        is_typeII_file = False
 
     # Collect information from mandatory keywords
 
@@ -313,9 +337,11 @@ def _read_pha_or_pha2_file(
                     )
                 )
             else:
+                
                 gathered_keywords[internal_name] = header.get(keyname)
 
                 # Fix "NONE" in None
+
                 if (
                     gathered_keywords[internal_name] == "NONE"
                     or gathered_keywords[internal_name] == "none"
@@ -326,7 +352,7 @@ def _read_pha_or_pha2_file(
 
         # Note that we check again because the content of the column can override the content of the header
 
-        if keyname in _might_be_columns[file_type] and typeII:
+        if keyname in _might_be_columns[file_type] and is_typeII_file:
 
             # Check if there is a column with this name
 
@@ -418,25 +444,34 @@ def _read_pha_or_pha2_file(
                 # Read in the response
 
         if isinstance(rsp_file, six.string_types) or isinstance(rsp_file, str) or isinstance(rsp_file, Path):
-            rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
-        else:
+            rsp: InstrumentResponse = OGIPResponse(rsp_file, arf_file=arf_file)
+
+        elif isinstance(rsp_file, InstrumentResponse):
 
             # assume a fully formed OGIPResponse
             rsp = rsp_file
 
+        else:
+
+            log.error(f"{rsp_file} is not correct type")
+
+            raise RuntimeError()
+
     if file_type == "background":
         # we need the rsp ebounds from response to build the histogram
 
-        assert isinstance(
-            rsp_file, InstrumentResponse
-        ), "You must supply and OGIPResponse to extract the energy bounds"
+        if not isinstance(rsp_file, InstrumentResponse):
+
+            log.error("You must supply and OGIPResponse to extract the energy bounds")
+
+            raise RuntimeError()
 
         rsp = rsp_file
 
     # Now get the data (counts or rates) and their errors. If counts, transform them in rates
 
-    if typeII:
+    if is_typeII_file:
 
         # PHA II file
         if has_rates:
@@ -608,7 +643,7 @@ def _read_pha_or_pha2_file(
 
                     tstop = tstart + data.field("TELAPSE")
 
-    elif typeII == False:
+    elif not is_typeII_file:
 
         if treat_as_time_series:
 
@@ -743,7 +778,7 @@ def _read_pha_or_pha2_file(
 
             count_errors = None
 
-    out = collections.OrderedDict(
+    return _PHAInfo(
         counts=counts,
         count_errors=count_errors,
         rates=rates,
@@ -759,8 +794,6 @@ def _read_pha_or_pha2_file(
         tstop=tstop,
     )
 
-    return out
-
 
 class PHASpectrum(BinnedSpectrumWithDispersion):
     def __init__(
@@ -768,9 +801,9 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         pha_file_or_instance: Union[str, Path, PHAII],
         spectrum_number: Optional[int] = None,
         file_type: str = "observed",
-        rsp_file: Optional[str] = None,
+        rsp_file: Optional[Union[str, InstrumentResponse]] = None,
         arf_file: Optional[str] = None,
-    ):
+    ) -> None:
         """
         A spectrum with dispersion build from an OGIP-compliant PHA FITS file. Both Type I & II files can be read. Type II
         spectra are selected either by specifying the spectrum_number or via the {spectrum_number} file name convention used
@@ -799,7 +832,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             raise RuntimeError()
 
-        pha_information: Dict[str, Any] = _read_pha_or_pha2_file(
+        pha_information: _PHAInfo = _read_pha_or_pha2_file(
             pha_file_or_instance,
             spectrum_number,
             file_type,
@@ -810,35 +843,36 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # default the grouping to all open bins
         # this will only be altered if the spectrum is rebinned
-        self._grouping = np.ones_like(pha_information["counts"])
+        
+        self._grouping: np.ndarray = np.ones_like(pha_information.counts)
 
         # this saves the extra properties to the class
 
-        self._gathered_keywords = pha_information["gathered_keywords"]
+        self._gathered_keywords = pha_information.gathered_keywords
 
-        self._file_type = file_type
+        self._file_type: str = file_type
 
-        self._file_name = pha_information["file_name"]
+        self._file_name: str = pha_information.file_name
 
         # pass the needed spectrum values back up
         # remember that Spectrum reads counts, but returns
         # rates!
 
         super(PHASpectrum, self).__init__(
-            counts=pha_information["counts"],
-            exposure=pha_information["exposure"],
-            response=pha_information["rsp"],
-            count_errors=pha_information["count_errors"],
-            sys_errors=pha_information["sys_errors"],
-            is_poisson=pha_information["is_poisson"],
-            quality=pha_information["quality"],
-            mission=pha_information["gathered_keywords"]["mission"],
-            instrument=pha_information["gathered_keywords"]["instrument"],
-            tstart=pha_information["tstart"],
-            tstop=pha_information["tstop"],
+            counts=pha_information.counts,
+            exposure=pha_information.exposure,
+            response=pha_information.rsp,
+            count_errors=pha_information.count_errors,
+            sys_errors=pha_information.sys_errors,
+            is_poisson=pha_information.is_poisson,
+            quality=pha_information.quality,
+            mission=pha_information.gathered_keywords["mission"],
+            instrument=pha_information.gathered_keywords["instrument"],
+            tstart=pha_information.tstart,
+            tstop=pha_information.tstop,
         )
 
-    def _return_file(self, key):
+    def _return_file(self, key)-> Union[None, str]:
 
         if key in self._gathered_keywords:
 
@@ -848,7 +882,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             return None
 
-    def set_ogip_grouping(self, grouping):
+    def set_ogip_grouping(self, grouping) -> None:
         """
         If the counts are rebinned, this updates the grouping
         :param grouping:
@@ -863,7 +897,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         return self._file_name
 
     @property
-    def background_file(self):
+    def background_file(self) -> Union[None, str]:
         """
         Returns the background file definied in the header, or None if there is none defined
 p
@@ -878,7 +912,7 @@ p
         return back_file
 
     @property
-    def scale_factor(self):
+    def scale_factor(self) -> float:
         """
         This is a scale factor (in the BACKSCAL keyword) which must be used to rescale background and source
         regions
@@ -888,7 +922,7 @@ p
         return self._gathered_keywords["backscal"]
 
     @property
-    def response_file(self):
+    def response_file(self) -> Union[str, None]:
         """
             Returns the response file definied in the header, or None if there is none defined
 
@@ -897,7 +931,7 @@ p
         return self._return_file("respfile")
 
     @property
-    def ancillary_file(self):
+    def ancillary_file(self) -> Union[str, None]:
         """
             Returns the ancillary file definied in the header, or None if there is none defined
 
@@ -906,7 +940,7 @@ p
         return self._return_file("ancrfile")
 
     @property
-    def grouping(self):
+    def grouping(self) -> np.ndarray:
 
         return self._grouping
 
@@ -916,7 +950,7 @@ p
         new_count_errors=None,
         new_exposure=None,
         new_scale_factor=None,
-    ):
+    ) -> "PHASpectrum":
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -987,7 +1021,7 @@ p
         return pha
 
     @classmethod
-    def from_dispersion_spectrum(cls, dispersion_spectrum, file_type="observed"):
+    def from_dispersion_spectrum(cls, dispersion_spectrum, file_type="observed", response=None):
         # type: (BinnedSpectrumWithDispersion, str) -> PHASpectrum
 
         if dispersion_spectrum.is_poisson:
@@ -1031,11 +1065,24 @@ p
             is_poisson=dispersion_spectrum.is_poisson,
         )
 
+        if file_type == "background":
+
+            if response is None:
+
+                log.error("passed a background file but no response to extract energy spectra.")
+
+                raise AssertionError()
+
+        else:
+
+            response = dispersion_spectrum.response
+
+        
         return cls(
             pha_file_or_instance=pha,
             spectrum_number=1,
             file_type=file_type,
-            rsp_file=dispersion_spectrum.response,
+            rsp_file=response
         )
 
 
@@ -1077,7 +1124,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
                 HDUidx = f.index_of("SPECTRUM")
 
-            except:
+            except KeyError:
 
                 raise RuntimeError(
                     "The input file %s is not in PHA format" % (
@@ -1116,7 +1163,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
                 raise RuntimeError()
 
-        pha_information = _read_pha_or_pha2_file(
+        pha_information: _PHAInfo = _read_pha_or_pha2_file(
             pha_file_or_instance,
             None,
             file_type,
@@ -1127,40 +1174,40 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         # default the grouping to all open bins
         # this will only be altered if the spectrum is rebinned
-        self._grouping = np.ones_like(pha_information["counts"])
+        self._grouping = np.ones_like(pha_information.counts)
 
         # this saves the extra properties to the class
 
-        self._gathered_keywords = pha_information["gathered_keywords"]
+        self._gathered_keywords = pha_information.gathered_keywords
 
         self._file_type = file_type
 
         # need to see if we have count errors, tstart, tstop
         # if not, we create an list of None
 
-        if pha_information["count_errors"] is None:
+        if pha_information.count_errors is None:
 
             count_errors = [None] * num_spectra
 
         else:
 
-            count_errors = pha_information["count_errors"]
+            count_errors = pha_information.count_errors
 
-        if pha_information["tstart"] is None:
+        if pha_information.tstart is None:
 
             tstart = [None] * num_spectra
 
         else:
 
-            tstart = pha_information["tstart"]
+            tstart = pha_information.tstart
 
-        if pha_information["tstop"] is None:
+        if pha_information.tstop is None:
 
             tstop = [None] * num_spectra
 
         else:
 
-            tstop = pha_information["tstop"]
+            tstop = pha_information.tstop
 
         # now build the list of binned spectra
 
@@ -1170,15 +1217,15 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
             list_of_binned_spectra.append(
                 BinnedSpectrumWithDispersion(
-                    counts=pha_information["counts"][i],
-                    exposure=pha_information["exposure"][i, 0],
-                    response=pha_information["rsp"],
+                    counts=pha_information.counts[i],
+                    exposure=pha_information.exposure[i, 0],
+                    response=pha_information.rsp,
                     count_errors=count_errors[i],
-                    sys_errors=pha_information["sys_errors"][i],
-                    is_poisson=pha_information["is_poisson"],
-                    quality=pha_information["quality"].get_slice(i),
-                    mission=pha_information["gathered_keywords"]["mission"],
-                    instrument=pha_information["gathered_keywords"]["instrument"],
+                    sys_errors=pha_information.sys_errors[i],
+                    is_poisson=pha_information.is_poisson,
+                    quality=pha_information.quality.get_slice(i),
+                    mission=pha_information.gathered_keywords["mission"],
+                    instrument=pha_information.gathered_keywords["instrument"],
                     tstart=tstart[i],
                     tstop=tstop[i],
                 )

@@ -14,8 +14,6 @@ from threeML.utils.fitted_objects.fitted_point_sources import \
     FittedPointSourceSpectralHandler
 from threeML.utils.progress_bar import tqdm
 
-
-
 log  =setup_logger(__name__)
 
 def _setup_analysis_dictionaries(
@@ -149,61 +147,44 @@ def _setup_analysis_dictionaries(
 
     # go through the MLE analysis and build up some fitted sources
 
-    for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
+    if mle_analyses:
+    
+        for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
 
-        # if we want to use this source
+            # if we want to use this source
 
-        if (
-            not use_components
-            or ("total" in components_to_use)
-            or (not mle_analyses[key]["component_names"])
-        ):
-            mle_analyses[key]["fitted point source"] = FittedPointSourceSpectralHandler(
-                mle_analyses[key]["analysis"],
-                mle_analyses[key]["source"],
-                energy_range,
-                energy_unit,
-                flux_unit,
-                confidence_level,
-                equal_tailed=equal_tailed,
-                is_differential_flux=differential,
-            )
+            if (
+                not use_components
+                or ("total" in components_to_use)
+                or (not mle_analyses[key]["component_names"])
+            ):
+                mle_analyses[key]["fitted point source"] = FittedPointSourceSpectralHandler(
+                    mle_analyses[key]["analysis"],
+                    mle_analyses[key]["source"],
+                    energy_range,
+                    energy_unit,
+                    flux_unit,
+                    confidence_level,
+                    equal_tailed=equal_tailed,
+                    is_differential_flux=differential,
+                )
 
-            num_sources_to_use += 1
+                num_sources_to_use += 1
 
-        # see if there are any components to use
+            # see if there are any components to use
 
-        if use_components:
+            if use_components:
 
-            num_components_to_use = 0
+                num_components_to_use = 0
 
-            component_dict = {}
+                component_dict = {}
 
-            for component in mle_analyses[key]["component_names"]:
+                for component in mle_analyses[key]["component_names"]:
 
-                # if we want to plot all the components
+                    # if we want to plot all the components
 
-                if not components_to_use:
+                    if not components_to_use:
 
-                    component_dict[component] = FittedPointSourceSpectralHandler(
-                        mle_analyses[key]["analysis"],
-                        mle_analyses[key]["source"],
-                        energy_range,
-                        energy_unit,
-                        flux_unit,
-                        confidence_level,
-                        equal_tailed,
-                        component=component,
-                        is_differential_flux=differential,
-                    )
-
-                    num_components_to_use += 1
-
-                else:
-
-                    # otherwise pick off only the ones of interest
-
-                    if component in components_to_use:
                         component_dict[component] = FittedPointSourceSpectralHandler(
                             mle_analyses[key]["analysis"],
                             mle_analyses[key]["source"],
@@ -218,111 +199,132 @@ def _setup_analysis_dictionaries(
 
                         num_components_to_use += 1
 
-            # save these to the dict
+                    else:
 
-            mle_analyses[key]["components"] = component_dict
+                        # otherwise pick off only the ones of interest
 
-        # keep track of how many components we need to plot
+                        if component in components_to_use:
+                            component_dict[component] = FittedPointSourceSpectralHandler(
+                                mle_analyses[key]["analysis"],
+                                mle_analyses[key]["source"],
+                                energy_range,
+                                energy_unit,
+                                flux_unit,
+                                confidence_level,
+                                equal_tailed,
+                                component=component,
+                                is_differential_flux=differential,
+                            )
 
-        if use_components:
+                            num_components_to_use += 1
 
-            num_sources_to_use += num_components_to_use
+                # save these to the dict
 
-            if "total" in components_to_use:
-                num_sources_to_use += 1
+                mle_analyses[key]["components"] = component_dict
 
-        # else:
-        #
-        #     num_sources_to_use += 1
+            # keep track of how many components we need to plot
+
+            if use_components:
+
+                num_sources_to_use += num_components_to_use
+
+                if "total" in components_to_use:
+                    num_sources_to_use += 1
+
+            # else:
+            #
+            #     num_sources_to_use += 1
 
     # repeat for the bayes analyses
 
-    for key in tqdm(list(bayesian_analyses.keys()), desc="processing Bayesian analyses"):
+    if bayesian_analyses:
+    
+        for key in tqdm(list(bayesian_analyses.keys()), desc="processing Bayesian analyses"):
 
-        # if we have a source to use
+            # if we have a source to use
 
-        if (
-            not use_components
-            or ("total" in components_to_use)
-            or (not bayesian_analyses[key]["component_names"])
-        ):
-            bayesian_analyses[key][
-                "fitted point source"
-            ] = FittedPointSourceSpectralHandler(
-                bayesian_analyses[key]["analysis"],
-                bayesian_analyses[key]["source"],
-                energy_range,
-                energy_unit,
-                flux_unit,
-                confidence_level,
-                equal_tailed,
-                is_differential_flux=differential,
-            )
+            if (
+                not use_components
+                or ("total" in components_to_use)
+                or (not bayesian_analyses[key]["component_names"])
+            ):
+                bayesian_analyses[key][
+                    "fitted point source"
+                ] = FittedPointSourceSpectralHandler(
+                    bayesian_analyses[key]["analysis"],
+                    bayesian_analyses[key]["source"],
+                    energy_range,
+                    energy_unit,
+                    flux_unit,
+                    confidence_level,
+                    equal_tailed,
+                    is_differential_flux=differential,
+                )
 
-            num_sources_to_use += 1
-
-        # if we want to use components
-
-        if use_components:
-
-            num_components_to_use = 0
-
-            component_dict = {}
-
-            for component in bayesian_analyses[key]["component_names"]:
-
-                # extracting all components
-
-                if not components_to_use:
-                    component_dict[component] = FittedPointSourceSpectralHandler(
-                        bayesian_analyses[key]["analysis"],
-                        bayesian_analyses[key]["source"],
-                        energy_range,
-                        energy_unit,
-                        flux_unit,
-                        confidence_level,
-                        equal_tailed,
-                        component=component,
-                        is_differential_flux=differential,
-                    )
-
-                    num_components_to_use += 1
-
-                # or just some of them
-
-                if component in components_to_use:
-                    component_dict[component] = FittedPointSourceSpectralHandler(
-                        bayesian_analyses[key]["analysis"],
-                        bayesian_analyses[key]["source"],
-                        energy_range,
-                        energy_unit,
-                        flux_unit,
-                        confidence_level,
-                        equal_tailed,
-                        component=component,
-                        is_differential_flux=differential,
-                    )
-
-                    num_components_to_use += 1
-
-            bayesian_analyses[key]["components"] = component_dict
-
-        # keep track of everything we added on
-
-        if use_components and num_components_to_use > 0:
-
-            num_sources_to_use += num_components_to_use
-
-            if "total" in components_to_use:
                 num_sources_to_use += 1
-        #
-        # else:
-        #
-        #     num_sources_to_use += 1
 
-    # we may have the same source in a bayesian and mle analysis.
-    # we want to plot them, but make sure to label them differently.
-    # so let's keep track of them
+            # if we want to use components
+
+            if use_components:
+
+                num_components_to_use = 0
+
+                component_dict = {}
+
+                for component in bayesian_analyses[key]["component_names"]:
+
+                    # extracting all components
+
+                    if not components_to_use:
+                        component_dict[component] = FittedPointSourceSpectralHandler(
+                            bayesian_analyses[key]["analysis"],
+                            bayesian_analyses[key]["source"],
+                            energy_range,
+                            energy_unit,
+                            flux_unit,
+                            confidence_level,
+                            equal_tailed,
+                            component=component,
+                            is_differential_flux=differential,
+                        )
+
+                        num_components_to_use += 1
+
+                    # or just some of them
+
+                    if component in components_to_use:
+                        component_dict[component] = FittedPointSourceSpectralHandler(
+                            bayesian_analyses[key]["analysis"],
+                            bayesian_analyses[key]["source"],
+                            energy_range,
+                            energy_unit,
+                            flux_unit,
+                            confidence_level,
+                            equal_tailed,
+                            component=component,
+                            is_differential_flux=differential,
+                        )
+
+                        num_components_to_use += 1
+
+                bayesian_analyses[key]["components"] = component_dict
+
+            # keep track of everything we added on
+
+            if use_components and num_components_to_use > 0:
+
+                num_sources_to_use += num_components_to_use
+
+                if "total" in components_to_use:
+                    num_sources_to_use += 1
+            #
+            # else:
+            #
+            #     num_sources_to_use += 1
+
+        # we may have the same source in a bayesian and mle analysis.
+        # we want to plot them, but make sure to label them differently.
+        # so let's keep track of them
 
     duplicate_keys = []
 

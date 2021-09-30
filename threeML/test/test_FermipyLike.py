@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 
 from threeML.io.logging import setup_logger
 log = setup_logger(__name__)

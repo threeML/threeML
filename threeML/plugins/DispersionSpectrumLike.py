@@ -1,14 +1,16 @@
 import copy
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
+from astromodels import Model
 
 from threeML.io.logging import setup_logger
 from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.XYLike import XYLike
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import (
-    BinnedSpectrumWithDispersion, ChannelSet)
+    BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet)
 
 log = setup_logger(__name__)
 
@@ -19,12 +21,13 @@ class DispersionSpectrumLike(SpectrumLike):
     def __init__(
         self,
         name: str,
-        observation,
-        background=None,
-        background_exposure=None,
-        verbose=True,
-        tstart=None,
-        tstop=None,
+        observation: BinnedSpectrumWithDispersion,
+        background: Optional[Union[BinnedSpectrum, SpectrumLike,
+                                   XYLike]] = None,
+        background_exposure: Optional[float] = None,
+        verbose: bool = True,
+        tstart: Optional[float] = None,
+        tstop: Optional[float] = None,
     ):
         """
         A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,
@@ -48,17 +51,24 @@ class DispersionSpectrumLike(SpectrumLike):
         XYLike plugin
         :param verbose: turn on/off verbose logging
                 """
-        assert isinstance(
-            observation, BinnedSpectrumWithDispersion
-        ), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
 
-        assert (
-            observation.response is not None
-        ), "the observed spectrum does not have a response"
+        if not isinstance(observation, BinnedSpectrumWithDispersion):
+
+            log.error(
+                "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
+            )
+
+            raise RuntimeError()
+
+        if observation.response is None:
+
+            log.error("the observed spectrum does not have a response")
+
+            raise RuntimeError()
 
         # assign the response to the plugins
 
-        self._rsp = observation.response  # type: InstrumentResponse
+        self._response: InstrumentResponse = observation.response
 
         super(DispersionSpectrumLike, self).__init__(
             name=name,
@@ -68,12 +78,11 @@ class DispersionSpectrumLike(SpectrumLike):
             verbose=verbose,
             tstart=tstart,
             tstop=tstop,
-
         )
 
-        self._predefined_energies = self._rsp.monte_carlo_energies
+        self._predefined_energies: np.ndarray = self._response.monte_carlo_energies
 
-    def set_model(self, likelihoodModel):
+    def set_model(self, likelihoodModel: Model) -> None:
         """
         Set the model to be used in the joint minimization.
         """
@@ -82,50 +91,61 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # Store likelihood model
 
-        self._like_model = likelihoodModel
+        self._like_model: Model = likelihoodModel
 
         # We assume there are no extended sources, since we cannot handle them here
 
-        assert self._like_model.get_number_of_extended_sources() == 0, (
-            "OGIP-like plugins do not support " "extended sources"
-        )
+        if not self._like_model.get_number_of_extended_sources() == 0:
+
+            log.error("SpectrumLike plugins do not support extended sources")
 
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
-                                                                       integrate_method=self._model_integrate_method)
+        differential_flux, integral = self._get_diff_flux_and_integral(
+            self._like_model, integrate_method=self._model_integrate_method)
 
         log.debug(f"{self._name} passing intfral flux function to RSP")
 
-        self._rsp.set_function(integral)
         self._integral_flux = integral
 
-    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None):
+        # pass to the response matrix
+        
+        self._response.set_function(self._integral_flux)
+
+        
+    def _evaluate_model(self,
+                        precalc_fluxes: Optional[np.array] = None
+                        ) -> np.ndarray:
         """
         evaluates the full model over all channels
         :return:
         """
 
-        return self._rsp.convolve(precalc_fluxes=precalc_fluxes)
+        return self._response.convolve(precalc_fluxes=precalc_fluxes)
 
-    def set_model_integrate_method(self,
-                                   method: str):
+    def set_model_integrate_method(self, method: str):
         """
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in [
-            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        if not method in ["simpson", "trapz"]:
+
+            log.error("Only simpson and trapz are valid intergate methods.")
+
+            raise RuntimeError()
+
         self._model_integrate_method = method
         log.info(f"{self._name} changing model integration method to {method}")
 
         # if like_model already set, upadte the integral function
         if self._like_model is not None:
-            differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
-                                                                           integrate_method=method)
-            self._rsp.set_function(integral)
+            differential_flux, integral = self._get_diff_flux_and_integral(
+                self._like_model, integrate_method=method)
+
             self._integral_flux = integral
+                        
+            self._response.set_function(self._integral_flux)
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
         """
@@ -136,9 +156,8 @@ class DispersionSpectrumLike(SpectrumLike):
          """
 
         # pass the response thru to the constructor
-        return super(DispersionSpectrumLike, self).get_simulated_dataset(
-            new_name=new_name, **kwargs
-        )
+        return super(DispersionSpectrumLike,
+                     self).get_simulated_dataset(new_name=new_name, **kwargs)
 
     def get_pha_files(self):
         info = {}
@@ -151,7 +170,7 @@ class DispersionSpectrumLike(SpectrumLike):
         if self._background_spectrum is not None:
             info["bak"] = copy.copy(self._background_spectrum)
 
-        info["rsp"] = copy.copy(self._rsp)
+        info["rsp"] = copy.copy(self._response)
 
         return info
 
@@ -161,11 +180,11 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        self._rsp.plot_matrix()
+        self._response.plot_matrix()
 
     @property
     def response(self) -> InstrumentResponse:
-        return self._rsp
+        return self._response
 
     def _output(self):
         # type: () -> pd.Series
@@ -173,7 +192,7 @@ class DispersionSpectrumLike(SpectrumLike):
         super_out = super(DispersionSpectrumLike,
                           self)._output()  # type: pd.Series
 
-        the_df = pd.Series({"response": self._rsp.rsp_filename})
+        the_df = pd.Series({"response": self._response.rsp_filename})
 
         return super_out.append(the_df)
 
@@ -201,7 +220,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
     @staticmethod
     def _build_fake_observation(
-        fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs
+            fake_data, channel_set, source_errors, source_sys_errors, is_poisson, exposure, scale_factor, **kwargs
     ):
         """
         This is the fake observation builder for SpectrumLike which builds data
@@ -215,25 +234,27 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        assert (
-            "response" in kwargs
-        ), "A response was not provided. Cannor build synthetic observation"
+        if not  ( "response" in kwargs):
+
+            log.error("A response was not provided. Cannot build synthetic observation")
+
+            raise RuntimeError()
 
         response = kwargs.pop("response")
 
         observation = BinnedSpectrumWithDispersion(
             fake_data,
-            exposure=1.0,
+            exposure=exposure,
             response=response,
             count_errors=source_errors,
             sys_errors=source_sys_errors,
             quality=None,
-            scale_factor=1.0,
+            scale_factor=scale_factor,
             is_poisson=is_poisson,
             mission="fake_mission",
             instrument="fake_instrument",
             tstart=0.0,
-            tstop=1.0,
+            tstop=exposure,
         )
 
         return observation
@@ -249,6 +270,8 @@ class DispersionSpectrumLike(SpectrumLike):
         background_function=None,
         background_errors=None,
         background_sys_errors=None,
+        exposure=1.0,
+        scale_factor=1.0
     ):
         # type: () -> DispersionSpectrumLike
         """
@@ -263,6 +286,8 @@ class DispersionSpectrumLike(SpectrumLike):
         :param background_function: (optional) astromodels background function
         :param background_errors: (optional) gaussian background errors
         :param background_sys_errors: (optional) background systematic errors
+        :param exposure: the exposure to assume
+        :param scale_factor: the scale factor between source exposure / bkg exposure
         :return: simulated DispersionSpectrumLike plugin
         """
 
@@ -283,4 +308,6 @@ class DispersionSpectrumLike(SpectrumLike):
             background_errors,
             background_sys_errors,
             response=response,
+            exposure=exposure,
+            scale_factor=scale_factor
         )

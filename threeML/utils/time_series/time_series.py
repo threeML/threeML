@@ -1,23 +1,21 @@
-from __future__ import division, print_function
-
-from builtins import object, range, zip
 
 __author__ = "grburgess"
 
 import collections
 import os
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable, List, Optional
 
 import h5py
 import numpy as np
 import pandas as pd
-from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient
+from threeML.utils.progress_bar import trange
 from threeML.utils.spectrum.binned_spectrum import Quality
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import (Polynomial, polyfit,
@@ -42,6 +40,26 @@ class OverLappingIntervals(RuntimeError):
 def ceildiv(a, b):
     return -(-a // b)
 
+@dataclass(frozen=True)
+class _OutputContainer:
+    """
+    A dummy contaier to extract information from the light curve
+    """
+    
+    instrument: str
+    telescope: str
+    tstart: Iterable[float]
+    telapse: Iterable[float]
+    channel: Iterable[int]
+    counts: Iterable[int]
+    rates: Iterable[float]
+    edges: Iterable[float]
+    quality: Quality
+    backfile: str
+    grouping: Iterable[int]
+    exposure: Iterable[float]
+    counts_error: Optional[Iterable[float]] = None
+    rate_error: Optional[Iterable[float]] = None
 
 class TimeSeries(object):
     def __init__(
@@ -472,7 +490,7 @@ class TimeSeries(object):
 
     def get_information_dict(
         self, use_poly: bool = False, extract: bool = False
-    ) -> dict:
+    ) -> _OutputContainer:
         """
         Return a PHAContainer that can be read by different builders
 
@@ -535,38 +553,30 @@ class TimeSeries(object):
 
             quality = self._native_quality
 
-        container_dict = {}
+        if not isinstance(quality, Quality):
 
-        container_dict["instrument"] = self._instrument
-        container_dict["telescope"] = self._mission
-        container_dict["tstart"] = self._time_intervals.absolute_start_time
-        container_dict["telapse"] = (
-            self._time_intervals.absolute_stop_time
-            - self._time_intervals.absolute_start_time
-        )
-        container_dict["channel"] = np.arange(
-            self._n_channels) + self._first_channel
-        container_dict["counts"] = counts
-        container_dict["counts error"] = counts_err
-        container_dict["rates"] = rates
-        container_dict["rate error"] = rate_err
+            quality = Quality.from_ogip(quality)
 
-        container_dict["edges"] = self._edges
-
+            
+        container_dict: _OutputContainer = _OutputContainer(instrument=self._instrument,
+                                                            telescope=self._mission,
+                                                            tstart=self._time_intervals.absolute_start_time,
+                                                            telapse=(self._time_intervals.absolute_stop_time
+                                                                     - self._time_intervals.absolute_start_time),
+                                                            channel=np.arange(self._n_channels) + self._first_channel,
+                                                            counts=counts,
+                                                            counts_error=counts_err,
+                                                            rates=rates,
+                                                            rate_error=rate_err,
+                                                            edges=self._edges,
+                                                            backfile="NONE",
+                                                            grouping=np.ones(self._n_channels),
+                                                            exposure=exposure,
+                                                            quality=quality)
+        
         # check to see if we already have a quality object
 
-        if isinstance(quality, Quality):
 
-            container_dict["quality"] = quality
-
-        else:
-
-            container_dict["quality"] = Quality.from_ogip(quality)
-
-        # TODO: make sure the grouping makes sense
-        container_dict["backfile"] = "NONE"
-        container_dict["grouping"] = np.ones(self._n_channels)
-        container_dict["exposure"] = exposure
         # container_dict['response'] = self._response
 
         return container_dict
@@ -898,6 +908,7 @@ class TimeSeries(object):
             self.set_active_time_intervals(
                 *self._time_intervals.to_string().split(","))
 
-    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
+    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False,
+                        use_echans_start=0, use_echans_stop=-1):
 
         raise NotImplementedError("must be implemented in subclass")

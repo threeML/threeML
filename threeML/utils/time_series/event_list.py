@@ -13,6 +13,7 @@ import os
 import numpy as np
 import pandas as pd
 from pandas import HDFStore
+import matplotlib.pyplot as plt
 from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.config.config import threeML_config
@@ -240,7 +241,14 @@ class EventList(TimeSeries):
             self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
                 events, p0)
 
-    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
+    def view_lightcurve(self,
+                        start: float = -10,
+                        stop: float = 20.0,
+                        dt: float = 1.0,
+                        use_binner: bool = False,
+                        use_echans_start: int = 0,
+                        use_echans_stop: int = -1
+    ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
         :param start:
@@ -249,6 +257,48 @@ class EventList(TimeSeries):
         :param use_binner:
 
         """
+
+        # validate echan mask input
+        if not isinstance(use_echans_start, int):
+            log.error(f"The use_echans_start variable must be a integer."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if not (use_echans_start > (-1)*(self.n_channels)-1 and
+                use_echans_start < (self.n_channels)):
+            log.error(f"The use_echans_start variable must be"
+                      f"between {(-1)*(self.n_channels)} and {self.n_channels-1}."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if not isinstance(use_echans_stop, int):
+            log.error(f"The use_echans_stop variable must be a integer."
+                      f" Input is {use_echans_stop}.")
+            raise AssertionError()
+
+        if not (use_echans_stop > (-1)*(self.n_channels)-1 and
+                use_echans_stop < (self.n_channels)):
+            log.error(f"The use_echans_stop variable must be"
+                      f"between {(-1)*(self.n_channels)} and {self.n_channels-1}."
+                      f" Input is {use_echans_stop}.")
+            raise AssertionError()
+
+        if use_echans_start < 0:
+            use_echans_start = self.n_channels+use_echans_start
+
+        if use_echans_stop < 0:
+            use_echans_stop = self.n_channels+use_echans_stop
+
+        if not use_echans_stop >= use_echans_start:
+            log.error(f"The use_echans_stop variable must be larger"
+                      f" or equal than the use_echans_start variable"
+                      f" Input is use_echans_start: {use_echans_start}"
+                      f" > use_echans_stop: {use_echans_stop}")
+            raise AssertionError()
+
+        # get echan bins
+        echan_bins = np.arange(use_echans_start, use_echans_stop+2, 1)-0.5
+
 
         if use_binner:
 
@@ -276,12 +326,12 @@ class EventList(TimeSeries):
 
             bins = np.arange(start, stop + dt, dt)
 
-        cnts, bins = np.histogram(self.arrival_times, bins=bins)
+        cnts, bins, _ = np.histogram2d(self.arrival_times, self.measurement,
+                                       bins=(bins, echan_bins))
+        cnts = np.sum(cnts, axis=1)
+
         time_bins = np.array([[bins[i], bins[i + 1]]
                               for i in range(len(bins) - 1)])
-
-        # width = np.diff(bins)
-        width = []
 
         # now we want to get the estimated background from the polynomial fit
 
@@ -296,33 +346,30 @@ class EventList(TimeSeries):
                 # zero out the bkg
                 tmpbkg = 0.0
 
-                # we will use the exposure for the width
-
-                this_width = self.exposure_over_interval(tb[0], tb[1])
-
                 # sum up the counts over this interval
 
-                for poly in self.polynomials:
+                for poly in self.polynomials[use_echans_start:use_echans_stop+1]:
 
                     tmpbkg += poly.integral(tb[0], tb[1])
 
-                # capture the exposure
-
-                width.append(this_width)
-
                 # capture the bkg *rate*
 
-                bkg.append(old_div(tmpbkg, this_width))
+                # Divide the background counts by the time intervall
+                # We do not use the dead time corrected exposure here
+                # because the integration is done over the full time bin
+                # and not the dead time corrected exposure
+                bkg.append(old_div(tmpbkg, tb[1]-tb[0]))
 
         else:
 
             bkg = None
 
-            for j, tb in enumerate(time_bins):
+        width = []
+        for j, tb in enumerate(time_bins):
+            # capture the exposure
+            this_width = self.exposure_over_interval(tb[0], tb[1])
 
-                this_width = self.exposure_over_interval(tb[0], tb[1])
-
-                width.append(this_width)
+            width.append(this_width)
 
         width = np.array(width)
 
@@ -475,7 +522,6 @@ class EventList(TimeSeries):
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
-
         if self._user_poly_order == -1:
 
             
@@ -698,6 +744,109 @@ class EventList(TimeSeries):
 
         self._polynomials = polynomials
 
+    def set_active_time_intervals(self, *args):
+        """Set the time interval(s) to be used during the analysis.
+
+        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
+
+        set_active_time_intervals("0.0-10.0")
+
+        which will set the energy range 0-10. seconds.
+        """
+        self._time_selection_exists = True
+
+        interval_masks = []
+
+        time_intervals = TimeIntervalSet.from_strings(*args)
+
+        time_intervals.merge_intersecting_intervals(in_place=True)
+
+        for interval in time_intervals:
+            tmin = interval.start_time
+            tmax = interval.stop_time
+
+            mask = self._select_events(tmin, tmax)
+
+            interval_masks.append(mask)
+
+        self._time_intervals = time_intervals
+
+        time_mask = interval_masks[0]
+        if len(interval_masks) > 1:
+            for mask in interval_masks[1:]:
+                time_mask = np.logical_or(time_mask, mask)
+
+        # calulate exposure and deadtime
+        exposure = 0
+        dead_time = 0
+        for interval in time_intervals:
+            tmin = interval.start_time
+            tmax = interval.stop_time
+            this_exposure = self.exposure_over_interval(tmin, tmax)
+            # check that the exposure is not larger than the total time
+            if this_exposure > (tmax-tmin):
+                log.error("The exposure in the active time bin is larger "
+                          "than the total active time. "
+                          "Something must be wrong!")
+                raise RuntimeError()
+            exposure += this_exposure
+            dead_time += (tmax-tmin)-this_exposure
+
+        self._exposure = exposure
+        self._active_dead_time = dead_time
+
+        tmp_counts = []  # Temporary list to hold the total counts per chan
+
+        for chan in range(self._first_channel, self._n_channels + self._first_channel):
+
+            channel_mask = self._measurement == chan
+            counts_mask = np.logical_and(channel_mask, time_mask)
+            total_counts = len(self._arrival_times[counts_mask])
+
+            tmp_counts.append(total_counts)
+
+        self._counts = np.array(tmp_counts)
+
+        tmp_counts = []
+        tmp_err = []  # Temporary list to hold the err counts per chan
+
+        if self._poly_fit_exists:
+
+            if not self._poly_fit_exists:
+                raise RuntimeError(
+                    "A polynomial fit to the channels does not exist!")
+
+            for chan in range(self._n_channels):
+
+                total_counts = 0
+                counts_err = 0
+
+                for tmin, tmax in zip(
+                    self._time_intervals.start_times, self._time_intervals.stop_times
+                ):
+                    # Now integrate the appropriate background polynomial
+                    total_counts += self._polynomials[chan].integral(
+                        tmin, tmax)
+                    counts_err += (
+                        self._polynomials[chan].integral_error(tmin, tmax)
+                    ) ** 2
+
+                tmp_counts.append(total_counts)
+
+                tmp_err.append(np.sqrt(counts_err))
+
+            self._poly_counts = np.array(tmp_counts)
+
+            self._poly_count_err = np.array(tmp_err)
+
+            # apply the dead time correction to the background counts
+            # and errors
+            corr = self._exposure/(self._active_dead_time+self._exposure)
+
+            self._poly_counts *= corr
+
+            self._poly_count_err *= corr
+
 
 class EventListWithDeadTime(EventList):
     def __init__(
@@ -791,100 +940,6 @@ class EventListWithDeadTime(EventList):
             interval_deadtime = 0
 
         return (stop - start) - interval_deadtime
-
-    def set_active_time_intervals(self, *args):
-        """Set the time interval(s) to be used during the analysis.
-
-        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
-
-        set_active_time_intervals("0.0-10.0")
-
-        which will set the energy range 0-10. seconds.
-        """
-
-        self._time_selection_exists = True
-
-        interval_masks = []
-
-        time_intervals = TimeIntervalSet.from_strings(*args)
-
-        time_intervals.merge_intersecting_intervals(in_place=True)
-
-        for interval in time_intervals:
-            tmin = interval.start_time
-            tmax = interval.stop_time
-
-            mask = self._select_events(tmin, tmax)
-
-            interval_masks.append(mask)
-
-        self._time_intervals = time_intervals
-
-        time_mask = interval_masks[0]
-        if len(interval_masks) > 1:
-            for mask in interval_masks[1:]:
-                time_mask = np.logical_or(time_mask, mask)
-
-        tmp_counts = []  # Temporary list to hold the total counts per chan
-
-        for chan in range(self._first_channel, self._n_channels + self._first_channel):
-
-            channel_mask = self._measurement == chan
-            counts_mask = np.logical_and(channel_mask, time_mask)
-            total_counts = len(self._arrival_times[counts_mask])
-
-            tmp_counts.append(total_counts)
-
-        self._counts = np.array(tmp_counts)
-
-        tmp_counts = []
-        tmp_err = []  # Temporary list to hold the err counts per chan
-
-        if self._poly_fit_exists:
-
-            if not self._poly_fit_exists:
-                raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!")
-
-            for chan in range(self._n_channels):
-
-                total_counts = 0
-                counts_err = 0
-
-                for tmin, tmax in zip(
-                    self._time_intervals.start_times, self._time_intervals.stop_times
-                ):
-                    # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(
-                        tmin, tmax)
-                    counts_err += (
-                        self._polynomials[chan].integral_error(tmin, tmax)
-                    ) ** 2
-
-                tmp_counts.append(total_counts)
-
-                tmp_err.append(np.sqrt(counts_err))
-
-            self._poly_counts = np.array(tmp_counts)
-
-            self._poly_count_err = np.array(tmp_err)
-
-        # Dead time correction
-
-        exposure = 0.0
-        for interval in self._time_intervals:
-            exposure += interval.duration
-
-        if self._dead_time is not None:
-
-            total_dead_time = self._dead_time[time_mask].sum()
-        else:
-
-            total_dead_time = 0.0
-
-        self._exposure = exposure - total_dead_time
-
-        self._active_dead_time = total_dead_time
 
 
 class EventListWithDeadTimeFraction(EventList):
@@ -983,100 +1038,6 @@ class EventListWithDeadTimeFraction(EventList):
             interval_deadtime = 0
 
         return interval - interval_deadtime
-
-    def set_active_time_intervals(self, *args):
-        """Set the time interval(s) to be used during the analysis.
-
-        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
-
-        set_active_time_intervals("0.0-10.0")
-
-        which will set the energy range 0-10. seconds.
-        """
-
-        self._time_selection_exists = True
-
-        interval_masks = []
-
-        time_intervals = TimeIntervalSet.from_strings(*args)
-
-        time_intervals.merge_intersecting_intervals(in_place=True)
-
-        for interval in time_intervals:
-            tmin = interval.start_time
-            tmax = interval.stop_time
-
-            mask = self._select_events(tmin, tmax)
-
-            interval_masks.append(mask)
-
-        self._time_intervals = time_intervals
-
-        time_mask = interval_masks[0]
-        if len(interval_masks) > 1:
-            for mask in interval_masks[1:]:
-                time_mask = np.logical_or(time_mask, mask)
-
-        tmp_counts = []  # Temporary list to hold the total counts per chan
-
-        for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            channel_mask = self._measurement == chan
-            counts_mask = np.logical_and(channel_mask, time_mask)
-            total_counts = len(self._arrival_times[counts_mask])
-
-            tmp_counts.append(total_counts)
-
-        self._counts = np.array(tmp_counts)
-
-        tmp_counts = []
-        tmp_err = []  # Temporary list to hold the err counts per chan
-
-        if self._poly_fit_exists:
-
-            if not self._poly_fit_exists:
-
-                log.error("A polynomial fit to the channels does not exist!")
-                
-                raise RuntimeError(
-                    )
-
-            for chan in range(self._n_channels):
-
-                total_counts = 0
-                counts_err = 0
-
-                for tmin, tmax in zip(
-                    self._time_intervals.start_times, self._time_intervals.stop_times
-                ):
-                    # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(
-                        tmin, tmax)
-                    counts_err += (
-                        self._polynomials[chan].integral_error(tmin, tmax)
-                    ) ** 2
-
-                tmp_counts.append(total_counts)
-
-                tmp_err.append(np.sqrt(counts_err))
-
-            self._poly_counts = np.array(tmp_counts)
-
-            self._poly_count_err = np.array(tmp_err)
-
-        # Dead time correction
-
-        exposure = 0.0
-        total_dead_time = 0.0
-        for interval, imask in zip(self._time_intervals, interval_masks):
-            exposure += interval.duration
-            if self._dead_time_fraction is not None:
-                total_dead_time += (
-                    interval.duration * self._dead_time_fraction[imask].mean()
-                )
-
-        self._exposure = exposure - total_dead_time
-
-        self._active_dead_time = total_dead_time
 
 
 class EventListWithLiveTime(EventList):
@@ -1253,94 +1214,3 @@ class EventListWithLiveTime(EventList):
         # the sum at the end converts all the arrays to floats
 
         return total_livetime.sum()
-
-    def set_active_time_intervals(self, *args):
-        """Set the time interval(s) to be used during the analysis.
-
-        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
-
-        set_active_time_intervals("0.0-10.0")
-
-        which will set the energy range 0-10. seconds.
-        """
-
-        self._time_selection_exists = True
-
-        interval_masks = []
-
-        time_intervals = TimeIntervalSet.from_strings(*args)
-
-        time_intervals.merge_intersecting_intervals(in_place=True)
-
-        for interval in time_intervals:
-            tmin = interval.start_time
-            tmax = interval.stop_time
-            mask = self._select_events(tmin, tmax)
-
-            interval_masks.append(mask)
-
-        self._time_intervals = time_intervals
-
-        time_mask = interval_masks[0]
-        if len(interval_masks) > 1:
-            for mask in interval_masks[1:]:
-                time_mask = np.logical_or(time_mask, mask)
-
-        tmp_counts = []  # Temporary list to hold the total counts per chan
-
-        for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            channel_mask = self._measurement == chan
-            counts_mask = np.logical_and(channel_mask, time_mask)
-            total_counts = len(self._arrival_times[counts_mask])
-
-            tmp_counts.append(total_counts)
-
-        self._counts = np.array(tmp_counts)
-
-        tmp_counts = []
-        tmp_err = []  # Temporary list to hold the err counts per chan
-
-        if self._poly_fit_exists:
-
-            if not self._poly_fit_exists:
-                raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!")
-
-            # for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            for chan in range(self._n_channels):
-
-                total_counts = 0
-                counts_err = 0
-
-                for tmin, tmax in zip(
-                    self._time_intervals.start_times, self._time_intervals.stop_times
-                ):
-                    # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(
-                        tmin, tmax)
-                    counts_err += (
-                        self._polynomials[chan].integral_error(tmin, tmax)
-                    ) ** 2
-
-                tmp_counts.append(total_counts)
-
-                tmp_err.append(np.sqrt(counts_err))
-
-            self._poly_counts = np.array(tmp_counts)
-
-            self._poly_count_err = np.array(tmp_err)
-
-        # Live time correction
-
-        exposure = 0.0
-        total_real_time = 0.0
-        for interval in self._time_intervals:
-            total_real_time += interval.duration
-            exposure += self.exposure_over_interval(
-                interval.start_time, interval.stop_time
-            )
-
-        # In this case the exposure is the total live time
-
-        self._exposure = exposure
-        self._active_dead_time = total_real_time - exposure

@@ -30,8 +30,28 @@ class EmceeSampler(MCMCSampler):
         super(EmceeSampler, self).__init__(
             likelihood_model, data_list, **kwargs)
 
-    def setup(self, n_iterations: int, n_burn_in: Optional[int] = None, n_walkers: int = 20, seed=None, **kwargs):
+    def setup(self, n_iterations: int,
+              n_burn_in: Optional[int] = None,
+              n_walkers: int = 20,
+              seed=None,
+              **kwargs):
 
+        """TODO describe function
+
+        :param n_iterations: 
+        :type n_iterations: int
+        :param n_burn_in: 
+        :type n_burn_in: Optional[int]
+        :param n_walkers: 
+        :type n_walkers: int
+        :param seed: 
+        :type seed: 
+        :returns: 
+
+        """
+
+        
+        
         log.debug(f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"
                   f"n_walkers: {n_walkers}, seed: {seed}.")
 

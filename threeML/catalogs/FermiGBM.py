@@ -455,3 +455,46 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         return model, sbpl
 
+
+class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
+    def __init__(self, update=False):
+        """
+        The Fermi-GBM trigger catalog.
+
+        :param update: force update the XML VO table
+        """
+
+        self._update = update
+
+        super(FermiGBMTriggerCatalog, self).__init__(
+            "fermigtrig",
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM trigger catalog"].url,
+            "Fermi-GBM trigger catalog",
+        )
+
+    def _get_vo_table_from_source(self):
+
+        self._vo_dataframe = get_heasarc_table_as_pandas(
+            "fermigtrig", update=self._update, cache_time_days=1.0
+        )
+
+    def apply_format(self, table):
+        new_table = table[
+            "name",
+            "trigger_type",
+            "ra",
+            "dec",
+            "trigger_time",
+            "localization_source"
+            
+        ]
+
+        new_table["ra"].format = "5.3f"
+        new_table["dec"].format = "5.3f"
+
+        return new_table.group_by("trigger_time")
+
+    def _source_is_valid(self, source):
+
+        return _gbm_and_lle_valid_source_check(source)
+

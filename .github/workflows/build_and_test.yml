@@ -1,9 +1,16 @@
 name: CI
 on:
     push:
-    # paths-ignore:
-    #   - 'CHANGELOG.md'
+      paths-ignore:
+        - "README.md"
+        - "**/docs/**"
+        - ".github/workflows/docs.yml"
+
     pull_request:
+      branches:
+        - master
+        - dev
+
     schedule:
         - cron: "0 11 * * *"
 
@@ -42,6 +49,10 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install --upgrade astromodels
                   pip install --upgrade flake8 coverage pytest-cov cython
+
+                  # temp fix for speclite
+                  pip install git+https://github.com/desihub/speclite.git
+                  
                   pip install -e .
             - name: Lint with flake8
               run: |
@@ -80,20 +91,27 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
+            
             - name: Cache conda
-              uses: actions/cache@v1
+              uses: actions/cache@v2
+              env:
+                # Increase this value to reset cache if etc/example-environment.yml has not changed
+                CACHE_NUMBER: 0
               with:
                   path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
+                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
+            
             - name: Setup Miniconda
               uses: conda-incubator/setup-miniconda@v2
               with:
                   auto-update-conda: true
                   auto-activate-base: false
+                  #mamba-version: "*"
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
                   channels: conda-forge, xspecmodels, threeml, fermi, defaults
                   environment-file: ci/environment.yml
+                  use-only-tar-bz2: true
 
             - name: Init Env
               shell: bash -l {0}
@@ -124,6 +142,8 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
+                  wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                  python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
@@ -142,7 +162,7 @@ jobs:
 
     publish-pypi:
         name: Publish to PyPi
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && (! endsWith(github.ref, 'dev'))
         runs-on: ubuntu-latest
         steps:
             - name: Checkout source

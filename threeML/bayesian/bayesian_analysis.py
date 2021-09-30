@@ -103,16 +103,22 @@ if len(_available_samplers) == 0:
     log.error("There are NO samplers available!")
     log.error("emcee is installed by default, something is wrong!")
 
+    raise RuntimeError()
+
 
 class BayesianAnalysis(object):
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
-        Bayesian analysis.
+        Perform Bayesian analysis by passing your model and data.
+        All free parameters must have priors set.
 
         :param likelihood_model: the likelihood model
         :param data_list: the list of datasets to use (normally an instance of DataList)
         :param kwargs: use 'verbose=True' for verbose operation
         :return:
+
+        :example:
+        
         """
 
         self._analysis_type = "bayesian"
@@ -231,7 +237,7 @@ class BayesianAnalysis(object):
             # now we will setup the samnpler with the
             # paramters from thre config
 
-            default_params = threeML_config.bayesian.default_setup
+            default_params = threeML_config.bayesian[f"{sampler_name}_setup"]
 
             self.sampler.setup(**default_params)
 
@@ -243,7 +249,22 @@ class BayesianAnalysis(object):
         return self._sampler
 
     def sample(self, quiet=False):
+        """
+        sample the posterior of the model with the selected algorithm
 
+        If no algorithm as been set, then the configured default algorithm
+        we default parameters will be run
+        
+        :param quiet: if True, then no output is displayed
+        :type quiet: 
+        :returns: 
+
+        """
+        if self._sampler is None:
+
+            # assuming the default sampler
+            self.set_sampler()
+        
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)
@@ -366,4 +387,4 @@ class BayesianAnalysis(object):
         Sets the model parameters to the mean of the marginal distributions
         """
 
-        self._sampler.restore_median_fit
+        self._sampler.restore_median_fit()

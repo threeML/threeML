@@ -9,6 +9,13 @@ from past.utils import old_div
 
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
+
+try:
+    from threeML.plugins.FermiLATLike import FermiLATLike
+    LATLike = True
+except:
+    LATLike = False
+
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -84,19 +91,19 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             if isinstance(
                 analysis.data_list[key], speclike.SpectrumLike
             ):
-
                 new_data_keys.append(key)
-
+            elif LATLike and isinstance(
+                            analysis.data_list[key], FermiLATLike
+                ):
+                new_data_keys.append(key)
             else:
-
                 log.warning(
-                    "Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
-                    "display_spectrum_model_counts" % key
+                    "Dataset %s is not of the SpectrumLike or FermiLATLike  kind. Cannot be plotted by display_spectrum_model_counts" % key
                 )
 
     if not new_data_keys:
         RuntimeError(
-            "There were no valid SpectrumLike data requested for plotting. Please use the detector names in the data list"
+            "There were no valid SpectrumLike or FermiLATLike data requested for plotting. Please use the detector names in the data list"
         )
 
     data_keys = new_data_keys
@@ -182,11 +189,17 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if "data_cmap" in kwargs:
         if len(data_keys) <= data_per_plot:
+
+            _cmap_len = max(len(data_keys), _sub_menu.n_colors)
+
             data_colors = cmap_intervals(
-                len(data_keys), kwargs.pop("data_cmap"))
+                _cmap_len, kwargs.pop("data_cmap"))
         else:
+
+            _cmap_len = max(data_per_plot, _sub_menu.n_colors)
+            
             data_colors_base = cmap_intervals(
-                data_per_plot, kwargs.pop("data_cmap"))
+                _cmap_len, kwargs.pop("data_cmap"))
             data_colors = []
             for i in range(len(data_keys)):
                 data_colors.append(data_colors_base[i % data_per_plot])
@@ -212,10 +225,16 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if "model_cmap" in kwargs:
         if len(data_keys) <= data_per_plot:
-            model_colors = cmap_intervals(len(data_keys),
+
+            _cmap_len = max(len(data_keys), _sub_menu.n_colors)
+            
+            model_colors = cmap_intervals(_cmap_len,
                                           kwargs.pop("model_cmap"))
         else:
-            model_colors_base = cmap_intervals(data_per_plot,
+
+            _cmap_len = max(data_per_plot, _sub_menu.n_colors)
+            
+            model_colors_base = cmap_intervals(_cmap_len,
                                                kwargs.pop("model_cmap"))
             model_colors = []
             for i in range(len(data_keys)):
@@ -341,6 +360,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             axes = residual_plot.data_axis
 
+            
         # go thru the detectors
         for key, data_color, model_color, background_color, min_rate, model_label, background_label in zip(
                 data_keys, data_colors, model_colors, background_colors, min_rates, model_labels, background_labels
