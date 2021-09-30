@@ -36,7 +36,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             "Fermi-LAT/GBM burst catalog",
         )
 
-        self._gbm_detector_lookup = np.array(
+        self._gbm_detector_lookup = numpy.array(
             [
                 "n0",
                 "n1",
@@ -99,7 +99,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = np.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
+            idx = numpy.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
             # get the location
