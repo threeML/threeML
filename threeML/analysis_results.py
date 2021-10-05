@@ -1877,6 +1877,9 @@ class BayesianResults(_AnalysisResults):
 
         return new_model
 
+
+
+    
 class MLEResults(_AnalysisResults):
     """
     Build the _AnalysisResults object starting from a covariance matrix.
