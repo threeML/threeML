@@ -303,6 +303,8 @@ conda activate ${ENV_NAME}
 
 mamba install python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
+conda activate ${ENV_NAME}
+
 conda deactivate
 
 line
