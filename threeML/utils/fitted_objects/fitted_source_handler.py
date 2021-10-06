@@ -118,7 +118,19 @@ class GenericFittedSourceHandler(object):
         # first test a parameters to check the number of samples
 
 
-        test_par = list(self._parameters.values())[0]
+        for par in list(self._parameters.values()):
+
+            if par.free:
+
+                test_par = par
+
+                break
+
+        else:
+
+            log.error("There are no free parameters in the model!")
+
+            raise RuntimeError()
 
         test_variate = self._analysis_results.get_variates(test_par.path)
 
