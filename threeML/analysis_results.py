@@ -927,7 +927,7 @@ class _AnalysisResults(object):
 
         # Get calling sequence of input function
         # arguments will be a list of names, like ['a','b']
-        arguments, _, _, _ = inspect.getargspec(function)
+        arguments = list(inspect.signature(function).parameters.keys())
 
         # Get the arguments of function which have not been specified
         # in the calling sequence (the **kwargs dictionary)
