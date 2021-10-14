@@ -86,304 +86,6 @@ def _escape_back_yaml_from_fits(yaml_code):
     return yaml_code
 
 
-def load_analysis_results(fits_file: str) -> _AnalysisResults:
-    """
-    Load the results of one or more analysis from a FITS file produced by 3ML
-
-    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
-    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
-    """
-
-    fits_file: Path = fits_file
-
-    with fits.open(fits_file) as f:
-
-        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
-
-        if n_results == 1:
-
-            log.debug(f"{fits_file} AR opened with 1 result")
-
-            return _load_one_results(f["ANALYSIS_RESULTS", 1])
-
-        else:
-
-            log.debug(f"{fits_file} AR opened with {n_results} results")
-
-            return _load_set_of_results(f, n_results)
-
-
-def load_analysis_results_hdf(hdf_file: str) -> _AnalysisResults:
-    """
-    Load the results of one or more analysis from a FITS file produced by 3ML
-
-    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
-    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
-    """
-
-    hdf_file: Path = sanitize_filename(hdf_file)
-
-    with h5py.File(hdf_file, "r") as f:
-
-        n_results = f.attrs["n_results"]
-
-        if n_results == 1:
-
-            log.debug(f"{hdf_file} AR opened with {n_results} result")
-
-            return _load_one_results_hdf(f["AnalysisResults_0"])
-
-        else:
-
-            log.debug(f"{hdf_file} AR opened with {n_results} results")
-
-            return _load_set_of_results_hdf(f, n_results)
-
-
-def convert_fits_analysis_result_to_hdf(fits_result_file: str):
-
-    ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
-
-    new_file_name_base, _ = os.path.splitext(fits_result_file)
-
-    new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
-
-    ar.write_to(new_file_name, overwrite=True, as_hdf=True)
-
-    log.info(f"Converted {fits_result_file} to {new_file_name}")
-
-
-def _load_one_results(fits_extension):
-    # Gather analysis type
-    analysis_type = fits_extension.header.get("RESUTYPE")
-
-    # Gather the optimized model
-    serialized_model = _escape_back_yaml_from_fits(
-        fits_extension.header.get("MODEL")
-    )
-    model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
-
-    optimized_model = ModelParser(model_dict=model_dict).get_model()
-
-    # Gather statistics values
-    statistic_values = collections.OrderedDict()
-
-    measure_values = collections.OrderedDict()
-
-    for key in list(fits_extension.header.keys()):
-
-        if key.find("STAT") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("STAT", ""))
-            value = float(fits_extension.header.get(key))
-            name = fits_extension.header.get("PN%i" % id)
-            statistic_values[name] = value
-
-        if key.find("MEAS") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("MEAS", ""))
-            name = fits_extension.header.get(key)
-            value = float(fits_extension.header.get("MV%i" % id))
-            measure_values[name] = value
-
-    if analysis_type == "MLE":
-
-        # Get covariance matrix
-
-        covariance_matrix = np.atleast_2d(
-            fits_extension.data.field("COVARIANCE").T
-        )
-
-        # Instance and return
-
-        return MLEResults(
-            optimized_model,
-            covariance_matrix,
-            statistic_values,
-            statistical_measures=measure_values,
-        )
-
-    elif analysis_type == "Bayesian":
-
-        # Gather samples
-        samples = fits_extension.data.field("SAMPLES")
-
-        try:
-            # Gather log probability
-            log_probability = fits_extension.data.field("LOG_PROB")[0]
-
-        except:
-
-            log_probability = None
-
-        # Instance and return
-
-        return BayesianResults(
-            optimized_model,
-            samples.T,
-            statistic_values,
-            statistical_measures=measure_values,
-            log_probabilty=log_probability,
-        )
-
-
-def _load_one_results_hdf(hdf_obj):
-    # Gather analysis type
-    analysis_type = hdf_obj.attrs["RESUTYPE"]
-
-    # Gather the optimized model
-    model_dict = recursively_load_dict_contents_from_group(hdf_obj, "MODEL")
-
-    optimized_model = ModelParser(model_dict=model_dict).get_model()
-
-    # Gather statistics values
-    statistic_values = collections.OrderedDict()
-
-    measure_values = collections.OrderedDict()
-
-    for key in list(hdf_obj.attrs.keys()):
-
-        if key.find("STAT") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("STAT", ""))
-            value = float(hdf_obj.attrs[key])
-            name = hdf_obj.attrs["PN%i" % id]
-            statistic_values[name] = value
-
-        if key.find("MEAS") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("MEAS", ""))
-            name = hdf_obj.attrs[key]
-            value = float(hdf_obj.attrs["MV%i" % id])
-            measure_values[name] = value
-
-    if analysis_type == "MLE":
-
-        # Get covariance matrix
-
-        covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
-
-        # Instance and return
-
-        return MLEResults(
-            optimized_model,
-            covariance_matrix,
-            statistic_values,
-            statistical_measures=measure_values,
-        )
-
-    elif analysis_type == "Bayesian":
-
-        # Gather samples
-        samples = hdf_obj["SAMPLES"][()]
-
-        try:
-            # Gather log probabiltiy
-            log_probability = hdf_obj["LOG_PROB"][()]
-
-        except:
-
-            log_probability = None
-
-        # Instance and return
-
-        return BayesianResults(
-            optimized_model,
-            samples.T,
-            statistic_values,
-            statistical_measures=measure_values,
-            log_probabilty=log_probability,
-        )
-
-
-def _load_set_of_results_hdf(hdf_obj, n_results):
-    # Gather all results
-    all_results = []
-
-    for i in range(n_results):
-
-        grp = hdf_obj["AnalysisResults_%d" % i]
-
-        all_results.append(_load_one_results_hdf(grp))
-
-    this_set = AnalysisResultsSet(all_results)
-
-    # Now gather the SEQUENCE extension and set the characterization frame accordingly
-
-    seq_type = hdf_obj.attrs["SEQ_TYPE"]
-
-    # Build the data tuple
-    seq_grp = hdf_obj["SEQUENCE"]
-
-    data_list = []
-
-    for name, grp in seq_grp.items():
-
-        if grp.attrs["UNIT"] == "NONE_TYPE":
-
-            this_tuple = (name, grp["DATA"][()])
-
-        else:
-
-            this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
-
-        data_list.append(this_tuple)
-
-    this_set.characterize_sequence(seq_type, tuple(data_list))
-
-    return this_set
-
-
-def _load_set_of_results(open_fits_file, n_results):
-    # Gather all results
-    all_results = []
-
-    for i in range(n_results):
-        all_results.append(
-            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1])
-        )
-
-    this_set = AnalysisResultsSet(all_results)
-
-    # Now gather the SEQUENCE extension and set the characterization frame accordingly
-
-    sequence_ext = open_fits_file["SEQUENCE"]
-
-    seq_type = sequence_ext.header.get("SEQ_TYPE")
-
-    # Build the data tuple
-    record = sequence_ext.data
-
-    data_list = []
-
-    for column in record.columns:
-
-        if column.unit is None:
-
-            this_tuple = (column.name, record[column.name])
-
-        else:
-
-            this_tuple = (
-                column.name,
-                record[column.name] * u.Unit(column.unit),
-            )
-
-        data_list.append(this_tuple)
-
-    this_set.characterize_sequence(seq_type, tuple(data_list))
-
-    return this_set
-
-
 class SEQUENCE(FITSExtension):
     """
     Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis
@@ -2337,3 +2039,301 @@ class AnalysisResultsSet(collections.Sequence):
                     grp = f.create_group("AnalysisResults_%d" % i)
 
                     ANALYSIS_RESULTS_HDF(ar, grp)
+
+
+def load_analysis_results(fits_file: str) -> _AnalysisResults:
+    """
+    Load the results of one or more analysis from a FITS file produced by 3ML
+
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    """
+
+    fits_file: Path = fits_file
+
+    with fits.open(fits_file) as f:
+
+        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
+
+        if n_results == 1:
+
+            log.debug(f"{fits_file} AR opened with 1 result")
+
+            return _load_one_results(f["ANALYSIS_RESULTS", 1])
+
+        else:
+
+            log.debug(f"{fits_file} AR opened with {n_results} results")
+
+            return _load_set_of_results(f, n_results)
+
+
+def load_analysis_results_hdf(hdf_file: str) -> _AnalysisResults:
+    """
+    Load the results of one or more analysis from a FITS file produced by 3ML
+
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    """
+
+    hdf_file: Path = sanitize_filename(hdf_file)
+
+    with h5py.File(hdf_file, "r") as f:
+
+        n_results = f.attrs["n_results"]
+
+        if n_results == 1:
+
+            log.debug(f"{hdf_file} AR opened with {n_results} result")
+
+            return _load_one_results_hdf(f["AnalysisResults_0"])
+
+        else:
+
+            log.debug(f"{hdf_file} AR opened with {n_results} results")
+
+            return _load_set_of_results_hdf(f, n_results)
+
+
+def convert_fits_analysis_result_to_hdf(fits_result_file: str):
+
+    ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
+
+    new_file_name_base, _ = os.path.splitext(fits_result_file)
+
+    new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
+
+    ar.write_to(new_file_name, overwrite=True, as_hdf=True)
+
+    log.info(f"Converted {fits_result_file} to {new_file_name}")
+
+
+def _load_one_results(fits_extension):
+    # Gather analysis type
+    analysis_type = fits_extension.header.get("RESUTYPE")
+
+    # Gather the optimized model
+    serialized_model = _escape_back_yaml_from_fits(
+        fits_extension.header.get("MODEL")
+    )
+    model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
+
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
+
+    measure_values = collections.OrderedDict()
+
+    for key in list(fits_extension.header.keys()):
+
+        if key.find("STAT") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT", ""))
+            value = float(fits_extension.header.get(key))
+            name = fits_extension.header.get("PN%i" % id)
+            statistic_values[name] = value
+
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = fits_extension.header.get(key)
+            value = float(fits_extension.header.get("MV%i" % id))
+            measure_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = np.atleast_2d(
+            fits_extension.data.field("COVARIANCE").T
+        )
+
+        # Instance and return
+
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = fits_extension.data.field("SAMPLES")
+
+        try:
+            # Gather log probability
+            log_probability = fits_extension.data.field("LOG_PROB")[0]
+
+        except:
+
+            log_probability = None
+
+        # Instance and return
+
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+            log_probabilty=log_probability,
+        )
+
+
+def _load_one_results_hdf(hdf_obj):
+    # Gather analysis type
+    analysis_type = hdf_obj.attrs["RESUTYPE"]
+
+    # Gather the optimized model
+    model_dict = recursively_load_dict_contents_from_group(hdf_obj, "MODEL")
+
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
+
+    measure_values = collections.OrderedDict()
+
+    for key in list(hdf_obj.attrs.keys()):
+
+        if key.find("STAT") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT", ""))
+            value = float(hdf_obj.attrs[key])
+            name = hdf_obj.attrs["PN%i" % id]
+            statistic_values[name] = value
+
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = hdf_obj.attrs[key]
+            value = float(hdf_obj.attrs["MV%i" % id])
+            measure_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
+
+        # Instance and return
+
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = hdf_obj["SAMPLES"][()]
+
+        try:
+            # Gather log probabiltiy
+            log_probability = hdf_obj["LOG_PROB"][()]
+
+        except:
+
+            log_probability = None
+
+        # Instance and return
+
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+            log_probabilty=log_probability,
+        )
+
+
+def _load_set_of_results_hdf(hdf_obj, n_results):
+    # Gather all results
+    all_results = []
+
+    for i in range(n_results):
+
+        grp = hdf_obj["AnalysisResults_%d" % i]
+
+        all_results.append(_load_one_results_hdf(grp))
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    seq_type = hdf_obj.attrs["SEQ_TYPE"]
+
+    # Build the data tuple
+    seq_grp = hdf_obj["SEQUENCE"]
+
+    data_list = []
+
+    for name, grp in seq_grp.items():
+
+        if grp.attrs["UNIT"] == "NONE_TYPE":
+
+            this_tuple = (name, grp["DATA"][()])
+
+        else:
+
+            this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set
+
+
+def _load_set_of_results(open_fits_file, n_results):
+    # Gather all results
+    all_results = []
+
+    for i in range(n_results):
+        all_results.append(
+            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1])
+        )
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    sequence_ext = open_fits_file["SEQUENCE"]
+
+    seq_type = sequence_ext.header.get("SEQ_TYPE")
+
+    # Build the data tuple
+    record = sequence_ext.data
+
+    data_list = []
+
+    for column in record.columns:
+
+        if column.unit is None:
+
+            this_tuple = (column.name, record[column.name])
+
+        else:
+
+            this_tuple = (
+                column.name,
+                record[column.name] * u.Unit(column.unit),
+            )
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set
