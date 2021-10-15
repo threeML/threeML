@@ -544,7 +544,7 @@ class FermipyLike(PluginPrototype):
 
   
             #Update this source only if it has free parameters (to gain time)
-            if not ( point_source.has_free_parameters() or force_update):
+            if not ( point_source.has_free_parameters or force_update):
                 continue
 
             #Update source position if free
@@ -577,7 +577,7 @@ class FermipyLike(PluginPrototype):
         ):  # type: astromodels.ExtendedSource
 
             #Update this source only if it has free parameters (to gain time)
-            if not ( extended_source.has_free_parameters() or force_update):
+            if not ( extended_source.has_free_parameters or force_update):
                 continue
 
             theShape = extended_source.spatial_shape
