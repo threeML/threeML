@@ -4,8 +4,11 @@ import re
 from builtins import map, str
 
 import numpy
-from astromodels import *
 from astropy.table import Table
+
+from astropy.coordinates import SkyCoord
+
+import astropy.units as u
 
 from threeML.config.config import threeML_config
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
@@ -241,6 +244,10 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
                 if (("_History" in column) or ("_Band" in column)) or (column == "param_values"):
                 
                     self._astropy_table.remove_column(column)
+                    
+            #remove duplicate columns
+            if "Extended" in list(self._astropy_table.columns) and  "extended" in list(self._astropy_table.columns):
+                self._astropy_table.remove_column("Extended")
             
             self._astropy_table.convert_bytestring_to_unicode()
             self._vo_dataframe = self._astropy_table.to_pandas()
@@ -290,7 +297,6 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
         pandas_df = self._vo_dataframe
         pandas_df["Search_Offset"] = self._fermipy_catalog.skydir.separation(skycoord).deg
 
-    
         pandas_df = pandas_df[pandas_df["Search_Offset"] < radius ]
         pandas_df = pandas_df.sort_values("Search_Offset")
 
