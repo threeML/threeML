@@ -1495,8 +1495,8 @@ class BayesianResults(_AnalysisResults):
 
         cc.add_chain(self._samples_transposed.T, parameters=labels)
 
-        if not cc_kwargs:
-            cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
+        #if not cc_kwargs:
+        #    cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
 
         cc.configure(**cc_kwargs)
         fig = cc.plotter.plot(parameters=parameters, **_default_plot_args)
