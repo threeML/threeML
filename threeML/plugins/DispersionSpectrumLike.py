@@ -178,10 +178,6 @@ class DispersionSpectrumLike(SpectrumLike):
         if self._background_spectrum is not None:
             info["bak"] = copy.copy(self._background_spectrum)
 
-        else:
-
-            info["bak"] = None
-
         info["rsp"] = copy.copy(self._response)
 
         return info
