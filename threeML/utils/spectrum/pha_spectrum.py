@@ -4,6 +4,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 import astropy.io.fits as fits
 import numpy as np
+from numpy.ma import count
 import six
 from past.utils import old_div
 
@@ -890,6 +891,31 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         """
 
         self._grouping = grouping
+
+    def to_binned_spectrum(self) -> BinnedSpectrumWithDispersion:
+        """
+        Convert directly to as Binned Spectrum
+        :returns: 
+
+        """
+        return BinnedSpectrumWithDispersion(counts=self.counts,
+                                            exposure=self.exposure,
+                                            response=self.response,
+                                            count_errors=self.count_errors,
+                                            sys_errors=self.sys_errors,
+                                            quality=self.quality,
+                                            scale_factor=self.scale_factor,
+                                            is_poisson=self.is_poisson,
+                                            mission=self.mission,
+                                            instrument=self.instrument,
+                                            tstart=self.tstart,
+                                            tstop=self.tstart)
+
+
+
+)
+
+        
 
     @property
     def filename(self) -> str:
