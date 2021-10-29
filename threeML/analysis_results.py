@@ -1569,7 +1569,8 @@ class BayesianResults(_AnalysisResults):
 
             subplot.hist(data, nbins, label=label)
 
-            subplot.locator_params(nbins=4)
+        # if not cc_kwargs:
+        #    cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
 
         figures = []
 
