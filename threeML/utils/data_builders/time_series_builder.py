@@ -316,14 +316,21 @@ class TimeSeriesBuilder(object):
 
             bayes = False
 
-        log.debug(f"using unbinned is {unbinned} for {self._name}")
-        log.debug(f"fitting bkg for {self._name}")
+        if "fit_poly" in kwargs:
+            fit_poly = kwargs.pop("fit_poly")
 
-        self._time_series.set_polynomial_fit_interval(
-            *intervals, unbinned=unbinned, bayes=bayes
+        else:
+
+            fit_poly = True
+
+        log.debug(f"using unbinned is {unbinned} for {self._name}")
+        log.debug(f"Setting bkg selection for {self._name}")
+
+        self._time_series.set_background_interval(
+            *intervals, unbinned=unbinned, bayes=bayes, fit_poly=fit_poly
         )
 
-        log.debug(f"finished fitting bkg for {self._name}")
+        log.debug(f"Finished setting bkg selection for {self._name}")
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
@@ -333,9 +340,14 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                self._background_spectrum = self._container_type.from_time_series(
-                    self._time_series, use_poly=True, extract=False
-                )
+                if self._time_series.poly_fit_exists:
+                    self._background_spectrum = (
+                        self._container_type.from_time_series(
+                            self._time_series,
+                            use_poly=True,
+                            extract=False
+                        )
+                    )
 
                 self._measured_background_spectrum = (
                     self._container_type.from_time_series(
@@ -348,10 +360,15 @@ class TimeSeriesBuilder(object):
             else:
 
                 # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
-
-                self._background_spectrum = self._container_type.from_time_series(
-                    self._time_series, self._response, use_poly=True, extract=False
-                )
+                if self._time_series.poly_fit_exists:
+                    self._background_spectrum = (
+                        self._container_type.from_time_series(
+                            self._time_series,
+                            self._response,
+                            use_poly=True,
+                            extract=False
+                        )
+                    )
 
                 self._measured_background_spectrum = (
                     self._container_type.from_time_series(
