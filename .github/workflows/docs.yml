@@ -171,7 +171,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.7
           channels: conda-forge, fermi, threeml, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: true
@@ -195,8 +195,6 @@ jobs:
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
-          # temporary fix for fermi tools
-          conda install -c conda-forge clhep=2.4.4.1
 
       - name: Install the package
         shell: bash -l {0}
@@ -216,7 +214,18 @@ jobs:
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
 
+
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
+
+          # Update GtBurst:
+          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+          python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
+
+          #jupytext --to py --pipe black docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
+          #python docs/md_docs/slow_execute/LAT_Transient_Builder_Example.py
+
           #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/optimizer_docs.md
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
@@ -280,9 +289,6 @@ jobs:
           #sudo apt-get install texlive
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-
-          # temporary fix for fermi tools
-
 
       - name: Install the package
         shell: bash -l {0}
