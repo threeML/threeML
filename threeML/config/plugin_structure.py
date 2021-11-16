@@ -14,6 +14,8 @@ class OGIP:
     data_plot: DataHistPlot = DataHistPlot()
     response_cmap: MPLCmap = MPLCmap.viridis
     response_zero_color: str = "k"
+
+
 @dataclass
 class Photo:
     fit_plot: BinnedSpectrumPlot = BinnedSpectrumPlot()
@@ -25,15 +27,17 @@ class Plugins:
     photo: Photo = Photo()
 
 
-class LightCurveMethodSwitch(Flag):
-    bayes = True
-    mle = False
+@dataclass
+class TimeSeriesFit:
+    fit_poly: bool = True
+    unbinned: bool = True
+    bayes: bool = False
 
-    
+
 @dataclass
 class TimeSeries:
     light_curve_color: str = "#05716c"
     selection_color: str = "#1fbfb8"
     background_color: str = "#C0392B"
     background_selection_color: str = "#E74C3C"
-    default_fit_method: Optional[LightCurveMethodSwitch] = None
+    fit: TimeSeriesFit = TimeSeriesFit()
