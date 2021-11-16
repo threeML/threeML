@@ -6,13 +6,14 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List, Optional
-
 import warnings
+
 import h5py
 import numpy as np
 import pandas as pd
 
 from threeML.config.config import threeML_config
+from threeML.config.config_utils import get_value_kwargs
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient
@@ -375,20 +376,17 @@ class TimeSeries(object):
         :param options:
 
         """
-        if "fit_poly" in options:
-            fit_poly = options.pop("fit_poly")
-            if not isinstance(fit_poly, bool):
-                log.error(f"fit_poly must be a boolean, but is {fit_poly}!")
-                raise AssertionError()
 
-        else:
-            fit_poly = True
+        fit_poly, options = get_value_kwargs("fit_poly",
+                                             bool,
+                                             threeML_config.time_series.fit.fit_poly,
+                                             **options)
 
         self._select_background_time_interval(*time_intervals)
 
         if fit_poly:
             log.debug("Fit a polynominal to the background time intervals.")
-            self._set_polynomial_fit_interval(*time_intervals, **options)
+            self.fit_polynomial(**options)
             log.debug("Fitting a polynominal to the background "
                       "time intervals done.")
         else:
@@ -402,9 +400,74 @@ class TimeSeries(object):
                          "from the last poly fit!")
                 self._delete_polynominal_fit()
 
-
             log.debug("Did not fit a polynominal to the background "
                       "time intervals.")
+
+    def fit_polynomial(self, **kwargs):
+        """
+        Fit the polynominals to the selected time intervals
+        :param kwargs:
+        :returns:
+        """
+        if self.bkg_intervals is None:
+            log.error("You first have to select the background intervals with "
+                      "the set_background_interval method before you can "
+                      "fit the background polynomials.")
+            raise RuntimeError()
+
+        # Find out if we want to binned or unbinned.
+        unbinned, kwargs = get_value_kwargs("unbinned",
+                                            bool,
+                                            threeML_config.time_series.fit.unbinned,
+                                            **kwargs)
+
+        bayes, kwargs = get_value_kwargs("bayes",
+                                         bool,
+                                         threeML_config.time_series.fit.bayes,
+                                         **kwargs)
+
+        if unbinned:
+            log.info("At the moment this unbinned polynominal fitting "
+                     "is only correct if the dead time ratio is constant "
+                     "in the selected background time intervals!")
+
+        if bayes:
+
+            self._fit_method_info["fit method"] = "bayes"
+
+        else:
+
+            self._fit_method_info["fit method"] = "mle"
+
+        # Fit the events with the given intervals
+        if unbinned:
+            self._unbinned = True  # keep track!
+
+            self._unbinned_fit_polynomials(bayes=bayes)
+
+        else:
+
+            self._unbinned = False
+
+            self._fit_polynomials(bayes=bayes)
+
+        # we have a fit now
+
+        self._poly_fit_exists = True
+
+        log.info(
+            f"{self._fit_method_info['bin type']} "
+            f"{self._optimal_polynomial_grade}-order "
+            "polynomial fit with the "
+            f"{self._fit_method_info['fit method']} method"
+        )
+
+        # recalculate the selected counts
+
+        if self._time_selection_exists:
+            self.set_active_time_intervals(
+                *self._time_intervals.to_string().split(",")
+            )
 
     def _select_background_time_interval(self, *time_intervals):
 
@@ -468,88 +531,6 @@ class TimeSeries(object):
 
         self._bkg_intervals = bkg_intervals
 
-    def _set_polynomial_fit_interval(self, *time_intervals, **kwargs) -> None:
-        """Set the time interval to fit the background.
-        Multiple intervals can be input as separate arguments
-        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
-
-        set_polynomial_fit_interval("-10.0-0.0","10.-15.")
-
-        :param time_intervals: intervals to fit on
-        :param unbinned:
-        :param bayes:
-        :param kwargs:
-
-        """
-        # Find out if we want to binned or unbinned.
-        # TODO: add the option to config file
-        if "unbinned" in kwargs:
-            unbinned = kwargs.pop("unbinned")
-            if not isinstance(unbinned, bool):
-                log.error("unbinned option must be True or False")
-                raise AssertionError()
-
-        else:
-
-            # assuming unbinned
-            # could use config file here
-            # unbinned = threeML_config['ogip']['use-unbinned-poly-fitting']
-
-            unbinned = True
-
-
-        # check if we are doing a bayesian
-        # fit and record this info
-            
-        if "bayes" in kwargs:
-            bayes = kwargs.pop("bayes")
-            if not isinstance(bayes, bool):
-                log.error("bayes option must be True or False")
-                raise AssertionError()
-
-        else:
-
-            bayes = False
-
-        if bayes:
-
-            self._fit_method_info["fit method"] = "bayes"
-
-        else:
-
-            self._fit_method_info["fit method"] = "bayes"
-
-        # Fit the events with the given intervals
-        if unbinned:
-
-            self._unbinned = True  # keep track!
-
-            self._unbinned_fit_polynomials(bayes=bayes)
-
-        else:
-
-            self._unbinned = False
-
-            self._fit_polynomials(bayes=bayes)
-
-        # we have a fit now
-
-        self._poly_fit_exists = True
-
-        log.info(
-            f"{self._fit_method_info['bin type']} "
-            f"{self._optimal_polynomial_grade}-order "
-            "polynomial fit with the "
-            f"{self._fit_method_info['fit method']} method"
-        )
-
-        # recalculate the selected counts
-
-        if self._time_selection_exists:
-            self.set_active_time_intervals(
-                *self._time_intervals.to_string().split(",")
-            )
-
     def _delete_polynominal_fit(self):
         """
         Delte all the information from previous poly fits
@@ -574,11 +555,11 @@ class TimeSeries(object):
         :param bayes:
         :param kwargs:
         """
-        warnings.warn("This method will be deprecated in the next release. "
-                      "Please use set_background_interval.",
-                      DeprecationWarning)
+        log.warning("set_polynomial_fit_interval will be deprecated in the "
+                    "next release. Please use set_background_interval with "
+                    "the same input.")
+        warnings.warn(DeprecationWarning())
         # Find out if we want to binned or unbinned.
-        # TODO: add the option to config file
         if "unbinned" in kwargs:
             unbinned = kwargs.pop("unbinned")
             assert type(
@@ -609,8 +590,12 @@ class TimeSeries(object):
 
         else:
 
-            self._fit_method_info["fit method"] = "bayes"
+            self._fit_method_info["fit method"] = "mle"
 
+        if unbinned:
+            log.info("At the moment this unbinned polynominal fitting "
+                     "is only correct if the dead time ratio is constant "
+                     "in the selected background time intervals!")
         # we create some time intervals
 
         bkg_intervals = TimeIntervalSet.from_strings(*time_intervals)
@@ -623,7 +608,7 @@ class TimeSeries(object):
 
         self._bkg_exposure = 0.0
 
-        for i, time_interval in enumerate(bkg_intervals):
+        for time_interval in bkg_intervals:
 
             t1 = time_interval.start_time
             t2 = time_interval.stop_time
@@ -687,7 +672,10 @@ class TimeSeries(object):
         self._poly_fit_exists = True
 
         log.info(
-            f"{self._fit_method_info['bin type']} {self._optimal_polynomial_grade}-order polynomial fit with the {self._fit_method_info['fit method']} method"
+            f"{self._fit_method_info['bin type']} "
+            f"{self._optimal_polynomial_grade}-order "
+            "polynomial fit with the "
+            f"{self._fit_method_info['fit method']} method"
         )
 
         # recalculate the selected counts
