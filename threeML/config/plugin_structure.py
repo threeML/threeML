@@ -30,7 +30,7 @@ class Plugins:
 @dataclass
 class TimeSeriesFit:
     fit_poly: bool = True
-    unbinned: bool = True
+    unbinned: bool = False
     bayes: bool = False
 
 
