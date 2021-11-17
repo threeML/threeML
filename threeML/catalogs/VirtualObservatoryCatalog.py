@@ -1,5 +1,3 @@
-
-from astromodels import *
 import astropy
 
 # from astropy.vo.client.vos_catalog import VOSCatalog
@@ -13,6 +11,8 @@ from astropy.coordinates.name_resolve import get_icrs_coordinates
 from astropy.coordinates import SkyCoord
 
 import astropy.table as astro_table
+
+import astropy.units as u
 
 from threeML.io.network import internet_connection_is_active
 from threeML.io.logging import setup_logger
