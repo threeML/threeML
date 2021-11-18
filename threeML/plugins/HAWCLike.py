@@ -676,7 +676,7 @@ class HAWCLike(PluginPrototype):
         x_limits = [-0.5, n_bins - 0.5]
         sub.set_xlim(x_limits)
 
-        sub.set_yscale("log", nonposy="clip")
+        sub.set_yscale("log", nonpositive="clip")
 
         sub.set_ylabel("Counts per bin")
 
