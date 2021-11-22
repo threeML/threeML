@@ -6,7 +6,6 @@ import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
 
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger, silence_console_log
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
@@ -1034,18 +1033,18 @@ class TimeSeriesBuilder(object):
         cls,
         name: str,
         apollo_data_file: str,
-        response: InstrumentResponse,
-        instrument_name: str,
+        response,
         restore_background=None,
         trigger_time=None,
         poly_order: int = -1,
     ):
         """ """
+        instrument_name = response.name
 
         apollo_data = apollox.ApolloDetectorData(
             apollo_data_file,
             instrument=instrument_name,
-            response=response,
+            response=response.current_response,
             t_zero=trigger_time,
         )
 
