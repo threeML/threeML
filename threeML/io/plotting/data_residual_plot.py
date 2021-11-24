@@ -233,7 +233,7 @@ class ResidualPlot(object):
         self._data_axis.set_xscale(xscale)
         if yscale == "log":
 
-            self._data_axis.set_yscale(yscale, nonposy="clip")
+            self._data_axis.set_yscale(yscale, nonpositive="clip")
 
         else:
 
