@@ -792,12 +792,14 @@ class Minimizer(object):
         """
 
         best_fit_values = self._fit_results["value"].values
+        
+        log.debug("Restoring best fit:")
 
         for parameter_name, best_fit_value in zip(
             list(self.parameters.keys()), best_fit_values
         ):
-
             self.parameters[parameter_name]._set_internal_value(best_fit_value)
+            log.debug(f"{parameter_name} = {best_fit_value}" )
 
         # Regenerate the internal parameter dictionary with the new values
         self._internal_parameters = self._update_internal_parameter_dictionary()
