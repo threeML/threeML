@@ -564,7 +564,7 @@ class FermiLATLike(PluginPrototype):
         )
 
         sub.set_xscale("log")
-        sub.set_yscale("log", nonposy="clip")
+        sub.set_yscale("log", nonpositive="clip")
 
         sub.set_ylabel("Counts per bin")
 
