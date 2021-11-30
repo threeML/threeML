@@ -276,6 +276,7 @@ class TimeSeriesBuilder(object):
                 self._time_series, response=self._response, use_poly=True, extract=False
             )
 
+        if self._time_series.bkg_intervals is not None:
             self._measured_background_spectrum = self._container_type.from_time_series(
                 self._time_series,
                 response=self._response,
