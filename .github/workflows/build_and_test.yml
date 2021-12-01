@@ -85,7 +85,7 @@ jobs:
         if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
         strategy:
             matrix:
-                os: ["ubuntu-latest", "macos-latest"]
+                os: ["ubuntu-latest", "macos-latest", "macos-10.15"]
                 python-version: [3.7]
         runs-on: ${{ matrix.os }}
         steps:
@@ -106,7 +106,7 @@ jobs:
               with:
                   auto-update-conda: true
                   auto-activate-base: false
-                  #mamba-version: "*"
+                  mamba-version: "*"
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
                   channels: conda-forge, xspecmodels, threeml, fermi, defaults
