@@ -37,7 +37,7 @@ jobs:
                   auto-activate-base: false
                   mamba-version: "*"
                   architecture: "x64"
-                  conda-build-version: "*"
+                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
@@ -59,6 +59,8 @@ jobs:
               shell: bash -l {0}
               run: |
                   # Build package
+
+                  conda install conda-build -n base
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
@@ -114,7 +116,7 @@ jobs:
                   auto-activate-base: false
                   mamba-version: "*"
                   architecture: "x64"
-                  conda-build-version: "*"
+                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
@@ -136,6 +138,8 @@ jobs:
               shell: bash -l {0}
               run: |
                   # Build package
+
+                  conda install conda-build -n base
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
