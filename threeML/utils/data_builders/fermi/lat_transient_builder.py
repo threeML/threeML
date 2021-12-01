@@ -22,10 +22,13 @@ log = setup_logger(__name__)
 try: 
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
+    from GtBurst.FuncFactory import Spectra
 
     from threeML import FermiLATLike
 
     irfs = IRFS.IRFS.keys()
+    spectra = Spectra()
+
     #irfs.append('auto')
 
     configuration = Configuration()
@@ -146,7 +149,7 @@ _required_parameters = [
 _optional_parameters = [
     'ra', 'dec', 'bin_file', 'tsmin', 'strategy', 'thetamax', 'spectralfiles', 'liketype', 'optimizeposition',
     'datarepository', 'ltcube', 'expomap', 'ulphindex', 'flemin', 'flemax', 'fgl_mode', 'tsmap_spec', 'filter_GTI',
-    'likelihood_profile', 'remove_fits_files','log_bins', 'bin_file'
+    'likelihood_profile', 'remove_fits_files','log_bins', 'bin_file','source_model'
 ]
 
 
@@ -298,6 +301,19 @@ class TransientLATDataBuilder(object):
             help_string="Particle model",
             is_number=False,
             allowed_values=['isotr with pow spectrum', 'isotr template', 'none', 'bkge', 'auto'])
+
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
+
+        name = 'source_model'
+
+        self._parameters[name] = LATLikelihoodParameter(
+            name=name,
+            help_string="Source model",
+            default_value='PowerLaw2',
+            is_number=False,
+            allowed_values=spectra.keys())
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
