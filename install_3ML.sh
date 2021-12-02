@@ -10,6 +10,7 @@ INSTALL_FERMI="no"
 BATCH="yes"
 PYTHON_VERSION="3.7"
 ENV_NAME="threeML"
+DEV="no"
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
@@ -31,8 +32,11 @@ while [ "${1:-}" != "" ]; do
       "--env-name")
         ENV_NAME="$2"
         ;;
+      "--dev")
+        DEV="yes"
+        ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--no-batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--no-batch] [--dev]" && exit 0
         ;;
     esac
     shift
@@ -270,6 +274,12 @@ fi
 conda config --add channels defaults
 
 conda config --add channels threeml
+
+if [[ "${DEV}" == "yes" ]]; then
+
+    conda config --add channels threeml/label/dev
+
+fi
 
 conda config --add channels conda-forge
 
