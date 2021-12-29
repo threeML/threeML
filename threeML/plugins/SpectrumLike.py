@@ -2476,9 +2476,14 @@ class SpectrumLike(PluginPrototype):
 
             # since we compare to the model rate... background subtract but with proper propagation
             src_rate = (
-                self.observed_counts / self._observed_spectrum.exposure
-                - (self.background_counts / self._background_exposure)
-                * self._area_ratio
+                self.observed_counts
+                / self._observed_spectrum.exposure
+                / self._observed_spectrum.scale_factor
+                - (
+                    self.background_counts
+                    / self._background_exposure
+                    / self._background_scale_factor
+                )
             )
 
         else:
@@ -2778,8 +2783,16 @@ class SpectrumLike(PluginPrototype):
 
         # convert to rates, ugly, yes
 
-        observed_rates = observed_counts / self._observed_spectrum.exposure / self._observed_spectrum.scale_factor
-        rate_err = cnt_err / self._observed_spectrum.exposure / self._observed_spectrum.scale_factor
+        observed_rates = (
+            observed_counts
+            / self._observed_spectrum.exposure
+            / self._observed_spectrum.scale_factor
+        )
+        rate_err = (
+            cnt_err
+            / self._observed_spectrum.exposure
+            / self._observed_spectrum.scale_factor
+        )
         # observed_counts /= self._observed_spectrum.exposure
         #        cnt_err /= self._observed_spectrum.exposure
 
