@@ -17,7 +17,6 @@ from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
@@ -237,18 +236,26 @@ class SpectrumLike(PluginPrototype):
         # point to the original ones, but if a rebinner is used and/or a mask is created through set_active_measurements,
         # they will contain the rebinned and/or masked versions
 
-        self._current_observed_counts = self._observed_counts
-        self._current_observed_count_errors = self._observed_count_errors
-        self._current_background_counts = self._background_counts
-        self._current_scaled_background_counts = self._scaled_background_counts
-        self._current_back_count_errors = self._back_count_errors
+        self._current_observed_counts: np.ndarray = self._observed_counts
+        self._current_observed_count_errors: Optional[
+            np.array
+        ] = self._observed_count_errors
+        self._current_background_counts: Optional[
+            np.array
+        ] = self._background_counts
+        self._current_scaled_background_counts: Optional[
+            np.array
+        ] = self._scaled_background_counts
+        self._current_back_count_errors: Optional[
+            np.array
+        ] = self._back_count_errors
 
         # This will be used to keep track of how many syntethic datasets have been generated
-        self._n_synthetic_datasets = 0
+        self._n_synthetic_datasets: int = 0
 
         if tstart is not None:
 
-            self._tstart = tstart
+            self._tstart: float = tstart
 
         else:
 
@@ -256,7 +263,7 @@ class SpectrumLike(PluginPrototype):
 
         if tstop is not None:
 
-            self._tstop = tstop
+            self._tstop: float = tstop
 
         else:
 
@@ -266,7 +273,7 @@ class SpectrumLike(PluginPrototype):
         self._simulation_storage = None
 
         # set the mask to the native quality
-        self._mask = self._observed_spectrum.quality.good
+        self._mask: np.array = self._observed_spectrum.quality.good
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
@@ -643,13 +650,13 @@ class SpectrumLike(PluginPrototype):
                 )
                 self._background_exposure = self._background_spectrum.exposure
 
-            self._area_ratio = old_div(
-                self._observed_spectrum.scale_factor,
-                self._background_scale_factor,
+            self._area_ratio = (
+                self._observed_spectrum.scale_factor
+                / self._background_scale_factor,
             )
 
-            self._exposure_ratio = old_div(
-                self._observed_spectrum.exposure, self._background_exposure
+            self._exposure_ratio = (
+                self._observed_spectrum.exposure / self._background_exposure
             )
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
@@ -708,10 +715,6 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
-        # if (self._background_spectrum is None) and (self._background_plugin is None):
-        #     return 1
-        #
-        # return self._observed_spectrum.exposure / self.background_exposure * self._observed_spectrum.scale_factor / self.background_scale_factor
         if not (
             (self._background_plugin is not None)
             or (self._background_spectrum) is not None
@@ -754,7 +757,7 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def background_plugin(self):
-        # type: () -> SpectrumLike
+        # type: () -> Optional[Union[SpectrumLike,XYLike] ]
 
         return self._background_plugin
 
@@ -1767,9 +1770,9 @@ class SpectrumLike(PluginPrototype):
         # background spectrum. It is used for example for the typical aperture-photometry method used in
         # X-ray astronomy, where the background region has a different size with respect to the source region
 
-        scale_factor = old_div(
-            self._observed_spectrum.scale_factor,
-            background_spectrum.scale_factor,
+        scale_factor = (
+            self._observed_spectrum.scale_factor
+            / background_spectrum.scale_factor,
         )
 
         # The expected number of counts is the rate in the background file multiplied by its exposure, renormalized
@@ -1789,19 +1792,19 @@ class SpectrumLike(PluginPrototype):
         return self._current_observed_counts
 
     @property
-    def current_background_counts(self) -> np.ndarray:
+    def current_background_counts(self) -> Optional[np.ndarray]:
         return self._current_background_counts
 
     @property
-    def current_scaled_background_counts(self) -> np.ndarray:
+    def current_scaled_background_counts(self) -> Optional[np.ndarray]:
         return self._current_scaled_background_counts
 
     @property
-    def current_background_count_errors(self) -> np.ndarray:
+    def current_background_count_errors(self) -> Optional[np.ndarray]:
         return self._current_back_count_errors
 
     @property
-    def current_observed_count_errors(self) -> np.ndarray:
+    def current_observed_count_errors(self) -> Optional[np.ndarray]:
         return self._current_observed_count_errors
 
     def _set_background_noise_model(self, new_model: str) -> None:
@@ -2473,17 +2476,15 @@ class SpectrumLike(PluginPrototype):
 
             # since we compare to the model rate... background subtract but with proper propagation
             src_rate = (
-                old_div(self.observed_counts, self._observed_spectrum.exposure)
-                - (old_div(self.background_counts, self._background_exposure))
+                self.observed_counts / self._observed_spectrum.exposure
+                - (self.background_counts / self._background_exposure)
                 * self._area_ratio
             )
 
         else:
 
             # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = old_div(
-                self.observed_counts, self._observed_spectrum.exposure
-            )
+            src_rate = self.observed_counts / self._observed_spectrum.exposure
 
         return src_rate
 
@@ -2503,28 +2504,23 @@ class SpectrumLike(PluginPrototype):
 
             src_rate_err = np.sqrt(
                 (
-                    old_div(
-                        self.observed_count_errors,
-                        self._observed_spectrum.exposure,
-                    )
+                    self.observed_count_errors
+                    / self._observed_spectrum.exposure
+                    / self._observed_spectrum.scale_factor
                 )
                 ** 2
                 + (
-                    (
-                        old_div(
-                            self.background_count_errors,
-                            self._background_exposure,
-                        )
-                    )
-                    * self._area_ratio
+                    self.background_count_errors
+                    / self._background_exposure
+                    / self._background_scale_factor
                 )
                 ** 2
             )
 
         else:
 
-            src_rate_err = old_div(
-                self.observed_count_errors, self._observed_spectrum.exposure
+            src_rate_err = (
+                self.observed_count_errors / self._observed_spectrum.exposure
             )
 
         return src_rate_err
@@ -2782,15 +2778,15 @@ class SpectrumLike(PluginPrototype):
 
         # convert to rates, ugly, yes
 
-        observed_rates = observed_counts / self._observed_spectrum.exposure
-        rate_err = cnt_err / self._observed_spectrum.exposure
+        observed_rates = observed_counts / self._observed_spectrum.exposure / self._observed_spectrum.scale_factor
+        rate_err = cnt_err / self._observed_spectrum.exposure / self._observed_spectrum.scale_factor
         # observed_counts /= self._observed_spectrum.exposure
         #        cnt_err /= self._observed_spectrum.exposure
 
         if scale_background:
 
-            background_rate *= self._area_ratio
-            background_rate_errors *= self._area_ratio
+            background_rate /= self._background_scale_factor
+            background_rate_errors /= self._background_scale_factor
 
             background_label = "Scaled %sBackground" % modeled_label
 
@@ -2843,8 +2839,8 @@ class SpectrumLike(PluginPrototype):
         if plot_errors:
             ax.errorbar(
                 mean_chan,
-                old_div(observed_rates, energy_width),
-                yerr=old_div(rate_err, energy_width),
+                observed_rates / energy_width,
+                yerr=rate_err / energy_width,
                 fmt="",
                 # markersize=3,
                 linestyle="",
@@ -2860,8 +2856,8 @@ class SpectrumLike(PluginPrototype):
             if self._background_noise_model is not None:
                 ax.errorbar(
                     mean_chan,
-                    old_div(background_rate, energy_width),
-                    yerr=old_div(background_rate_errors, energy_width),
+                    background_rate / energy_width,
+                    yerr=background_rate_errors / energy_width,
                     fmt="",
                     # markersize=3,
                     linestyle="",
@@ -2887,11 +2883,10 @@ class SpectrumLike(PluginPrototype):
             energy_width_unrebinned = (
                 energy_max_unrebinned - energy_min_unrebinned
             )
-            observed_rate_unrebinned = old_div(
-                self._observed_counts, self.exposure
-            )
-            observed_rate_unrebinned_err = old_div(
-                np.sqrt(self._observed_counts), self.exposure
+            observed_rate_unrebinned = self._observed_counts / self.exposure
+
+            observed_rate_unrebinned_err = (
+                np.sqrt(self._observed_counts) / self.exposure
             )
 
             if non_used_mask.sum() > 0:
@@ -2921,12 +2916,13 @@ class SpectrumLike(PluginPrototype):
 
                 else:
 
-                    background_rate_unrebinned = old_div(
-                        self._background_counts, self.background_exposure
+                    background_rate_unrebinned = (
+                        self._background_counts / self.background_exposure
                     )
-                    background_rate_unrebinned_err = old_div(
-                        np.sqrt(self._background_counts),
-                        self.background_exposure,
+
+                    background_rate_unrebinned_err = (
+                        np.sqrt(self._background_counts)
+                        / self.background_exposure
                     )
 
                 if non_used_mask.sum() > 0:
@@ -2955,14 +2951,10 @@ class SpectrumLike(PluginPrototype):
 
                 ax.errorbar(
                     mean_chan_unrebinned[non_used_mask],
-                    old_div(
-                        observed_rate_unrebinned[non_used_mask],
-                        energy_width_unrebinned[non_used_mask],
-                    ),
-                    yerr=old_div(
-                        observed_rate_unrebinned_err[non_used_mask],
-                        energy_width_unrebinned[non_used_mask],
-                    ),
+                    observed_rate_unrebinned[non_used_mask]
+                    / energy_width_unrebinned[non_used_mask],
+                    yerr=observed_rate_unrebinned_err[non_used_mask]
+                    / energy_width_unrebinned[non_used_mask],
                     fmt="",
                     # markersize=3,
                     linestyle="",
@@ -2976,10 +2968,8 @@ class SpectrumLike(PluginPrototype):
                 if self._background_noise_model is not None:
                     ax.errorbar(
                         mean_chan_unrebinned[non_used_mask],
-                        old_div(
-                            background_rate_unrebinned[non_used_mask],
-                            energy_width_unrebinned[non_used_mask],
-                        ),
+                        background_rate_unrebinned[non_used_mask]
+                        / energy_width_unrebinned[non_used_mask],
                         yerr=background_rate_unrebinned_err[non_used_mask]
                         / energy_width_unrebinned[non_used_mask],
                         fmt="",
@@ -3275,7 +3265,7 @@ class SpectrumLike(PluginPrototype):
                 r[idx_negative] = 0.0
 
                 # Do the weighted average of the mean energies
-                weights = old_div(r, np.sum(r))
+                weights = r / np.sum(r)
 
                 this_mean_energy = np.average(
                     mean_energy_unrebinned[idx], weights=weights
@@ -3330,7 +3320,7 @@ class SpectrumLike(PluginPrototype):
         significance_calc = Significance(
             rebinned_observed_counts,
             rebinned_background_counts
-            + old_div(rebinned_model_counts, self._total_scale_factor),
+            + rebinned_model_counts / self._total_scale_factor,
             min([self._total_scale_factor, 1.0]),
         )
 
@@ -3339,12 +3329,13 @@ class SpectrumLike(PluginPrototype):
         # TODO check this: shoudn't it be obseved-background/model (for the old way) and
         # observed/(model+background) (for the new way). Errors also wrong observed+background error
         if ratio_residuals:
-            residuals = old_div(
-                (rebinned_observed_counts - rebinned_model_counts),
-                rebinned_model_counts,
+            residuals = (
+                (old_direbinned_observed_counts - rebinned_model_counts)
+                / rebinned_model_counts,
             )
-            residual_errors = old_div(
-                rebinned_observed_count_errors, rebinned_model_counts
+
+            residual_errors = (
+                rebinned_observed_count_errors / rebinned_model_counts
             )
 
         else:
@@ -3385,10 +3376,9 @@ class SpectrumLike(PluginPrototype):
 
                 if self._background_noise_model is None:
 
-                    residuals = old_div(
-                        (rebinned_observed_counts - rebinned_model_counts),
-                        rebinned_observed_count_errors,
-                    )
+                    residuals = (
+                        rebinned_observed_counts - rebinned_model_counts
+                    ) / rebinned_observed_count_errors
 
                 else:
 
