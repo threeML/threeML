@@ -636,9 +636,7 @@ class SpectrumLike(PluginPrototype):
                     # if the background exposure is set in the constructor, then this will scale it, otherwise
                     # this will be unity
 
-                    self._exposure_ratio = (
-                        self._background_exposure
-                    ) = self._explict_background_exposure
+                    self._exposure_ratio = self._background_exposure / self._explict_background_exposure
 
             else:
                 # this is the normal case with no background model, get the scale factor directly
@@ -650,10 +648,8 @@ class SpectrumLike(PluginPrototype):
                 )
                 self._background_exposure = self._background_spectrum.exposure
 
-            self._area_ratio = (
-                self._observed_spectrum.scale_factor
-                / self._background_scale_factor,
-            )
+            self._area_ratio =self._observed_spectrum.scale_factor / self._background_scale_factor
+
 
             self._exposure_ratio = (
                 self._observed_spectrum.exposure / self._background_exposure
