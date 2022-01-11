@@ -181,7 +181,20 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     elif catalog_entry["spatial_function"] == "RadialGaussian":
         this_shape = Gaussian_on_sphere()
     elif catalog_entry["spatial_function"] == "SpatialMap":
-        this_shape = SpatialTemplate_2D()
+        
+        the_file = catalog_entry["spatial_filename"]
+        if isinstance(the_file, bytes):
+            the_file = the_file.decode("ascii")
+        
+        if "FERMIPY_DATA_DIR" not in os.environ:
+            os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data" )
+        
+        the_dir = os.path.join( os.path.expandvars( catalog_entry["extdir"] ), "Templates" )
+        
+        the_template = os.path.join( the_dir, the_file )
+
+        this_shape = SpatialTemplate_2D(fits_file=the_template)
+        
     else:
         log.error("Spatial_Function {} not implemented yet" % catalog_entry["Spatial_Function"] )
         raise NotImplementedError()
@@ -301,18 +314,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif catalog_entry["spatial_function"] == "SpatialMap":
         
-        the_file = catalog_entry["spatial_filename"]
-        if isinstance(the_file, bytes):
-            the_file = the_file.decode("ascii")
-        
-        if "FERMIPY_DATA_DIR" not in os.environ:
-            os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data" )
-        
-        the_dir = os.path.join( os.path.expandvars( catalog_entry["extdir"] ), "Templates" )
-        
-        the_template = os.path.join( the_dir, the_file )
-
-        this_shape.load_file(the_template)
+        this_shape._load_file()
 
 
     return this_source
