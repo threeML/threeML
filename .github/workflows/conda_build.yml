@@ -11,8 +11,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags') == false
         runs-on: ${{ matrix.os }}
         strategy:
+            fail-fast: false
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: ["ubuntu-latest", "macos-latest", "macos-10.15"]
                 python-version: [3.7]
 
         steps:
@@ -34,8 +35,9 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
+                  mamba-version: "*"
                   architecture: "x64"
-                  conda-build-version: 3.21
+                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
@@ -57,6 +59,8 @@ jobs:
               shell: bash -l {0}
               run: |
                   # Build package
+
+                  conda install conda-build -n base
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
@@ -89,7 +93,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-10.15]
                 python-version: [3.7]
 
         steps:
@@ -111,12 +115,13 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
+                  mamba-version: "*"
                   architecture: "x64"
-                  conda-build-version: 3.21
+                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, defaults
+                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
                   use-only-tar-bz2: true
                   
             - name: Init Env
@@ -134,6 +139,8 @@ jobs:
               shell: bash -l {0}
               run: |
                   # Build package
+
+                  conda install conda-build -n base
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
