@@ -306,7 +306,7 @@ if [[ "${INSTALL_FERMI}" == "yes" ]]; then
         PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
     else
         conda config --add channels fermi
-        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1"
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1 astroquery==0.4.3"
     fi
     
 
