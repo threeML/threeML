@@ -75,7 +75,7 @@ def test_LLE_catalog():
     _ = lle_catalog.query('trigger_type == "GRB"')
 
 
-#@pytest.mark.xfail
+@pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_swift_catalog():
 
