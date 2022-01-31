@@ -7,9 +7,10 @@ set -e
 INSTALL_XSPEC="no"
 INSTALL_ROOT="no"
 INSTALL_FERMI="no"
-BATCH="no"
+BATCH="yes"
 PYTHON_VERSION="3.7"
 ENV_NAME="threeML"
+DEV="no"
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
@@ -22,8 +23,8 @@ while [ "${1:-}" != "" ]; do
       "--with-fermi")
         INSTALL_FERMI="yes"
         ;;
-      "--batch")
-        BATCH="yes"
+      "--no-batch")
+        BATCH="no"
         ;;
       "--python")
         PYTHON_VERSION="$2"
@@ -31,8 +32,11 @@ while [ "${1:-}" != "" ]; do
       "--env-name")
         ENV_NAME="$2"
         ;;
+      "--dev")
+        DEV="yes"
+        ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--no-batch] [--dev]" && exit 0
         ;;
     esac
     shift
@@ -260,9 +264,22 @@ export PATH=${conda_path}/bin:${PATH}
 source $conda_path/etc/profile.d/conda.sh
 conda deactivate
 
+if [[ "${BATCH}" == "yes" ]]; then
+
+    # Answer yes to all questions (non-interactive)
+    conda config --set always_yes true
+
+fi
+
 conda config --add channels defaults
 
 conda config --add channels threeml
+
+if [[ "${DEV}" == "yes" ]]; then
+
+    conda config --add channels threeml/label/dev
+
+fi
 
 conda config --add channels conda-forge
 
@@ -289,7 +306,7 @@ if [[ "${INSTALL_FERMI}" == "yes" ]]; then
         PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
     else
         conda config --add channels fermi
-        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1"
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1 astroquery==0.4.3"
     fi
     
 
@@ -297,15 +314,9 @@ fi
 
 # Now we have conda installed, let's install 3ML
 
-conda create --yes --name ${ENV_NAME} python=$PYTHON_VERSION mamba
+conda install mamba -n base -c conda-forge
 
-conda activate ${ENV_NAME}
-
-mamba install python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
-
-conda activate ${ENV_NAME}
-
-conda deactivate
+mamba create --name ${ENV_NAME} python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
