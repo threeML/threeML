@@ -652,7 +652,7 @@ class SpectrumLike(PluginPrototype):
 
             self._area_ratio = (
                 self._observed_spectrum.scale_factor
-                / self._background_scale_factor,
+                / self._background_scale_factor
             )
 
             self._exposure_ratio = (
