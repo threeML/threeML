@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
-from astromodels.functions.priors import Uniform_prior
+from astromodels.functions.priors import Uniform_prior, Truncated_gaussian
 from astromodels.utils.valid_variable import is_valid_variable_name
 
 from threeML.config.config import threeML_config
@@ -2259,6 +2259,9 @@ class SpectrumLike(PluginPrototype):
         self,
         min_value: Union[int, float] = 0.8,
         max_value: Union[int, float] = 1.2,
+        use_gaussian_prior: bool = False,
+        mu:float=1,
+        sigma: float=0.1
     ) -> None:
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
@@ -2271,7 +2274,10 @@ class SpectrumLike(PluginPrototype):
         with other OGIPLike-type detectors
 
         :param min_value: minimum allowed value (default: 0.8, corresponding to a 20% - effect)
-        :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect
+        :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect)
+        :param use_gaussian_prior: use a gaussian prior on the constant
+        :param mu: the center of the gaussian
+        :param sigma: the spread of the gaussian
         :return:
         """
         log.info(
@@ -2281,8 +2287,13 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.bounds = (min_value, max_value)
 
         # Use a uniform prior by default
+        if use_gaussian_prior:
 
-        self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
+            self._nuisance_parameter.prior = Truncated_gaussian(mu=mu, sigma=sigma, lower_bound=min_value, upper_bound=max_value)
+
+        else:
+
+            self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
 
     def fix_effective_area_correction(
         self, value: Union[int, float] = 1
