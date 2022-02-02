@@ -3438,7 +3438,7 @@ class SpectrumLike(PluginPrototype):
         # observed/(model+background) (for the new way). Errors also wrong observed+background error
         if ratio_residuals:
             residuals = (
-                (old_direbinned_observed_counts - rebinned_model_counts)
+                (rebinned_observed_counts - rebinned_model_counts)
                 / rebinned_model_counts,
             )
 
