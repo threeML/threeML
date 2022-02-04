@@ -103,6 +103,58 @@ class GaussianObservedStatistic(BinnedStatistic):
         return self._spectrum_plugin.observed_count_errors
 
 
+class GaussianObservedGaussianBackgroundStatistic(BinnedStatistic):
+    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
+
+        chi2_ = half_chi2(
+            self._spectrum_plugin.current_observed_counts-self._spectrum_plugin.current_background_counts,
+            np.sqrt(self._spectrum_plugin.current_observed_count_errors**2 +
+                    self._spectrum_plugin.current_background_count_errors**2),
+            model_counts,
+        )
+
+        assert np.all(np.isfinite(chi2_))
+
+        return nb_sum(chi2_) * (-1), None
+
+    def get_randomized_source_counts(self, source_model_counts):
+
+        if not np.isfinite(source_model_counts[0]):
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
+        idx = self._spectrum_plugin.observed_count_errors > 0
+
+        randomized_source_counts = np.zeros_like(source_model_counts)
+
+        randomized_source_counts[idx] = np.random.normal(
+            loc=source_model_counts[idx],
+            scale=self._spectrum_plugin.observed_count_errors[idx],
+        )
+
+        # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+
+        idx = randomized_source_counts < 0  # type: np.ndarray
+
+        negative_source_n = nb_sum(idx)
+
+        if negative_source_n > 0:
+            log.warning(
+                "Generated source has negative counts "
+                "in %i channels. Fixing them to zero" % (negative_source_n)
+            )
+
+            randomized_source_counts[idx] = 0
+
+        return randomized_source_counts
+
+    def get_randomized_source_errors(self):
+        return self._spectrum_plugin.observed_count_errors
+
 class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
     def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         # In this likelihood the background becomes part of the model, which means that
@@ -404,7 +456,8 @@ statistic_lookup = {
         None: PoissonObservedNoBackgroundStatistic,
         "modeled": PoissonObservedModeledBackgroundStatistic,
     },
-    "gaussian": {None: GaussianObservedStatistic},
+    "gaussian": {None: GaussianObservedStatistic,
+                 'gaussian':GaussianObservedGaussianBackgroundStatistic},
     None: {None: None},
 }
 

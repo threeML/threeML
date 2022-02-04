@@ -416,10 +416,10 @@ class SpectrumLike(PluginPrototype):
                     observation_noise_model = "gaussian"
                     background_noise_model = "gaussian"
 
-                    if not np.all(self._background_counts >= 0):
-                        raise NegativeBackground(
-                            "Error in background spectrum: negative background!"
-                        )
+                    #if not np.all(self._background_counts >= 0):
+                    #    raise NegativeBackground(
+                    #        "Error in background spectrum: negative background!"
+                    #    )
 
         else:
 
@@ -2202,16 +2202,18 @@ class SpectrumLike(PluginPrototype):
         """
 
         cnt_err = None
-
+        log.debug('self._observation_noise_model = %s' % self._observation_noise_model )
+        log.debug('self._background_noise_model = %s' % self._background_noise_model )
         if self._observation_noise_model == "poisson":
 
             cnt_err = np.sqrt(self._observed_counts)
 
         else:
 
-            if self._background_noise_model is None:
-                cnt_err = self._observed_count_errors
-
+            #if self._background_noise_model is None:
+            cnt_err = self._observed_count_errors
+            #elif self._background_noise_model is "gaussian":
+            #    cnt_err = self._observed_count_errors
                 # calculate all the correct quantites
 
         return cnt_err
@@ -2258,12 +2260,15 @@ class SpectrumLike(PluginPrototype):
 
                 raise RuntimeError("This is a bug")
 
-        else:
+        else: # gaussian observation
 
             if self._background_noise_model is None:
                 # Observed counts
                 background_counts = None
 
+            elif self._background_noise_model == "gaussian":
+
+                background_counts = self._background_counts
                 # calculate all the correct quantites
 
         return background_counts
@@ -2316,6 +2321,10 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_noise_model is None:
                 background_errors = None
+
+            elif self._background_noise_model == "gaussian":
+
+                background_errors = self._back_count_errors
 
         return background_errors
 
@@ -2618,6 +2627,19 @@ class SpectrumLike(PluginPrototype):
                 background_rate = np.zeros(observed_counts.shape)
 
                 background_rate_errors = np.zeros(observed_counts.shape)
+
+                cnt_err = copy.copy(self._current_observed_count_errors)
+
+            elif self._background_noise_model == "gaussian":
+                observed_counts = copy.copy(self._current_observed_counts)
+
+                background_counts = copy.copy(self._current_background_counts)
+
+                background_errors = copy.copy(self._current_back_count_errors)
+
+                background_rate = background_counts / self._background_exposure
+
+                background_rate_errors = background_errors / self._background_exposure
 
                 cnt_err = copy.copy(self._current_observed_count_errors)
 
@@ -3199,6 +3221,9 @@ class SpectrumLike(PluginPrototype):
                         (rebinned_observed_counts - rebinned_model_counts),
                         rebinned_observed_count_errors,
                     )
+                elif self._background_noise_model == "gaussian":
+
+                    residuals = significance_calc.gaussian_background(rebinned_observed_count_errors,rebinned_background_errors)
 
                 else:
 
