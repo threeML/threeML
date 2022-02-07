@@ -178,8 +178,8 @@ jobs:
                   python-version: 3.7
             - name: Build package
               run: |
-                  pip install wheel
-                  python setup.py sdist
+                  pip install wheel setuptools -U
+                  python setup.py sdist bdist_wheel
             - name: Publish
               uses: pypa/gh-action-pypi-publish@v1.1.0
               with:
@@ -200,9 +200,10 @@ jobs:
             - name: Install twine
               run: |
                   python -m pip install twine
+                  pip install wheel setuptools -U
             - name: Build package
               run: |
-                  python setup.py sdist
+                  python setup.py sdist bdist_wheel
             - name: List result
               run: |
                   ls -lh dist
