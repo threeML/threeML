@@ -186,5 +186,5 @@ jobs:
               env:
                   UPLOAD_TOKEN: ${{secrets.CONDA_TOKEN}}
                   CURRENT_OS: ${{matrix.os}}
-                  ISDEV: ${{endsWith(github.ref, 'dev')}}
+                  ISDEV: ${{contains(github.ref, 'dev')}}
 
