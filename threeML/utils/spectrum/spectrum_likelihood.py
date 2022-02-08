@@ -137,23 +137,58 @@ class GaussianObservedGaussianBackgroundStatistic(BinnedStatistic):
         )
 
         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+        # This is not ok if the spectrum is a polarization spectrum (Q or U) since it can be negative
 
-        idx = randomized_source_counts < 0  # type: np.ndarray
+        #idx = randomized_source_counts < 0  # type: np.ndarray
 
-        negative_source_n = nb_sum(idx)
+        #negative_source_n = nb_sum(idx)
 
-        if negative_source_n > 0:
-            log.warning(
-                "Generated source has negative counts "
-                "in %i channels. Fixing them to zero" % (negative_source_n)
-            )
+        #if negative_source_n > 0:
+        #    log.warning(
+        #        "Generated source has negative counts "
+        #        "in %i channels. Fixing them to zero" % (negative_source_n)
+        #    )
 
-            randomized_source_counts[idx] = 0
+        #    randomized_source_counts[idx] = 0
 
         return randomized_source_counts
 
     def get_randomized_source_errors(self):
         return self._spectrum_plugin.observed_count_errors
+
+    def get_randomized_background_counts(self):
+        # Now randomize the expectations.
+
+        _, background_model_counts = self.get_current_value()
+
+        # We cannot generate variates with zero sigma. They variates from those channel will always be zero
+        # This is a limitation of this whole idea. However, remember that by construction an error of zero
+        # it is only allowed when the background counts are zero as well.
+        idx = self._spectrum_plugin.background_count_errors > 0
+
+        randomized_background_counts = np.zeros_like(background_model_counts)
+
+        randomized_background_counts[idx] = np.random.normal(
+            loc=background_model_counts[idx],
+            scale=self._spectrum_plugin.background_count_errors[idx],
+        )
+
+        # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+        # This is not ok if the spectrum is a polarization spectrum (Q or U) since it can be negative
+
+        #idx = randomized_background_counts < 0  # type: np.ndarray
+        #negative_background_n = nb_sum(idx)
+        #if negative_background_n > 0:
+        #    log.warning(
+        #        "Generated background has negative counts "
+        #        "in %i channels. Fixing them to zero" % (negative_background_n)
+        #    )
+        # randomized_background_counts[idx] = 0
+
+        return randomized_background_counts
+    
+    def get_randomized_background_errors(self):
+        return copy.copy(self._spectrum_plugin.background_count_errors)
 
 class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
     def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
