@@ -99,7 +99,7 @@ class ResidualPlot:
     linewidth: float = 1
     marker: str = "."
     size: float = 3
-    legend_font_size: float 6.94
+    legend_font_size: float = 6.94
 
 @dataclass
 class GenericPlotting:
