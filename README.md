@@ -14,6 +14,7 @@
 [![PyPI version fury.io](https://badge.fury.io/py/threeML.svg)](https://pypi.python.org/pypi/threeML/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dw/threeml)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/threeml)
+[![Install using pip](https://github.com/threeML/threeML/actions/workflows/pip_install.yml/badge.svg)](https://github.com/threeML/threeML/actions/workflows/pip_install.yml)
 ## Conda
 
 ![Conda](https://img.shields.io/conda/pn/threeml/threeml)
