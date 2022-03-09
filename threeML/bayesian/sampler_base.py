@@ -300,7 +300,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
                 parameter.value = trial_values[i]
 
-                log_prior += math.log10(prior_value)
+                log_prior += math.log(prior_value)
 
         log_like = self._log_like(trial_values)
 
@@ -328,7 +328,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
                 parameter.value = trial_values[i]
 
-                log_prior += math.log10(prior_value)
+                log_prior += math.log(prior_value)
 
         return log_prior
 
