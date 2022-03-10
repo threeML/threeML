@@ -2,15 +2,14 @@
 Define the interface for a plugin class.
 """
 
-from builtins import object
 import abc
+
+from builtins import object
+
+from astromodels import IndependentVariable
 from astromodels.utils.valid_variable import is_valid_variable_name
 
-import functools
-from astromodels import IndependentVariable
-from future.utils import with_metaclass
 from threeML.io.logging import setup_logger
-
 
 log =setup_logger(__name__)
 # def set_external_property(method):
