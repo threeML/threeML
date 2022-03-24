@@ -169,12 +169,6 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     """
     Translate a spectrum from the nFGL into an astromodels extended source
     """
-    print ("-----")
-    print(fgl_name)
-    for k in catalog_entry.keys():
-        print (k,catalog_entry[k])
-    print ("-----")
-    print (os.environ["FERMIPY_DATA_DIR"])
     name = _sanitize_fgl_name(fgl_name)
 
     spectrum_type = catalog_entry["spectrum_type"]
