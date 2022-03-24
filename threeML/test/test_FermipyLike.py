@@ -37,7 +37,7 @@ def test_FermipyLike_fromVO():
 
     model = lat_catalog.get_model()
 
-    assert model.get_number_of_point_sources() == 147
+    assert model.get_number_of_point_sources() == 172
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)

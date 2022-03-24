@@ -136,11 +136,11 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-        a = float(catalog_entry["plec_exp_factor"])
+        a = float(catalog_entry["plec_exp_factor_s"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
         conv = numpy.exp(a * E0 ** b)
-        this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+        this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.gamma = b
         this_spectrum.gamma.fix = fix
@@ -169,7 +169,12 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     """
     Translate a spectrum from the nFGL into an astromodels extended source
     """
-
+    print ("-----")
+    print(fgl_name)
+    for k in catalog_entry.keys():
+        print (k,catalog_entry[k])
+    print ("-----")
+    print (os.environ["FERMIPY_DATA_DIR"])
     name = _sanitize_fgl_name(fgl_name)
 
     spectrum_type = catalog_entry["spectrum_type"]
@@ -251,11 +256,11 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
-        a = float(catalog_entry["plec_exp_factor"])
+        a = float(catalog_entry["plec_exp_factor_s"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
         conv = numpy.exp(a * E0 ** b)
-        this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+        this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.gamma = b
         this_spectrum.gamma.fix = fix
@@ -312,8 +317,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         
         the_template = os.path.join( the_dir, the_file )
 
-        this_shape.load_file(the_template)
-
+        this_shape._load_file(the_template)
 
     return this_source
 
