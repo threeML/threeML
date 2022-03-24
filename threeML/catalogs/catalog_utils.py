@@ -64,7 +64,6 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
     """
     Translate a spectrum from the nFGL into an astromodels point source
     """
-
     name = _sanitize_fgl_name(fgl_name)
 
     spectrum_type = catalog_entry["spectrum_type"]
@@ -136,24 +135,45 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-        a = float(catalog_entry["plec_exp_factor_s"])
-        E0 = float(catalog_entry["pivot_energy"])
-        b = float(catalog_entry["plec_exp_index"])
-        conv = numpy.exp(a * E0 ** b)
-        this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
-        this_spectrum.index.fix = fix
-        this_spectrum.gamma = b
-        this_spectrum.gamma.fix = fix
-        this_spectrum.piv = E0 * u.MeV
-        this_spectrum.K = (
-            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
-        )
+        # new parameterization 4FGLDR3:
+        if ('plec_index_s' in catalog_entry.keys()):
+            d  = float(catalog_entry["plec_exp_factor_s"])
+            E0 = float(catalog_entry["pivot_energy"]) * u.MeV
+            b  = float(catalog_entry["plec_exp_index"])
+            Gs = float(catalog_entry["plec_index_s"])
+
+            conv = numpy.exp(d/b ** 2)
+            this_spectrum.index =  d/b - Gs
+            this_spectrum.index.fix = fix
+            this_spectrum.gamma = d/b
+            this_spectrum.gamma.fix = fix
+            this_spectrum.piv = E0
+            this_spectrum.K = (
+                conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            )
+            this_spectrum.xc =  E0
+        else:
+            # OLD parameterization 4FGL which is in fermipy:
+            a = float(catalog_entry["plec_exp_factor"])
+            E0 = float(catalog_entry["pivot_energy"])
+            b = float(catalog_entry["plec_exp_index"])
+
+            conv = numpy.exp(a * E0 ** b)
+            this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+            this_spectrum.index.fix = fix
+            this_spectrum.gamma = b
+            this_spectrum.gamma.fix = fix
+            this_spectrum.piv = E0 * u.MeV
+            this_spectrum.K = (
+                    conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            )
+            this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
+
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
-        this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
         this_spectrum.xc.fix = fix
 
     else:
@@ -169,6 +189,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     """
     Translate a spectrum from the nFGL into an astromodels extended source
     """
+
     name = _sanitize_fgl_name(fgl_name)
 
     spectrum_type = catalog_entry["spectrum_type"]

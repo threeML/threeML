@@ -15,6 +15,8 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(
     not is_plugin_available("FermipyLike"), reason="No LAT environment installed"
 )
 
+update_logging_level("INFO")
+
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
