@@ -201,7 +201,21 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     elif catalog_entry["spatial_function"] == "RadialGaussian":
         this_shape = Gaussian_on_sphere()
     elif catalog_entry["spatial_function"] == "SpatialMap":
-        this_shape = SpatialTemplate_2D()
+        the_file = catalog_entry["spatial_filename"]
+        if isinstance(the_file, bytes):
+            the_file = the_file.decode("ascii")
+
+        if "FERMIPY_DATA_DIR" not in os.environ:
+            os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data")
+
+        the_dir = os.path.join(os.path.expandvars(catalog_entry["extdir"]), "Templates")
+
+        the_template = os.path.join(the_dir, the_file)
+
+        #this_shape(fits_file=the_template)
+
+        this_shape = SpatialTemplate_2D(fits_file=the_template)
+
     else:
         log.error("Spatial_Function {} not implemented yet" % catalog_entry["Spatial_Function"] )
         raise NotImplementedError()
@@ -271,24 +285,47 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
-        a = float(catalog_entry["plec_exp_factor_s"])
-        E0 = float(catalog_entry["pivot_energy"])
-        b = float(catalog_entry["plec_exp_index"])
-        conv = numpy.exp(a * E0 ** b)
-        this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
-        this_spectrum.index.fix = fix
-        this_spectrum.gamma = b
-        this_spectrum.gamma.fix = fix
-        this_spectrum.piv = E0 * u.MeV
-        this_spectrum.K = (
-            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
-        )
+
+        # new parameterization 4FGLDR3:
+        if ('plec_index_s' in catalog_entry.keys()):
+            d  = float(catalog_entry["plec_exp_factor_s"])
+            E0 = float(catalog_entry["pivot_energy"]) * u.MeV
+            b  = float(catalog_entry["plec_exp_index"])
+            Gs = float(catalog_entry["plec_index_s"])
+
+            conv = numpy.exp(d/b ** 2)
+            this_spectrum.index =  d/b - Gs
+            this_spectrum.index.fix = fix
+            this_spectrum.gamma = d/b
+            this_spectrum.gamma.fix = fix
+            this_spectrum.piv = E0
+            this_spectrum.K = (
+                conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            )
+            this_spectrum.xc =  E0
+        else:
+            # OLD parameterization 4FGL which is in fermipy:
+            a = float(catalog_entry["plec_exp_factor"])
+            E0 = float(catalog_entry["pivot_energy"])
+            b = float(catalog_entry["plec_exp_index"])
+
+            conv = numpy.exp(a * E0 ** b)
+            this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+            this_spectrum.index.fix = fix
+            this_spectrum.gamma = b
+            this_spectrum.gamma.fix = fix
+            this_spectrum.piv = E0 * u.MeV
+            this_spectrum.K = (
+                    conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            )
+            this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
+
+
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
-        this_spectrum.xc = a ** (-1.0/b) * u.MeV
         this_spectrum.xc.fix = fix
 
     else:
@@ -318,21 +355,6 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_shape.sigma = catalog_entry["model_semimajor"] / 1.36 * u.degree
         this_shape.sigma.fix = True
         this_shape.sigma.bounds = (0, catalog_entry["model_semimajor"] / 1.36) * u.degree
-
-    elif catalog_entry["spatial_function"] == "SpatialMap":
-        
-        the_file = catalog_entry["spatial_filename"]
-        if isinstance(the_file, bytes):
-            the_file = the_file.decode("ascii")
-        
-        if "FERMIPY_DATA_DIR" not in os.environ:
-            os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data" )
-        
-        the_dir = os.path.join( os.path.expandvars( catalog_entry["extdir"] ), "Templates" )
-        
-        the_template = os.path.join( the_dir, the_file )
-
-        this_shape._load_file(the_template)
 
     return this_source
 

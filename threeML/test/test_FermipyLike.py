@@ -62,7 +62,7 @@ def test_FermipyLike_fromVO():
     # Download data from Jan 01 2010 to Jan 2 2010
 
     tstart = "2010-01-01 00:00:00"
-    tstop = "2010-01-08 00:00:00"
+    tstop  = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
@@ -154,7 +154,7 @@ def test_FermipyLike_fromDisk():
     # Download data from Jan 01 2010 to Jan 2 2010
 
     tstart = "2010-01-01 00:00:00"
-    tstop = "2010-01-08 00:00:00"
+    tstop  = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
