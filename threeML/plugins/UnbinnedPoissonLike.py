@@ -24,6 +24,7 @@ class EventObservation(object):
         exposure: float,
         start: Union[float, np.ndarray],
         stop: Union[float, np.ndarray],
+        for_timeseries: bool = False
     ):
 
         self._events = np.array(events)
@@ -61,6 +62,10 @@ class EventObservation(object):
         log.debug(f"created event observation with")
         log.debug(f"{self._start} {self._stop}")
 
+        self._for_timeseries = for_timeseries
+        if for_timeseries:
+            log.debug("This EventObservation is for a time series fit!")
+
     @property
     def events(self) -> np.ndarray:
         return self._events
@@ -84,6 +89,10 @@ class EventObservation(object):
     @property
     def is_multi_interval(self) -> bool:
         return self._is_multi_interval
+
+    @property
+    def for_timeseries(self) -> bool:
+        return self._for_timeseries
 
 
 class UnbinnedPoissonLike(PluginPrototype):
@@ -110,6 +119,21 @@ class UnbinnedPoissonLike(PluginPrototype):
         self._source_name: str = source_name
 
         self._n_events: int = self._observation.n_events
+
+        if self._observation.for_timeseries:
+
+            total_dt = 0
+
+            if self._observation.is_multi_interval:
+                for start, stop in zip(self._observation.start,
+                                       self._observation.stop):
+                    total_dt += stop-start
+            else:
+                total_dt = self._observation.stop-self._observation.start
+
+            self._dead_corr = self._observation.exposure/total_dt
+        else:
+            self._dead_corr = 1.
 
         super(UnbinnedPoissonLike, self).__init__(
             name=name, nuisance_parameters={})
@@ -222,7 +246,7 @@ class UnbinnedPoissonLike(PluginPrototype):
                 self._observation.start, self._observation.stop
             )
 
-        M = self._model(self._observation.events) * self._observation.exposure
+        M = self._model(self._observation.events)
         negative_mask = M < 0
         if negative_mask.sum() > 0:
             M[negative_mask] = 0.0
@@ -230,7 +254,7 @@ class UnbinnedPoissonLike(PluginPrototype):
         # use numba to sum the events
         sum_logM = _evaluate_logM_sum(M, self._n_events)
 
-        minus_log_like = -n_expected_counts + sum_logM
+        minus_log_like = -n_expected_counts*self._dead_corr + sum_logM
 
         return minus_log_like
 

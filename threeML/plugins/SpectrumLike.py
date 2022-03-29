@@ -621,16 +621,14 @@ class SpectrumLike(PluginPrototype):
 
                 log.debug("this is a normal background observation")
 
-                self._background_scale_factor = self._background_spectrum.scale_factor
+                self._background_scale_factor = (self._background_spectrum.scale_factor)
+                
                 self._background_exposure = self._background_spectrum.exposure
 
-            self._area_ratio = (
-                self._observed_spectrum.scale_factor / self._background_scale_factor
-            )
+            self._area_ratio = float(self._observed_spectrum.scale_factor) / float(self._background_scale_factor)
 
-            self._exposure_ratio = (
-                self._observed_spectrum.exposure / self._background_exposure
-            )
+            self._exposure_ratio = float(self._observed_spectrum.exposure) / float(self._background_exposure)
+            
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
 
