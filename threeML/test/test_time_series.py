@@ -43,7 +43,7 @@ def test_event_list_constructor():
     with pytest.raises(AttributeError):
         evt_list.text_bins
 
-    assert evt_list.poly_intervals is None
+    assert evt_list.bkg_intervals is None
 
     with pytest.raises(AttributeError):
         evt_list.tmax_list
@@ -77,7 +77,7 @@ def test_unbinned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_polynomial_fit_interval(
+    evt_list.set_background_interval(
         "%f-%f" % (start + 1, stop - 1), unbinned=True, bayes=False
     )
 
@@ -114,7 +114,7 @@ def test_binned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_polynomial_fit_interval(
+    evt_list.set_background_interval(
         "%f-%f" % (start + 1, stop - 1), unbinned=False
     )
 
@@ -122,6 +122,98 @@ def test_binned_fit(event_time_series):
 
     results = evt_list.get_poly_info()["coefficients"]
     
+
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+
+    assert evt_list._poly_counts.sum() > 0
+
+    evt_list.__repr__()
+
+def test_no_poly_fit(event_time_series):
+
+    start, stop = 0, 50
+
+    poly = [1]
+
+    arrival_times = event_time_series
+
+    evt_list = EventListWithDeadTime(
+        arrival_times=arrival_times,
+        measurement=np.zeros_like(arrival_times),
+        n_channels=1,
+        start_time=arrival_times[0],
+        stop_time=arrival_times[-1],
+        dead_time=np.zeros_like(arrival_times),
+    )
+
+    evt_list.set_background_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=False, fit_poly=False
+    )
+
+    evt_list.set_active_time_intervals("0-1")
+
+    # no polys should be calculated and saved
+
+    assert evt_list.polynomials is None
+
+    # but the time selection should be set
+    assert evt_list.bkg_intervals[0].start_time == start + 1
+    assert evt_list.bkg_intervals[0].stop_time == stop - 1
+
+    # Now with poly fit
+    evt_list.set_background_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=False
+    )
+
+    results = evt_list.get_poly_info()["coefficients"]
+
+
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+
+    assert evt_list._poly_counts.sum() > 0
+
+    # again without poly fit. Make sure the poly info is deleted
+    evt_list.set_background_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=False, fit_poly=False
+    )
+
+    assert evt_list.polynomials is None
+
+    assert evt_list.bkg_intervals[0].start_time == start + 1
+    assert evt_list.bkg_intervals[0].stop_time == stop - 1
+
+    evt_list.__repr__()
+
+
+def test_deprecation(event_time_series):
+
+    # this tests the old set_polynomial_fit_interval function and makes sure
+    # the deprecation warning is raised. Must be removed when we remove this
+    # function.
+
+    start, stop = 0, 50
+
+    poly = [1]
+
+    arrival_times = event_time_series
+
+    evt_list = EventListWithDeadTime(
+        arrival_times=arrival_times,
+        measurement=np.zeros_like(arrival_times),
+        n_channels=1,
+        start_time=arrival_times[0],
+        stop_time=arrival_times[-1],
+        dead_time=np.zeros_like(arrival_times),
+    )
+    with pytest.deprecated_call():
+        evt_list.set_polynomial_fit_interval(
+            "%f-%f" % (start + 1, stop - 1), unbinned=False
+        )
+
+    evt_list.set_active_time_intervals("0-1")
+
+    results = evt_list.get_poly_info()["coefficients"]
+
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
@@ -307,7 +399,7 @@ def test_read_lle():
 
         old_coefficients, old_errors = lle.get_background_parameters()
 
-        old_tmin_list = lle._time_series.poly_intervals
+        old_tmin_list = lle._time_series.bkg_intervals
 
         lle.save_background("temp_lle", overwrite=True)
 
@@ -321,7 +413,7 @@ def test_read_lle():
 
         new_coefficients, new_errors = lle.get_background_parameters()
 
-        new_tmin_list = lle._time_series.poly_intervals
+        new_tmin_list = lle._time_series.bkg_intervals
 
         assert new_coefficients == old_coefficients
 
