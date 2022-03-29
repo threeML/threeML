@@ -3,7 +3,6 @@ import collections
 import math
 
 import numpy as np
-from future.utils import with_metaclass
 
 try:
 
@@ -42,7 +41,7 @@ from threeML.utils.spectrum.share_spectrum import ShareSpectrum
 log = setup_logger(__name__)
 
 
-class SamplerBase(with_metaclass(abc.ABCMeta, object)):
+class SamplerBase(metaclass=abc.ABCMeta):
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
 
@@ -300,7 +299,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
                 parameter.value = trial_values[i]
 
-                log_prior += math.log10(prior_value)
+                log_prior += math.log(prior_value)
 
         log_like = self._log_like(trial_values)
 
@@ -328,7 +327,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
                 parameter.value = trial_values[i]
 
-                log_prior += math.log10(prior_value)
+                log_prior += math.log(prior_value)
 
         return log_prior
 
@@ -462,14 +461,6 @@ class UnitCubeSampler(SamplerBase):
                 parameter.value = trial_values[i]
 
             log_like = self._log_like(trial_values)
-
-            # if self._verbose:
-            #     n_par = len(self._free_parameters)
-
-            #     print(
-            #         "Trial values %s gave a log_like of %s"
-            #         % (["%.2g" % trial_values[i] for i in range(n_par)], log_like)
-            #     )
 
             return log_like
 
