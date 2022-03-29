@@ -59,6 +59,15 @@ jobs:
                   echo "HOME= ${HOME}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
+                  echo "Running on development branch: ${ISDEV} "
+
+                  if [[ "${ISDEV}" == "true" ]]; then
+
+                  mamba install -c threeml/label/dev "threeml/label/dev::astromodels"
+                  
+                  fi
+              env:
+                  ISDEV: ${{contains(github.ref, 'dev')}} 
             - name: Conda list
               shell: bash -l {0}
               run: |

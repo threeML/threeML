@@ -32,6 +32,8 @@ from threeML.utils.time_series.event_list import (
     EventList, EventListWithDeadTime, EventListWithDeadTimeFraction,
     EventListWithLiveTime)
 from threeML.utils.time_series.time_series import TimeSeries
+from threeML.config.config import threeML_config
+from threeML.config.config_utils import get_value_kwargs
 
 log = setup_logger(__name__)
 
@@ -274,6 +276,7 @@ class TimeSeriesBuilder(object):
                 self._time_series, response=self._response, use_poly=True, extract=False
             )
 
+        if self._time_series.bkg_intervals is not None:
             self._measured_background_spectrum = self._container_type.from_time_series(
                 self._time_series,
                 response=self._response,
@@ -286,6 +289,15 @@ class TimeSeriesBuilder(object):
 
         log.info(
             f"Interval set to {self._tstart}-{self._tstop} for {self._name}")
+
+    def fit_polynomial(self, **kwargs):
+        """
+        Fit the polynominals to the selected time intervals. Must be called after
+        set_background_interval.
+        :param kwargs:
+        :returns:
+        """
+        self._time_series.fit_polynomial(**kwargs)
 
     def set_background_interval(self, *intervals, **kwargs):
         """
@@ -302,28 +314,30 @@ class TimeSeriesBuilder(object):
         :return: none
 
         """
-        if "unbinned" in kwargs:
+        fit_poly, kwargs = get_value_kwargs("fit_poly",
+                                            bool,
+                                            threeML_config.time_series.fit.fit_poly,
+                                            **kwargs)
 
-            unbinned = kwargs.pop("unbinned")
-        else:
+        unbinned, kwargs = get_value_kwargs("unbinned",
+                                            bool,
+                                            threeML_config.time_series.fit.unbinned,
+                                            **kwargs)
 
-            unbinned = False
-
-        if "bayes" in kwargs:
-            bayes = kwargs.pop("bayes")
-
-        else:
-
-            bayes = False
+        bayes, kwargs = get_value_kwargs("bayes",
+                                         bool,
+                                         threeML_config.time_series.fit.bayes,
+                                         **kwargs)
 
         log.debug(f"using unbinned is {unbinned} for {self._name}")
-        log.debug(f"fitting bkg for {self._name}")
+        log.debug(f"Setting bkg selection for {self._name}")
 
-        self._time_series.set_polynomial_fit_interval(
-            *intervals, unbinned=unbinned, bayes=bayes
+        self._time_series.set_background_interval(
+            *intervals, unbinned=unbinned, bayes=bayes, fit_poly=fit_poly
         )
 
-        log.debug(f"finished fitting bkg for {self._name}")
+        log.debug(f"Finished setting bkg selection for {self._name}")
+
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
@@ -333,9 +347,17 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                self._background_spectrum = self._container_type.from_time_series(
-                    self._time_series, use_poly=True, extract=False
-                )
+                if self._time_series.poly_fit_exists:
+                    self._background_spectrum = (
+                        self._container_type.from_time_series(
+                            self._time_series,
+                            use_poly=True,
+                            extract=False
+                        )
+                    )
+
+                else:
+                    self._background_spectrum = None
 
                 self._measured_background_spectrum = (
                     self._container_type.from_time_series(
@@ -348,10 +370,18 @@ class TimeSeriesBuilder(object):
             else:
 
                 # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
+                if self._time_series.poly_fit_exists:
+                    self._background_spectrum = (
+                        self._container_type.from_time_series(
+                            self._time_series,
+                            self._response,
+                            use_poly=True,
+                            extract=False
+                        )
+                    )
 
-                self._background_spectrum = self._container_type.from_time_series(
-                    self._time_series, self._response, use_poly=True, extract=False
-                )
+                else:
+                    self._background_spectrum = None
 
                 self._measured_background_spectrum = (
                     self._container_type.from_time_series(
