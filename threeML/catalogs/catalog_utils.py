@@ -70,6 +70,10 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
     ra = float(catalog_entry["ra"])
     dec = float(catalog_entry["dec"])
 
+    log.debug(f"source parameters for {fgl_name}")
+    log.debug(catalog_entry)
+
+
     if spectrum_type == "PowerLaw":
 
         this_spectrum = Powerlaw()

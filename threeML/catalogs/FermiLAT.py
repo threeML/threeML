@@ -195,7 +195,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
                 else:
                 
                     log.warning(
-                        "Source %s is extended, but not morphology information is available. "
+                        "Source %s is extended, but morphology information is unavailable. "
                         "I will provide a point source instead" % name
                     )
                     this_source = _get_point_source_from_fgl(this_name, row, fix=True)
