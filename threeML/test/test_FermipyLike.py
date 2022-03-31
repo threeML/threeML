@@ -149,6 +149,7 @@ def test_FermipyLike_fromDisk():
     # However, let's free the index of the Crab
     model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.free = True
 
+
     assert len(model.free_parameters) == 4
 
     # Download data from Jan 01 2010 to Jan 2 2010
@@ -194,6 +195,11 @@ def test_FermipyLike_fromDisk():
     data = DataList(LAT)
 
     # Here is where the fermipy processing happens (the .setup method)
+
+
     jl = JointLikelihood(model, data)
+
+    jl.set_minimizer("ROOT")
+
 
     res = jl.fit()
