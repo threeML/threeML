@@ -72,7 +72,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     log.debug(f"source parameters for {fgl_name}")
     log.debug(catalog_entry)
-
+    1
 
     if spectrum_type == "PowerLaw":
 
