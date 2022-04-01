@@ -109,7 +109,7 @@ bayes_analysis.results.corner_plot();
 
 ```python
 bayes_analysis.set_sampler('dynesty_dynamic')
-bayes_analysis.sampler.setup(n_live_points=400)
+bayes_analysis.sampler.setup()
 bayes_analysis.sample()
 
 xyl.plot();
