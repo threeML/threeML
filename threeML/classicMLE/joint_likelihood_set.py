@@ -235,12 +235,12 @@ class JointLikelihoodSet(object):
 
         # let's iterate, perform the fit and fill the data frame
 
-        if threeML_config["parallel"]["use_parallel"]:
+        if threeML_config.parallel.use_parallel:
 
             # Parallel computation
 
             with silence_console_log(and_progress_bars=False):
-                client = ParallelClient(**options_for_parallel_computation)
+                client: ParallelClient = ParallelClient(**options_for_parallel_computation)
 
                 results = client.execute_with_progress_bar(
                     self.worker, list(range(self._n_iterations))
