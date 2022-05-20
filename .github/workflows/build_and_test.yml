@@ -89,7 +89,7 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel
-                  python -m pip install cython
+                  python -m pip install cython extension_helpers astropy
                   git clone https://github.com/threeML/astromodels
                   cd astromodels
                   git checkout dev
@@ -120,13 +120,6 @@ jobs:
                   MPLBACKEND: "Agg"
 
 
-            # we do not need to run coverage on pip
-            # - name: Upload coverage to Codecov
-            #   uses: codecov/codecov-action@v1
-            #   with:
-            #       file: ./coverage.xml
-            #       files: ./coverage1.xml,./coverage2.xml
-            #       directory: ./coverage/reports/
 
     test-conda:
         name: Test on Conda
