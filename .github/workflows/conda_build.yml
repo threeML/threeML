@@ -77,15 +77,16 @@ jobs:
               run: |
                   # Build package
 
-                  conda install conda-build -n base
+                  #conda install conda-build -n base
+                  conda install -c conda-forge boa -n base
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
-                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
                   else
                   # there is some strange error about the prefix length
-                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  conda mambabuild --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
 
                   conda install --use-local -c conda-forge threeml
@@ -157,15 +158,16 @@ jobs:
               run: |
                   # Build package
 
-                  conda install conda-build -n base
+                  #conda install conda-build -n base
+                  conda install -c conda-forge boa -n base
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
-                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
                   else
                   # there is some strange error about the prefix length
-                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  conda mambabuild --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
 
             - name: Publish to Conda

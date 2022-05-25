@@ -308,6 +308,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
         return nb_sum(loglike), bkg_model
 
     def get_randomized_source_counts(self, source_model_counts):
+
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
         # get it from the likelihood function
 

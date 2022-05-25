@@ -118,15 +118,15 @@ class BinnedModulationCurve(BinnedSpectrum):
             is_poisson = False
 
         return cls(
-            counts=pha_information["counts"],
-            exposure=pha_information["exposure"],
-            abounds=pha_information["edges"],
-            instrument=pha_information["instrument"],
-            mission=pha_information["telescope"],
-            tstart=pha_information["tstart"],
-            tstop=pha_information["tstart"] + pha_information["telapse"],
-            count_errors=pha_information["counts error"],
-            quality=pha_information["quality"],
+            counts=pha_information.counts,
+            exposure=pha_information.exposure,
+            abounds=pha_information.edges,
+            instrument=pha_information.instrument,
+            mission=pha_information.telescope,
+            tstart=pha_information.tstart,
+            tstop=pha_information.tstart + pha_information.telapse,
+            count_errors=pha_information.counts_error,
+            quality=pha_information.quality,
             scale_factor=1.0,
             is_poisson=is_poisson,
         )
