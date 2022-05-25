@@ -98,7 +98,7 @@ bayes_analysis.results.corner_plot();
 
 ```python
 bayes_analysis.set_sampler('dynesty_nested')
-bayes_analysis.sampler.setup(n_live_points=400, stop_function=dynesty.utils.old_stopping_function, neff=None)
+bayes_analysis.sampler.setup(n_live_points=400)
 bayes_analysis.sample()
 
 xyl.plot();
@@ -109,7 +109,7 @@ bayes_analysis.results.corner_plot();
 
 ```python
 bayes_analysis.set_sampler('dynesty_dynamic')
-bayes_analysis.sampler.setup(stop_function=dynesty.utils.old_stopping_function, neff=None)
+bayes_analysis.sampler.setup(stop_function=dynesty.utils.old_stopping_function, n_effective=None)
 bayes_analysis.sample()
 
 xyl.plot();
