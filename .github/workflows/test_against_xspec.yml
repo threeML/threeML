@@ -6,7 +6,7 @@ on:
         - cron: "0 22 * * 0"
 
 jobs:
-    xspec:
+    xspec-standard:
         name: Test against XSPEC
         runs-on: ubuntu-latest
         steps:
@@ -93,7 +93,7 @@ jobs:
               pip install --upgrade flake8 coverage pytest-cov cython
               pip install -e .
             env:
-              ASTRO_XSPEC_VERSION: 12.12.0
+              ASTRO_XSPEC_VERSION: 12.12.1
 
 
           - name: Test xspec
@@ -103,3 +103,212 @@ jobs:
               source ${HEADAS}/headas-init.sh;
               python -m pytest threeML/test/test_AAA_against_xspec.py
               
+    xspec-astro-master:
+        name: Test against XSPEC astro master
+        runs-on: ubuntu-latest
+        steps:
+          - name: Set up Python 3.8
+            uses: actions/setup-python@v2
+            with:
+              python-version: 3.8
+
+          - name: Cache XPSEC
+            uses: actions/cache@v2
+            id: cache-xspec
+            with:
+              path: ~/xspec_home
+              key: xspec-ver3
+          - name: Get XSPEC
+            env:
+              CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
+            run: |
+              echo "getting latest heasoft bundle";
+              if [[ "$CACHE_HIT" == 'true' ]]; then
+
+
+              echo "NOOOO"
+
+
+
+              else
+
+              mkdir -p ~/xspec_home
+
+              wget -O heasoft-src.tar.gz 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga
+
+              mv heasoft-src.tar.gz ~/xspec_home/
+
+
+              fi
+
+          - name: Extract XSPEC
+            env:
+              CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
+            run: |
+
+              if [[ "$CACHE_HIT" == 'true' ]]; then
+
+              echo "NOOOOOO"
+
+              else
+
+
+              echo "unpacking heasoft";
+
+              cd ~/xspec_home
+
+              #rm -rf heasoft*/;
+              tar -xzf heasoft-src.tar.gz;
+              ls heasoft*;
+              ls;
+              echo "compiling xspec";
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              ls heasoft*;
+              XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+
+              pushd $XSPEC_BUILD_DIR;
+              mkdir -p ~/xspec_home/xspec-install/;
+              ./configure --prefix=/home/runner/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
+              ls ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/;
+
+              ls
+              popd;
+              rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
+              fi
+
+          - name: Checkout
+            uses: actions/checkout@v2
+          - name: Install dependencies
+            run: |
+              export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+              echo "loading xspec from " $HEADAS;
+              source ${HEADAS}/headas-init.sh;
+              python -c 'import xspec' || true;
+
+              python -m pip install --upgrade pip wheel
+              python -m pip install numpy numba
+
+              git clone https://github.com/threeML/astromodels
+              cd astromodels
+
+              python setup.py install
+
+              cd ..
+
+              pip install --upgrade flake8 coverage pytest-cov cython
+              pip install -e .
+            env:
+              ASTRO_XSPEC_VERSION: 12.12.1
+
+
+          - name: Test xspec
+            run: |
+              export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+              echo "loading xspec from " $HEADAS;
+              source ${HEADAS}/headas-init.sh;
+              python -m pytest threeML/test/test_AAA_against_xspec.py
+
+    xspec-astro-dev:
+        name: Test against XSPEC astro dev
+        runs-on: ubuntu-latest
+        steps:
+          - name: Set up Python 3.8
+            uses: actions/setup-python@v2
+            with:
+              python-version: 3.8
+
+          - name: Cache XPSEC
+            uses: actions/cache@v2
+            id: cache-xspec
+            with:
+              path: ~/xspec_home
+              key: xspec-ver3
+          - name: Get XSPEC
+            env:
+              CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
+            run: |
+              echo "getting latest heasoft bundle";
+              if [[ "$CACHE_HIT" == 'true' ]]; then
+
+
+              echo "NOOOO"
+
+
+
+              else
+
+              mkdir -p ~/xspec_home
+
+              wget -O heasoft-src.tar.gz 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga
+
+              mv heasoft-src.tar.gz ~/xspec_home/
+
+
+              fi
+
+          - name: Extract XSPEC
+            env:
+              CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
+            run: |
+
+              if [[ "$CACHE_HIT" == 'true' ]]; then
+
+              echo "NOOOOOO"
+
+              else
+
+
+              echo "unpacking heasoft";
+
+              cd ~/xspec_home
+
+              #rm -rf heasoft*/;
+              tar -xzf heasoft-src.tar.gz;
+              ls heasoft*;
+              ls;
+              echo "compiling xspec";
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              ls heasoft*;
+              XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+
+              pushd $XSPEC_BUILD_DIR;
+              mkdir -p ~/xspec_home/xspec-install/;
+              ./configure --prefix=/home/runner/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
+              ls ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/;
+
+              ls
+              popd;
+              rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
+              fi
+
+          - name: Checkout
+            uses: actions/checkout@v2
+          - name: Install dependencies
+            run: |
+              export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+              echo "loading xspec from " $HEADAS;
+              source ${HEADAS}/headas-init.sh;
+              python -c 'import xspec' || true;
+
+              python -m pip install --upgrade pip wheel
+              python -m pip install numpy numba
+
+              git clone https://github.com/threeML/astromodels
+              cd astromodels
+              git checkout dev
+              python setup.py install
+
+              cd ..
+
+              pip install --upgrade flake8 coverage pytest-cov cython
+              pip install -e .
+            env:
+              ASTRO_XSPEC_VERSION: 12.12.1
+
+
+          - name: Test xspec
+            run: |
+              export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+              echo "loading xspec from " $HEADAS;
+              source ${HEADAS}/headas-init.sh;
+              python -m pytest threeML/test/test_AAA_against_xspec.py

@@ -83,7 +83,7 @@ but then let's fix the sync and the IC components of the Crab nebula (cannot fit
 
 ```python
 model['Crab_IC.spectrum.main.Log_parabola.K'].fix = True
-model.Crab_synch.spectrum.main.Powerlaw.K.fix     = True
+model.Crab_synch.spectrum.main.Log_parabola.K.fix     = True
 ```
 
 However, let's free the index of the Crab Pulsar
