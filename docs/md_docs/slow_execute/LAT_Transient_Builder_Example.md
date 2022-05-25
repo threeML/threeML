@@ -206,7 +206,7 @@ for T0, T1 in zip(intervals[:-1], intervals[1:]):
     model[LAT_model_name + "_GalacticTemplate_Value"].fix = True
     model[LAT_model_name + "_GalacticTemplate_Value"].fix = True
     # model.display( complete=True )
-    jl.set_minimizer("ROOT")
+    jl.set_minimizer("minuit")
     jl.fit(compute_covariance=True)
     results[LAT_name] = jl
     pass
