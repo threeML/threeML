@@ -29,7 +29,7 @@ With any of the samplers, you can pass keywords to access their setups. Read eac
 from threeML import *
 
 import numpy as np
-
+import dynesty
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
@@ -109,7 +109,7 @@ bayes_analysis.results.corner_plot();
 
 ```python
 bayes_analysis.set_sampler('dynesty_dynamic')
-bayes_analysis.sampler.setup()
+bayes_analysis.sampler.setup(stop_function=dynesty.utils.old_stopping_function, n_effective=None)
 bayes_analysis.sample()
 
 xyl.plot();
