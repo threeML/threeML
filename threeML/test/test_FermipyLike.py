@@ -199,7 +199,7 @@ def test_FermipyLike_fromDisk():
 
     jl = JointLikelihood(model, data)
 
-    jl.set_minimizer("ROOT")
+    jl.set_minimizer("minuit")
 
 
     res = jl.fit()
