@@ -45,8 +45,9 @@ skip_if_pygmo_is_not_available = pytest.mark.skipif(
 
 
 def check_results(fit_results):
-    print(fit_results)
+
     assert np.isclose(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'],2.571, atol=1e-1)
+
     assert np.isclose(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'], -1.185, atol=5e-2)
 
 
