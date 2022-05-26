@@ -30,8 +30,8 @@ def test_FermipyLike_fromVO():
 
     ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
 
-    assert np.isclose(ra, 83.633, atol=1e-3)
-    assert np.isclose(dec, 22.013, atol=1e-3)
+    assert np.isclose(ra, 83.633, atol=5e-3)
+    assert np.isclose(dec, 22.013, atol=5e-3)
 
     # This gets a 3ML model (a Model instance) from the table above, where every source
     # in the 3FGL becomes a Source instance. Note that by default all parameters of all
@@ -117,8 +117,8 @@ def test_FermipyLike_fromDisk():
 
     ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
 
-    assert np.isclose(ra, 83.633, atol=1e-3)
-    assert np.isclose(dec, 22.013, atol=1e-3)
+    assert np.isclose(ra, 83.633, atol=5e-3)
+    assert np.isclose(dec, 22.013, atol=5e-3)
 
     # This gets a 3ML model (a Model instance) from the table above, where every source
     # in the 3FGL becomes a Source instance. Note that by default all parameters of all
