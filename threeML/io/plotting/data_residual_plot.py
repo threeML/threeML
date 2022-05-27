@@ -1,23 +1,22 @@
 from __future__ import division
-from builtins import zip
-from builtins import object
-from past.utils import old_div
+
+from builtins import object, zip
+
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
 import numpy as np
-
-from threeML.io.plotting.step_plot import step_plot
+from matplotlib.ticker import MaxNLocator
+from past.utils import old_div
 from threeML.config.config import threeML_config
-
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
-
 from threeML.io.package_data import get_path_of_data_file
+from threeML.io.plotting.step_plot import step_plot
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)
+
 
 class ResidualPlot(object):
     def __init__(self, **kwargs):
@@ -226,14 +225,16 @@ class ResidualPlot(object):
         """
 
         if show_legend:
-            self._data_axis.legend(fontsize="x-small", loc=0)
+            self._data_axis.legend(
+                fontsize=threeML_config.plotting.residual_plot.legend_font_size, loc=0
+            )
 
         self._data_axis.set_ylabel(ylabel)
 
         self._data_axis.set_xscale(xscale)
         if yscale == "log":
 
-            self._data_axis.set_yscale(yscale, nonposy="clip")
+            self._data_axis.set_yscale(yscale, nonpositive="clip")
 
         else:
 

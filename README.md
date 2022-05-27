@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5646954.svg)](https://doi.org/10.5281/zenodo.5646954)
 
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/threeML/threeML)
 ![GitHub issues](https://img.shields.io/github/issues/threeML/threeML)
@@ -13,6 +14,7 @@
 [![PyPI version fury.io](https://badge.fury.io/py/threeML.svg)](https://pypi.python.org/pypi/threeML/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dw/threeml)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/threeml)
+[![Install using pip](https://github.com/threeML/threeML/actions/workflows/pip_install.yml/badge.svg)](https://github.com/threeML/threeML/actions/workflows/pip_install.yml)
 ## Conda
 
 ![Conda](https://img.shields.io/conda/pn/threeml/threeml)

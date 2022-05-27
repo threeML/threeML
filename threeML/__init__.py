@@ -2,7 +2,7 @@
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import pandas as pd
 
-pd.set_option("max_columns", None)
+pd.set_option("display.max_columns", None)
 
 import os
 import traceback
@@ -244,7 +244,7 @@ from threeML.analysis_results import (convert_fits_analysis_result_to_hdf,
                                       load_analysis_results_hdf)
 # Import catalogs
 from threeML.catalogs import (FermiGBMBurstCatalog, FermiGBMTriggerCatalog,
-                              FermiLATSourceCatalog, FermiLLEBurstCatalog, SwiftGRBCatalog)
+                              FermiLATSourceCatalog, FermiPySourceCatalog, FermiLLEBurstCatalog, SwiftGRBCatalog)
 
 from threeML.io import (activate_warnings, silence_warnings,
                         update_logging_level,
