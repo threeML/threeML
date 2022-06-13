@@ -1869,7 +1869,7 @@ class MLEResults(_AnalysisResults):
         display(self.get_statistic_measure_frame())
 
 
-class AnalysisResultsSet(collections.Sequence):
+class AnalysisResultsSet(collections.abc.Sequence):
     """
     A container for results which behaves like a list (but you cannot add/remove elements).
 
