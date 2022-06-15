@@ -13,7 +13,11 @@ import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
+<<<<<<< HEAD
 from astromodels.functions.priors import Truncated_gaussian, Uniform_prior
+=======
+from astromodels.functions.priors import Uniform_prior, Truncated_gaussian
+>>>>>>> dev
 from astromodels.utils.valid_variable import is_valid_variable_name
 from past.utils import old_div
 from threeML.config.config import threeML_config
@@ -2122,7 +2126,13 @@ class SpectrumLike(PluginPrototype):
                         diff_fluxes_edges = differential_flux(e_edges)
 
                         return _trapz(
+<<<<<<< HEAD
                             np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,
+=======
+                            np.array(
+                                [diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]
+                            ).T,
+>>>>>>> dev
                             np.array([ee1, ee2]).T,
                         )
 
@@ -2171,8 +2181,13 @@ class SpectrumLike(PluginPrototype):
         min_value: Union[int, float] = 0.8,
         max_value: Union[int, float] = 1.2,
         use_gaussian_prior: bool = False,
+<<<<<<< HEAD
         mu: float = 1,
         sigma: float = 0.1,
+=======
+        mu:float=1,
+        sigma: float=0.1
+>>>>>>> dev
     ) -> None:
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
@@ -2199,10 +2214,19 @@ class SpectrumLike(PluginPrototype):
 
         # Use a uniform prior by default
         if use_gaussian_prior:
+<<<<<<< HEAD
 
             self._nuisance_parameter.prior = Truncated_gaussian(
                 mu=mu, sigma=sigma, lower_bound=min_value, upper_bound=max_value
             )
+=======
+
+            self._nuisance_parameter.prior = Truncated_gaussian(mu=mu, sigma=sigma, lower_bound=min_value, upper_bound=max_value)
+
+        else:
+
+            self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
+>>>>>>> dev
 
         else:
 
@@ -2240,6 +2264,10 @@ class SpectrumLike(PluginPrototype):
             )
             self._integral_flux = integral
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
     def __set_model_integrate_method(self, value: str) -> None:
 
         self.set_model_integrate_method(value)
@@ -2259,7 +2287,11 @@ class SpectrumLike(PluginPrototype):
     model_integrate_method = property(
         ___get_model_integrate_method,
         ___set_model_integrate_method,
+<<<<<<< HEAD
         doc="""The method used to integrate the model across the response matrix """,
+=======
+    doc="""The method used to integrate the model across the response matrix """
+>>>>>>> dev
     )
 
     def set_background_integrate_method(self, method: str) -> None:
@@ -2284,6 +2316,10 @@ class SpectrumLike(PluginPrototype):
             )
             self._background_integral_flux = integral
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
     def __set_background_integrate_method(self, value: str) -> None:
 
         self.set_background_integrate_method(value)
@@ -2303,7 +2339,11 @@ class SpectrumLike(PluginPrototype):
     background_integrate_method = property(
         ___get_background_integrate_method,
         ___set_background_integrate_method,
+<<<<<<< HEAD
         doc="""The method used to integrate the_background across the response matrix """,
+=======
+    doc="""The method used to integrate the_background across the response matrix """
+>>>>>>> dev
     )
 
     @property
@@ -3697,4 +3737,8 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
 @nb.njit(fastmath=True, cache=True)
 def _rsum(model_mid_points, de):
 
+<<<<<<< HEAD
     return np.multiply(model_mid_points, de)
+=======
+    return np.multiply(model_mid_points,de)
+>>>>>>> dev

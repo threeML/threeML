@@ -82,7 +82,7 @@ class LATLikelihoodParameter(object):
 
         # make sure that the value set is allowed
         if self._allowed_values is not None:
-            assert self._current_value in self._allowed_values, 'The value of %s is not in %s' % (self._name, self._allowed_values )
+            assert self._current_value in set(self._allowed_values), 'The value of %s is not in %s' % (self._name, self._allowed_values )
 
         # construct the class
 
