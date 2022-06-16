@@ -3697,8 +3697,4 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
 @nb.njit(fastmath=True, cache=True)
 def _rsum(model_mid_points, de):
 
-<<<<<<< HEAD
     return np.multiply(model_mid_points, de)
-=======
-    return np.multiply(model_mid_points,de)
->>>>>>> dev
