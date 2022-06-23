@@ -6,9 +6,9 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.10.2
+      jupytext_version: 1.13.8
   kernelspec:
-    display_name: Python 3
+    display_name: Python 3 (ipykernel)
     language: python
     name: python3
 ---
@@ -19,7 +19,7 @@ jupyter:
 In this Example we show how to use the fermipy plugin in threeML. We perform a Binned likelihood analysis and a Bayesian analysis of the Crab, optimizing the parameters of the Crab Pulsar (PSR J0534+2200) keeping fixed the parameters of the Crab Nebula. In the model, the nebula is described by two sources, one representing the synchrotron spectrum, the othet the Inverse Compton emission.
 In this example we show how to download Fermi-LAT data, how to build a model starting from the 4FGL, how to free and fix parameters of the sources in the model, and how to perform a spectral analysis using the fermipy plugin.
 
-```python 
+```python
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -43,7 +43,7 @@ from threeML import *
 ```
 
 
-```python 
+```python
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
@@ -83,7 +83,7 @@ but then let's fix the sync and the IC components of the Crab nebula (cannot fit
 
 ```python
 model['Crab_IC.spectrum.main.Log_parabola.K'].fix = True
-model.Crab_synch.spectrum.main.Powerlaw.K.fix     = True
+model.Crab_synch.spectrum.main.Log_parabola.K.fix     = True
 ```
 
 However, let's free the index of the Crab Pulsar
@@ -181,7 +181,7 @@ jl = JointLikelihood(model, data)
 ### Performing the fit
 
 ```python
-jl.set_minimizer("ROOT")
+jl.set_minimizer("minuit")
 
 res = jl.fit()
 ```

@@ -195,7 +195,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
                 else:
                 
                     log.warning(
-                        "Source %s is extended, but not morphology information is available. "
+                        "Source %s is extended, but morphology information is unavailable. "
                         "I will provide a point source instead" % name
                     )
                     this_source = _get_point_source_from_fgl(this_name, row, fix=True)
@@ -252,12 +252,12 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
             self._astropy_table.convert_bytestring_to_unicode()
             self._vo_dataframe = self._astropy_table.to_pandas()
             self._vo_dataframe.rename(columns = str.lower, inplace=True)
-            
+
             rename_dict = {
-                "spectrumtype": "spectrum_type",
-                "raj2000": "ra",
-                "dej2000": "dec",
-                "source_name": "name",
+                "spectrumtype":   "spectrum_type",
+                "raj2000":        "ra",
+                "dej2000":        "dec",
+                "source_name":    "name",
                 "plec_expfactor": "plec_exp_factor"
             }
                   

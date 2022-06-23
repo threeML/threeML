@@ -1154,16 +1154,19 @@ class BayesianResults(_AnalysisResults):
 
         cmap = plt.get_cmap(corner_style.cmap.value)
 
-        cmap.with_extremes(
-            under=corner_style.extremes,
-            over=corner_style.extremes,
-            bad=corner_style.extremes,
-        )
-        cmap.set_extremes(
-            under=corner_style.extremes,
-            over=corner_style.extremes,
-            bad=corner_style.extremes,
-        )
+        try:
+            cmap.with_extremes(
+                under=corner_style.extremes,
+                over=corner_style.extremes,
+               bad=corner_style.extremes,
+            )
+            cmap.set_extremes(
+               under=corner_style.extremes,
+               over=corner_style.extremes,
+                bad=corner_style.extremes,
+            )
+        except:
+            pass
 
         contourf_kwargs = dict(corner_style.contourf_kwargs)
         contourf_kwargs["cmap"] = cmap
@@ -1866,7 +1869,7 @@ class MLEResults(_AnalysisResults):
         display(self.get_statistic_measure_frame())
 
 
-class AnalysisResultsSet(collections.Sequence):
+class AnalysisResultsSet(collections.abc.Sequence):
     """
     A container for results which behaves like a list (but you cannot add/remove elements).
 

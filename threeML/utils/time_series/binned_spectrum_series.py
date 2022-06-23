@@ -197,9 +197,9 @@ class BinnedSpectrumSeries(TimeSeries):
 
             selection = None
 
-        if self.poly_intervals is not None:
+        if self.bkg_intervals is not None:
 
-            bkg_selection = self.poly_intervals.bin_stack
+            bkg_selection = self.bkg_intervals.bin_stack
 
         else:
 
@@ -335,11 +335,12 @@ class BinnedSpectrumSeries(TimeSeries):
 
         self._poly_fit_exists = True
 
-        # we need to adjust the selection to the true intervals of the time-binned spectra
+        # we need to adjust the selection to the true intervals of
+        # the time-binned spectra
 
-        tmp_poly_intervals = self._poly_intervals
-        poly_intervals = self._adjust_to_true_intervals(tmp_poly_intervals)
-        self._poly_intervals = poly_intervals
+        tmp_poly_intervals = self._bkg_intervals
+        bkg_intervals = self._adjust_to_true_intervals(tmp_poly_intervals)
+        self._bkg_intervals = bkg_intervals
 
         # now lets get all the counts, exposure and midpoints for the
         # selection
@@ -348,7 +349,7 @@ class BinnedSpectrumSeries(TimeSeries):
         selected_exposure = []
         selected_midpoints = []
 
-        for selection in poly_intervals:
+        for selection in bkg_intervals:
 
             # get the mask of these bins
 
