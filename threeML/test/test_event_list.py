@@ -49,7 +49,7 @@ def test_event_list_constructor():
     with pytest.raises(AttributeError):
         evt_list.text_bins
 
-    assert evt_list.poly_intervals is None
+    assert evt_list.bkg_intervals is None
 
     with pytest.raises(AttributeError):
         evt_list.tmax_list
@@ -81,7 +81,7 @@ def test_unbinned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_polynomial_fit_interval(
+    evt_list.set_background_interval(
         "%f-%f" % (start + 1, stop - 1), unbinned=True
     )
 
@@ -113,7 +113,7 @@ def test_binned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_polynomial_fit_interval(
+    evt_list.set_background_interval(
         "%f-%f" % (start + 1, stop - 1), unbinned=False
     )
 

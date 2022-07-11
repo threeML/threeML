@@ -98,7 +98,7 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
         log.warning('Only one FT1 file provided. Skipping the merge...')
         import shutil
 
-        shutil.copyfile(ft1s[0], outfile)
+        os.rename(ft1s[0], outfile)
         return outfile
 
     _filelist = "_filelist.txt"
@@ -232,7 +232,7 @@ def download_LAT_data(
 
     if not destination_directory.exists():
 
-        destination_directory.mkdir()
+        destination_directory.mkdir(parents=True)
 
     # This will complete automatically the form available at
     # http://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi
@@ -574,3 +574,98 @@ def download_LAT_data(
         ),
         FT2
     )
+
+class LAT_dataset():
+
+    def __init__(self):
+        self.ft1=None
+        self.ft2=None
+        pass
+
+    def make_LAT_dataset(self,
+                         ra: float,
+                         dec: float,
+                         radius: float,
+                         trigger_time : float,
+                         tstart: float,
+                         tstop: float,
+                         data_type: str = "Photon",
+                         destination_directory: str = ".",
+                         Emin: float = 30.,
+                         Emax: float = 1000000.):
+
+        self.trigger_time = trigger_time
+        self.ra           = ra
+        self.dec          = dec
+        self.METstart     = tstart+trigger_time
+        self.METstop      = tstop+trigger_time
+        self.Emin         = Emin
+        self.Emax         = Emax
+
+        self.destination_directory = destination_directory
+
+
+        import datetime
+        from GtBurst.dataHandling import met2date,_makeDatasetsOutOfLATdata
+
+        metdate = 239241601
+
+        if tstart>metdate: assert("Start time must bge relative to triggertime")
+        if tstop>metdate:  assert("Stop time must bge relative to triggertime")
+
+        grb_name = met2date(trigger_time, opt='grbname')
+
+        destination_directory = os.path.join(destination_directory,'bn%s' % grb_name)
+
+        new_ft1 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft1', grb_name))
+
+        new_ft2 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft2', grb_name))
+
+        eboundsFilename = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.rsp" % ('cspec', grb_name))
+
+        if (not os.path.exists(new_ft1) or not os.path.exists(new_ft2) or not os.path.exists(eboundsFilename)) :
+            ft1,ft2 = download_LAT_data(
+                                        ra,
+                                        dec,
+                                        radius,
+                                        trigger_time + tstart,
+                                        trigger_time + tstop,
+                                        time_type='MET',
+                                        data_type=data_type,
+                                        destination_directory=destination_directory,
+                                        Emin=Emin,
+                                        Emax=Emax
+            )
+
+
+            os.rename(str(ft1), new_ft1 )
+
+            os.rename(str(ft2), new_ft2 )
+
+            _, eboundsFilename, _, cspecfile = _makeDatasetsOutOfLATdata(new_ft1, new_ft2,
+                                                                             grb_name,
+                                                                             tstart, tstop,
+                                                                             ra, dec,
+                                                                             trigger_time,
+                                                                             destination_directory,
+                                                                             cspecstart=tstart,
+                                                                             cspecstop=tstop)
+        self.grb_name = grb_name
+        self.ft1      = new_ft1
+        self.ft2      = new_ft2
+        self.rspfile     = eboundsFilename
+        pass
+
+
+    def extract_events(self,roi, zmax, irf, thetamax=180.0,strategy='time'):
+        from GtBurst import dataHandling
+        global lastDisplay
+
+        LATdata = dataHandling.LATData(self.ft1, self.rspfile, self.ft2)
+
+        self.filt_file, nEvents = LATdata.performStandardCut(self.ra, self.dec, roi, irf, self.METstart, self.METstop, self.Emin, self.Emax, zmax,
+                                                           thetamax,
+                                                           True, strategy=strategy.lower())
+        log.info('Extracted %s events' % nEvents)
+
+
