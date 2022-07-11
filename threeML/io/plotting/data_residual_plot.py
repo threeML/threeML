@@ -201,6 +201,11 @@ class ResidualPlot(object):
 
                 residual_yerr = np.ones_like(residuals)
 
+            idx = np.isinf(residuals)
+
+            residuals[idx] = 0.
+
+
             self._residual_axis.axhline(0, linestyle="--", color="k")
 
             self._residual_axis.errorbar(x, residuals, yerr=residual_yerr, **kwargs)
