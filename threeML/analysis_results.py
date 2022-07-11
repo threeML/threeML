@@ -29,8 +29,10 @@ from threeML.exceptions.custom_exceptions import BadCovariance
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile, fits
-from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
-                                   recursively_save_dict_contents_to_group)
+from threeML.io.hdf5_utils import (
+    recursively_load_dict_contents_from_group,
+    recursively_save_dict_contents_to_group,
+)
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
@@ -84,300 +86,6 @@ def _escape_back_yaml_from_fits(yaml_code):
     return yaml_code
 
 
-def load_analysis_results(fits_file: str):
-    """
-    Load the results of one or more analysis from a FITS file produced by 3ML
-
-    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
-    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
-    """
-
-    fits_file: Path = fits_file
-
-    with fits.open(fits_file) as f:
-
-        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
-
-        if n_results == 1:
-
-            log.debug(f"{fits_file} AR opened with 1 result")
-
-            return _load_one_results(f["ANALYSIS_RESULTS", 1])
-
-        else:
-
-            log.debug(f"{fits_file} AR opened with {n_results} results")
-
-            return _load_set_of_results(f, n_results)
-
-
-def load_analysis_results_hdf(hdf_file: str):
-    """
-    Load the results of one or more analysis from a FITS file produced by 3ML
-
-    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
-    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
-    """
-
-    hdf_file: Path = sanitize_filename(hdf_file)
-
-    with h5py.File(hdf_file, "r") as f:
-
-        n_results = f.attrs["n_results"]
-
-        if n_results == 1:
-
-            log.debug(f"{hdf_file} AR opened with {n_results} result")
-
-            return _load_one_results_hdf(f["AnalysisResults_0"])
-
-        else:
-
-            log.debug(f"{hdf_file} AR opened with {n_results} results")
-
-            return _load_set_of_results_hdf(f, n_results)
-
-
-def convert_fits_analysis_result_to_hdf(fits_result_file: str):
-
-    ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
-
-    new_file_name_base, _ = os.path.splitext(fits_result_file)
-
-    new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
-
-    ar.write_to(new_file_name, overwrite=True, as_hdf=True)
-
-    log.info(f"Converted {fits_result_file} to {new_file_name}")
-
-
-def _load_one_results(fits_extension):
-    # Gather analysis type
-    analysis_type = fits_extension.header.get("RESUTYPE")
-
-    # Gather the optimized model
-    serialized_model = _escape_back_yaml_from_fits(
-        fits_extension.header.get("MODEL"))
-    model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
-
-    optimized_model = ModelParser(model_dict=model_dict).get_model()
-
-    # Gather statistics values
-    statistic_values = collections.OrderedDict()
-
-    measure_values = collections.OrderedDict()
-
-    for key in list(fits_extension.header.keys()):
-
-        if key.find("STAT") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("STAT", ""))
-            value = float(fits_extension.header.get(key))
-            name = fits_extension.header.get("PN%i" % id)
-            statistic_values[name] = value
-
-        if key.find("MEAS") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("MEAS", ""))
-            name = fits_extension.header.get(key)
-            value = float(fits_extension.header.get("MV%i" % id))
-            measure_values[name] = value
-
-    if analysis_type == "MLE":
-
-        # Get covariance matrix
-
-        covariance_matrix = np.atleast_2d(
-            fits_extension.data.field("COVARIANCE").T)
-
-        # Instance and return
-
-        return MLEResults(
-            optimized_model,
-            covariance_matrix,
-            statistic_values,
-            statistical_measures=measure_values,
-        )
-
-    elif analysis_type == "Bayesian":
-
-        # Gather samples
-        samples = fits_extension.data.field("SAMPLES")
-
-        try:
-            # Gather log probability
-            log_probability = fits_extension.data.field("LOG_PROB")[0]
-
-        except:
-
-            log_probability = None
-
-            
-        # Instance and return
-
-        return BayesianResults(
-            optimized_model,
-            samples.T,
-            statistic_values,
-            statistical_measures=measure_values,
-            log_probabilty=log_probability
-        )
-
-
-def _load_one_results_hdf(hdf_obj):
-    # Gather analysis type
-    analysis_type = hdf_obj.attrs["RESUTYPE"]
-
-    # Gather the optimized model
-    model_dict = recursively_load_dict_contents_from_group(hdf_obj, "MODEL")
-
-    optimized_model = ModelParser(model_dict=model_dict).get_model()
-
-    # Gather statistics values
-    statistic_values = collections.OrderedDict()
-
-    measure_values = collections.OrderedDict()
-
-    for key in list(hdf_obj.attrs.keys()):
-
-        if key.find("STAT") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("STAT", ""))
-            value = float(hdf_obj.attrs[key])
-            name = hdf_obj.attrs["PN%i" % id]
-            statistic_values[name] = value
-
-        if key.find("MEAS") == 0:
-            # Found a keyword with a statistic for a plugin
-            # Gather info about it
-
-            id = int(key.replace("MEAS", ""))
-            name = hdf_obj.attrs[key]
-            value = float(hdf_obj.attrs["MV%i" % id])
-            measure_values[name] = value
-
-    if analysis_type == "MLE":
-
-        # Get covariance matrix
-
-        covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
-
-        # Instance and return
-
-        return MLEResults(
-            optimized_model,
-            covariance_matrix,
-            statistic_values,
-            statistical_measures=measure_values,
-        )
-
-    elif analysis_type == "Bayesian":
-
-        # Gather samples
-        samples = hdf_obj["SAMPLES"][()]
-
-        try:
-            # Gather log probabiltiy
-            log_probability = hdf_obj["LOG_PROB"][()]
-            
-        except:
-
-            log_probability = None
-            
-        # Instance and return
-
-        return BayesianResults(
-            optimized_model,
-            samples.T,
-            statistic_values,
-            statistical_measures=measure_values,
-            log_probabilty=log_probability
-        )
-
-
-def _load_set_of_results_hdf(hdf_obj, n_results):
-    # Gather all results
-    all_results = []
-
-    for i in range(n_results):
-
-        grp = hdf_obj["AnalysisResults_%d" % i]
-
-        all_results.append(_load_one_results_hdf(grp))
-
-    this_set = AnalysisResultsSet(all_results)
-
-    # Now gather the SEQUENCE extension and set the characterization frame accordingly
-
-    seq_type = hdf_obj.attrs["SEQ_TYPE"]
-
-    # Build the data tuple
-    seq_grp = hdf_obj["SEQUENCE"]
-
-    data_list = []
-
-    for name, grp in seq_grp.items():
-
-        if grp.attrs["UNIT"] == "NONE_TYPE":
-
-            this_tuple = (name, grp["DATA"][()])
-
-        else:
-
-            this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
-
-        data_list.append(this_tuple)
-
-    this_set.characterize_sequence(seq_type, tuple(data_list))
-
-    return this_set
-
-
-def _load_set_of_results(open_fits_file, n_results):
-    # Gather all results
-    all_results = []
-
-    for i in range(n_results):
-        all_results.append(
-            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
-
-    this_set = AnalysisResultsSet(all_results)
-
-    # Now gather the SEQUENCE extension and set the characterization frame accordingly
-
-    sequence_ext = open_fits_file["SEQUENCE"]
-
-    seq_type = sequence_ext.header.get("SEQ_TYPE")
-
-    # Build the data tuple
-    record = sequence_ext.data
-
-    data_list = []
-
-    for column in record.columns:
-
-        if column.unit is None:
-
-            this_tuple = (column.name, record[column.name])
-
-        else:
-
-            this_tuple = (column.name,
-                          record[column.name] * u.Unit(column.unit))
-
-        data_list.append(this_tuple)
-
-    this_set.characterize_sequence(seq_type, tuple(data_list))
-
-    return this_set
-
-
 class SEQUENCE(FITSExtension):
     """
     Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis
@@ -425,8 +133,8 @@ class ANALYSIS_RESULTS_HDF(object):
             # Check that the covariance matrix has the right shape
 
             if not covariance_matrix.shape == (
-                    n_parameters,
-                    n_parameters,
+                n_parameters,
+                n_parameters,
             ):
 
                 log.error(
@@ -436,18 +144,17 @@ class ANALYSIS_RESULTS_HDF(object):
                         n_parameters,
                         covariance_matrix.shape[0],
                         covariance_matrix.shape[1],
-                    ))
+                    )
+                )
 
                 raise RuntimeError()
 
             # Empty samples set
             samples = np.zeros(n_parameters)
 
-
             # Empty log prob set
             log_probability = np.zeros(n_parameters)
 
-            
         else:
 
             if not isinstance(analysis_results, BayesianResults):
@@ -466,7 +173,7 @@ class ANALYSIS_RESULTS_HDF(object):
             # Gather log probabilty
 
             log_probability = analysis_results._log_probability
-            
+
         # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
         # save the model to recursive dictionaries
@@ -477,15 +184,17 @@ class ANALYSIS_RESULTS_HDF(object):
         hdf_obj.attrs["RESUTYPE"] = analysis_results.analysis_type
 
         recursively_save_dict_contents_to_group(
-            hdf_obj, "MODEL", optimized_model.to_dict_with_types())
+            hdf_obj, "MODEL", optimized_model.to_dict_with_types()
+        )
         # Get data frame with parameters (always use equal tail errors)
 
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
         hdf_obj.create_dataset(
             "NAME",
-            data=np.array(list(free_parameters.keys()),
-                          dtype=h5py.string_dtype()),
+            data=np.array(
+                list(free_parameters.keys()), dtype=h5py.string_dtype()
+            ),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
@@ -559,22 +268,27 @@ class ANALYSIS_RESULTS_HDF(object):
                 shuffle=True,
             )
 
-            
         else:
 
             raise RuntimeError("This AR is invalid!")
 
         # Now add two keywords for each instrument
-        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
+        stat_series = (
+            analysis_results.optimal_statistic_values
+        )  # type: pd.Series
 
-        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
+        for i, (plugin_instance_name, stat_value) in enumerate(
+            stat_series.items()
+        ):
 
             hdf_obj.attrs["STAT%i" % i] = stat_value
             hdf_obj.attrs["PN%i" % i] = plugin_instance_name
 
         # Now add the statistical measures
 
-        measure_series = analysis_results.statistical_measures  # type: pd.Series
+        measure_series = (
+            analysis_results.statistical_measures
+        )  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
             hdf_obj.attrs["MEAS%i" % i] = measure
@@ -620,7 +334,7 @@ class ANALYSIS_RESULTS(FITSExtension):
 
             # empty array
             dummy = np.zeros(n_parameters)
-            
+
             # Check that the covariance matrix has the right shape
 
             if not covariance_matrix.shape == (
@@ -628,12 +342,15 @@ class ANALYSIS_RESULTS(FITSExtension):
                 n_parameters,
             ):
 
-                log.error("Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
-                n_parameters,
-                n_parameters,
-                covariance_matrix.shape[0],
-                covariance_matrix.shape[1],
-            ))
+                log.error(
+                    "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
+                    % (
+                        n_parameters,
+                        n_parameters,
+                        covariance_matrix.shape[0],
+                        covariance_matrix.shape[1],
+                    )
+                )
 
                 raise RuntimeError()
 
@@ -647,7 +364,7 @@ class ANALYSIS_RESULTS(FITSExtension):
                 log.error("This is not a BayesianResults")
 
                 raise RuntimeError()
-                
+
             # Empty covariance matrix
 
             covariance_matrix = np.zeros(n_parameters)
@@ -661,25 +378,25 @@ class ANALYSIS_RESULTS(FITSExtension):
             log_probability = analysis_results.log_probability
 
             dummy = np.zeros(samples.shape)
-            
-            dummy[0] = log_probability
-            
 
-            
+            dummy[0] = log_probability
+
         # Serialize the model so it can be placed in the header
         yaml_model_serialization = my_yaml.dump(
-            optimized_model.to_dict_with_types())
+            optimized_model.to_dict_with_types()
+        )
 
         # Replace characters which cannot be contained in a FITS header with other characters
         yaml_model_serialization = _escape_yaml_for_fits(
-            yaml_model_serialization)
+            yaml_model_serialization
+        )
 
         # Get data frame with parameters (always use equal tail errors)
 
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
         # Prepare columns
-        
+
         data_tuple = [
             ("NAME", list(free_parameters.keys())),
             ("VALUE", data_frame["value"].values),
@@ -689,37 +406,48 @@ class ANALYSIS_RESULTS(FITSExtension):
             ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
             ("COVARIANCE", covariance_matrix),
             ("LOG_PROB", dummy),
-            ("SAMPLES", samples)
-            
+            ("SAMPLES", samples),
         ]
 
         # Init FITS extension
 
         super(ANALYSIS_RESULTS, self).__init__(
-            data_tuple, self._HEADER_KEYWORDS)
+            data_tuple, self._HEADER_KEYWORDS
+        )
 
         # Update keywords with their values for this instance
         self.hdu.header.set("MODEL", yaml_model_serialization)
         self.hdu.header.set("RESUTYPE", analysis_results.analysis_type)
 
         # Now add two keywords for each instrument
-        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
+        stat_series = (
+            analysis_results.optimal_statistic_values
+        )  # type: pd.Series
 
-        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
+        for i, (plugin_instance_name, stat_value) in enumerate(
+            stat_series.items()
+        ):
             self.hdu.header.set(
-                "STAT%i" % i, stat_value, comment="Stat. value for plugin %i" % i
+                "STAT%i" % i,
+                stat_value,
+                comment="Stat. value for plugin %i" % i,
             )
             self.hdu.header.set(
-                "PN%i" % i, plugin_instance_name, comment="Name of plugin %i" % i
+                "PN%i" % i,
+                plugin_instance_name,
+                comment="Name of plugin %i" % i,
             )
 
         # Now add the statistical measures
 
-        measure_series = analysis_results.statistical_measures  # type: pd.Series
+        measure_series = (
+            analysis_results.statistical_measures
+        )  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
-            self.hdu.header.set("MEAS%i" % i, measure,
-                                comment="Measure type %i" % i)
+            self.hdu.header.set(
+                "MEAS%i" % i, measure, comment="Measure type %i" % i
+            )
             self.hdu.header.set(
                 "MV%i" % i, measure_value, comment="Measure value %i" % i
             )
@@ -746,7 +474,8 @@ class AnalysisResultsFITS(FITSFile):
 
             # Make SEQUENCE extension
             sequence_ext = SEQUENCE(
-                kwargs["sequence_name"], kwargs["sequence_tuple"])
+                kwargs["sequence_name"], kwargs["sequence_tuple"]
+            )
 
             extensions.append(sequence_ext)
 
@@ -765,7 +494,8 @@ class AnalysisResultsFITS(FITSFile):
 
         # Set a couple of keywords in the primary header
         self._hdu_list[0].header.set(
-            "DATE", datetime.datetime.now().isoformat())
+            "DATE", datetime.datetime.now().isoformat()
+        )
         self._hdu_list[0].header.set(
             "ORIGIN",
             "3ML",
@@ -802,7 +532,7 @@ class _AnalysisResults(object):
         # Safety checks
 
         self._n_free_parameters = len(optimized_model.free_parameters)
-        
+
         assert samples.shape[1] == self._n_free_parameters, (
             "Number of free parameters (%s) and set of samples (%s) "
             "do not agree." % (samples.shape[1], self._n_free_parameters)
@@ -831,7 +561,8 @@ class _AnalysisResults(object):
 
         # Gather also the optimized values of the parameters
         self._values = np.array(
-            [x.value for x in list(self._free_parameters.values())])
+            [x.value for x in list(self._free_parameters.values())]
+        )
 
         # Set the analysis type
         self._analysis_type = analysis_type
@@ -851,7 +582,9 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(self, filename: str, overwrite: bool = False, as_hdf: bool = False):
+    def write_to(
+        self, filename: str, overwrite: bool = False, as_hdf: bool = False
+    ):
         """
         Write results to a FITS or HDF5 file
 
@@ -933,7 +666,8 @@ class _AnalysisResults(object):
         # in the calling sequence (the **kwargs dictionary)
         # (they will be excluded from the vectorization)
         to_be_excluded = [
-            item for item in arguments if item not in list(kwargs.keys())]
+            item for item in arguments if item not in list(kwargs.keys())
+        ]
 
         # Vectorize the function
         vectorized = np.vectorize(function, excluded=to_be_excluded)
@@ -944,7 +678,8 @@ class _AnalysisResults(object):
 
         # Finally make so that the result is always a RandomVariate
         wrapper2 = lambda *args, **kwargs: RandomVariates(
-            wrapper(*args, **kwargs))
+            wrapper(*args, **kwargs)
+        )
 
         return wrapper2
 
@@ -1075,7 +810,8 @@ class _AnalysisResults(object):
         else:
 
             raise ValueError(
-                "error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type
+                "error_type must be either 'equal tail' or 'hpd'. Got %s"
+                % error_type
             )
 
         # Build the data frame
@@ -1110,7 +846,8 @@ class _AnalysisResults(object):
                 if this_par.has_transformation():
 
                     best_fit_internal = this_par.transformation.forward(
-                        values[-1])
+                        values[-1]
+                    )
 
                     _, neg_error = this_par.internal_to_external_delta(
                         best_fit_internal, -std_dev
@@ -1128,7 +865,11 @@ class _AnalysisResults(object):
                     positive_errors.append(std_dev)
 
         results_table = ResultsTable(
-            parameter_paths, values, negative_errors, positive_errors, units_dict
+            parameter_paths,
+            values,
+            negative_errors,
+            positive_errors,
+            units_dict,
         )
 
         return results_table
@@ -1166,7 +907,7 @@ class _AnalysisResults(object):
         components_to_use=(),
         sum_sources=False,
         include_extended=False,
-        verbose=False
+        verbose=False,
     ):
         """
 
@@ -1275,15 +1016,24 @@ class BayesianResults(_AnalysisResults):
     """
 
     def __init__(
-            self, optimized_model, samples, posterior_values, statistical_measures, log_probabilty
+        self,
+        optimized_model,
+        samples,
+        posterior_values,
+        statistical_measures,
+        log_probabilty,
     ):
 
         super(BayesianResults, self).__init__(
-            optimized_model, samples, posterior_values, "Bayesian", statistical_measures
+            optimized_model,
+            samples,
+            posterior_values,
+            "Bayesian",
+            statistical_measures,
         )
 
         self._log_probability = log_probabilty
-        
+
     def get_correlation_matrix(self):
         """
         Estimate the covariance matrix from the samples
@@ -1301,7 +1051,9 @@ class BayesianResults(_AnalysisResults):
 
         return self._get_statistic_frame(name="-log(posterior)")
 
-    def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
+    def display(
+        self, display_correlation=False, error_type="equal tail", cl=0.68
+    ):
 
         best_fit_table = self._get_results_table(error_type, cl)
 
@@ -1328,14 +1080,19 @@ class BayesianResults(_AnalysisResults):
 
         display(self.get_statistic_measure_frame())
 
-    def corner_plot(self, renamed_parameters : Optional[Dict] = None, components : Optional[List] = None, **kwargs):
+    def corner_plot(
+        self,
+        renamed_parameters: Optional[Dict] = None,
+        components: Optional[List] = None,
+        **kwargs,
+    ):
         """
         Produce the corner plot showing the marginal distributions in one and two directions.
 
         :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}, where 'old label' is the full path of the parameter
-        :param components: a python list of parameter paths to use in the corner plot 
+        :param components: a python list of parameter paths to use in the corner plot
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
@@ -1344,26 +1101,35 @@ class BayesianResults(_AnalysisResults):
             assert (
                 len(list(self._free_parameters.keys()))
                 == self._samples_transposed.T[0].shape[0]
-            ), ("Mismatch between sample" " dimensions and number of free" " parameters")
-            
-            components  = self._free_parameters.keys()
+            ), (
+                "Mismatch between sample"
+                " dimensions and number of free"
+                " parameters"
+            )
+
+            components = self._free_parameters.keys()
             samples = self._samples_transposed.T
         else:
-            assert len(components) >= 2, 'Must have at least two parameters to compare contours'
+            assert (
+                len(components) >= 2
+            ), "Must have at least two parameters to compare contours"
             samples = []
             for name in components:
                 try:
                     # Get appropriate sample column from given name
                     samples.append(
-                            self._samples_transposed[
-                                list(self._free_parameters.keys()).index(name)
-                                ])
+                        self._samples_transposed[
+                            list(self._free_parameters.keys()).index(name)
+                        ]
+                    )
                 except ValueError:
-                    raise ValueError('Parameter %s must be a free parameter'%name)
+                    raise ValueError(
+                        "Parameter %s must be a free parameter" % name
+                    )
             samples = np.array(samples).T
 
         labels = []
-        #priors = []
+        # priors = []
 
         for i, parameter_name in enumerate(components):
 
@@ -1375,35 +1141,46 @@ class BayesianResults(_AnalysisResults):
 
             if renamed_parameters is not None:
 
-                # Hopefully this doesn't break backward compatibility -- 
+                # Hopefully this doesn't break backward compatibility --
                 # parameter.path == keys in _free_parameters
                 if parameter_name in renamed_parameters:
 
                     labels[-1] = renamed_parameters[parameter_name]
 
-            #priors.append(
+            # priors.append(
             #    self._optimized_model.parameters[parameter_name].prior)
 
         corner_style = threeML_config.bayesian.corner_style
-            
+
         cmap = plt.get_cmap(corner_style.cmap.value)
 
-        cmap.with_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
-        cmap.set_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
-        
+        try:
+            cmap.with_extremes(
+                under=corner_style.extremes,
+                over=corner_style.extremes,
+               bad=corner_style.extremes,
+            )
+            cmap.set_extremes(
+               under=corner_style.extremes,
+               over=corner_style.extremes,
+                bad=corner_style.extremes,
+            )
+        except:
+            pass
+
         contourf_kwargs = dict(corner_style.contourf_kwargs)
         contourf_kwargs["cmap"] = cmap
-                            
+
         # default arguments
         default_args = {
             "show_titles": corner_style.show_titles,
             "title_fmt": corner_style.title_fmt,
             "labels": labels,
-            "bins":corner_style.bins,
+            "bins": corner_style.bins,
             "quantiles": corner_style.quantiles,
             "fill_contours": corner_style.fill_contours,
             "contourf_kwargs": contourf_kwargs,
-            "levels": corner_style.levels
+            "levels": corner_style.levels,
         }
 
         # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
@@ -1420,12 +1197,14 @@ class BayesianResults(_AnalysisResults):
         """
         The log probability values
 
-        :returns: 
+        :returns:
 
         """
         return self._log_probability
-    
-    def corner_plot_cc(self, parameters=None, renamed_parameters=None, **cc_kwargs):
+
+    def corner_plot_cc(
+        self, parameters=None, renamed_parameters=None, **cc_kwargs
+    ):
         """
         Corner plots using chainconsumer which allows for nicer plotting of
         marginals
@@ -1462,13 +1241,16 @@ class BayesianResults(_AnalysisResults):
         labels = []
         priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            self._free_parameters.items()
+        ):
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
 
             priors.append(
-                self._optimized_model.parameters[parameter_name].prior)
+                self._optimized_model.parameters[parameter_name].prior
+            )
 
         # Rename the parameters if needed.
 
@@ -1495,8 +1277,8 @@ class BayesianResults(_AnalysisResults):
 
         cc.add_chain(self._samples_transposed.T, parameters=labels)
 
-        #if not cc_kwargs:
-        #    cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
+        if not cc_kwargs:
+            cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
 
         cc.configure(**cc_kwargs)
         fig = cc.plotter.plot(parameters=parameters, **_default_plot_args)
@@ -1553,7 +1335,10 @@ class BayesianResults(_AnalysisResults):
 
             assert (
                 len(names) == len(other_fits) + 1
-            ), "you have %d chains but %d names" % (len(other_fits) + 1, len(names))
+            ), "you have %d chains but %d names" % (
+                len(other_fits) + 1,
+                len(names),
+            )
 
         else:
 
@@ -1616,7 +1401,9 @@ class BayesianResults(_AnalysisResults):
             if names is not None:
 
                 cc.add_chain(
-                    other_fit.samples.T, parameters=labels_other, name=names[j + 1]
+                    other_fit.samples.T,
+                    parameters=labels_other,
+                    name=names[j + 1],
                 )
 
             else:
@@ -1626,7 +1413,9 @@ class BayesianResults(_AnalysisResults):
         labels = []
         # priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            self._free_parameters.items()
+        ):
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
@@ -1654,8 +1443,9 @@ class BayesianResults(_AnalysisResults):
 
         if names is not None:
 
-            cc.add_chain(self._samples_transposed.T,
-                         parameters=labels, name=names[0])
+            cc.add_chain(
+                self._samples_transposed.T, parameters=labels, name=names[0]
+            )
 
         else:
 
@@ -1765,7 +1555,8 @@ class BayesianResults(_AnalysisResults):
 
             for i in range(n_subsets):
                 samples = np.random.choice(
-                    this_samples, n_samples_in_each_subset)
+                    this_samples, n_samples_in_each_subset
+                )
 
                 this_bootstrap_averages.append(np.average(samples))
                 this_bootstrap_variances.append(np.std(samples))
@@ -1781,7 +1572,8 @@ class BayesianResults(_AnalysisResults):
 
             subplot.hist(data, nbins, label=label)
 
-            subplot.locator_params(nbins=4)
+        # if not cc_kwargs:
+        #    cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
 
         figures = []
 
@@ -1791,9 +1583,11 @@ class BayesianResults(_AnalysisResults):
             fig.suptitle(parameter_name)
 
             plot_one_histogram(
-                subs[0], averages[parameter_name], "sliding window")
+                subs[0], averages[parameter_name], "sliding window"
+            )
             plot_one_histogram(
-                subs[0], bootstrap_averages[parameter_name], "bootstrap")
+                subs[0], bootstrap_averages[parameter_name], "bootstrap"
+            )
 
             subs[0].set_ylabel("N subsets")
             subs[0].set_xlabel("Average")
@@ -1801,7 +1595,8 @@ class BayesianResults(_AnalysisResults):
             subs[0].legend()
 
             plot_one_histogram(
-                subs[1], variances[parameter_name], "sliding window")
+                subs[1], variances[parameter_name], "sliding window"
+            )
             plot_one_histogram(
                 subs[1], bootstrap_variances[parameter_name], "bootstrap"
             )
@@ -1858,18 +1653,20 @@ class BayesianResults(_AnalysisResults):
         """
 
         new_model = astromodels.clone_model(self._optimized_model)
-        
-        
+
         if self._log_probability is None:
 
-            log.error("this is an older analysis results file and does not contain the log probability")
+            log.error(
+                "this is an older analysis results file and does not contain the log probability"
+            )
 
             raise RuntimeError()
-        
-        
+
         idx = self._log_probability.argmax()
 
-        for i, (parameter_name, parameter) in enumerate(new_model.free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            new_model.free_parameters.items()
+        ):
 
             par = self._samples_transposed[i, idx]
 
@@ -1878,8 +1675,6 @@ class BayesianResults(_AnalysisResults):
         return new_model
 
 
-
-    
 class MLEResults(_AnalysisResults):
     """
     Build the _AnalysisResults object starting from a covariance matrix.
@@ -1929,12 +1724,11 @@ class MLEResults(_AnalysisResults):
                 expected_shape,
             )
 
-            if not np.all(
-                np.isfinite(covariance_matrix)
-            ):
+            if not np.all(np.isfinite(covariance_matrix)):
 
                 log.error(
-                    "Covariance matrix contains Nan or inf. Cannot continue.")
+                    "Covariance matrix contains Nan or inf. Cannot continue."
+                )
 
                 raise BadCovariance()
 
@@ -2005,13 +1799,16 @@ class MLEResults(_AnalysisResults):
 
             if parameter.has_transformation():
 
-                samples[:, i] = parameter.transformation.backward(
-                    samples[:, i])
+                samples[:, i] = parameter.transformation.backward(samples[:, i])
 
         # Finally build the class
 
         super(MLEResults, self).__init__(
-            optimized_model, samples, likelihood_values, "MLE", statistical_measures
+            optimized_model,
+            samples,
+            likelihood_values,
+            "MLE",
+            statistical_measures,
         )
 
         # Store the covariance matrix
@@ -2103,7 +1900,9 @@ class AnalysisResultsSet(collections.Sequence):
         :return:
         """
 
-        assert len(x) == len(self), "Wrong number of bounds (%i, should be %i)" % (
+        assert len(x) == len(
+            self
+        ), "Wrong number of bounds (%i, should be %i)" % (
             len(x),
             len(self),
         )
@@ -2139,7 +1938,10 @@ class AnalysisResultsSet(collections.Sequence):
 
         assert len(upper_bounds) == len(
             self
-        ), "Wrong number of bounds (%i, should be %i)" % (len(upper_bounds), len(self))
+        ), "Wrong number of bounds (%i, should be %i)" % (
+            len(upper_bounds),
+            len(self),
+        )
 
         if unit is not None:
 
@@ -2152,8 +1954,10 @@ class AnalysisResultsSet(collections.Sequence):
 
         else:
 
-            data_tuple = (("LOWER_BOUND", lower_bounds),
-                          ("UPPER_BOUND", upper_bounds))
+            data_tuple = (
+                ("LOWER_BOUND", lower_bounds),
+                ("UPPER_BOUND", upper_bounds),
+            )
 
         self.characterize_sequence(name, data_tuple)
 
@@ -2239,3 +2043,301 @@ class AnalysisResultsSet(collections.Sequence):
                     grp = f.create_group("AnalysisResults_%d" % i)
 
                     ANALYSIS_RESULTS_HDF(ar, grp)
+
+
+def load_analysis_results(fits_file: str) -> _AnalysisResults:
+    """
+    Load the results of one or more analysis from a FITS file produced by 3ML
+
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    """
+
+    fits_file: Path = fits_file
+
+    with fits.open(fits_file) as f:
+
+        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
+
+        if n_results == 1:
+
+            log.debug(f"{fits_file} AR opened with 1 result")
+
+            return _load_one_results(f["ANALYSIS_RESULTS", 1])
+
+        else:
+
+            log.debug(f"{fits_file} AR opened with {n_results} results")
+
+            return _load_set_of_results(f, n_results)
+
+
+def load_analysis_results_hdf(hdf_file: str) -> _AnalysisResults:
+    """
+    Load the results of one or more analysis from a FITS file produced by 3ML
+
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    """
+
+    hdf_file: Path = sanitize_filename(hdf_file)
+
+    with h5py.File(hdf_file, "r") as f:
+
+        n_results = f.attrs["n_results"]
+
+        if n_results == 1:
+
+            log.debug(f"{hdf_file} AR opened with {n_results} result")
+
+            return _load_one_results_hdf(f["AnalysisResults_0"])
+
+        else:
+
+            log.debug(f"{hdf_file} AR opened with {n_results} results")
+
+            return _load_set_of_results_hdf(f, n_results)
+
+
+def convert_fits_analysis_result_to_hdf(fits_result_file: str):
+
+    ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
+
+    new_file_name_base, _ = os.path.splitext(fits_result_file)
+
+    new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
+
+    ar.write_to(new_file_name, overwrite=True, as_hdf=True)
+
+    log.info(f"Converted {fits_result_file} to {new_file_name}")
+
+
+def _load_one_results(fits_extension):
+    # Gather analysis type
+    analysis_type = fits_extension.header.get("RESUTYPE")
+
+    # Gather the optimized model
+    serialized_model = _escape_back_yaml_from_fits(
+        fits_extension.header.get("MODEL")
+    )
+    model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
+
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
+
+    measure_values = collections.OrderedDict()
+
+    for key in list(fits_extension.header.keys()):
+
+        if key.find("STAT") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT", ""))
+            value = float(fits_extension.header.get(key))
+            name = fits_extension.header.get("PN%i" % id)
+            statistic_values[name] = value
+
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = fits_extension.header.get(key)
+            value = float(fits_extension.header.get("MV%i" % id))
+            measure_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = np.atleast_2d(
+            fits_extension.data.field("COVARIANCE").T
+        )
+
+        # Instance and return
+
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = fits_extension.data.field("SAMPLES")
+
+        try:
+            # Gather log probability
+            log_probability = fits_extension.data.field("LOG_PROB")[0]
+
+        except:
+
+            log_probability = None
+
+        # Instance and return
+
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+            log_probabilty=log_probability,
+        )
+
+
+def _load_one_results_hdf(hdf_obj):
+    # Gather analysis type
+    analysis_type = hdf_obj.attrs["RESUTYPE"]
+
+    # Gather the optimized model
+    model_dict = recursively_load_dict_contents_from_group(hdf_obj, "MODEL")
+
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
+
+    measure_values = collections.OrderedDict()
+
+    for key in list(hdf_obj.attrs.keys()):
+
+        if key.find("STAT") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT", ""))
+            value = float(hdf_obj.attrs[key])
+            name = hdf_obj.attrs["PN%i" % id]
+            statistic_values[name] = value
+
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = hdf_obj.attrs[key]
+            value = float(hdf_obj.attrs["MV%i" % id])
+            measure_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
+
+        # Instance and return
+
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = hdf_obj["SAMPLES"][()]
+
+        try:
+            # Gather log probabiltiy
+            log_probability = hdf_obj["LOG_PROB"][()]
+
+        except:
+
+            log_probability = None
+
+        # Instance and return
+
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+            log_probabilty=log_probability,
+        )
+
+
+def _load_set_of_results_hdf(hdf_obj, n_results):
+    # Gather all results
+    all_results = []
+
+    for i in range(n_results):
+
+        grp = hdf_obj["AnalysisResults_%d" % i]
+
+        all_results.append(_load_one_results_hdf(grp))
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    seq_type = hdf_obj.attrs["SEQ_TYPE"]
+
+    # Build the data tuple
+    seq_grp = hdf_obj["SEQUENCE"]
+
+    data_list = []
+
+    for name, grp in seq_grp.items():
+
+        if grp.attrs["UNIT"] == "NONE_TYPE":
+
+            this_tuple = (name, grp["DATA"][()])
+
+        else:
+
+            this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set
+
+
+def _load_set_of_results(open_fits_file, n_results):
+    # Gather all results
+    all_results = []
+
+    for i in range(n_results):
+        all_results.append(
+            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1])
+        )
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    sequence_ext = open_fits_file["SEQUENCE"]
+
+    seq_type = sequence_ext.header.get("SEQ_TYPE")
+
+    # Build the data tuple
+    record = sequence_ext.data
+
+    data_list = []
+
+    for column in record.columns:
+
+        if column.unit is None:
+
+            this_tuple = (column.name, record[column.name])
+
+        else:
+
+            this_tuple = (
+                column.name,
+                record[column.name] * u.Unit(column.unit),
+            )
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set

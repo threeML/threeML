@@ -1,27 +1,20 @@
 from __future__ import division
 
-# Leave these imports here, even though they look not used in the module, as they are used in the tutorial
-
-from builtins import zip
-from builtins import map
-from builtins import range
-from past.utils import old_div
-from threeML.minimizer.grid_minimizer import GridMinimizer
-
-# from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
-from threeML.minimizer.minuit_minimizer import MinuitMinimizer
-from threeML.minimizer.grid_minimizer import GridMinimizer
-
-from astromodels import Gaussian, Function1D, FunctionMeta, Model, PointSource
-from threeML.plugin_prototype import PluginPrototype
-from threeML.data_list import DataList
-from threeML.classicMLE.joint_likelihood import JointLikelihood
-
-from astromodels import use_astromodels_memoization
+from builtins import map, range, zip
 
 import matplotlib.pyplot as plt
 import numpy as np
-from future.utils import with_metaclass
+from astromodels import (Function1D, FunctionMeta, Gaussian, Model,
+                         PointSource, use_astromodels_memoization)
+from past.utils import old_div
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.data_list import DataList
+from threeML.minimizer.grid_minimizer import GridMinimizer
+# from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
+from threeML.minimizer.minuit_minimizer import MinuitMinimizer
+from threeML.plugin_prototype import PluginPrototype
+
+# Leave these imports here, even though they look not used in the module, as they are used in the tutorial
 
 
 # You don't need to do this in a normal 3ML analysis
@@ -210,7 +203,7 @@ class CustomLikelihoodLike(PluginPrototype):
         return 1
 
 
-class Simple(with_metaclass(FunctionMeta, Function1D)):
+class Simple(Function1D, metaclass=FunctionMeta):
     """
     description :
 

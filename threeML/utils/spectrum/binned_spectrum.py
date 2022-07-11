@@ -1,18 +1,13 @@
-from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-from builtins import object
+from typing import Any, Dict, List, Optional, Union
+
 import numpy as np
 import pandas as pd
 
-from typing import Union, List, Dict, Any, Optional
-
-from threeML.utils.OGIP.response import InstrumentResponse
+from threeML.io.logging import setup_logger
 from threeML.utils.histogram import Histogram
 from threeML.utils.interval import Interval, IntervalSet
+from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
-from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 
@@ -101,11 +96,22 @@ class Quality(object):
         return self._bad
 
     @property
-    def n_elements(self):
+    def n_elements(self) -> int:
         return len(self._quality)
 
     @classmethod
     def from_ogip(cls, ogip_quality):
+        """
+        Read in quality from an OGIP file
+
+        :param cls: 
+        :type cls: 
+        :param ogip_quality: 
+        :type ogip_quality: 
+        :returns: 
+
+        """
+        
         ogip_quality = np.atleast_1d(ogip_quality)
         good = ogip_quality == 0
         warn = ogip_quality == 2
@@ -161,7 +167,7 @@ class BinnedSpectrum(Histogram):
         ebounds: Union[np.ndarray, ChannelSet],
         count_errors: Optional[np.ndarray] = None,
         sys_errors: Optional[np.ndarray] = None,
-        quality=None,
+        quality: Optional[Quality] =None,
         scale_factor: float = 1.0,
         is_poisson: bool = False,
         mission: Optional[str] = None,
@@ -236,11 +242,11 @@ class BinnedSpectrum(Histogram):
 
             if not isinstance(quality, Quality):
 
-                log.error("quality is not of typoe Quality")
+                log.error("quality is not of type Quality")
 
                 raise RuntimeError()
 
-            self._quality: Optional[Quality] = quality
+            self._quality: Quality = quality
 
         else:
 
@@ -599,20 +605,19 @@ class BinnedSpectrum(Histogram):
             is_poisson = False
 
         return cls(
-            instrument=pha_information["instrument"],
-            mission=pha_information["telescope"],
-            tstart=pha_information["tstart"],
-            tstop=pha_information["tstart"] + pha_information["telapse"],
-            #telapse=pha_information["telapse"],
-            # channel=pha_information['channel'],
-            counts=pha_information["counts"],
-            count_errors=pha_information["counts error"],
-            quality=pha_information["quality"],
-            #grouping=pha_information["grouping"],
-            exposure=pha_information["exposure"],
-            #backscale=1.0,
+            instrument=pha_information.instrument,
+            mission=pha_information.telescope,
+            tstart=pha_information.tstart,
+            tstop=pha_information.start + pha_information.telapse,
+            #telapse=pha_information["telapse,
+            # channel=pha_information.channel,
+            counts=pha_information.counts,
+            count_errors=pha_information.counts_error,
+            quality=pha_information.quality,
+            #grouping=pha_information.grouping,
+            exposure=pha_information.exposure,
             is_poisson=is_poisson,
-            ebounds=pha_information["edges"])
+            ebounds=pha_information.edges)
 
     def __add__(self, other):
         assert self == other, "The bins are not equal"
@@ -836,16 +841,16 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
             is_poisson = False
 
         return cls(
-            instrument=pha_information["instrument"],
-            mission=pha_information["telescope"],
-            tstart=pha_information["tstart"],
-            tstop=pha_information["tstart"] + pha_information["telapse"],
+            instrument=pha_information.instrument,
+            mission=pha_information.telescope,
+            tstart=pha_information.tstart,
+            tstop=pha_information.tstart + pha_information.telapse,
             # channel=pha_information['channel'],
-            counts=pha_information["counts"],
-            count_errors=pha_information["counts error"],
-            quality=pha_information["quality"],
-            # grouping=pha_information['grouping'],
-            exposure=pha_information["exposure"],
+            counts=pha_information.counts,
+            count_errors=pha_information.counts_error,
+            quality=pha_information.quality,
+            # grouping=pha_information.grouping,
+            exposure=pha_information.exposure,
             response=response,
             scale_factor=1.0,
             is_poisson=is_poisson,

@@ -1,10 +1,9 @@
 from __future__ import division
 
-import math
 import re
 from builtins import map, str
 
-import numpy as np
+import numpy
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
@@ -16,39 +15,9 @@ from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
 from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
+from .catalog_utils import _gbm_and_lle_valid_source_check
 
 log = setup_logger(__name__)
-
-_trigger_name_match = re.compile("^GRB\d{9}$")
-_3FGL_name_match = re.compile("^3FGL J\d{4}.\d(\+|-)\d{4}\D?$")
-
-
-def _gbm_and_lle_valid_source_check(source):
-    """
-    checks if source name is valid for both GBM and LLE data
-
-    :param source: source name
-    :return: bool
-    """
-
-    warn_string = (
-        "The trigger %s is not valid. Must be in the form GRB080916009" % source
-    )
-
-    match = _trigger_name_match.match(source)
-
-    if match is None:
-
-        log.warning(warn_string)
-
-        answer = False
-
-    else:
-
-        answer = True
-
-    return answer
-
 
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
@@ -67,7 +36,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             "Fermi-LAT/GBM burst catalog",
         )
 
-        self._gbm_detector_lookup = np.array(
+        self._gbm_detector_lookup = numpy.array(
             [
                 "n0",
                 "n1",
@@ -130,7 +99,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = np.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
+            idx = numpy.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
             # get the location
@@ -487,11 +456,10 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         return model, sbpl
 
 
-######
 class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
-        The Fermi-GBM trigger catalog. 
+        The Fermi-GBM trigger catalog.
 
         :param update: force update the XML VO table
         """
@@ -530,384 +498,3 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
 
         return _gbm_and_lle_valid_source_check(source)
 
-
-
-    
-#########
-
-threefgl_types = {
-    "agn": "other non-blazar active galaxy",
-    "bcu": "active galaxy of uncertain type",
-    "bin": "binary",
-    "bll": "BL Lac type of blazar",
-    "css": "compact steep spectrum quasar",
-    "fsrq": "FSRQ type of blazar",
-    "gal": "normal galaxy (or part)",
-    "glc": "globular cluster",
-    "hmb": "high-mass binary",
-    "nlsy1": "narrow line Seyfert 1",
-    "nov": "nova",
-    "PSR": "pulsar, identified by pulsations",
-    "psr": "pulsar, no pulsations seen in LAT yet",
-    "pwn": "pulsar wind nebula",
-    "rdg": "radio galaxy",
-    "sbg": "starburst galaxy",
-    "sey": "Seyfert galaxy",
-    "sfr": "star-forming region",
-    "snr": "supernova remnant",
-    "spp": "special case - potential association with SNR or PWN",
-    "ssrq": "soft spectrum radio quasar",
-    "unk": "unknown",
-    "": "unknown",
-}
-
-
-def _sanitize_3fgl_name(fgl_name):
-    swap = (
-        fgl_name.replace(" ", "_").replace("+", "p").replace("-", "m").replace(".", "d")
-    )
-
-    if swap[0] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-        swap = "_%s" % swap
-
-    return swap
-
-
-def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
-    """
-    Translate a spectrum from the 3FGL into an astromodels spectrum
-    """
-
-    name = _sanitize_3fgl_name(fgl_name)
-
-    spectrum_type = catalog_entry["spectrum_type"]
-    ra = float(catalog_entry["ra"])
-    dec = float(catalog_entry["dec"])
-
-    if spectrum_type == "PowerLaw":
-
-        this_spectrum = Powerlaw()
-
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-
-        this_spectrum.index = float(catalog_entry["pl_index"]) * -1
-        this_spectrum.index.fix = fix
-        this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
-        this_spectrum.K.fix = fix
-        this_spectrum.K.bounds = (
-            this_spectrum.K.value / 1000.0,
-            this_spectrum.K.value * 1000,
-        )
-        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-
-    elif spectrum_type == "LogParabola":
-
-        this_spectrum = Log_parabola()
-
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-
-        this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
-        this_spectrum.alpha.fix = fix
-        this_spectrum.beta = float(catalog_entry["lp_beta"])
-        this_spectrum.beta.fix = fix
-        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
-        this_spectrum.K.fix = fix
-        this_spectrum.K.bounds = (
-            this_spectrum.K.value / 1000.0,
-            this_spectrum.K.value * 1000,
-        )
-
-    elif spectrum_type == "PLExpCutoff":
-
-        this_spectrum = Cutoff_powerlaw()
-
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-
-        this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
-        this_spectrum.index.fix = fix
-        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
-        this_spectrum.K.fix = fix
-        this_spectrum.K.bounds = (
-            this_spectrum.K.value / 1000.0,
-            this_spectrum.K.value * 1000,
-        )
-        this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
-        this_spectrum.xc.fix = fix
-
-    elif spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2"]:
-        # This is the new definition, from the 4FGL catalog.
-        # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
-        # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        this_spectrum = Super_cutoff_powerlaw()
-
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-        a = float(catalog_entry["plec_exp_factor_s"])
-        E0 = float(catalog_entry["pivot_energy"])
-        b = float(catalog_entry["plec_exp_index"])
-        conv = math.exp(a * E0 ** b)
-        this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
-        this_spectrum.index.fix = fix
-        this_spectrum.gamma = b
-        this_spectrum.gamma.fix = fix
-        this_spectrum.piv = E0 * u.MeV
-        this_spectrum.K = (
-            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
-        )
-        this_spectrum.K.fix = fix
-        this_spectrum.K.bounds = (
-            this_spectrum.K.value / 1000.0,
-            this_spectrum.K.value * 1000,
-        )
-        this_spectrum.xc = a ** (old_div(-1.0, b)) * u.MeV
-        this_spectrum.xc.fix = fix
-
-    else:
-
-        raise NotImplementedError(
-            "Spectrum type %s is not a valid 4FGL type" % spectrum_type
-        )
-
-    return this_source
-
-
-class ModelFrom3FGL(Model):
-    def __init__(self, ra_center, dec_center, *sources):
-
-        self._ra_center = float(ra_center)
-        self._dec_center = float(dec_center)
-
-        super(ModelFrom3FGL, self).__init__(*sources)
-
-    def free_point_sources_within_radius(self, radius, normalization_only=True):
-        """
-        Free the parameters for the point sources within the given radius of the center of the search cone
-
-        :param radius: radius in degree
-        :param normalization_only: if True, frees only the normalization of the source (default: True)
-        :return: none
-        """
-        self._free_or_fix(True, radius, normalization_only)
-
-    def fix_point_sources_within_radius(self, radius, normalization_only=True):
-        """
-        Fixes the parameters for the point sources within the given radius of the center of the search cone
-
-        :param radius: radius in degree
-        :param normalization_only: if True, fixes only the normalization of the source (default: True)
-        :return: none
-        """
-        self._free_or_fix(False, radius, normalization_only)
-
-    def _free_or_fix(self, free, radius, normalization_only):
-
-        for src_name in self.point_sources:
-
-            src = self.point_sources[src_name]
-
-            this_d = angular_distance(
-                self._ra_center,
-                self._dec_center,
-                src.position.ra.value,
-                src.position.dec.value,
-            )
-
-            if this_d <= radius:
-
-                if normalization_only:
-
-                    src.spectrum.main.shape.K.free = free
-
-                else:
-
-                    for par in src.spectrum.main.shape.parameters:
-                        src.spectrum.main.shape.parameters[par].free = free
-
-
-class FermiLATSourceCatalog(VirtualObservatoryCatalog):
-    def __init__(self, update=False):
-
-        self._update = update
-
-        super(FermiLATSourceCatalog, self).__init__(
-            "fermilpsc",
-            threeML_config["catalogs"]["Fermi"]["catalogs"]["LAT FGL"].url,
-            "Fermi-LAT/LAT source catalog",
-        )
-
-    def _get_vo_table_from_source(self):
-
-        self._vo_dataframe = get_heasarc_table_as_pandas(
-            "fermilpsc", update=self._update, cache_time_days=10.0
-        )
-
-    def _source_is_valid(self, source):
-        """
-        checks if source name is valid for the 3FGL catalog
-
-        :param source: source name
-        :return: bool
-        """
-
-        warn_string = (
-            "The trigger %s is not valid. Must be in the form '3FGL J0000.0+0000'"
-            % source
-        )
-
-        match = _3FGL_name_match.match(source)
-
-        if match is None:
-
-            log.warning(warn_string)
-
-            answer = False
-
-        else:
-
-            answer = True
-
-        return answer
-
-    def apply_format(self, table):
-        def translate(key):
-            if isinstance(key, bytes):
-                key = key.decode("ascii")
-            if key.lower() == "psr":
-                return threefgl_types[key]
-            if key.lower() in list(threefgl_types.keys()):
-                return threefgl_types[key.lower()]
-            return key
-
-        # Translate the 3 letter code to a more informative category, according
-        # to the dictionary above
-
-        table["short_source_type"] = table["source_type"]
-        table["source_type"] = np.array(list(map(translate, table["short_source_type"])))
-
-        if "Search_Offset" in table.columns:
-
-            new_table = table[
-                "name",
-                "source_type",
-                "short_source_type",
-                "ra",
-                "dec",
-                "assoc_name",
-                "tevcat_assoc",
-                "Search_Offset",
-            ]
-
-            return new_table.group_by("Search_Offset")
-
-        # we may have not done a cone search!
-        else:
-
-            new_table = table[
-                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
-            ]
-
-            return new_table.group_by("name")
-
-    def get_model(self, use_association_name=True):
-
-        assert (
-            self._last_query_results is not None
-        ), "You have to run a query before getting a model"
-
-        # Loop over the table and build a source for each entry
-        sources = []
-        source_names = []
-        for name, row in self._last_query_results.T.items():
-            if name[-1] == "e":
-                # Extended source
-                log.warning(
-                    "Source %s is extended, support for extended source is not here yet. I will ignore"
-                    "it" % name
-                )
-
-            # If there is an association and use_association is True, use that name, otherwise the 3FGL name
-            if row["assoc_name"] != "" and use_association_name:
-
-                this_name = row["assoc_name"]
-
-                # The crab is the only source which is present more than once in the 3FGL
-
-                if this_name == "Crab Nebula":
-
-                    if name[-1] == "i":
-
-                        this_name = "Crab_IC"
-
-                    elif name[-1] == "s":
-
-                        this_name = "Crab_synch"
-
-                    else:
-
-                        this_name = "Crab_pulsar"
-            else:
-
-                this_name = name
-
-            # in the 4FGL name there are more sources with the same name: this nwill avod any duplicates:
-            i = 1
-            while this_name in source_names:
-                this_name += str(i)
-                i += 1
-                pass
-            # By default all sources are fixed. The user will free the one he/she will need
-
-            source_names.append(this_name)
-
-            this_source = _get_point_source_from_3fgl(this_name, row, fix=True)
-
-            sources.append(this_source)
-
-        return ModelFrom3FGL(self.ra_center, self.dec_center, *sources)
-
-
-class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
-    def __init__(self, update=False):
-        """
-        The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger
-        number, location, trigger type and date range.
-
-        :param update: force update the XML VO table
-        """
-
-        self._update = update
-
-        super(FermiLLEBurstCatalog, self).__init__(
-            "fermille",
-            threeML_config["catalogs"]["Fermi"]["catalogs"]["LLE catalog"].url,
-            "Fermi-LAT/LLE catalog",
-        )
-
-    def apply_format(self, table):
-        new_table = table["name", "ra", "dec", "trigger_time", "trigger_type"]
-
-        # Remove rows with masked elements in trigger_time column
-        if new_table.masked:
-            new_table = new_table[~new_table["trigger_time"].mask]
-
-        new_table["ra"].format = "5.3f"
-        new_table["dec"].format = "5.3f"
-
-        return new_table.group_by("trigger_time")
-
-    def _get_vo_table_from_source(self):
-
-        self._vo_dataframe = get_heasarc_table_as_pandas(
-            "fermille", update=self._update, cache_time_days=5.0
-        )
-
-    def _source_is_valid(self, source):
-
-        return _gbm_and_lle_valid_source_check(source)

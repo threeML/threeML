@@ -56,7 +56,6 @@ class DynestyNestedSampler(UnitCubeSampler):
         print_func=None,
         save_bounds=True,
         bound="multi",
-        wrapped_params=None,
         sample="auto",
         periodic=None,
         reflective=None,
@@ -76,8 +75,6 @@ class DynestyNestedSampler(UnitCubeSampler):
         compute_jac=False,
         enlarge=None,
         bootstrap=0,
-        vol_dec=0.5,
-        vol_check=2.0,
         walks=25,
         facc=0.5,
         slices=5,
@@ -108,9 +105,7 @@ class DynestyNestedSampler(UnitCubeSampler):
         :type save_bounds: 
         :param bound: 
         :type bound: 
-        :param wrapped_params: 
-        :type wrapped_params: 
-        :param sample: 
+        :param sample:
         :type sample: 
         :param periodic: 
         :type periodic: 
@@ -182,7 +177,8 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._kwargs = {}
         self._kwargs["nlive"] = n_live_points
         self._kwargs["bound"] = bound
-        self._kwargs["wrapped_params"] = wrapped_params
+
+
         self._kwargs["sample"] = sample
         self._kwargs["periodic"] = periodic
         self._kwargs["reflective"] = reflective
@@ -215,8 +211,7 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._kwargs["compute_jac"] = compute_jac
         self._kwargs["enlarge"] = enlarge
         self._kwargs["bootstrap"] = bootstrap
-        self._kwargs["vol_dec"] = vol_dec
-        self._kwargs["vol_check"] = vol_check
+
         self._kwargs["walks"] = walks
         self._kwargs["facc"] = facc
         self._kwargs["slices"] = slices
@@ -271,7 +266,9 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         with use_astromodels_memoization(False):
             log.debug("Start dynesty run")
+
             sampler.run_nested(**self._sampler_kwargs)
+
             log.debug("Dynesty run done")
 
         self._sampler = sampler
@@ -367,7 +364,6 @@ class DynestyDynamicSampler(UnitCubeSampler):
         print_func=None,
         live_points=None,
         bound="multi",
-        wrapped_params=None,
         sample="auto",
         periodic=None,
         reflective=None,
@@ -386,8 +382,6 @@ class DynestyDynamicSampler(UnitCubeSampler):
         compute_jac=False,
         enlarge=None,
         bootstrap=0,
-        vol_dec=0.5,
-        vol_check=2.0,
         walks=25,
         facc=0.5,
         slices=5,
@@ -442,9 +436,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         :type live_points: 
         :param bound: 
         :type bound: 
-        :param wrapped_params: 
-        :type wrapped_params: 
-        :param sample: 
+        :param sample:
         :type sample: 
         :param periodic: 
         :type periodic: 
@@ -499,7 +491,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         :returns: 
 
         """
-        log.debug("Setup dynesty sampler")
+        log.debug("Setup dynesty dynamic sampler")
         self._sampler_kwargs = {}
         self._sampler_kwargs["nlive_init"] = nlive_init
         self._sampler_kwargs["maxiter_init"] = maxiter_init
@@ -526,7 +518,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._kwargs = {}
 
         self._kwargs["bound"] = bound
-        self._kwargs["wrapped_params"] = wrapped_params
+
         self._kwargs["sample"] = sample
         self._kwargs["periodic"] = periodic
         self._kwargs["reflective"] = reflective
@@ -559,8 +551,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._kwargs["compute_jac"] = compute_jac
         self._kwargs["enlarge"] = enlarge
         self._kwargs["bootstrap"] = bootstrap
-        self._kwargs["vol_dec"] = vol_dec
-        self._kwargs["vol_check"] = vol_check
+
         self._kwargs["walks"] = walks
         self._kwargs["facc"] = facc
         self._kwargs["slices"] = slices

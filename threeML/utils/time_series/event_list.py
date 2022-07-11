@@ -383,9 +383,9 @@ class EventList(TimeSeries):
 
             selection = None
 
-        if self.poly_intervals is not None:
+        if self.bkg_intervals is not None:
 
-            bkg_selection = self.poly_intervals.bin_stack
+            bkg_selection = self.bkg_intervals.bin_stack
 
         else:
 
@@ -458,7 +458,7 @@ class EventList(TimeSeries):
 
         all_bkg_masks = []
 
-        for selection in self._poly_intervals:
+        for selection in self._bkg_intervals:
             all_bkg_masks.append(
                 np.logical_and(
                     self._arrival_times >= selection.start_time,
@@ -508,7 +508,7 @@ class EventList(TimeSeries):
         # Remove bins with zero counts
         all_non_zero_mask = []
 
-        for selection in self._poly_intervals:
+        for selection in self._bkg_intervals:
             all_non_zero_mask.append(
                 np.logical_and(
                     mean_time >= selection.start_time, mean_time <= selection.stop_time
@@ -627,7 +627,7 @@ class EventList(TimeSeries):
 
         poly_exposure = 0
 
-        for selection in self._poly_intervals:
+        for selection in self._bkg_intervals:
             total_duration += selection.duration
 
             poly_exposure += self.exposure_over_interval(
@@ -662,7 +662,6 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-
             self._optimal_polynomial_grade = (
                 self._unbinned_fit_global_and_determine_optimum_grade(
                     total_poly_events, poly_exposure, bayes=bayes
@@ -670,7 +669,8 @@ class EventList(TimeSeries):
             )
 
             log.info(
-                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
+                "Auto-determined polynomial order: "
+                f"{self._optimal_polynomial_grade}"
             )
 
         else:
@@ -683,8 +683,8 @@ class EventList(TimeSeries):
 
         # Check whether we are parallelizing or not
 
-        t_start = self._poly_intervals.start_times
-        t_stop = self._poly_intervals.stop_times
+        t_start = self._bkg_intervals.start_times
+        t_stop = self._bkg_intervals.stop_times
 
         if threeML_config["parallel"]["use_parallel"]:
 
@@ -717,8 +717,6 @@ class EventList(TimeSeries):
         else:
 
             polynomials = []
-
-            
 
             for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
                 channel_mask = total_poly_energies == channel
