@@ -42,12 +42,11 @@ class LikelihoodRatioTest(object):
         # Safety check that the user has provided the models in the right order
         if self._reference_TS < 0:
 
-            log.warning(
-                "The reference TS is negative, either you specified the likelihood objects "
-                "in the wrong order, or the fit for the alternative hyp. has failed. Since the "
-                "two hyp. are nested, by definition the more complex hypothesis should give a "
-                "better or equal fit with respect to the null hypothesis."
-            )
+            log.warning( "The reference TS is negative, either you specified the likelihood objects ")
+            log.warning("in the wrong order, or the fit for the alternative hyp. has failed. Since the ")
+            log.warning("two hyp. are nested, by definition the more complex hypothesis should give a ")
+            log.warning("better or equal fit with respect to the null hypothesis.")
+
 
         # Check that the dataset is the same
 
@@ -59,14 +58,11 @@ class LikelihoodRatioTest(object):
             # Since this check might fail if the user loaded twice the same data, only issue a warning, instead of
             # an exception.
 
-            log.warning(
-                "The data lists for the null hyp. and for the alternative hyp. seems to be different."
-                " If you loaded twice the same data and made the same data selections, disregard this "
-                "message. Otherwise, consider the fact that the LRT is meaningless if the two data "
-                "sets are not exactly the same. We will use the data loaded as part of the null "
-                "hypothesis JointLikelihood object",
-                RuntimeWarning,
-            )
+            log.warning( "The data lists for the null hyp. and for the alternative hyp. seems to be different.")
+            log.warning(" If you loaded twice the same data and made the same data selections, disregard this ")
+            log.warning("message. Otherwise, consider the fact that the LRT is meaningless if the two data ")
+            log.warning("sets are not exactly the same. We will use the data loaded as part of the null ")
+            log.warning("hypothesis JointLikelihood object" )
 
         # For saving pha files
         self._save_pha = False
