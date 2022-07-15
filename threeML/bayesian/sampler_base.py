@@ -4,7 +4,7 @@ import math
 from typing import Dict, Optional
 
 import numpy as np
-from astromodels.utils.logging import threeML_config
+from threeML.config import threeML_config
 
 try:
 
