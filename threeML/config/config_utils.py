@@ -66,7 +66,7 @@ def show_configuration(sub_menu: Optional[str] = None):
 
             log.error(msg)
 
-            raise RuntimeError(msg)
+            raise AssertionError(msg)
 
     return tree
 

@@ -1021,12 +1021,12 @@ class BayesianResults(_AnalysisResults):
 
         if threeML_config.bayesian.use_median_fit:
 
-            _rich_console.print("[medium_spring_green bold] Median posterior point:")
+            _rich_console.print("[medium_spring_green bold underline] Median posterior point:")
 
         else:
 
             _rich_console.print(
-                "[medium_spring_green bold]Maximum a posteriori probability (MAP) point:\n"
+                "[medium_spring_green bold underline]Maximum a posteriori probability (MAP) point:\n"
             )
 
         best_fit_table.display()
@@ -1038,18 +1038,18 @@ class BayesianResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            _rich_console.print("[medium_spring_green bold]\nCorrelation matrix:\n")
+            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
 
             display(corr_matrix)
 
         _rich_console.print(
-            "[medium_spring_green bold]\nValues of -log(posterior) at the minimum:\n"
+            "[medium_spring_green bold underline]\nValues of -log(posterior) at the minimum:\n"
         )
 
         display(self.get_statistic_frame())
 
         _rich_console.print(
-            "[medium_spring_green bold]\nValues of statistical measures:\n"
+            "[medium_spring_green bold underline]\nValues of statistical measures:\n"
         )
 
         display(self.get_statistic_measure_frame())
@@ -1795,7 +1795,7 @@ class MLEResults(_AnalysisResults):
             error_type="covariance", cl=cl, covariance=self.covariance_matrix
         )
 
-        _rich_console.print("[medium_spring_green bold]Best fit values:\n")
+        _rich_console.print("[medium_spring_green bold underline]Best fit values:\n")
 
         best_fit_table.display()
 
@@ -1806,15 +1806,15 @@ class MLEResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            _rich_console.print("[medium_spring_green bold]\nCorrelation matrix:\n")
+            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
 
             display(corr_matrix)
 
-        _rich_console.print("[medium_spring_green bold]\nValues of -log(likelihood) at the minimum:\n")
+        _rich_console.print("[medium_spring_green bold underline]\nValues of -log(likelihood) at the minimum:\n")
 
         display(self.get_statistic_frame())
 
-        _rich_console.print("[medium_spring_green bold]\nValues of statistical measures:\n")
+        _rich_console.print("[medium_spring_green bold underline]\nValues of statistical measures:\n")
 
         display(self.get_statistic_measure_frame())
 
