@@ -1,7 +1,5 @@
 import logging
 import os
-import time
-from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -134,8 +132,6 @@ class UltraNestSampler(UnitCubeSampler):
         self._update_free_parameters()
 
         param_names = list(self._free_parameters.keys())
-
-        n_dim = len(param_names)
 
         loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
