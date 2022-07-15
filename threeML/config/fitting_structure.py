@@ -31,7 +31,7 @@ class Optimizer(Enum):
 @dataclass
 class BayesianDefault:
 
-    use_median_fit: bool = True
+    use_median_fit: bool = False
 
     default_sampler: Sampler = Sampler.emcee
 
