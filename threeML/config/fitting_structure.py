@@ -30,7 +30,11 @@ class Optimizer(Enum):
 
 @dataclass
 class BayesianDefault:
+
+    use_median_fit: bool = True
+
     default_sampler: Sampler = Sampler.emcee
+
     emcee_setup: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {'n_burnin': None,
                             'n_iterations': 500,
