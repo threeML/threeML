@@ -1,5 +1,5 @@
 import collections
-import collections.abc as abc
+import abc
 import math
 from typing import Dict, Optional
 
