@@ -1,15 +1,14 @@
 from pathlib import Path
 
-import pytest
 import numpy as np
-
+import pytest
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 from threeML.io.uncertainty_formatter import uncertainty_formatter
+
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
-
 
 
 def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
@@ -192,16 +191,13 @@ def test_basic_bayesian_analysis_results_multicomp(
     frame = bayes.results.get_data_frame()
 
     expected_central_values = np.array(
-        [1.90814527e00, -1.20941618e00, 8.45755638e-06, 4.03552579e01]
+        [ 2.34413445e+00, -1.23415050e+00,  4.22061459e-06,  4.81015263e+01]
     )
     expected_negative_errors = np.array(
-#        [-3.02301749e-01, -2.93259914e-02, -1.70958890e-06, -3.92505021e00]
-        #[-2.91662847e-01, -3.10753350e-02, -1.91482744e-06, -4.28729636e00]
-        [-3.97109465e-01, -3.18799713e-02, -3.60114276e-06, -4.37113312e-01]
+        [-7.41882269e-01, -6.32235088e-03,  7.16550504e-07, -8.26739096e+00]
     )
     expected_positive_errors = np.array(
-        #[2.65259894e-01, 3.24980566e-02, 1.78051424e-06, 4.00921638e00]
-        [2.77062119e-01, 3.62933150e-02, 1.35767668e-07, 7.92103414e+00]
+        [-1.01459656e-01,  6.44783673e-02,  4.27319744e-06,  1.04076379e-01]
     )
 
     assert np.allclose(frame["value"].values, expected_central_values, rtol=0.1)
@@ -295,25 +291,20 @@ def test_gbm_workflow():
     [x.unlink() for x in dl_files]
 
 
-
-
 def test_uncertainty_formatter():
 
+    assert "1.0 -2.0 +1.0" == uncertainty_formatter(1, -1, 2)
 
-    assert '1.0 -2.0 +1.0' == uncertainty_formatter(1, -1, 2)
+    assert "(1.0 +/- 1.0) x 10^3" == uncertainty_formatter(1e3, -1, 2)
 
-    assert '(1.0 +/- 1.0) x 10^3' == uncertainty_formatter(1e3, -1, 2)
+    assert "1.0 -2.0 +0" == uncertainty_formatter(1, -1, np.nan)
 
-    assert '1.0 -2.0 +0' == uncertainty_formatter(1, -1, np.nan)
+    assert "1.0 +0 +1.0" == uncertainty_formatter(1, np.nan, 2)
 
-    assert '1.0 +0 +1.0' == uncertainty_formatter(1, np.nan, 2)
+    assert "1.0 +/- 0" == uncertainty_formatter(1, np.nan, np.nan)
 
-    assert  '1.0 +/- 0' == uncertainty_formatter(1, np.nan, np.nan)
+    assert "1.0 -2.0 +inf" == uncertainty_formatter(1, -1, np.inf)
 
+    assert "1.0 +inf +1.0" == uncertainty_formatter(1, np.inf, 2)
 
-    assert '1.0 -2.0 +inf' == uncertainty_formatter(1, -1, np.inf)
-
-    assert '1.0 +inf +1.0' == uncertainty_formatter(1, np.inf, 2)
-
-    assert '1.0 +/- inf' == uncertainty_formatter(1, np.inf, np.inf)
-    
+    assert "1.0 +/- inf" == uncertainty_formatter(1, np.inf, np.inf)
