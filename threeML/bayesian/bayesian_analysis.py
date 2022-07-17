@@ -1,11 +1,5 @@
-from __future__ import division, print_function
-
-from builtins import object
-
-import numpy as np
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from astromodels import use_astromodels_memoization
 from astromodels.core.model import Model
-
 from threeML.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
@@ -13,8 +7,15 @@ from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
 
 
-_possible_samplers = ["emcee", "mutinest", "zeus", "ultranest",
-                      "dynesty_nested", "dynesty_dynamic", "autoemcee"]
+_possible_samplers = [
+    "emcee",
+    "mutinest",
+    "zeus",
+    "ultranest",
+    "dynesty_nested",
+    "dynesty_dynamic",
+    "autoemcee",
+]
 
 
 _available_samplers = {}
@@ -22,12 +23,11 @@ _available_samplers = {}
 try:
 
     import emcee
-
     from threeML.bayesian.emcee_sampler import EmceeSampler
 
     _available_samplers["emcee"] = EmceeSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no emcee")
 
@@ -35,38 +35,36 @@ except(ImportError):
 try:
 
     import dynesty
-
     from threeML.bayesian.dynesty_sampler import (DynestyDynamicSampler,
                                                   DynestyNestedSampler)
+
     _available_samplers["dynesty_nested"] = DynestyNestedSampler
     _available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
 
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no dynesty")
 
 try:
 
     import pymultinest
-
     from threeML.bayesian.multinest_sampler import MultiNestSampler
 
     _available_samplers["multinest"] = MultiNestSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no multinest")
 
 try:
 
     import zeus
-
     from threeML.bayesian.zeus_sampler import ZeusSampler
 
     _available_samplers["zeus"] = ZeusSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no zeus")
 
@@ -74,13 +72,12 @@ except(ImportError):
 try:
 
     import ultranest
-
     from threeML.bayesian.ultranest_sampler import UltraNestSampler
 
     _available_samplers["ultranest"] = UltraNestSampler
 
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no ultranest")
 
@@ -88,12 +85,11 @@ except(ImportError):
 try:
 
     import autoemcee
-
     from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler
 
     _available_samplers["autoemcee"] = AutoEmceeSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no autoemcee")
 
@@ -103,10 +99,10 @@ if len(_available_samplers) == 0:
     log.error("There are NO samplers available!")
     log.error("emcee is installed by default, something is wrong!")
 
-    raise RuntimeError()
+    raise RuntimeError("There are NO samplers available!")
 
 
-class BayesianAnalysis(object):
+class BayesianAnalysis:
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
         Perform Bayesian analysis by passing your model and data.
@@ -118,12 +114,12 @@ class BayesianAnalysis(object):
         :return:
 
         :example:
-        
+
         """
 
-        self._analysis_type = "bayesian"
+        self._analysis_type: str = "bayesian"
 
-        self._is_registered = False
+        self._is_registered: bool = False
 
         self._register_model_and_data(likelihood_model, data_list)
 
@@ -220,7 +216,8 @@ class BayesianAnalysis(object):
         if sampler_name not in _available_samplers:
 
             log.error(
-                f"{sampler_name} is not a valid sampler please choose from {','.join(list(_available_samplers.keys()))}")
+                f"{sampler_name} is not a valid sampler please choose from {','.join(list(_available_samplers.keys()))}"
+            )
 
             raise RuntimeError()
 
@@ -254,17 +251,17 @@ class BayesianAnalysis(object):
 
         If no algorithm as been set, then the configured default algorithm
         we default parameters will be run
-        
+
         :param quiet: if True, then no output is displayed
-        :type quiet: 
-        :returns: 
+        :type quiet:
+        :returns:
 
         """
         if self._sampler is None:
 
             # assuming the default sampler
             self.set_sampler()
-        
+
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)

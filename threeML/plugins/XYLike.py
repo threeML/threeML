@@ -1,5 +1,5 @@
 import copy
-from typing import Optional, Union
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numba as nb
@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource
 from astromodels.functions.function import Function
-from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
