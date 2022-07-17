@@ -191,13 +191,13 @@ def test_basic_bayesian_analysis_results_multicomp(
     frame = bayes.results.get_data_frame()
 
     expected_central_values = np.array(
-        [ 1.86699909e+00, -1.19874605e+00,  6.35591781e-06,  4.37783184e+01]
+        [1.86699909e00, -1.19874605e00, 6.35591781e-06, 4.37783184e01]
     )
     expected_negative_errors = np.array(
-        [-7.41882269e-01, -6.32235088e-03,  7.16550504e-07, -8.26739096e+00]
+        [-2.91016381e-01, -3.29625316e-02, -1.59072260e-06, -4.83703088e00]
     )
     expected_positive_errors = np.array(
-        [-1.01459656e-01,  6.44783673e-02,  4.27319744e-06,  1.04076379e-01]
+        [-1.01459656e-01, 6.44783673e-02, 4.27319744e-06, 1.04076379e-01]
     )
 
     assert np.allclose(frame["value"].values, expected_central_values, rtol=0.1)
