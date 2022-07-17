@@ -7,91 +7,59 @@ from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
 
 
-_possible_samplers = [
-    "emcee",
-    "mutinest",
-    "zeus",
-    "ultranest",
-    "dynesty_nested",
-    "dynesty_dynamic",
-    "autoemcee",
-]
+_possible_samplers = {
+    "emcee": [
+        "emcee",
+        "from threeML.bayesian.emcee_sampler import EmceeSampler",
+        "EmceeSampler",
+    ],
+    "mutinest": [
+        "pymultinest",
+        "from threeML.bayesian.multinest_sampler import MultiNestSampler",
+        "MultiNestSampler",
+    ],
+    "zeus": [
+        "zeus",
+        "from threeML.bayesian.zeus_sampler import ZeusSampler",
+        "ZeusSampler",
+    ],
+    "ultranest": [
+        "ultranest",
+        "from threeML.bayesian.ultranest_sampler import UltraNestSampler",
+        "UltraNestSampler",
+    ],
+    "dynesty_nested": [
+        "dynesty",
+        "from threeML.bayesian.dynesty_sampler import DynestyNestedSampler",
+        "DynestyNestedSampler",
+    ],
+    "dynesty_dynamic": [
+        "dynesty",
+        "from threeML.bayesian.dynesty_sampler import DynestyDynamicSampler",
+        "DynestyDynamicSampler",
+    ],
+    "autoemcee": [
+        "autoemcee",
+        "from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler",
+        "AutoEmceeSampler",
+    ],
+}
 
 
 _available_samplers = {}
 
-try:
+for k, v in _possible_samplers.items():
 
-    import emcee
-    from threeML.bayesian.emcee_sampler import EmceeSampler
+    try:
 
-    _available_samplers["emcee"] = EmceeSampler
+        exec(f"import {v[0]}")
+        exec(f"{v[1]}")
+        exec(f"_available_samplers['{k}'] = {v[2]}")
 
-except (ImportError):
+    except (ImportError):
 
-    log.debug("no emcee")
+        log.debug(f"no {v[0]}")
 
-
-try:
-
-    import dynesty
-    from threeML.bayesian.dynesty_sampler import (DynestyDynamicSampler,
-                                                  DynestyNestedSampler)
-
-    _available_samplers["dynesty_nested"] = DynestyNestedSampler
-    _available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
-
-
-except (ImportError):
-
-    log.debug("no dynesty")
-
-try:
-
-    import pymultinest
-    from threeML.bayesian.multinest_sampler import MultiNestSampler
-
-    _available_samplers["multinest"] = MultiNestSampler
-
-except (ImportError):
-
-    log.debug("no multinest")
-
-try:
-
-    import zeus
-    from threeML.bayesian.zeus_sampler import ZeusSampler
-
-    _available_samplers["zeus"] = ZeusSampler
-
-except (ImportError):
-
-    log.debug("no zeus")
-
-
-try:
-
-    import ultranest
-    from threeML.bayesian.ultranest_sampler import UltraNestSampler
-
-    _available_samplers["ultranest"] = UltraNestSampler
-
-
-except (ImportError):
-
-    log.debug("no ultranest")
-
-
-try:
-
-    import autoemcee
-    from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler
-
-    _available_samplers["autoemcee"] = AutoEmceeSampler
-
-except (ImportError):
-
-    log.debug("no autoemcee")
 
 # we should always have at least emcee available
 if len(_available_samplers) == 0:
