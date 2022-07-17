@@ -13,7 +13,7 @@ _possible_samplers = {
         "from threeML.bayesian.emcee_sampler import EmceeSampler",
         "EmceeSampler",
     ],
-    "mutinest": [
+    "multinest": [
         "pymultinest",
         "from threeML.bayesian.multinest_sampler import MultiNestSampler",
         "MultiNestSampler",
