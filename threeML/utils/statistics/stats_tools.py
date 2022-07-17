@@ -1,19 +1,15 @@
-from __future__ import division
-
-# Provides some universal statistical utilities and stats comparison tools
-
-from past.utils import old_div
-from builtins import object
 from math import sqrt
 
 import numpy as np
-import pandas as pd
 import scipy.interpolate
 import scipy.stats
-import warnings
 from scipy.special import erfinv
+from threeML.io.logging import setup_logger
 
-from threeML.io.rich_display import display
+# Provides some universal statistical utilities and stats comparison tools
+
+
+log = setup_logger(__name__)
 
 
 def aic(log_like, n_parameters, n_data_points):
@@ -27,18 +23,20 @@ def aic(log_like, n_parameters, n_data_points):
     try:
         val = -2.0 * log_like + 2 * n_parameters
         val += (
-            2 * n_parameters * (n_parameters + 1) / float(n_data_points - n_parameters - 1)
+            2
+            * n_parameters
+            * (n_parameters + 1)
+            / float(n_data_points - n_parameters - 1)
         )
 
     except:
 
         val = 0
 
-        
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn("AIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning("AIC was NAN. Recording zero, but you should examine your fit.")
 
     return val
 
@@ -52,7 +50,7 @@ def bic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn("BIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning("BIC was NAN. Recording zero, but you should examine your fit.")
 
     return val
 
@@ -95,7 +93,7 @@ def dic(bayes_analysis):
         elpd_dic = 0
         pdic = 0
 
-        warnings.warn("DIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning("DIC was NAN. Recording zero, but you should examine your fit.")
 
     return -2 * elpd_dic, pdic
 
@@ -109,7 +107,7 @@ def sqrt_sum_of_squares(arg):
     return np.sqrt(np.square(arg).sum())
 
 
-class PoissonResiduals(object):
+class PoissonResiduals:
     """
     This class implements a way to compute residuals for a Poisson distribution mapping them to residuals of a standard
     normal distribution. The probability of obtaining the observed counts given the expected one is computed, and then
@@ -215,7 +213,7 @@ class PoissonResiduals(object):
         return out
 
 
-class Significance(object):
+class Significance:
     """
     Implements equations in Li&Ma 1983
 
@@ -275,15 +273,14 @@ class Significance(object):
         idx = self.Non > 0
 
         one[idx] = self.Non[idx] * np.log(
-            old_div((1 + self.alpha), self.alpha)
-            * (old_div(self.Non[idx], (self.Non[idx] + self.Noff[idx])))
+            ((1 + self.alpha) / self.alpha)
+            * ((self.Non[idx] / (self.Non[idx] + self.Noff[idx])))
         )
 
         two = np.zeros_like(self.Noff, dtype=float)
 
         two[idx] = self.Noff[idx] * np.log(
-            (1 + self.alpha)
-            * (old_div(self.Noff[idx], (self.Non[idx] + self.Noff[idx])))
+            (1 + self.alpha) * ((self.Noff[idx] / (self.Non[idx] + self.Noff[idx])))
         )
 
         if assign_sign:
@@ -303,7 +300,7 @@ class Significance(object):
         which is appropriate when the observation is Poisson distributed but
         the background has been modeled and thus has Gaussian distributed errors.
 
-        :param sigma_b: The gaussian 1 sigma errors on the background  
+        :param sigma_b: The gaussian 1 sigma errors on the background
         :return:
 
         """
@@ -322,10 +319,7 @@ class Significance(object):
         )
 
         S = sqrt(2) * np.sqrt(
-            o * np.log(old_div(o, b0))
-            + old_div((b0 - b) ** 2, (2 * sigma_b ** 2))
-            + b0
-            - o
+            o * np.log(o / b0) + (((b0 - b) ** 2) / (2 * sigma_b ** 2)) + b0 - o
         )
 
         sign = np.where(o > b, 1, -1)
