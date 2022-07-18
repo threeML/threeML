@@ -149,6 +149,8 @@ class UltraNestSampler(UnitCubeSampler):
 
             if using_mpi:
 
+                comm.Barrier()
+
                 # if we are running in parallel and this is not the
                 # first engine, then we want to wait and let everything finish
 
@@ -160,7 +162,7 @@ class UltraNestSampler(UnitCubeSampler):
                         log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
 
-                comm.Barrier()
+
 
             else:
 
@@ -215,6 +217,8 @@ class UltraNestSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
+            comm.Barrier()
+
             if rank != 0:
                 # these engines do not need to read
                 process_fit = False
@@ -223,7 +227,7 @@ class UltraNestSampler(UnitCubeSampler):
 
                 process_fit = True
 
-            comm.Barrier()
+
 
         else:
 

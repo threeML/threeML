@@ -150,6 +150,8 @@ class MultiNestSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
+            comm.Barrier()
+
             if rank == 0:
                 # create mcmc chains directory only on first engine
 
@@ -157,7 +159,7 @@ class MultiNestSampler(UnitCubeSampler):
                     log.debug(f"Create {chain_dir} for multinest output")
                     chain_dir.mkdir()
 
-            comm.Barrier()
+
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
@@ -188,6 +190,8 @@ class MultiNestSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
+            comm.Barrier()
+
             if rank != 0:
 
                 # these engines do not need to read
@@ -197,7 +201,7 @@ class MultiNestSampler(UnitCubeSampler):
 
                 process_fit = True
 
-            comm.Barrier()
+
 
         else:
 
