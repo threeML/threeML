@@ -15,7 +15,7 @@ try:
 
     import ultranest
 
-except:
+except ImportError:
 
     has_ultranest = False
 
@@ -39,7 +39,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 

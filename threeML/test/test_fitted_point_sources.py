@@ -1,5 +1,4 @@
 import os
-from builtins import zip
 
 import astropy.units as u
 import matplotlib.pyplot as plt

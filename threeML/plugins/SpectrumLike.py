@@ -1214,11 +1214,7 @@ class SpectrumLike(PluginPrototype):
                         ):
 
                             log.error(
-                                f"%s is larger than the number of channels: %d"
-                                % (
-                                    s,
-                                    self._observed_spectrum.n_channels,
-                                )
+                                f"{s} is larger than the number of channels: {self._observed_spectrum.n_channels}"
                             )
 
                             raise RuntimeError()
@@ -1234,8 +1230,7 @@ class SpectrumLike(PluginPrototype):
                 if not idx[0] < idx[1]:
 
                     log.error(
-                        "The channel and energy selection (%s) are out of order and translates to %s-%s"
-                        % (selections, idx[0], idx[1])
+                        f"The channel and energy selection ({selections}) are out of order and translates to {idx[0]}-{idx[1]}"
                     )
 
                     raise RuntimeError()
@@ -1244,8 +1239,7 @@ class SpectrumLike(PluginPrototype):
                 self._mask[idx[0] : idx[1] + 1] = True
 
                 log.info(
-                    "Range %s translates to channels %s-%s"
-                    % (arg, idx[0], idx[1])
+                    f"Range {arg} translates to channels {idx[0]}-{idx[1]}"
                 )
 
         # If you are just excluding channels
@@ -2065,7 +2059,7 @@ class SpectrumLike(PluginPrototype):
         self, likelihood_model: Model, integrate_method: str = "simpson"
     ) -> Tuple[types.FunctionType, types.FunctionType]:
 
-        if not integrate_method in ["simpson", "trapz", "riemann"]:
+        if integrate_method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid integral_methods.")
 
@@ -2310,7 +2304,7 @@ class SpectrumLike(PluginPrototype):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        if not method in ["simpson", "trapz", "riemann"]:
+        if method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
@@ -2353,7 +2347,7 @@ class SpectrumLike(PluginPrototype):
         Change the integrate method for the background integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        if not method in ["simpson", "trapz", "riemann"]:
+        if method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
@@ -3188,10 +3182,6 @@ class SpectrumLike(PluginPrototype):
 
         return fig
 
-    def __repr__(self):
-
-        return self._output().to_string()
-
     def _output(self):
         # type: () -> pd.Series
 
@@ -3260,7 +3250,7 @@ class SpectrumLike(PluginPrototype):
         min_rate: Union[int, float],
         ratio_residuals: bool = False,
         total_counts: bool = False,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
 
         Build new arrays before or after a fit of rebinned data/model

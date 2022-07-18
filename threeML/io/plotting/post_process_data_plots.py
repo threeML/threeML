@@ -1,10 +1,5 @@
-from __future__ import division
-
-from builtins import zip
-
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import MaxNLocator
 from past.utils import old_div
 
 import threeML.plugins.PhotometryLike as photolike
@@ -14,7 +9,7 @@ try:
     from threeML.plugins.FermiLATLike import FermiLATLike
 
     LATLike = True
-except:
+except ImportError:
     LATLike = False
 
 from threeML.config.config import threeML_config

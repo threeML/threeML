@@ -16,9 +16,6 @@ from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.utils.power_of_two_utils import is_power_of_2
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
-from threeML.io.logging import setup_logger
-
-log = setup_logger(__name__)
 
 from threeML.io.logging import setup_logger
 
@@ -72,14 +69,14 @@ def _get_unique_tag_from_configuration(configuration):
 
     for section, keys in keys_for_hash:
 
-        if not section in configuration:
+        if section not in configuration:
             log.critical(
                 "Configuration lacks section %s, which is required" % section
             )
 
         for key in keys:
 
-            if not key in configuration[section]:
+            if key not in configuration[section]:
                 log.critical(
                     "Section %s in configuration lacks key %s, which is required"
                     % key
@@ -125,7 +122,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
     else:
 
-        if not "gtlike" in configuration:
+        if "gtlike" not in configuration:
 
             configuration["gtlike"] = {}
 
@@ -216,7 +213,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
                 this_source["ra"] = circmean([ra_min, ra_max] * u.deg).value
                 this_source["dec"] = circmean([dec_min, dec_max] * u.deg).value
 
-            except:
+            except Exception:
+
                 log.critical(
                     f"Source {extended_source.name} does not have a template file set; must call read_file first()"
                 )
@@ -413,9 +411,9 @@ class FermipyLike(PluginPrototype):
         # Now check that the data exists
 
         # As minimum there must be a evfile and a scfile
-        if not "evfile" in self._configuration["data"]:
+        if "evfile" not in self._configuration["data"]:
             log.critical("You must provide a evfile in the data section")
-        if not "scfile" in self._configuration["data"]:
+        if "scfile" not in self._configuration["data"]:
             log.critical("You must provide a scfile in the data section")
 
         for datum in self._configuration["data"]:
@@ -736,7 +734,7 @@ class FermipyLike(PluginPrototype):
                 extended_source.name, dnde_MeV, update_source=update_dictionary
             )
 
-    def get_log_like(self):
+    def get_log_like(self) -> float:
         """
         Return the value of the log-likelihood with the current values for the
         parameters stored in the ModelManager instance
@@ -751,13 +749,15 @@ class FermipyLike(PluginPrototype):
 
             value = self._gta.like.logLike.value()
 
-        except:
+        except Exception:
+
+            log.error("Something went wrong in Fermipy")
 
             raise
 
         return value - logfactorial(int(self._gta.like.total_nobs()))
 
-    def inner_fit(self):
+    def inner_fit(self) -> float:
         """
         This is used for the profile likelihood. Keeping fixed all parameters in the
         LikelihoodModel, this method minimize the logLike over the remaining nuisance
@@ -767,7 +767,7 @@ class FermipyLike(PluginPrototype):
         """
         return self.get_log_like()
 
-    def get_number_of_data_points(self):
+    def get_number_of_data_points(self) -> int:
         """
         Return the number of spatial/energy bins
 

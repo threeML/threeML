@@ -2,12 +2,11 @@ import os
 import shutil
 import tempfile
 import uuid
-from builtins import str
+
 from contextlib import contextmanager
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
-
 
 log = setup_logger(__name__)
 
@@ -105,9 +104,9 @@ def temporary_directory(prefix="", within_directory=None):
 
         shutil.rmtree(directory)
 
-    except:
+    except Exception:
 
-        log.warning("Couldn't remove temporary directory %s" % directory)
+        log.warning(f"Couldn't remove temporary directory {directory}")
 
 
 @contextmanager

@@ -1,5 +1,3 @@
-from __future__ import division
-
 from past.utils import old_div
 
 __author__ = "grburgess"
@@ -34,7 +32,7 @@ class InvalidUnitError(RuntimeError):
     pass
 
 
-class FluxConversion(object):
+class FluxConversion:
     def __init__(self, flux_unit, energy_unit, flux_model):
         """
         a generic flux conversion class to handle transforming spectra
@@ -307,7 +305,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
             self._components = self._solve_for_component_flux(composite_model)
 
-        except:
+        except Exception:
 
             self._components = None
 

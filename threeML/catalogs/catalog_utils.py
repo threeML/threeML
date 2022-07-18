@@ -1,21 +1,14 @@
-from __future__ import division
-
+import os
+import os.path
 import re
-from builtins import map, str
 
+import astromodels
 import numpy
-from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
-from astropy.stats import circmean
 from astropy import units as u
+from astropy.stats import circmean
 
-from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.logging import setup_logger
-from pkg_resources import resource_filename
-import os.path, os
-
 
 log = setup_logger(__name__)
 
@@ -82,9 +75,9 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     if spectrum_type == "PowerLaw":
 
-        this_spectrum = Powerlaw()
+        this_spectrum = astromodels.Powerlaw()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
 
@@ -102,9 +95,9 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "LogParabola":
 
-        this_spectrum = Log_parabola()
+        this_spectrum = astromodels.Log_parabola()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
 
@@ -124,9 +117,9 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "PLExpCutoff":
 
-        this_spectrum = Cutoff_powerlaw()
+        this_spectrum = astromodels.Cutoff_powerlaw()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
 
@@ -148,9 +141,9 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        this_spectrum = Super_cutoff_powerlaw()
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
         # new parameterization 4FGLDR3:
@@ -200,8 +193,10 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     else:
 
+        log.error(f"Spectrum type {spectrum_type} is not a valid 4FGL type")
+
         raise NotImplementedError(
-            "Spectrum type %s is not a valid 4FGL type" % spectrum_type
+            f"Spectrum type {spectrum_type} is not a valid 4FGL type"
         )
 
     return this_source
@@ -219,9 +214,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     dec = float(catalog_entry["dec"])
 
     if catalog_entry["spatial_function"] == "RadialDisk":
-        this_shape = Disk_on_sphere()
+        this_shape = astromodels.Disk_on_sphere()
     elif catalog_entry["spatial_function"] == "RadialGaussian":
-        this_shape = Gaussian_on_sphere()
+        this_shape = astromodels.Gaussian_on_sphere()
     elif catalog_entry["spatial_function"] == "SpatialMap":
         the_file = catalog_entry["spatial_filename"]
         if isinstance(the_file, bytes):
@@ -238,7 +233,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
         # this_shape(fits_file=the_template)
 
-        this_shape = SpatialTemplate_2D(fits_file=the_template)
+        this_shape = astromodels.SpatialTemplate_2D(fits_file=the_template)
 
     else:
         log.error(
@@ -249,9 +244,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     if spectrum_type == "PowerLaw":
 
-        this_spectrum = Powerlaw()
+        this_spectrum = astromodels.Powerlaw()
 
-        this_source = ExtendedSource(
+        this_source = astromodels.ExtendedSource(
             name, spatial_shape=this_shape, spectral_shape=this_spectrum
         )
 
@@ -269,9 +264,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "LogParabola":
 
-        this_spectrum = Log_parabola()
+        this_spectrum = astromodels.Log_parabola()
 
-        this_source = ExtendedSource(
+        this_source = astromodels.ExtendedSource(
             name, spatial_shape=this_shape, spectral_shape=this_spectrum
         )
 
@@ -291,9 +286,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "PLExpCutoff":
 
-        this_spectrum = Cutoff_powerlaw()
+        this_spectrum = astromodels.Cutoff_powerlaw()
 
-        this_source = ExtendedSource(
+        this_source = astromodels.ExtendedSource(
             name, spatial_shape=this_shape, spectral_shape=this_spectrum
         )
 
@@ -315,9 +310,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        this_spectrum = Super_cutoff_powerlaw()
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
 
-        this_source = ExtendedSource(
+        this_source = astromodels.ExtendedSource(
             name, spatial_shape=this_shape, spectral_shape=this_spectrum
         )
 
@@ -402,7 +397,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     return this_source
 
 
-class ModelFromFGL(Model):
+class ModelFromFGL(astromodels.Model):
     def __init__(self, ra_center, dec_center, *sources):
 
         self._ra_center = float(ra_center)
@@ -494,7 +489,7 @@ class ModelFromFGL(Model):
                     src.spatial_shape.lat0.value,
                 )
 
-            except:
+            except Exception:
 
                 (ra_min, ra_max), (
                     dec_min,

@@ -261,11 +261,6 @@ class BayesianAnalysis(object):
 
             log.info("sampler is setup with default parameters")
 
-    @property
-    def sampler(self):
-
-        return self._sampler
-
     def sample(self, quiet=False):
         """
         sample the posterior of the model with the selected algorithm

@@ -9,6 +9,8 @@ from .plugin_structure import Plugins, TimeSeries
 from .point_source_structure import PointSourceDefaults
 
 # logging
+
+
 class LoggingLevel(IntEnum):
     DEBUG = logging.DEBUG
     INFO = logging.INFO

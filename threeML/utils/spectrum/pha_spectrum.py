@@ -4,7 +4,6 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 import astropy.io.fits as fits
 import numpy as np
-from numpy.ma import count
 import six
 from past.utils import old_div
 
@@ -303,7 +302,7 @@ def _read_pha_or_pha2_file(
 
         is_typeII_file = True
 
-        if spectrum_number == None and not treat_as_time_series:
+        if spectrum_number is None and not treat_as_time_series:
 
             log.error(
                 "This is a PHA Type II file. You have to provide a spectrum number"

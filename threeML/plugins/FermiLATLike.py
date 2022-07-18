@@ -1,8 +1,7 @@
 from __future__ import division
 
 import collections
-import os
-from builtins import object, range, zip
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -130,7 +129,7 @@ class LikelihoodModelConverter:
 
             log.error("Cannot support extended sources yet!")
 
-            raise NotImplemented("Cannot support extended sources yet!")
+            raise NotImplementedError("Cannot support extended sources yet!")
 
         iso = LikelihoodComponent.IsotropicTemplate(self.irfs)
 
@@ -228,7 +227,7 @@ class LikelihoodModelConverter:
         return MyPointSource(src, name, temp_name)
 
 
-class FermiLATUnpickler(object):
+class FermiLATUnpickler:
     def __call__(
         self,
         name,

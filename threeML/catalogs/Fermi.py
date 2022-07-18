@@ -5,12 +5,12 @@ import re
 from builtins import map, str
 
 import numpy as np
-from astromodels import *
+import astropy.units as u
+import astromodels
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
@@ -296,7 +296,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         beta = row[primary_string + "beta"]
         amp = row[primary_string + "ampl"]
 
-        band = Band()
+        band = astromodels.Band()
 
         if amp < 0.0:
             amp = 0.0
@@ -333,9 +333,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         band.beta = beta
 
         # build the model
-        ps = PointSource(name, ra, dec, spectral_shape=band)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=band)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, band
 
@@ -362,7 +362,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # need to correct epeak to e cut
         ecut = old_div(epeak, (2 - index))
 
-        cpl = Cutoff_powerlaw()
+        cpl = astromodels.Cutoff_powerlaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -386,9 +386,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         cpl.index = index
 
-        ps = PointSource(name, ra, dec, spectral_shape=cpl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=cpl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, cpl
 
@@ -411,7 +411,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pivot = row[primary_string + "pivot"]
         amp = row[primary_string + "ampl"]
 
-        pl = Powerlaw()
+        pl = astromodels.Powerlaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -420,9 +420,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pl.piv = pivot
         pl.index = index
 
-        ps = PointSource(name, ra, dec, spectral_shape=pl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=pl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, pl
 
@@ -448,7 +448,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         break_energy = row[primary_string + "brken"]
         pivot = row[primary_string + "pivot"]
 
-        sbpl = SmoothlyBrokenPowerLaw()
+        sbpl = astromodels.SmoothlyBrokenPowerLaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -488,9 +488,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         sbpl.break_scale.free = True
 
-        ps = PointSource(name, ra, dec, spectral_shape=sbpl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=sbpl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, sbpl
 
@@ -596,9 +596,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     if spectrum_type == "PowerLaw":
 
-        this_spectrum = Powerlaw()
+        this_spectrum = astromodels.Powerlaw()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
 
@@ -616,9 +616,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "LogParabola":
 
-        this_spectrum = Log_parabola()
+        this_spectrum = astromodels.Log_parabola()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
 
@@ -638,9 +638,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "PLExpCutoff":
 
-        this_spectrum = Cutoff_powerlaw()
+        this_spectrum = astromodels.Cutoff_powerlaw()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
 
@@ -662,9 +662,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        this_spectrum = Super_cutoff_powerlaw()
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
 
-        this_source = PointSource(
+        this_source = astromodels.PointSource(
             name, ra=ra, dec=dec, spectral_shape=this_spectrum
         )
         a = float(catalog_entry["plec_exp_factor_s"])
@@ -698,7 +698,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
     return this_source
 
 
-class ModelFrom3FGL(Model):
+class ModelFrom3FGL(astromodels.Model):
     def __init__(self, ra_center, dec_center, *sources):
 
         self._ra_center = float(ra_center)

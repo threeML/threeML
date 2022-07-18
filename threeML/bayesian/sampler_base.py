@@ -19,7 +19,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 
@@ -37,8 +38,8 @@ from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.numba_utils import nb_sum
-from threeML.utils.statistics.stats_tools import aic, bic, dic
 from threeML.utils.spectrum.share_spectrum import ShareSpectrum
+from threeML.utils.statistics.stats_tools import aic, bic, dic
 
 log = setup_logger(__name__)
 
@@ -398,7 +399,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
             return -np.inf
 
-        except:
+        except Exception:
 
             # We don't want to catch more serious issues
 

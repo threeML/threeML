@@ -14,7 +14,7 @@ try:
 
     from dynesty import DynamicNestedSampler, NestedSampler
 
-except:
+except ImportError:
 
     has_dynesty = False
 

@@ -1,5 +1,5 @@
-import numpy as np
 import h5py
+import numpy as np
 
 
 def recursively_save_dict_contents_to_group(h5file, path, dic):
@@ -56,7 +56,7 @@ def recursively_load_dict_contents_from_group(h5file, path):
 
                 ans[key] = tmp.decode("utf-8")
 
-            except:
+            except Exception:
 
                 ans[key] = tmp
 

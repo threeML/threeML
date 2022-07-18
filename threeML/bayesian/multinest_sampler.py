@@ -1,4 +1,3 @@
-import os
 import shutil
 import time
 from pathlib import Path
@@ -17,7 +16,7 @@ try:
 
     import pymultinest
 
-except:
+except ImportError:
 
     has_pymultinest = False
 
@@ -41,7 +40,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 

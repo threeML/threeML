@@ -1,5 +1,3 @@
-from __future__ import division
-
 import re
 
 import numpy as np
@@ -51,7 +49,7 @@ def get_uncertainty_tokens(x):
             this_str.replace("+/-", " ").replace("nan", "0"),
         ).groups()
 
-    except:
+    except Exception:
 
         log.error(
             f"Could not extract number, uncertainty and exponent from  {x.__str__()}. This is likely a bug."
@@ -90,13 +88,13 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     if not np.isfinite(error_p):
 
-        log.warning(f"the positive uncertainty is not finite ")
+        log.warning("the positive uncertainty is not finite ")
 
         error_p_is_nan = True
 
     if not np.isfinite(error_m):
 
-        log.warning(f"the negative uncertainty is not finite ")
+        log.warning("the negative uncertainty is not finite ")
 
         error_m_is_nan = True
 

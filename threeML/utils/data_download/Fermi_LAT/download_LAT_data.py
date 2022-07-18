@@ -1,6 +1,3 @@
-from __future__ import print_function
-
-import glob
 import html.parser
 import os
 import re
@@ -9,7 +6,6 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from builtins import str
 from pathlib import Path
 
 import astropy.io.fits as pyfits
@@ -344,7 +340,7 @@ def download_LAT_data(
 
         os.remove(temporaryFileName)
 
-    except:
+    except Exception:
 
         pass
 
@@ -416,7 +412,12 @@ def download_LAT_data(
             estimatedTimeLine,
         )[0]
 
-    except:
+    except Exception:
+
+        log.error(
+            "Problems with the download. Empty or wrong answer from the LAT server. "
+            "Please retry later."
+        )
 
         raise RuntimeError(
             "Problems with the download. Empty or wrong answer from the LAT server. "
@@ -518,7 +519,7 @@ def download_LAT_data(
 
     remotePath = "%s/queries/" % threeML_config.LAT.public_http_location
 
-    if links != None:
+    if links is not None:
 
         filenames = [x.split("/")[-1] for x in links]
 
@@ -604,7 +605,8 @@ class LAT_dataset:
         self.destination_directory = destination_directory
 
         import datetime
-        from GtBurst.dataHandling import met2date, _makeDatasetsOutOfLATdata
+
+        from GtBurst.dataHandling import _makeDatasetsOutOfLATdata, met2date
 
         metdate = 239241601
 

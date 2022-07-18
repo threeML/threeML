@@ -1,8 +1,8 @@
 from future import standard_library
 
 standard_library.install_aliases()
-from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.classicMLE.joint_likelihood import JointLikelihood
 
 __all__ = []
 
@@ -25,6 +25,8 @@ def pickle_joint_likelihood(jl):
 copyreg.pickle(JointLikelihood, pickle_joint_likelihood)
 
 # Serialization for BayesianAnalysis object
+
+
 def pickle_bayesian_analysis(bs):
 
     return BayesianAnalysis, (bs.likelihood_model, bs.data_list)

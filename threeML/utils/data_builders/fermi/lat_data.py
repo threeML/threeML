@@ -1,15 +1,13 @@
 import collections
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 
+from threeML.io.logging import setup_logger
 from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
-from threeML.io.logging import setup_logger
-
 
 log = setup_logger(__name__)
 
@@ -52,9 +50,10 @@ class LLEFile(object):
             self._gti_stop = ft1_["GTI"].data["STOP"]
 
             try:
+
                 self._trigger_time = ft1_["EVENTS"].header["TRIGTIME"]
 
-            except:
+            except Exception:
 
                 # For whatever reason
                 log.warning(

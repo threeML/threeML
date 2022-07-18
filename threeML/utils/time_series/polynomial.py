@@ -37,7 +37,7 @@ log = setup_logger(__name__)
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
 
 
-class Polynomial(object):
+class Polynomial:
     def __init__(
         self, coefficients: Iterable[float], is_integral: bool = False
     ):
@@ -322,9 +322,9 @@ def polyfit(
                     jl.results.covariance_matrix
                 )
 
-            except:
+            except Exception:
 
-                log.exception(f"Fit failed in channel")
+                log.exception("Fit failed in channel")
                 raise FitFailed()
 
             min_log_likelihood = xy.get_log_like()

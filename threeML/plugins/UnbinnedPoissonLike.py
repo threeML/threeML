@@ -59,7 +59,7 @@ class EventObservation(object):
 
         self._n_events: int = len(self._events)
 
-        log.debug(f"created event observation with")
+        log.debug("created event observation with")
         log.debug(f"{self._start} {self._stop}")
 
         self._for_timeseries = for_timeseries

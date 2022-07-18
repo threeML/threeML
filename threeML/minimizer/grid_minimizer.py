@@ -224,7 +224,7 @@ class GridMinimizer(GlobalMinimizer):
                     this_minimum,
                 ) = _minimizer._minimize()
 
-            except:
+            except Exception:
 
                 # A failure is not a problem here, only if all of the fit fail then we have a problem
                 # but this case is handled later

@@ -1,17 +1,12 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from builtins import object
-from past.utils import old_div
 import collections
 
-import ROOT
-import numpy as np
-
-import scipy.integrate
 import astromodels
+import numpy as np
+import ROOT
+import scipy.integrate
+from past.utils import old_div
 
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import (
     tgraph_to_arrays,
@@ -19,8 +14,6 @@ from threeML.io.cern_root_utils.tobject_to_numpy import (
     tree_to_ndarray,
 )
 from threeML.plugin_prototype import PluginPrototype
-from threeML.exceptions.custom_exceptions import custom_warnings
-
 from threeML.utils.statistics.likelihood_functions import (
     poisson_observed_poisson_background,
 )

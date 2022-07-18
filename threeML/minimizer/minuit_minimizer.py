@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 import collections
-from builtins import range
 
 import numpy as np
 from iminuit import Minuit
@@ -272,7 +269,7 @@ class MinuitMinimizer(LocalMinimizer):
 
             self.minuit.minos()
 
-        except:
+        except Exception:
 
             self._print_current_status()
 

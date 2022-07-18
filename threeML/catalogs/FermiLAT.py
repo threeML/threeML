@@ -1,32 +1,26 @@
-from __future__ import division
-
 import re
-from builtins import map, str
-
-import numpy
-from astropy.table import Table
-
-from astropy.coordinates import SkyCoord
 
 import astropy.units as u
+import numpy
+from astropy.coordinates import SkyCoord
+from astropy.table import Table
 
 from threeML.config.config import threeML_config
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
-from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from .catalog_utils import (
-    _get_point_source_from_fgl,
-    _get_extended_source_from_fgl,
     ModelFromFGL,
+    _get_extended_source_from_fgl,
+    _get_point_source_from_fgl,
 )
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 try:
     from fermipy.catalog import Catalog
 
     have_fermipy = True
-except:
+except ImportError:
     have_fermipy = False
 
 
@@ -251,7 +245,7 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
 
                 self._fermipy_catalog = Catalog.create(self._catalog_name)
 
-            except:
+            except Exception:
 
                 log.error(
                     f"Catalog {self._catalog_name} not available in fermipy"

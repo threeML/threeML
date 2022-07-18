@@ -1,7 +1,5 @@
-import logging
-import os
 import time
-from pathlib import Path
+
 
 import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
@@ -14,7 +12,7 @@ try:
 
     import autoemcee
 
-except:
+except ImportError:
 
     has_autoemcee = False
 
@@ -38,7 +36,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 
@@ -189,18 +188,14 @@ class AutoEmceeSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
-            if rank != 0:
+            comm.Barrier()
 
-                # let these guys take a break
-                time.sleep(1)
+            if rank != 0:
 
                 # these engines do not need to read
                 process_fit = False
 
             else:
-
-                # wait for a moment to allow it all to turn off
-                time.sleep(1)
 
                 process_fit = True
 

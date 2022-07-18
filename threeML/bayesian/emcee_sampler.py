@@ -6,7 +6,6 @@ from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config import threeML_config
-from threeML.config.config import threeML_config
 from threeML.io.detect_notebook import is_inside_notebook
 from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient

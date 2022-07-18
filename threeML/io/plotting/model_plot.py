@@ -1,9 +1,5 @@
-from builtins import object
-
 __author__ = "grburgess"
 
-import warnings
-from typing import List
 
 import astropy.units as u
 import matplotlib.pyplot as plt
@@ -19,8 +15,6 @@ from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.utils.progress_bar import tqdm
-
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)
@@ -905,7 +899,7 @@ class SpectralContourPlot(object):
                 ]
             )
 
-        except:
+        except Exception:
 
             pass
 

@@ -35,7 +35,7 @@ def download_files_from_directory_ftp(
 
     # if no filename has been specified, connect first to retrieve the list of files to download
 
-    if filenames == None:
+    if filenames is not None:
 
         # Connect to server and log in
 
@@ -45,14 +45,14 @@ def download_files_from_directory_ftp(
 
             ftp.login()
 
-        except:
+        except Exception:
             # Maybe we are already logged in
 
             try:
 
                 ftp.cwd("/")
 
-            except:
+            except Exception:
 
                 # nope! don't know what is happening
                 raise
@@ -76,7 +76,7 @@ def download_files_from_directory_ftp(
 
     for i, filename in enumerate(tqdm(filenames)):
 
-        if namefilter != None and filename.find(namefilter) < 0:
+        if namefilter is not None and filename.find(namefilter) < 0:
 
             # Filename does not match, do not download it
             continue

@@ -1,10 +1,10 @@
-from builtins import str
-from builtins import object
-from astropy.io import fits
-import numpy as np
+from builtins import object, str
+
 import astropy.units as u
+import numpy as np
 import pkg_resources
 import six
+from astropy.io import fits
 
 from threeML.io.logging import setup_logger
 
@@ -181,10 +181,14 @@ class FITSExtension(object):
 
                     col_type = np.array(test_value[0]).dtype.type
 
-                except:
+                except Exception:
+
+                    log.error(
+                        f"Could not understand type of column {column_name}"
+                    )
 
                     raise RuntimeError(
-                        "Could not understand type of column %s" % column_name
+                        f"Could not understand type of column {column_name}"
                     )
 
                 # Make sure we are not dealing with objects
@@ -194,11 +198,14 @@ class FITSExtension(object):
 
                     _ = np.array(test_value, col_type)
 
-                except:
+                except Exception:
+
+                    log.error(
+                        f"Column {column_name} contain data which cannot be coerced to {col_type}"
+                    )
 
                     raise RuntimeError(
-                        "Column %s contain data which cannot be coerced to %s"
-                        % (column_name, col_type)
+                        f"Column {column_name} contain data which cannot be coerced to {col_type}"
                     )
 
                 else:

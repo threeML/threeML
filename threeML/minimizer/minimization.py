@@ -1,8 +1,5 @@
-from __future__ import division
-
 import collections
 import math
-from builtins import object, range, str, zip
 
 import numpy as np
 import pandas as pd
@@ -683,11 +680,19 @@ class Minimizer(object):
 
         # This should return the list of best fit parameters and the minimum of the function
 
-        raise NotImplemented(
+        log.error(
+            "This is the method of the base class. Must be implemented by the actual minimizer"
+        )
+
+        raise NotImplementedError(
             "This is the method of the base class. Must be implemented by the actual minimizer"
         )
 
     def set_algorithm(self, algorithm):
+
+        log.error(
+            "Must be implemented by the actual minimizer if it provides more than one algorithm"
+        )
 
         raise NotImplementedError(
             "Must be implemented by the actual minimizer if it provides more than one algorithm"
@@ -876,7 +881,7 @@ class Minimizer(object):
 
             covariance_matrix = np.linalg.inv(hessian_matrix)
 
-        except:
+        except Exception:
 
             log.warning(
                 "Cannot invert Hessian matrix, looks like the matrix is singular"
@@ -896,7 +901,7 @@ class Minimizer(object):
 
             _ = np.linalg.cholesky(covariance_matrix)
 
-        except:
+        except Exception:
 
             log.warning(
                 "Covariance matrix is NOT semi-positive definite. Cannot estimate errors. This can "
@@ -1078,10 +1083,11 @@ class Minimizer(object):
                         xtol=1e-5,
                         maxiter=1000,
                     )  # type: float
-                except:
+
+                except Exception:
 
                     log.warning(
-                        "Cannot find boundary for parameter %s" % parameter_name
+                        f"Cannot find boundary for parameter {parameter_name}"
                     )
 
                     error = np.nan

@@ -2,10 +2,10 @@ __author__ = "grburgess"
 
 import collections
 import os
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List, Optional
-import warnings
 
 import h5py
 import numpy as np
@@ -67,7 +67,7 @@ class _OutputContainer:
     rate_error: Optional[Iterable[float]] = None
 
 
-class TimeSeries(object):
+class TimeSeries:
     def __init__(
         self,
         start_time: float,
@@ -294,8 +294,8 @@ class TimeSeries(object):
         if self._poly_fit_exists:
 
             log.info(
-                f"Refitting background with new polynomial order "
-                "({value}) and existing selections"
+                "Refitting background with new polynomial order "
+                f"({value}) and existing selections"
             )
 
             if self._time_selection_exists:
@@ -1027,7 +1027,7 @@ class TimeSeries(object):
 
                     filename_sanitized.unlink()
 
-                except:
+                except IOError:
 
                     log.error(
                         f"The file {filename_sanitized} already exists "

@@ -1,5 +1,6 @@
-import shutil
 import os
+import shutil
+
 import pytest
 
 from threeML import *

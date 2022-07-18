@@ -1,7 +1,3 @@
-from __future__ import division
-
-from builtins import map, range, zip
-
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels import (
@@ -13,6 +9,7 @@ from astromodels import (
     use_astromodels_memoization,
 )
 from past.utils import old_div
+
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.minimizer.grid_minimizer import GridMinimizer
@@ -46,7 +43,7 @@ class JointLikelihoodWrap(JointLikelihood):
 
                 super(JointLikelihoodWrap, self).fit(*args, **kwargs)
 
-            except:
+            except Exception:
 
                 raise
 

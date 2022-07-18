@@ -1,19 +1,13 @@
-from __future__ import division
-
-# Provides some universal statistical utilities and stats comparison tools
-
-from past.utils import old_div
-from builtins import object
+import warnings
 from math import sqrt
 
 import numpy as np
-import pandas as pd
 import scipy.interpolate
 import scipy.stats
-import warnings
+from past.utils import old_div
 from scipy.special import erfinv
 
-from threeML.io.rich_display import display
+# Provides some universal statistical utilities and stats comparison tools
 
 
 def aic(log_like, n_parameters, n_data_points):
@@ -33,7 +27,7 @@ def aic(log_like, n_parameters, n_data_points):
             / float(n_data_points - n_parameters - 1)
         )
 
-    except:
+    except Exception:
 
         val = 0
 
@@ -117,7 +111,7 @@ def sqrt_sum_of_squares(arg):
     return np.sqrt(np.square(arg).sum())
 
 
-class PoissonResiduals(object):
+class PoissonResiduals:
     """
     This class implements a way to compute residuals for a Poisson distribution mapping them to residuals of a standard
     normal distribution. The probability of obtaining the observed counts given the expected one is computed, and then

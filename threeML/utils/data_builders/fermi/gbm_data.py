@@ -1,6 +1,5 @@
 import collections
 import re
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
@@ -16,7 +15,7 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 log = setup_logger(__name__)
 
 
-class GBMTTEFile(object):
+class GBMTTEFile:
     def __init__(self, ttefile: str) -> None:
         """
 
@@ -61,7 +60,7 @@ class GBMTTEFile(object):
         try:
             self._trigger_time = tte["PRIMARY"].header["TRIGTIME"]
 
-        except:
+        except Exception:
 
             # For continuous data
             log.warning(
@@ -200,7 +199,7 @@ class GBMTTEFile(object):
             mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
             mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
 
-        except:
+        except Exception:
 
             log.warning(
                 "You do not have the requests library, cannot get time system from Heasarc "
@@ -254,7 +253,7 @@ class GBMCdata(object):
 
             self._trigger_time = cdata["PRIMARY"].header["TRIGTIME"]
 
-        except:
+        except Exception:
 
             # For continuous data
             log.warning(
@@ -363,7 +362,7 @@ class GBMCdata(object):
             mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
             mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
 
-        except:
+        except Exception:
 
             log.warning(
                 "You do not have the requests library, cannot get time system from Heasarc "

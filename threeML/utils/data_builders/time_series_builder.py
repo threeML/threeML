@@ -6,7 +6,8 @@ import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
 
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.config.config import threeML_config
+from threeML.config.config_utils import get_value_kwargs
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger, silence_console_log
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
@@ -40,8 +41,6 @@ from threeML.utils.time_series.event_list import (
     EventListWithLiveTime,
 )
 from threeML.utils.time_series.time_series import TimeSeries
-from threeML.config.config import threeML_config
-from threeML.config.config_utils import get_value_kwargs
 
 log = setup_logger(__name__)
 
@@ -832,7 +831,7 @@ class TimeSeriesBuilder(object):
 
             # this is for a set of intervals.
 
-            log.debug(f"extracting a series of spectra")
+            log.debug("extracting a series of spectra")
 
             assert (
                 self._time_series.bins is not None
@@ -1141,7 +1140,7 @@ class TimeSeriesBuilder(object):
 
                             half_shifted = True
 
-                    except:
+                    except Exception:
 
                         half_shifted = True
 
@@ -1291,7 +1290,7 @@ class TimeSeriesBuilder(object):
 
                             half_shifted = True
 
-                    except:
+                    except Exception:
 
                         half_shifted = True
 

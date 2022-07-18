@@ -140,7 +140,7 @@ class JointLikelihood(object):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
-                if not dataset.name in parameter_name:
+                if dataset.name not in parameter_name:
                     log.error(
                         f"This is a bug of the plugin for {type(dataset)}: "
                         "nuisance parameters must contain the instance name"
@@ -266,7 +266,7 @@ class JointLikelihood(object):
             ):
 
                 # Do global minimization first
-                log.debug(f"starting global optimization")
+                log.debug("starting global optimization")
 
                 if quiet:
 
@@ -1024,12 +1024,12 @@ class JointLikelihood(object):
                 # a big number for the likelihood so that the fit engine will avoid it
 
                 log.warning(
-                    "Fitting engine in forbidden space: %s" % (trial_values,),
+                    f"Fitting engine in forbidden space: {trial_values}"
                 )
 
                 return minimization.FIT_FAILED
 
-            except:
+            except Exception:
 
                 # Do not intercept other errors
 

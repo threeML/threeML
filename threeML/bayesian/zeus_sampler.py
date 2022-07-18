@@ -1,18 +1,16 @@
 import numpy as np
-
-from threeML.io.logging import setup_logger
-from threeML.bayesian.sampler_base import MCMCSampler
-from threeML.config.config import threeML_config
-
-from threeML.parallel.parallel_client import ParallelClient
 from astromodels import use_astromodels_memoization
 
+from threeML.bayesian.sampler_base import MCMCSampler
+from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger
+from threeML.parallel.parallel_client import ParallelClient
 
 try:
 
     import zeus
 
-except:
+except ImportError:
 
     has_zeus = False
 
@@ -38,7 +36,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 

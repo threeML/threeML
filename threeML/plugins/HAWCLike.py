@@ -1,11 +1,6 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import str
-from builtins import range
-from past.utils import old_div
 import collections
 import os
-import sys
+
 
 from copy import deepcopy
 
@@ -15,12 +10,12 @@ from astromodels import Parameter
 from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
+from past.utils import old_div
+
 from threeML.exceptions.custom_exceptions import custom_warnings
-
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.plugin_prototype import PluginPrototype
-
 from threeML.io.logging import setup_logger
+from threeML.plugin_prototype import PluginPrototype
 
 log = setup_logger(__name__)
 
@@ -323,14 +318,14 @@ class HAWCLike(PluginPrototype):
                     self._fullsky,
                 )
 
-        except:
+        except Exception:
 
-            print(
+            log.error(
                 "Could not instance the LikeHAWC class from LIFF. "
                 + "Check that HAWC software is working"
             )
 
-            raise
+            raise RuntimeError
 
         else:
 
@@ -341,6 +336,8 @@ class HAWCLike(PluginPrototype):
         if self._fullsky:
 
             if self._roi_ra is None and self._roi_fits is None:
+
+                log.error("You have to define a ROI with the setROI method")
 
                 raise RuntimeError(
                     "You have to define a ROI with the setROI method"
@@ -975,8 +972,11 @@ class HAWCLike(PluginPrototype):
         ax.grid(True)
 
         try:
+
             plt.tight_layout()
-        except:
+
+        except Exception:
+
             pass
 
         return fig

@@ -135,7 +135,7 @@ class DispersionSpectrumLike(SpectrumLike):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        if not method in ["simpson", "trapz", "riemann"]:
+        if method not in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 

@@ -1,5 +1,3 @@
-from builtins import range
-
 __author__ = "grburgess"
 
 import collections
@@ -93,7 +91,7 @@ def _setup_analysis_dictionaries(
                             for c in source.spectrum.main.composite.functions
                         ]
 
-                    except:
+                    except Exception:
 
                         comps = []
 
@@ -133,7 +131,7 @@ def _setup_analysis_dictionaries(
                             for c in source.spectrum.main.composite.functions
                         ]
 
-                    except:
+                    except Exception:
 
                         comps = []
 

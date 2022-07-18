@@ -1,4 +1,3 @@
-# Custom warning
 import math
 import signal
 import subprocess
@@ -119,7 +118,7 @@ def parallel_computation(profile=None, start_cluster=True):
 
                 view = rc[:]
 
-            except:
+            except Exception:
 
                 time.sleep(0.5)
 

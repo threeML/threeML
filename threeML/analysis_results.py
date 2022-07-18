@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import collections
 import datetime
 import functools
@@ -49,7 +47,7 @@ try:
 
     import chainconsumer
 
-except:
+except ImportError:
 
     has_chainconsumer = False
 
@@ -1165,7 +1163,8 @@ class BayesianResults(_AnalysisResults):
                 over=corner_style.extremes,
                 bad=corner_style.extremes,
             )
-        except:
+        except Exception:
+
             pass
 
         contourf_kwargs = dict(corner_style.contourf_kwargs)
@@ -2032,7 +2031,7 @@ class AnalysisResultsSet(collections.abc.Sequence):
 
                         sub_grp.create_dataset("DATA", data=value.value)
 
-                    except:
+                    except Exception:
 
                         sub_grp.attrs["UNIT"] = "NONE_TYPE"
 
@@ -2175,7 +2174,7 @@ def _load_one_results(fits_extension):
             # Gather log probability
             log_probability = fits_extension.data.field("LOG_PROB")[0]
 
-        except:
+        except Exception:
 
             log_probability = None
 
@@ -2248,7 +2247,7 @@ def _load_one_results_hdf(hdf_obj):
             # Gather log probabiltiy
             log_probability = hdf_obj["LOG_PROB"][()]
 
-        except:
+        except Exception:
 
             log_probability = None
 
