@@ -14,7 +14,12 @@ import matplotlib.pyplot as plt
 
 class IntervalContainer(object):
     def __init__(
-        self, start, stop, parameter_values, likelihood_values, n_integration_points
+        self,
+        start,
+        stop,
+        parameter_values,
+        likelihood_values,
+        n_integration_points,
     ):
 
         # Make sure there is no NaN or infinity
@@ -43,8 +48,10 @@ class IntervalContainer(object):
         self._n_integration_points = int(n_integration_points)
 
         # Build interpolation of the likelihood curve
-        self._minus_likelihood_interp = scipy.interpolate.InterpolatedUnivariateSpline(
-            np.log10(parameter_values), -likelihood_values, k=1, ext=0
+        self._minus_likelihood_interp = (
+            scipy.interpolate.InterpolatedUnivariateSpline(
+                np.log10(parameter_values), -likelihood_values, k=1, ext=0
+            )
         )
 
         # Find maximum of loglike
@@ -55,7 +62,10 @@ class IntervalContainer(object):
 
         res = scipy.optimize.minimize_scalar(
             self._minus_likelihood_interp,
-            bounds=(np.log10(self._min_par_value), np.log10(self._max_par_value)),
+            bounds=(
+                np.log10(self._min_par_value),
+                np.log10(self._max_par_value),
+            ),
             method="bounded",
             options={"maxiter": 10000, "disp": True, "xatol": 1e-3},
         )
@@ -112,7 +122,10 @@ class IntervalContainer(object):
 
             # Look for negative bound using BRENTQ
             low_bound_cl, res = scipy.optimize.brentq(
-                bounding_f, self._min_par_value, self._minimum[0], full_output=True
+                bounding_f,
+                self._min_par_value,
+                self._minimum[0],
+                full_output=True,
             )
 
             assert res.converged, "Could not find lower bound"
@@ -136,7 +149,10 @@ class IntervalContainer(object):
 
             # Look for positive bound using BRENTQ
             hi_bound_cl, res = scipy.optimize.brentq(
-                bounding_f, self._minimum[0], self._max_par_value, full_output=True
+                bounding_f,
+                self._minimum[0],
+                self._max_par_value,
+                full_output=True,
             )
 
             assert res.converged, "Could not find upper bound"
@@ -147,7 +163,9 @@ class IntervalContainer(object):
 class CastroLike(PluginPrototype):
     def __init__(self, name, interval_containers):
 
-        self._interval_containers = sorted(interval_containers, key=lambda x: x.start)
+        self._interval_containers = sorted(
+            interval_containers, key=lambda x: x.start
+        )
 
         # By default all containers are active
         self._active_containers = self._interval_containers
@@ -196,7 +214,10 @@ class CastroLike(PluginPrototype):
 
         for interval_container in self._interval_containers:
 
-            if interval_container.start >= tmin and interval_container.stop <= tmax:
+            if (
+                interval_container.start >= tmin
+                and interval_container.stop <= tmax
+            ):
 
                 self._active_containers.append(interval_container)
 
@@ -316,7 +337,9 @@ class CastroLike(PluginPrototype):
 
                 uls_yerrs.append(dy)
 
-        sub.errorbar(xs, ys, xerr=xerrs, yerr=yerrs, fmt=",", ecolor=color, mfc=color)
+        sub.errorbar(
+            xs, ys, xerr=xerrs, yerr=yerrs, fmt=",", ecolor=color, mfc=color
+        )
 
         sub.errorbar(
             uls_xs,

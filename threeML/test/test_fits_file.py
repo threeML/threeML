@@ -66,4 +66,6 @@ def test_fits_file():
 
         assert read_dummy_fits["TEST"].header["TFORM1"] == dtype_keys[i]
 
-        assert np.alltrue(read_dummy_fits["TEST"].data["TEST_VALUE"] == test_values)
+        assert np.alltrue(
+            read_dummy_fits["TEST"].data["TEST_VALUE"] == test_values
+        )

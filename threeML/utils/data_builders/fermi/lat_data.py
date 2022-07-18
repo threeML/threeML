@@ -13,6 +13,7 @@ from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 
+
 class LLEFile(object):
     def __init__(self, lle_file, ft2_file, rsp_file):
         """
@@ -130,7 +131,9 @@ class LLEFile(object):
 
             # create an index of all the FT2 bins falling within this interval
 
-            tmp_idx = np.logical_and(start <= self._ft2_tstart, self._ft2_tstop <= stop)
+            tmp_idx = np.logical_and(
+                start <= self._ft2_tstart, self._ft2_tstop <= stop
+            )
 
             # add them to the already selected idx
             filter_idx = np.logical_or(filter_idx, tmp_idx)
@@ -158,7 +161,9 @@ class LLEFile(object):
         for start, stop in zip(self._gti_start, self._gti_stop):
 
             # capture all the events within that interval
-            tmp_idx = np.logical_and(start <= self._events, self._events <= stop)
+            tmp_idx = np.logical_and(
+                start <= self._events, self._events <= stop
+            )
 
             # combine with the already selected events
             filter_idx = np.logical_or(filter_idx, tmp_idx)
@@ -215,9 +220,11 @@ class LLEFile(object):
     @trigger_time.setter
     def trigger_time(self, val):
 
-        assert self._tstart <= val <= self._tstop, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._tstart, self._tstop)
+        assert (
+            self._tstart <= val <= self._tstop
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._tstart,
+            self._tstop,
         )
 
         self._trigger_time = val
@@ -292,12 +299,12 @@ class LLEFile(object):
     def _output(self):
 
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
 
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 

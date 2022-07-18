@@ -12,18 +12,23 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import (DetDoesNotExist,
-                                                  TriggerDoesNotExist)
+from threeML.exceptions.custom_exceptions import (
+    DetDoesNotExist,
+    TriggerDoesNotExist,
+)
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
-from threeML.io.download_from_http import (ApacheDirectory,
-                                           RemoteDirectoryNotFound)
-from threeML.io.file_utils import (file_existing_and_readable,
-                                   if_directory_not_existing_then_make,
-                                   sanitize_filename)
+from threeML.io.download_from_http import (
+    ApacheDirectory,
+    RemoteDirectoryNotFound,
+)
+from threeML.io.file_utils import (
+    file_existing_and_readable,
+    if_directory_not_existing_then_make,
+    sanitize_filename,
+)
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
-
 
 
 def _validate_fermi_date(year: str, month: str, day: str) -> str:
@@ -38,19 +43,19 @@ def _validate_fermi_date(year: str, month: str, day: str) -> str:
 
         if int(x[0]) == 0:
 
-            if (int(x[1]) <1) or (int(x[1])>9 ):
+            if (int(x[1]) < 1) or (int(x[1]) > 9):
 
                 log.error(f"{x} is not a valid, year, month, day")
                 raise NameError()
         else:
 
-            if (int(x[1]) <0) or (int(x[1])>9 ):
+            if (int(x[1]) < 0) or (int(x[1]) > 9):
 
                 log.error(f"{x} is not a valid, year, month, day")
                 raise NameError()
 
     return f"{year}{month}{day}"
-    
+
 
 def _validate_fermi_trigger_name(trigger: str) -> str:
 
@@ -64,9 +69,7 @@ def _validate_fermi_trigger_name(trigger: str) -> str:
     )
 
     if not isinstance(trigger, str):
-        log.error(
-            "Triggers must be strings"
-        )
+        log.error("Triggers must be strings")
         raise TypeError()
 
     trigger = trigger.lower()
@@ -92,7 +95,11 @@ _detector_list = "n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,na,nb,b0,b1".split(",")
 
 
 def download_GBM_trigger_data(
-        trigger_name: str, detectors: Optional[List[str]] = None, destination_directory: str = ".", compress_tte: bool = True, cspec_only: bool=False
+    trigger_name: str,
+    detectors: Optional[List[str]] = None,
+    destination_directory: str = ".",
+    compress_tte: bool = True,
+    cspec_only: bool = False,
 ) -> Dict[str, Any]:
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
@@ -116,7 +123,8 @@ def download_GBM_trigger_data(
 
     # create output directory if it does not exists
     destination_directory: Path = sanitize_filename(
-        destination_directory, abspath=True)
+        destination_directory, abspath=True
+    )
 
     if_directory_not_existing_then_make(destination_directory)
 
@@ -153,11 +161,10 @@ def download_GBM_trigger_data(
     except RemoteDirectoryNotFound:
 
         log.exception(
-            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}")
-
-        raise TriggerDoesNotExist(
-
+            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}"
         )
+
+        raise TriggerDoesNotExist()
 
     # Now select the files we want to download, then we will download them later
     # We do it in two steps because we want to be able to choose what to download once we
@@ -195,13 +202,13 @@ def download_GBM_trigger_data(
         # nor about files which pertain to other detectors
 
         if cspec_only:
-            
+
             allowed_files = ["cspec"]
 
         else:
 
             allowed_files = ["cspec", "tte"]
-            
+
         if (
             file_type not in allowed_files
             or ext not in ["rsp", "rsp2", "pha", "fit"]
@@ -258,7 +265,9 @@ def download_GBM_trigger_data(
             log.debug(f"{detector} has RSP2 responses")
 
             local_detector_info["rsp"] = downloader.download(
-                remote_detector_info["rsp2"], destination_directory, progress=True
+                remote_detector_info["rsp2"],
+                destination_directory,
+                progress=True,
             )
 
         else:
@@ -266,7 +275,9 @@ def download_GBM_trigger_data(
             log.debug(f"{detector} has RSP responses")
 
             local_detector_info["rsp"] = downloader.download(
-                remote_detector_info["rsp"], destination_directory, progress=True
+                remote_detector_info["rsp"],
+                destination_directory,
+                progress=True,
             )
 
         if not cspec_only:
@@ -282,13 +293,13 @@ def download_GBM_trigger_data(
 
 
 def download_GBM_daily_data(
-        year: str,
-        month: str,
-        day: str,
-        detectors: Optional[List[str]] = None,
-        destination_directory: str = ".",
-        compress_tte: bool = True,
-        cspec_only: bool=True
+    year: str,
+    month: str,
+    day: str,
+    detectors: Optional[List[str]] = None,
+    destination_directory: str = ".",
+    compress_tte: bool = True,
+    cspec_only: bool = True,
 ) -> Dict[str, Any]:
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
@@ -314,7 +325,8 @@ def download_GBM_daily_data(
 
     # create output directory if it does not exists
     destination_directory: Path = sanitize_filename(
-        destination_directory, abspath=True)
+        destination_directory, abspath=True
+    )
 
     if_directory_not_existing_then_make(destination_directory)
 
@@ -351,11 +363,10 @@ def download_GBM_daily_data(
     except RemoteDirectoryNotFound:
 
         log.exception(
-            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}")
-
-        raise TriggerDoesNotExist(
-
+            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}"
         )
+
+        raise TriggerDoesNotExist()
 
     # Now select the files we want to download, then we will download them later
     # We do it in two steps because we want to be able to choose what to download once we
@@ -393,13 +404,13 @@ def download_GBM_daily_data(
         # nor about files which pertain to other detectors
 
         if cspec_only:
-            
+
             allowed_files = ["cspec"]
 
         else:
 
             allowed_files = ["cspec", "tte"]
-            
+
         if (
             file_type not in allowed_files
             or ext not in ["pha", "fit"]
@@ -452,7 +463,6 @@ def download_GBM_daily_data(
             )
 
     return download_info
-
 
 
 def _get_latest_version(filenames):

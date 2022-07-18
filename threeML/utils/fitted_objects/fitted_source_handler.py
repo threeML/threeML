@@ -53,7 +53,8 @@ class GenericFittedSourceHandler(object):
 
         if len(self._independent_variable_range) == 1:
             self._independent_variable_range = (
-                self._independent_variable_range[0],)
+                self._independent_variable_range[0],
+            )
 
         # figure out the output shape of the best fit and errors
 
@@ -117,7 +118,6 @@ class GenericFittedSourceHandler(object):
 
         # first test a parameters to check the number of samples
 
-
         for par in list(self._parameters.values()):
 
             if par.free:
@@ -136,12 +136,16 @@ class GenericFittedSourceHandler(object):
 
         if len(test_variate) > threeML_config.point_source.max_number_samples:
 
-            choices = np.random.choice(range(len(test_variate)), size=threeML_config.point_source.max_number_samples)
+            choices = np.random.choice(
+                range(len(test_variate)),
+                size=threeML_config.point_source.max_number_samples,
+            )
 
-        
         # because we might be using composite functions,
         # we have to keep track of parameter names in a non-elegant way
-        for par, name in zip(list(self._parameters.values()), self._parameter_names):
+        for par, name in zip(
+            list(self._parameters.values()), self._parameter_names
+        ):
 
             if par.free:
 
@@ -149,11 +153,13 @@ class GenericFittedSourceHandler(object):
 
                 # Do not use more than 1000 values (would make computation too slow for nothing)
 
-                if len(this_variate) > threeML_config.point_source.max_number_samples:
+                if (
+                    len(this_variate)
+                    > threeML_config.point_source.max_number_samples
+                ):
 
-                    
                     this_variate = this_variate[choices]
-                
+
                 arguments[name] = this_variate
 
             else:
@@ -186,12 +192,14 @@ class GenericFittedSourceHandler(object):
 
             with use_astromodels_memoization(False):
 
-                variables = list(itertools.product(*self._independent_variable_range))
+                variables = list(
+                    itertools.product(*self._independent_variable_range)
+                )
 
                 if len(variables) > 1:
-                    
+
                     for v in tqdm(variables, desc="Propagating errors"):
-                    
+
                         variates.append(self._propagated_function(*v))
 
                 else:
@@ -199,7 +207,7 @@ class GenericFittedSourceHandler(object):
                     for v in variables:
 
                         variates.append(self._propagated_function(*v))
-                                                    
+
         # otherwise just evaluate
         else:
 
@@ -208,7 +216,11 @@ class GenericFittedSourceHandler(object):
         # create a variates container
 
         self._propagated_variates = VariatesContainer(
-            variates, self._out_shape, self._cl, self._transform, self._equal_tailed
+            variates,
+            self._out_shape,
+            self._cl,
+            self._transform,
+            self._equal_tailed,
         )
 
     @property
@@ -459,8 +471,9 @@ class VariatesContainer(object):
 
             other_values = other.values
 
-            summed_values = [v + vo for v,
-                             vo in zip(self._values, other_values)]
+            summed_values = [
+                v + vo for v, vo in zip(self._values, other_values)
+            ]
 
             return VariatesContainer(
                 summed_values,

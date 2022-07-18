@@ -15,7 +15,9 @@ from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
-    half_chi2, poisson_log_likelihood_ideal_bkg)
+    half_chi2,
+    poisson_log_likelihood_ideal_bkg,
+)
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
@@ -74,7 +76,9 @@ class XYLike(PluginPrototype):
 
             self._has_errors = False
 
-            log.info("Using unweighted Gaussian (equivalent to chi^2) statistic.")
+            log.info(
+                "Using unweighted Gaussian (equivalent to chi^2) statistic."
+            )
 
         else:
 
@@ -112,7 +116,9 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(cls, name, function, x, yerr=None, exposure=None, **kwargs):
+    def from_function(
+        cls, name, function, x, yerr=None, exposure=None, **kwargs
+    ):
         """
         Generate an XYLike plugin from an astromodels function instance
 
@@ -126,8 +132,9 @@ class XYLike(PluginPrototype):
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr=yerr,
-                         exposure=exposure, **kwargs)
+        xyl_gen = XYLike(
+            "generator", x, y, yerr=yerr, exposure=exposure, **kwargs
+        )
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
@@ -279,19 +286,17 @@ class XYLike(PluginPrototype):
 
         self._source_name = source_name
 
-
     @property
     def likelihood_model(self) -> Model:
 
         if self._likelihood_model is None:
 
-            log.error( f"plugin {self._name} does not have a likelihood model" )
+            log.error(f"plugin {self._name} does not have a likelihood model")
 
             raise RuntimeError()
 
         return self._likelihood_model
 
-        
     @property
     def x(self):
 
@@ -332,7 +337,9 @@ class XYLike(PluginPrototype):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert self._source_name in likelihood_model_instance.point_sources, (
+            assert (
+                self._source_name in likelihood_model_instance.point_sources
+            ), (
                 "This XYLike plugin refers to the source %s, "
                 "but that source is not a point source in the likelihood model"
                 % (self._source_name)
@@ -344,7 +351,9 @@ class XYLike(PluginPrototype):
 
         if self._source_name is None:
 
-            n_point_sources = self._likelihood_model.get_number_of_point_sources()
+            n_point_sources = (
+                self._likelihood_model.get_number_of_point_sources()
+            )
 
             assert (
                 n_point_sources > 0
@@ -358,7 +367,9 @@ class XYLike(PluginPrototype):
             expectation = np.sum(
                 [
                     source(self._x, tag=self._tag)
-                    for source in list(self._likelihood_model.point_sources.values())
+                    for source in list(
+                        self._likelihood_model.point_sources.values()
+                    )
                 ],
                 axis=0,
             )
@@ -371,9 +382,9 @@ class XYLike(PluginPrototype):
 
             if self._source_name in self._likelihood_model.point_sources:
 
-                expectation = self._likelihood_model.point_sources[self._source_name](
-                    self._x
-                )
+                expectation = self._likelihood_model.point_sources[
+                    self._source_name
+                ](self._x)
 
             else:
 
@@ -401,13 +412,18 @@ class XYLike(PluginPrototype):
             if negative_mask.sum() > 0:
                 expectation[negative_mask] = 0.0
 
-            return _poisson_like(self._y[self._mask], self._zeros, expectation * self._exposure
-                                 )
+            return _poisson_like(
+                self._y[self._mask], self._zeros, expectation * self._exposure
+            )
 
         else:
 
             # Chi squared
-            return _chi2_like(self._y[self._mask], self._yerr[self._mask], expectation * self._exposure)
+            return _chi2_like(
+                self._y[self._mask],
+                self._yerr[self._mask],
+                expectation * self._exposure,
+            )
 
     def get_simulated_dataset(self, new_name=None):
 
@@ -475,7 +491,9 @@ class XYLike(PluginPrototype):
 
         return new_xy
 
-    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"):
+    def plot(
+        self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"
+    ):
 
         fig, sub = plt.subplots(1, 1)
 
@@ -531,7 +549,8 @@ class XYLike(PluginPrototype):
         self.set_model(model)
 
         self._joint_like_obj = JointLikelihood(
-            model, DataList(self), verbose=verbose)
+            model, DataList(self), verbose=verbose
+        )
 
         self._joint_like_obj.set_minimizer(minimizer)
 
@@ -563,11 +582,7 @@ class XYLike(PluginPrototype):
 
 @nb.njit(fastmath=True)
 def _poisson_like(y, zeros, expectation):
-    return np.sum(
-        poisson_log_likelihood_ideal_bkg(
-            y, zeros, expectation
-        )[0]
-    )
+    return np.sum(poisson_log_likelihood_ideal_bkg(y, zeros, expectation)[0])
 
 
 @nb.njit(fastmath=True)

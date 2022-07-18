@@ -19,7 +19,7 @@ pd.reset_option('display.float_format')
 log = setup_logger(__name__)
 
 
-try: 
+try:
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
     from GtBurst.FuncFactory import Spectra
@@ -29,7 +29,7 @@ try:
     irfs = IRFS.IRFS.keys()
     spectra = Spectra()
 
-    #irfs.append('auto')
+    # irfs.append('auto')
 
     configuration = Configuration()
 
@@ -42,26 +42,30 @@ except (ImportError):
     if threeML_config.logging.startup_warnings:
 
         log.warning('No fermitools installed')
-        
-
-
 
 
 class LATLikelihoodParameter(object):
-
-    def __init__(self, name, help_string, default_value=None, allowed_values=None, is_number=True, is_bool=False):
+    def __init__(
+        self,
+        name,
+        help_string,
+        default_value=None,
+        allowed_values=None,
+        is_number=True,
+        is_bool=False,
+    ):
         """
 
         A container for the parameters that are needed by GtBurst
 
-        :param name: the parameter name 
+        :param name: the parameter name
         :param help_string: the help string
         :param default_value: a default value if needed
         :param allowed_values: the values allowed for input
         :param is_number: if this is a number
         :param is_bool: if this is a bool
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -82,7 +86,12 @@ class LATLikelihoodParameter(object):
 
         # make sure that the value set is allowed
         if self._allowed_values is not None:
-            assert self._current_value in set(self._allowed_values), 'The value of %s is not in %s' % (self._name, self._allowed_values )
+            assert self._current_value in set(
+                self._allowed_values
+            ), 'The value of %s is not in %s' % (
+                self._name,
+                self._allowed_values,
+            )
 
         # construct the class
 
@@ -107,7 +116,13 @@ class LATLikelihoodParameter(object):
 
     def __set_value(self, value):
         if self._allowed_values is not None:
-            assert value in self._allowed_values, 'The value %s of %s is not in %s' % (value,self._name, self._allowed_values)
+            assert (
+                value in self._allowed_values
+            ), 'The value %s of %s is not in %s' % (
+                value,
+                self._name,
+                self._allowed_values,
+            )
 
         self._current_value = value
 
@@ -147,23 +162,42 @@ _required_parameters = [
 ]
 
 _optional_parameters = [
-    'ra', 'dec', 'bin_file', 'tsmin', 'strategy', 'thetamax', 'spectralfiles', 'liketype', 'optimizeposition',
-    'datarepository', 'ltcube', 'expomap', 'ulphindex', 'flemin', 'flemax', 'fgl_mode', 'tsmap_spec', 'filter_GTI',
-    'likelihood_profile', 'remove_fits_files','log_bins', 'bin_file','source_model'
+    'ra',
+    'dec',
+    'bin_file',
+    'tsmin',
+    'strategy',
+    'thetamax',
+    'spectralfiles',
+    'liketype',
+    'optimizeposition',
+    'datarepository',
+    'ltcube',
+    'expomap',
+    'ulphindex',
+    'flemin',
+    'flemax',
+    'fgl_mode',
+    'tsmap_spec',
+    'filter_GTI',
+    'likelihood_profile',
+    'remove_fits_files',
+    'log_bins',
+    'bin_file',
+    'source_model',
 ]
 
 
 class TransientLATDataBuilder(object):
-
     def __init__(self, triggername, **init_values):
         """
-        Build the command for GtBurst's likelihood analysis 
-        and produce the required files for the FermiLATLike 
+        Build the command for GtBurst's likelihood analysis
+        and produce the required files for the FermiLATLike
         plugin
 
         :param triggername: the trigger name in YYMMDDXXX fermi format
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -184,50 +218,69 @@ class TransientLATDataBuilder(object):
         # no value is set UNLESS there is a default
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="File for the results (will be overwritten)", is_number=False)
+            name=name,
+            help_string="File for the results (will be overwritten)",
+            is_number=False,
+        )
 
         # this keeps the user from erasing these objects accidentally
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         # and repeat
 
         name = 'ra'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="R.A. of the object (J2000)", is_number=True)
+            name=name, help_string="R.A. of the object (J2000)", is_number=True
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'dec'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="Dec. of the object (J2000)", is_number=True)
+            name=name, help_string="Dec. of the object (J2000)", is_number=True
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'roi'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="Radius of the Region Of Interest (ROI)", is_number=True)
+            name=name,
+            help_string="Radius of the Region Of Interest (ROI)",
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'tstarts'
 
         self._parameters[name] = LATLikelihoodParameter(
-                name=name,
-                default_value = None,
-                help_string="Comma-separated list of start times (with respect to trigger)", 
-                is_number=False)
+            name=name,
+            default_value=None,
+            help_string="Comma-separated list of start times (with respect to trigger)",
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -235,37 +288,59 @@ class TransientLATDataBuilder(object):
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
-            default_value = None,
-            help_string="Comma-separated list of stop times (with respect to trigger)", is_number=False)
+            default_value=None,
+            help_string="Comma-separated list of stop times (with respect to trigger)",
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'zmax'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value=100., help_string="Zenith cut", is_number=True)
+            name=name,
+            default_value=100.0,
+            help_string="Zenith cut",
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'emin'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value=100., help_string="Minimum energy for the analysis", is_number=True)
+            name=name,
+            default_value=100.0,
+            help_string="Minimum energy for the analysis",
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'emax'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value=100000., help_string="Maximum energy for the analysis", is_number=True)
+            name=name,
+            default_value=100000.0,
+            help_string="Maximum energy for the analysis",
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -276,9 +351,12 @@ class TransientLATDataBuilder(object):
             default_value='p8_source',
             help_string="Instrument Function to be used (IRF)",
             is_number=False,
-            allowed_values=irfs)
+            allowed_values=irfs,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -288,9 +366,12 @@ class TransientLATDataBuilder(object):
             name=name,
             help_string="Galactic model for the likelihood",
             is_number=False,
-            allowed_values=['template (fixed norm.)', 'template', 'none'])
+            allowed_values=['template (fixed norm.)', 'template', 'none'],
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -300,9 +381,18 @@ class TransientLATDataBuilder(object):
             name=name,
             help_string="Particle model",
             is_number=False,
-            allowed_values=['isotr with pow spectrum', 'isotr template', 'none', 'bkge', 'auto'])
+            allowed_values=[
+                'isotr with pow spectrum',
+                'isotr template',
+                'none',
+                'bkge',
+                'auto',
+            ],
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -313,9 +403,12 @@ class TransientLATDataBuilder(object):
             help_string="Source model",
             default_value='PowerLaw2',
             is_number=False,
-            allowed_values=spectra.keys())
+            allowed_values=spectra.keys(),
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -323,12 +416,14 @@ class TransientLATDataBuilder(object):
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
-            default_value=20.,
+            default_value=20.0,
             help_string="Minimum TS to consider a detection",
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -339,18 +434,27 @@ class TransientLATDataBuilder(object):
             default_value='time',
             help_string="Strategy for Zenith cut: events or time",
             is_number=False,
-            allowed_values=['events', 'time'])
+            allowed_values=['events', 'time'],
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'thetamax'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value=180., help_string="Theta cut", is_number=True)
+            name=name,
+            default_value=180.0,
+            help_string="Theta cut",
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -361,9 +465,12 @@ class TransientLATDataBuilder(object):
             default_value='no',
             help_string="Produce spectral files to be used in XSPEC?",
             allowed_values=['yes', 'no'],
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -374,34 +481,38 @@ class TransientLATDataBuilder(object):
             default_value='unbinned',
             help_string="Likelihood type (binned or unbinned)",
             allowed_values=['binned', 'unbinned'],
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'bin_file'
 
         self._parameters[name] = LATLikelihoodParameter(
-                name = name,
-                default_value = None,
-                help_string = "A string containing a text file 'res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
-                is_bool = False,
-                is_number = False)
+            name=name,
+            default_value=None,
+            help_string="A string containing a text file 'res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
+            is_bool=False,
+            is_number=False,
+        )
 
         ##################################
 
         name = 'log_bins'
 
         self._parameters[name] = LATLikelihoodParameter(
-                name = name,
-                default_value = None,
-                help_string = "Use logarithmically-spaced bins. For example: '1.0 10000.0 30'",
-                is_number = False,
-                is_bool = False)
+            name=name,
+            default_value=None,
+            help_string="Use logarithmically-spaced bins. For example: '1.0 10000.0 30'",
+            is_number=False,
+            is_bool=False,
+        )
 
         ##################################
-
 
         name = 'optimizeposition'
 
@@ -410,9 +521,12 @@ class TransientLATDataBuilder(object):
             default_value='no',
             help_string="Optimize position with gtfindsrc?",
             allowed_values=['no', 'yes'],
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -422,36 +536,57 @@ class TransientLATDataBuilder(object):
             name=name,
             default_value=configuration.get('dataRepository'),
             help_string="Dir where data are stored",
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'ltcube'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value='', help_string="Pre-computed livetime cube", is_number=False)
+            name=name,
+            default_value='',
+            help_string="Pre-computed livetime cube",
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'expomap'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value='', help_string="Pre-computed exposure map", is_number=False)
+            name=name,
+            default_value='',
+            help_string="Pre-computed exposure map",
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
         name = 'ulphindex'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, default_value=-2, help_string="Photon index for upper limits", is_number=True)
+            name=name,
+            default_value=-2,
+            help_string="Photon index for upper limits",
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -461,9 +596,12 @@ class TransientLATDataBuilder(object):
             name=name,
             default_value=100,
             help_string="Lower bound energy for flux/upper limit computation",
-            is_number=True)
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -473,9 +611,12 @@ class TransientLATDataBuilder(object):
             name=name,
             default_value=10000,
             help_string="Upper bound energy for flux/upper limit computation",
-            is_number=True)
+            is_number=True,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -485,9 +626,12 @@ class TransientLATDataBuilder(object):
             name=name,
             default_value='fast',
             help_string="Set 'complete' to use all FGL sources, set 'fast' to use only bright sources",
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -496,11 +640,13 @@ class TransientLATDataBuilder(object):
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
             default_value=None,
-            help_string=
-            "A TS map specification of the type half_size,n_side. For example: \n 0.5,8' makes a TS map 1 deg x 1 deg with 64 points",
-            is_number=False)
+            help_string="A TS map specification of the type half_size,n_side. For example: \n 0.5,8' makes a TS map 1 deg x 1 deg with 64 points",
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -511,9 +657,12 @@ class TransientLATDataBuilder(object):
             default_value=False,
             help_string="Automatically divide time intervals crossing GTIs",
             is_bool=True,
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -524,9 +673,12 @@ class TransientLATDataBuilder(object):
             default_value=False,
             help_string="Produce a text file containing the profile of the likelihood for a \n changing normalization ",
             is_bool=True,
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         ##################################
 
@@ -537,9 +689,12 @@ class TransientLATDataBuilder(object):
             default_value=False,
             help_string="Whether to remove the FITS files of every interval in order to save disk space",
             is_bool=True,
-            is_number=False)
+            is_number=False,
+        )
 
-        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+        super(TransientLATDataBuilder, self).__setattr__(
+            name, self._parameters[name]
+        )
 
         # Now if there are keywords from a configuration to read,
         # lets do it
@@ -548,11 +703,11 @@ class TransientLATDataBuilder(object):
 
     def _process_keywords(self, **kwargs):
         """
-        processes the keywords from a dictionary 
+        processes the keywords from a dictionary
         likely loaded from a yaml config
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -565,11 +720,11 @@ class TransientLATDataBuilder(object):
             else:
                 # add warning that there is something strange in the configuration
                 pass
- 
+
     def __setattr__(self, name, value):
         """
         Override this so that we cannot erase parameters
-        
+
         """
 
         if (name in _required_parameters) or (name in _optional_parameters):
@@ -583,8 +738,12 @@ class TransientLATDataBuilder(object):
         This builds the cmd string for the script
         """
 
-        cmd_str = '%s %s' % (os.path.join('fermitools', 'GtBurst', 'scripts', 'doTimeResolvedLike.py'),
-                             self._triggername)
+        cmd_str = '%s %s' % (
+            os.path.join(
+                'fermitools', 'GtBurst', 'scripts', 'doTimeResolvedLike.py'
+            ),
+            self._triggername,
+        )
 
         for k, v in self._parameters.items():
 
@@ -598,7 +757,9 @@ class TransientLATDataBuilder(object):
 
                 # but fail if we did not set the ones needed
 
-                assert v.name not in _required_parameters, '%s is not set but is required' % v.name
+                assert v.name not in _required_parameters, (
+                    '%s is not set but is required' % v.name
+                )
 
         return cmd_str
 
@@ -607,12 +768,16 @@ class TransientLATDataBuilder(object):
         run GtBurst to produce the files needed for the FermiLATLike plugin
         """
 
-        assert has_fermitools, 'You do not have the fermitools installed and cannot run GtBurst'
+        assert (
+            has_fermitools
+        ), 'You do not have the fermitools installed and cannot run GtBurst'
 
         # This is not the cleanest way to do this, but at the moment I see
         # no way around it as I do not want to rewrite the fermitools
 
-        cmd = self._get_command_string()    # should not allow you to be missing args!
+        cmd = (
+            self._get_command_string()
+        )  # should not allow you to be missing args!
 
         # now we want to get the site package directory to find where the script is
         # located. This should be the first entry... might break in teh future!
@@ -633,7 +798,9 @@ class TransientLATDataBuilder(object):
                 #  We will move the old intervals to a tmp directory
                 # so that they are not lost
 
-                log.info('You have choosen to recompute the time intervals in this folder')
+                log.info(
+                    'You have choosen to recompute the time intervals in this folder'
+                )
 
                 tmp_dir = 'tmp_%s' % str(uuid.uuid4())
 
@@ -655,7 +822,9 @@ class TransientLATDataBuilder(object):
         # run this baby
 
         subprocess.call(cmd, shell=True)
-        self.lat_observations = self._create_lat_observations_from_run(intervals_before_run)
+        self.lat_observations = self._create_lat_observations_from_run(
+            intervals_before_run
+        )
         return self.lat_observations
 
     def _create_lat_observations_from_run(self, intervals_before_run):
@@ -664,7 +833,7 @@ class TransientLATDataBuilder(object):
         each inteval and turns them into LAT observations.
 
 
-        :rtype: 
+        :rtype:
 
         """
 
@@ -686,69 +855,104 @@ class TransientLATDataBuilder(object):
             if interval in intervals_before_run:
 
                 log.info(
-                    '%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.' % interval
+                    '%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.'
+                    % interval
                 )
             else:
 
                 # check that either tstarts,tstops or log_bins are defined
-                if self._parameters['tstarts'].value is not None or self._parameters['tstops'].value is not None:
+                if (
+                    self._parameters['tstarts'].value is not None
+                    or self._parameters['tstops'].value is not None
+                ):
                     tstart, tstop = [
-                        float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
+                        float(x)
+                        for x in re.match(
+                            '^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval
+                        ).groups()
+                    ]
                 else:
-                    assert self._parameters['log_bins'].value is None, 'Choose either to use tstarts and tstops, or to use log_bins'
+                    assert (
+                        self._parameters['log_bins'].value is None
+                    ), 'Choose either to use tstarts and tstops, or to use log_bins'
 
-                event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
+                event_file = os.path.join(
+                    interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername
+                )
 
                 if not file_existing_and_readable(event_file):
                     log.info('The event file does not exist. Please examine!')
 
-                ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername)
+                ft2_file = os.path.join(
+                    interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername
+                )
 
                 if not file_existing_and_readable(ft2_file):
                     log.info('The ft2 file does not exist. Please examine!')
                     log.info('we will grab the data file for you.')
 
-                    base_ft2_file = os.path.join('%s' % self.datarepository.get_disp_value(),
-                                                 'bn%s' % self._triggername,
-                                                 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
+                    base_ft2_file = os.path.join(
+                        '%s' % self.datarepository.get_disp_value(),
+                        'bn%s' % self._triggername,
+                        'gll_ft2_tr_bn%s_v00.fit' % self._triggername,
+                    )
 
                     if not file_existing_and_readable(base_ft2_file):
 
                         log.error('Cannot find any FT2 files!')
 
                         raise AssertionError()
-                        
+
                     shutil.copy(base_ft2_file, interval)
 
-                    ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
+                    ft2_file = os.path.join(
+                        interval, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername
+                    )
 
                     log.info('copied %s to %s' % (base_ft2_file, ft2_file))
 
-                exposure_map = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername)
+                exposure_map = os.path.join(
+                    interval,
+                    'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername,
+                )
 
                 if not file_existing_and_readable(exposure_map):
                     log.info('The exposure map does not exist. Please examine!')
 
-                livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
+                livetime_cube = os.path.join(
+                    interval,
+                    'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername,
+                )
 
                 if not file_existing_and_readable(livetime_cube):
-                    log.info('The livetime_cube does not exist. Please examine!')
+                    log.info(
+                        'The livetime_cube does not exist. Please examine!'
+                    )
 
                 # optional bin_file parameter
-                #if self._parameters['bin_file'].value is not None:
-                    
-                    # liketype matches
+                # if self._parameters['bin_file'].value is not None:
+
+                # liketype matches
                 #    assert self._parameters['liketype'] == 'binned', 'liketype must be binned to use bin_file parameter %s'%self._parameters['bin_file'].value
 
-                    # value carries a few arguments, take first value- path
-                 #   bin_file_path = self._parameters['bin_file'].value.split()[0]
-                 #   bin_file = os.path.join(interval, bin_file_path)
+                # value carries a few arguments, take first value- path
+                #   bin_file_path = self._parameters['bin_file'].value.split()[0]
+                #   bin_file = os.path.join(interval, bin_file_path)
 
-                 #   if not file_existing_and_readable(bin_file):
-                 #       print('The bin_file at %s does not exist. Please examine!'%bin_file)
+                #   if not file_existing_and_readable(bin_file):
+                #       print('The bin_file at %s does not exist. Please examine!'%bin_file)
 
                 # now create a LAT observation object
-                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername)#@, bin_file)
+                this_obs = LATObservation(
+                    event_file,
+                    ft2_file,
+                    exposure_map,
+                    livetime_cube,
+                    tstart,
+                    tstop,
+                    self._parameters['liketype'].get_disp_value(),
+                    self._triggername,
+                )  # @, bin_file)
 
                 lat_observations.append(this_obs)
 
@@ -756,7 +960,7 @@ class TransientLATDataBuilder(object):
 
     def to_LATLike(self):
 
-        _lat_like_plugins=[]
+        _lat_like_plugins = []
 
         for _lat_ob in self.lat_observations:
 
@@ -791,12 +995,12 @@ class TransientLATDataBuilder(object):
 
     def save_configuration(self, filename):
         """
-        Save the current configuration to a yaml 
+        Save the current configuration to a yaml
         file for use later. Suggested extension is .yml
 
-        :param filename: the yaml file name to save to 
-        :returns: 
-        :rtype: 
+        :param filename: the yaml file name to save to
+        :returns:
+        :rtype:
 
         """
 
@@ -819,10 +1023,10 @@ class TransientLATDataBuilder(object):
         """
         Load a saved yaml configuration for the given trigger name
 
-        :param triggername: Trigger name of the source in YYMMDDXXX 
+        :param triggername: Trigger name of the source in YYMMDDXXX
         :param config_file: the saved yaml configuration to use
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -833,22 +1037,31 @@ class TransientLATDataBuilder(object):
 
 
 class LATObservation(object):
-
-    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, liketype, triggername):#, bin_file):
+    def __init__(
+        self,
+        event_file,
+        ft2_file,
+        exposure_map,
+        livetime_cube,
+        tstart,
+        tstop,
+        liketype,
+        triggername,
+    ):  # , bin_file):
         """
-        A container to formalize the storage of Fermi LAT 
+        A container to formalize the storage of Fermi LAT
         observation files
 
-        :param event_file: 
-        :param ft2_file: 
-        :param exposure_map: 
-        :param livetime_cube: 
+        :param event_file:
+        :param ft2_file:
+        :param exposure_map:
+        :param livetime_cube:
         :param tstart:
         :param tstop:
         :param liketype:
         :param triggername:
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -858,9 +1071,9 @@ class LATObservation(object):
         self._livetime_cube = livetime_cube
         self._tstart = tstart
         self._tstop = tstop
-        self._liketype =liketype
+        self._liketype = liketype
         self._triggername = triggername
-        #self._bin_file = bin_file
+        # self._bin_file = bin_file
 
     @property
     def event_file(self):
@@ -890,8 +1103,8 @@ class LATObservation(object):
     def liketype(self):
         return self._liketype
 
-    #@property
-    #def bin_file(self):
+    # @property
+    # def bin_file(self):
     #    return self._bin_file
 
     @property
@@ -909,7 +1122,7 @@ class LATObservation(object):
         output['livetime_cube'] = self._livetime_cube
         output['triggername'] = self._triggername
         output['liketype'] = self._liketype
-        #output['bin_file'] = self._bin_file
+        # output['bin_file'] = self._bin_file
 
         df = pd.Series(output)
 
@@ -917,16 +1130,17 @@ class LATObservation(object):
 
     def to_LATLike(self):
 
-        _fermi_lat_like =  FermiLATLike(
-                     name = ('LAT%dX%d' % (self._tstart, self._tstop)).replace('-','n'),
-                     event_file = self._event_file,
-                     ft2_file = self._ft2_file,
-                     livetime_cube_file = self._livetime_cube,
-                     kind = self._liketype,
-                     exposure_map_file=self._exposure_map,
-                     source_maps=None,
-                     binned_expo_map=None)
-                    #,bin_file = self._bin_file)
-                     #source_name=self._triggername)
+        _fermi_lat_like = FermiLATLike(
+            name=('LAT%dX%d' % (self._tstart, self._tstop)).replace('-', 'n'),
+            event_file=self._event_file,
+            ft2_file=self._ft2_file,
+            livetime_cube_file=self._livetime_cube,
+            kind=self._liketype,
+            exposure_map_file=self._exposure_map,
+            source_maps=None,
+            binned_expo_map=None,
+        )
+        # ,bin_file = self._bin_file)
+        # source_name=self._triggername)
 
         return _fermi_lat_like

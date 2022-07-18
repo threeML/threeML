@@ -1,17 +1,27 @@
 import logging
 
 from threeML.config.config import threeML_config
-from threeML.io import (activate_logs, activate_progress_bars,
-                        activate_warnings, debug_mode, loud_mode, quiet_mode,
-                        silence_logs, silence_progress_bars, silence_warnings,
-                        toggle_progress_bars,
-                        update_logging_level)
-from threeML.io.logging import (astromodels_console_log_handler,
-                                astromodels_dev_log_handler,
-                                astromodels_usr_log_handler,
-                                threeML_console_log_handler,
-                                threeML_dev_log_handler,
-                                threeML_usr_log_handler)
+from threeML.io import (
+    activate_logs,
+    activate_progress_bars,
+    activate_warnings,
+    debug_mode,
+    loud_mode,
+    quiet_mode,
+    silence_logs,
+    silence_progress_bars,
+    silence_warnings,
+    toggle_progress_bars,
+    update_logging_level,
+)
+from threeML.io.logging import (
+    astromodels_console_log_handler,
+    astromodels_dev_log_handler,
+    astromodels_usr_log_handler,
+    threeML_console_log_handler,
+    threeML_dev_log_handler,
+    threeML_usr_log_handler,
+)
 from threeML.utils.progress_bar import tqdm, trange
 
 

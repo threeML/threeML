@@ -24,6 +24,7 @@ else:
 
 log = setup_logger(__name__)
 
+
 class DynestyPool(object):
     """A simple wrapper for `dview`."""
 
@@ -85,81 +86,81 @@ class DynestyNestedSampler(UnitCubeSampler):
     ):
         """TODO describe function
 
-        :param n_live_points: 
-        :type n_live_points: 
-        :param maxiter: 
-        :type maxiter: 
-        :param maxcall: 
-        :type maxcall: 
-        :param dlogz: 
-        :type dlogz: 
-        :param logl_max: 
-        :type logl_max: 
-        :param n_effective: 
-        :type n_effective: 
-        :param add_live: 
-        :type add_live: 
-        :param print_func: 
-        :type print_func: 
-        :param save_bounds: 
-        :type save_bounds: 
-        :param bound: 
-        :type bound: 
+        :param n_live_points:
+        :type n_live_points:
+        :param maxiter:
+        :type maxiter:
+        :param maxcall:
+        :type maxcall:
+        :param dlogz:
+        :type dlogz:
+        :param logl_max:
+        :type logl_max:
+        :param n_effective:
+        :type n_effective:
+        :param add_live:
+        :type add_live:
+        :param print_func:
+        :type print_func:
+        :param save_bounds:
+        :type save_bounds:
+        :param bound:
+        :type bound:
         :param sample:
-        :type sample: 
-        :param periodic: 
-        :type periodic: 
-        :param reflective: 
-        :type reflective: 
-        :param update_interval: 
-        :type update_interval: 
-        :param first_update: 
-        :type first_update: 
-        :param npdim: 
-        :type npdim: 
-        :param rstate: 
-        :type rstate: 
-        :param use_pool: 
-        :type use_pool: 
-        :param live_points: 
-        :type live_points: 
-        :param logl_args: 
-        :type logl_args: 
-        :param logl_kwargs: 
-        :type logl_kwargs: 
-        :param ptform_args: 
-        :type ptform_args: 
-        :param ptform_kwargs: 
-        :type ptform_kwargs: 
-        :param gradient: 
-        :type gradient: 
-        :param grad_args: 
-        :type grad_args: 
-        :param grad_kwargs: 
-        :type grad_kwargs: 
-        :param compute_jac: 
-        :type compute_jac: 
-        :param enlarge: 
-        :type enlarge: 
-        :param bootstrap: 
-        :type bootstrap: 
-        :param vol_dec: 
-        :type vol_dec: 
-        :param vol_check: 
-        :type vol_check: 
-        :param walks: 
-        :type walks: 
-        :param facc: 
-        :type facc: 
-        :param slices: 
-        :type slices: 
-        :param fmove: 
-        :type fmove: 
-        :param max_move: 
-        :type max_move: 
-        :param update_func: 
-        :type update_func: 
-        :returns: 
+        :type sample:
+        :param periodic:
+        :type periodic:
+        :param reflective:
+        :type reflective:
+        :param update_interval:
+        :type update_interval:
+        :param first_update:
+        :type first_update:
+        :param npdim:
+        :type npdim:
+        :param rstate:
+        :type rstate:
+        :param use_pool:
+        :type use_pool:
+        :param live_points:
+        :type live_points:
+        :param logl_args:
+        :type logl_args:
+        :param logl_kwargs:
+        :type logl_kwargs:
+        :param ptform_args:
+        :type ptform_args:
+        :param ptform_kwargs:
+        :type ptform_kwargs:
+        :param gradient:
+        :type gradient:
+        :param grad_args:
+        :type grad_args:
+        :param grad_kwargs:
+        :type grad_kwargs:
+        :param compute_jac:
+        :type compute_jac:
+        :param enlarge:
+        :type enlarge:
+        :param bootstrap:
+        :type bootstrap:
+        :param vol_dec:
+        :type vol_dec:
+        :param vol_check:
+        :type vol_check:
+        :param walks:
+        :type walks:
+        :param facc:
+        :type facc:
+        :param slices:
+        :type slices:
+        :param fmove:
+        :type fmove:
+        :param max_move:
+        :type max_move:
+        :param update_func:
+        :type update_func:
+        :returns:
 
         """
         log.debug("Setup dynesty sampler")
@@ -177,7 +178,6 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._kwargs = {}
         self._kwargs["nlive"] = n_live_points
         self._kwargs["bound"] = bound
-
 
         self._kwargs["sample"] = sample
         self._kwargs["periodic"] = periodic
@@ -228,9 +228,9 @@ class DynestyNestedSampler(UnitCubeSampler):
     def sample(self, quiet=False):
         """
         sample using the UltraNest numerical integration method
-        :rtype: 
+        :rtype:
 
-        :returns: 
+        :returns:
 
         """
         if not self._is_setup:
@@ -248,7 +248,9 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         self._kwargs["ndim"] = ndim
 
-        loglike, dynesty_prior = self._construct_unitcube_posterior(return_copy=True)
+        loglike, dynesty_prior = self._construct_unitcube_posterior(
+            return_copy=True
+        )
 
         # check if we are doing to do things in parallel
 
@@ -282,7 +284,9 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         rstate = np.random
 
-        if abs(np.sum(weights) - 1.0) > SQRTEPS:  # same tol as in np.random.choice.
+        if (
+            abs(np.sum(weights) - 1.0) > SQRTEPS
+        ):  # same tol as in np.random.choice.
             raise ValueError("Weights do not sum to 1.")
 
         # Make N subdivisions and choose positions with a consistent random offset.
@@ -316,10 +320,12 @@ class DynestyNestedSampler(UnitCubeSampler):
             [self._log_prior(samples) for samples in self._raw_samples]
         )
 
-        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(10.0)
+        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(
+            10.0
+        )
 
         self._build_samples_dictionary()
-        
+
         self._build_results()
 
         # Display results
@@ -392,103 +398,103 @@ class DynestyDynamicSampler(UnitCubeSampler):
     ):
         """TODO describe function
 
-        :param nlive_init: 
-        :type nlive_init: 
-        :param maxiter_init: 
-        :type maxiter_init: 
-        :param maxcall_init: 
-        :type maxcall_init: 
-        :param dlogz_init: 
-        :type dlogz_init: 
-        :param logl_max_init: 
-        :type logl_max_init: 
-        :param n_effective_init: 
-        :type n_effective_init: 
-        :param nlive_batch: 
-        :type nlive_batch: 
-        :param wt_function: 
-        :type wt_function: 
-        :param wt_kwargs: 
-        :type wt_kwargs: 
-        :param maxiter_batch: 
-        :type maxiter_batch: 
-        :param maxcall_batch: 
-        :type maxcall_batch: 
-        :param maxiter: 
-        :type maxiter: 
-        :param maxcall: 
-        :type maxcall: 
-        :param maxbatch: 
-        :type maxbatch: 
-        :param n_effective: 
-        :type n_effective: 
-        :param stop_function: 
-        :type stop_function: 
-        :param stop_kwargs: 
-        :type stop_kwargs: 
-        :param use_stop: 
-        :type use_stop: 
-        :param save_bounds: 
-        :type save_bounds: 
-        :param print_func: 
-        :type print_func: 
-        :param live_points: 
-        :type live_points: 
-        :param bound: 
-        :type bound: 
+        :param nlive_init:
+        :type nlive_init:
+        :param maxiter_init:
+        :type maxiter_init:
+        :param maxcall_init:
+        :type maxcall_init:
+        :param dlogz_init:
+        :type dlogz_init:
+        :param logl_max_init:
+        :type logl_max_init:
+        :param n_effective_init:
+        :type n_effective_init:
+        :param nlive_batch:
+        :type nlive_batch:
+        :param wt_function:
+        :type wt_function:
+        :param wt_kwargs:
+        :type wt_kwargs:
+        :param maxiter_batch:
+        :type maxiter_batch:
+        :param maxcall_batch:
+        :type maxcall_batch:
+        :param maxiter:
+        :type maxiter:
+        :param maxcall:
+        :type maxcall:
+        :param maxbatch:
+        :type maxbatch:
+        :param n_effective:
+        :type n_effective:
+        :param stop_function:
+        :type stop_function:
+        :param stop_kwargs:
+        :type stop_kwargs:
+        :param use_stop:
+        :type use_stop:
+        :param save_bounds:
+        :type save_bounds:
+        :param print_func:
+        :type print_func:
+        :param live_points:
+        :type live_points:
+        :param bound:
+        :type bound:
         :param sample:
-        :type sample: 
-        :param periodic: 
-        :type periodic: 
-        :param reflective: 
-        :type reflective: 
-        :param update_interval: 
-        :type update_interval: 
-        :param first_update: 
-        :type first_update: 
-        :param npdim: 
-        :type npdim: 
-        :param rstate: 
-        :type rstate: 
-        :param use_pool: 
-        :type use_pool: 
-        :param logl_args: 
-        :type logl_args: 
-        :param logl_kwargs: 
-        :type logl_kwargs: 
-        :param ptform_args: 
-        :type ptform_args: 
-        :param ptform_kwargs: 
-        :type ptform_kwargs: 
-        :param gradient: 
-        :type gradient: 
-        :param grad_args: 
-        :type grad_args: 
-        :param grad_kwargs: 
-        :type grad_kwargs: 
-        :param compute_jac: 
-        :type compute_jac: 
-        :param enlarge: 
-        :type enlarge: 
-        :param bootstrap: 
-        :type bootstrap: 
-        :param vol_dec: 
-        :type vol_dec: 
-        :param vol_check: 
-        :type vol_check: 
-        :param walks: 
-        :type walks: 
-        :param facc: 
-        :type facc: 
-        :param slices: 
-        :type slices: 
-        :param fmove: 
-        :type fmove: 
-        :param max_move: 
-        :type max_move: 
-        :param update_func: 
-        :type update_func: 
-        :returns: 
+        :type sample:
+        :param periodic:
+        :type periodic:
+        :param reflective:
+        :type reflective:
+        :param update_interval:
+        :type update_interval:
+        :param first_update:
+        :type first_update:
+        :param npdim:
+        :type npdim:
+        :param rstate:
+        :type rstate:
+        :param use_pool:
+        :type use_pool:
+        :param logl_args:
+        :type logl_args:
+        :param logl_kwargs:
+        :type logl_kwargs:
+        :param ptform_args:
+        :type ptform_args:
+        :param ptform_kwargs:
+        :type ptform_kwargs:
+        :param gradient:
+        :type gradient:
+        :param grad_args:
+        :type grad_args:
+        :param grad_kwargs:
+        :type grad_kwargs:
+        :param compute_jac:
+        :type compute_jac:
+        :param enlarge:
+        :type enlarge:
+        :param bootstrap:
+        :type bootstrap:
+        :param vol_dec:
+        :type vol_dec:
+        :param vol_check:
+        :type vol_check:
+        :param walks:
+        :type walks:
+        :param facc:
+        :type facc:
+        :param slices:
+        :type slices:
+        :param fmove:
+        :type fmove:
+        :param max_move:
+        :type max_move:
+        :param update_func:
+        :type update_func:
+        :returns:
 
         """
         log.debug("Setup dynesty dynamic sampler")
@@ -540,7 +546,6 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         self._kwargs["use_pool"] = use_pool
 
- 
         self._kwargs["logl_args"] = logl_args
         self._kwargs["logl_kwargs"] = logl_kwargs
         self._kwargs["ptform_args"] = ptform_args
@@ -568,9 +573,9 @@ class DynestyDynamicSampler(UnitCubeSampler):
     def sample(self, quiet=False):
         """
         sample using the UltraNest numerical integration method
-        :rtype: 
+        :rtype:
 
-        :returns: 
+        :returns:
 
         """
         if not self._is_setup:
@@ -588,7 +593,9 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         self._kwargs["ndim"] = ndim
 
-        loglike, dynesty_prior = self._construct_unitcube_posterior(return_copy=True)
+        loglike, dynesty_prior = self._construct_unitcube_posterior(
+            return_copy=True
+        )
 
         # check if we are doing to do things in parallel
 
@@ -620,7 +627,9 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         rstate = np.random
 
-        if abs(np.sum(weights) - 1.0) > SQRTEPS:  # same tol as in np.random.choice.
+        if (
+            abs(np.sum(weights) - 1.0) > SQRTEPS
+        ):  # same tol as in np.random.choice.
             raise ValueError("Weights do not sum to 1.")
 
         # Make N subdivisions and choose positions with a consistent random offset.
@@ -652,10 +661,12 @@ class DynestyDynamicSampler(UnitCubeSampler):
             [self._log_prior(samples) for samples in self._raw_samples]
         )
 
-        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(10.0)
+        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(
+            10.0
+        )
 
         self._build_samples_dictionary()
-        
+
         self._build_results()
 
         # Display results

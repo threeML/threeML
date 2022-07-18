@@ -447,7 +447,9 @@ def test_time_interval_sets_starts_stops():
 
     ts1 = TimeIntervalSet([t1, t2, t3])
 
-    for start, stop, interval in zip(ts1.start_times, ts1.stop_times, [t1, t2, t3]):
+    for start, stop, interval in zip(
+        ts1.start_times, ts1.stop_times, [t1, t2, t3]
+    ):
 
         assert interval.start_time == start
         assert interval.stop_time == stop

@@ -97,13 +97,16 @@ class VERITASRun(object):
             # Compute bin centers and bin width of the Monte Carlo energy bins
 
             self._dE = (
-                10 ** self._log_mc_energies[1:] - 10 ** self._log_mc_energies[:-1]
+                10 ** self._log_mc_energies[1:]
+                - 10 ** self._log_mc_energies[:-1]
             )
             self._mc_energies_c = (
-                10 ** self._log_mc_energies[1:] + 10 ** self._log_mc_energies[:-1]
+                10 ** self._log_mc_energies[1:]
+                + 10 ** self._log_mc_energies[:-1]
             ) / 2.0
             self._recon_energies_c = (
-                10 ** self._log_recon_energies[1:] + 10 ** self._log_recon_energies[:-1]
+                10 ** self._log_recon_energies[1:]
+                + 10 ** self._log_recon_energies[:-1]
             ) / 2.0
 
             self._n_chan = self._log_recon_energies.shape[0] - 1
@@ -114,12 +117,12 @@ class VERITASRun(object):
 
             # Read the TGraph
             tgraph = f.Get(run_name + "/gMeanEffectiveArea")
-            self._log_eff_area_energies, self._eff_area = tgraph_to_arrays(tgraph)
+            self._log_eff_area_energies, self._eff_area = tgraph_to_arrays(
+                tgraph
+            )
 
             # Transform the effective area to cm2 (it is in m2 in the file)
-            self._eff_area *= (
-                1e8  # This value is for VEGAS, because VEGAS effective area is in cm2
-            )
+            self._eff_area *= 1e8  # This value is for VEGAS, because VEGAS effective area is in cm2
 
             # Transform energies to keV
             self._log_eff_area_energies += 9
@@ -168,7 +171,9 @@ class VERITASRun(object):
         self._first_chan = (
             np.abs(self._log_recon_energies - self._start_energy)
         ).argmin()
-        self._last_chan = (np.abs(self._log_recon_energies - self._end_energy)).argmin()
+        self._last_chan = (
+            np.abs(self._log_recon_energies - self._end_energy)
+        ).argmin()
 
     def _renorm_hMigration(self):
 
@@ -188,7 +193,9 @@ class VERITASRun(object):
         rc_e1 = 10 ** self._log_recon_energies[:-1]
         rc_e2 = 10 ** self._log_recon_energies[1:]
 
-        expectation = self._simulated_spectrum(self._recon_energies_c) * (rc_e2 - rc_e1)
+        expectation = self._simulated_spectrum(self._recon_energies_c) * (
+            rc_e2 - rc_e1
+        )
 
         # Get the unnormalized effective area
 
@@ -209,7 +216,9 @@ class VERITASRun(object):
         v_new = np.sum(self._hMigration, axis=1)
         new_v = old_div(v_new, expectation)
         avg1_new = new_v
-        avg2_new = np.interp(self._recon_energies_c, energies_eff, self._eff_area)
+        avg2_new = np.interp(
+            self._recon_energies_c, energies_eff, self._eff_area
+        )
         renorm_new = old_div(avg1_new, avg2_new)
         hMigration_new = old_div(self._hMigration, renorm_new[:, None])
         hMigration_new[~np.isfinite(hMigration_new)] = 0
@@ -413,7 +422,10 @@ class VERITASLike(PluginPrototype):
 
             this_run.display()
 
-            if this_run.total_counts == 0 or this_run.total_background_counts == 0:
+            if (
+                this_run.total_counts == 0
+                or this_run.total_background_counts == 0
+            ):
 
                 custom_warnings.warn(
                     "%s has 0 source or bkg counts, cannot use it." % run_name
@@ -453,7 +465,9 @@ class VERITASLike(PluginPrototype):
         """
 
         # Set the model for all runs
-        self._likelihood_model = likelihood_model_instance  # type: astromodels.Model
+        self._likelihood_model = (
+            likelihood_model_instance
+        )  # type: astromodels.Model
 
         # for run in self._runs_like.values():
         #

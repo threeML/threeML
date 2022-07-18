@@ -31,58 +31,57 @@ class ScipyMinimizer(LocalMinimizer):
 
             default_setup = {"algorithm": "L-BFGS-B", "tol": 0.0001}
 
-            
-            
             self._setup_dict = default_setup
 
         else:
 
             if "algorithm" in user_setup_dict:
 
-                
                 if not user_setup_dict["algorithm"] in _SUPPORTED_ALGORITHMS:
 
-                    log.error("Supported algorithms are %s" % (",".join(_SUPPORTED_ALGORITHMS)))
+                    log.error(
+                        "Supported algorithms are %s"
+                        % (",".join(_SUPPORTED_ALGORITHMS))
+                    )
 
                     raise AssertionError()
 
-                log.info(f"scipy minimizer algorithm set to:{user_setup_dict['algorithm']}")
-                
+                log.info(
+                    f"scipy minimizer algorithm set to:{user_setup_dict['algorithm']}"
+                )
+
             # We can assume that the setup has been already checked against the setup_keys
             for key in user_setup_dict:
 
-                
                 self._setup_dict[key] = user_setup_dict[key]
-
-    
 
     def set_algorithm(self, algorithm: str) -> None:
         """
         set the algorithm for the scipy minimizer.
         Valid entries are "L-BFGS-B", "TNC", "SLSQP"
-        
-        :param algorithm: 
+
+        :param algorithm:
         :type algorithm: str
-        :returns: 
+        :returns:
 
         """
         if algorithm not in _SUPPORTED_ALGORITHMS:
 
-            log.error("Supported algorithms are %s" % (",".join(_SUPPORTED_ALGORITHMS)))
+            log.error(
+                "Supported algorithms are %s"
+                % (",".join(_SUPPORTED_ALGORITHMS))
+            )
 
             raise AssertionError()
-        
 
         self._setup_dict["algorithm"] = algorithm
 
-        
-        
     # This cannot be part of a class, unfortunately, because of how PyGMO serialize objects
-    
+
     @staticmethod
     def _check_bounds(x, minima, maxima):
 
-#        return _check_bounds(x, minima, maxima)
+        #        return _check_bounds(x, minima, maxima)
 
         for val, min_val, max_val in zip(x, minima, maxima):
 
@@ -97,7 +96,6 @@ class ScipyMinimizer(LocalMinimizer):
                 if val > max_val:
 
                     return False
-            
 
         return True
 
@@ -109,9 +107,10 @@ class ScipyMinimizer(LocalMinimizer):
         minima = []
         maxima = []
 
-        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(
-            self._internal_parameters.items()
-        ):
+        for i, (
+            par_name,
+            (cur_value, cur_delta, cur_min, cur_max),
+        ) in enumerate(self._internal_parameters.items()):
 
             x0.append(cur_value)
 
@@ -178,6 +177,7 @@ class ScipyMinimizer(LocalMinimizer):
 
         return best_fit_values, float(res.fun)
 
+
 @nb.njit(fastmath=True)
 def _check_bounds(x, minima, maxima):
 
@@ -195,6 +195,4 @@ def _check_bounds(x, minima, maxima):
 
                 return False
 
-
     return True
-

@@ -7,9 +7,12 @@ import numpy as np
 from iminuit import Minuit
 
 from threeML.io.logging import setup_logger
-from threeML.minimizer.minimization import (CannotComputeCovariance,
-                                            CannotComputeErrors, FitFailed,
-                                            LocalMinimizer)
+from threeML.minimizer.minimization import (
+    CannotComputeCovariance,
+    CannotComputeErrors,
+    FitFailed,
+    LocalMinimizer,
+)
 
 log = setup_logger(__name__)
 
@@ -173,8 +176,6 @@ class MinuitMinimizer(LocalMinimizer):
         for line in str(self.minuit.params).splitlines():
             log.error(line)
 
-        
-
     def _minimize(self):
         """
         Minimize the function using MIGRAD
@@ -243,11 +244,10 @@ class MinuitMinimizer(LocalMinimizer):
             self._print_current_status()
 
             log.error(
-                "HESSE failed. Most probably some of your parameters are unconstrained.")
-
-            raise CannotComputeCovariance(
-
+                "HESSE failed. Most probably some of your parameters are unconstrained."
             )
+
+            raise CannotComputeCovariance()
 
         return covariance
 
@@ -303,7 +303,9 @@ class MinuitMinimizer(LocalMinimizer):
 
                 # Need to transform in the external reference
 
-                best_fit_value_internal = self._fit_results.loc[par.path, "value"]
+                best_fit_value_internal = self._fit_results.loc[
+                    par.path, "value"
+                ]
 
                 _, minus_error_external = par.internal_to_external_delta(
                     best_fit_value_internal, minus_error

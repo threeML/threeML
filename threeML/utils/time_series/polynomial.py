@@ -1,9 +1,16 @@
-
 from typing import Iterable, List, Optional, Tuple, Union
 
 import numpy as np
-from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
-                         PointSource, Quadratic)
+from astromodels import (
+    Constant,
+    Cubic,
+    Gaussian,
+    Line,
+    Log_normal,
+    Model,
+    PointSource,
+    Quadratic,
+)
 
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
@@ -13,11 +20,15 @@ from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import BadCovariance, FitFailed
 from threeML.io.logging import setup_logger, silence_console_log
 from threeML.minimizer.grid_minimizer import AllFitFailed
-from threeML.minimizer.minimization import (CannotComputeCovariance,
-                                            GlobalMinimization,
-                                            LocalMinimization)
-from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
-                                                 UnbinnedPoissonLike)
+from threeML.minimizer.minimization import (
+    CannotComputeCovariance,
+    GlobalMinimization,
+    LocalMinimization,
+)
+from threeML.plugins.UnbinnedPoissonLike import (
+    EventObservation,
+    UnbinnedPoissonLike,
+)
 from threeML.plugins.XYLike import XYLike
 
 log = setup_logger(__name__)
@@ -27,7 +38,9 @@ _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
 
 
 class Polynomial(object):
-    def __init__(self, coefficients: Iterable[float], is_integral: bool = False):
+    def __init__(
+        self, coefficients: Iterable[float], is_integral: bool = False
+    ):
         """
         A polynomial
 
@@ -41,10 +54,12 @@ class Polynomial(object):
         log.debug(f"with coefficients {self._coefficients}")
 
         self._i_plus_1: np.ndarray = np.array(
-            list(range(1, self._degree + 1 + 1)), dtype=float)
+            list(range(1, self._degree + 1 + 1)), dtype=float
+        )
 
         self._cov_matrix: np.ndarray = np.zeros(
-            (self._degree + 1, self._degree + 1))
+            (self._degree + 1, self._degree + 1)
+        )
 
         # we can fix some things for speed
         # we only need to set the coeff for the
@@ -63,7 +78,8 @@ class Polynomial(object):
             )
 
             self._integral_polynomial: "Polynomial" = Polynomial(
-                integral_coeff, is_integral=True)
+                integral_coeff, is_integral=True
+            )
 
     @classmethod
     def from_previous_fit(cls, coefficients, covariance) -> "Polynomial":
@@ -92,17 +108,17 @@ class Polynomial(object):
         return np.sqrt(self._cov_matrix.diagonal())
 
     def __get_coefficient(self):
-        """ gets the coefficients"""
+        """gets the coefficients"""
 
         return np.array(self._coefficients)
 
     def ___get_coefficient(self):
-        """ Indirect coefficient getter """
+        """Indirect coefficient getter"""
 
         return self.__get_coefficient()
 
     def __set_coefficient(self, val):
-        """ sets the coefficients"""
+        """sets the coefficients"""
 
         self._coefficients = val
 
@@ -115,11 +131,10 @@ class Polynomial(object):
             ]
         )
 
-        self._integral_polynomial = Polynomial(
-            integral_coeff, is_integral=True)
+        self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
     def ___set_coefficient(self, val):
-        """ Indirect coefficient setter """
+        """Indirect coefficient setter"""
 
         return self.__set_coefficient(val)
 
@@ -173,11 +188,15 @@ class Polynomial(object):
         return np.sqrt(err2)
 
 
-def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
-            exposure: Iterable[float],
-            bayes: Optional[bool] = False) -> Tuple[Polynomial, float]:
-    """ 
-    function to fit a polynomial to data. 
+def polyfit(
+    x: Iterable[float],
+    y: Iterable[float],
+    grade: int,
+    exposure: Iterable[float],
+    bayes: Optional[bool] = False,
+) -> Tuple[Polynomial, float]:
+    """
+    function to fit a polynomial to data.
     not a member to allow parallel computation
 
     :param x: the x coord of the data
@@ -193,10 +212,9 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
     # return a "zero polynomial"
     log.debug(f"starting polyfit with grade {grade} ")
 
-    bayes = get_value("bayes",
-                      bayes,
-                      bool,
-                      threeML_config.time_series.fit.bayes)
+    bayes = get_value(
+        "bayes", bayes, bool, threeML_config.time_series.fit.bayes
+    )
 
     nan_mask = np.isnan(y)
 
@@ -211,7 +229,7 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
         log.debug("no counts, return 0")
 
         # No data, nothing to do!
-        return Polynomial([0.0]*(grade+1)), 0.0
+        return Polynomial([0.0] * (grade + 1)), 0.0
 
     # create 3ML plugins and fit them with 3ML!
     # should eventuallly allow better config
@@ -224,14 +242,15 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
     model = Model(ps)
 
-    avg = np.mean(y/exposure)
+    avg = np.mean(y / exposure)
 
     log.debug(f"starting polyfit with avg norm {avg}")
 
     with silence_console_log():
 
-        xy = XYLike("series", x=x, y=y, exposure=exposure,
-                    poisson_data=True, quiet=True)
+        xy = XYLike(
+            "series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True
+        )
 
         if not bayes:
 
@@ -268,7 +287,12 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
                 jl.fit(quiet=True)
 
-            except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+            except (
+                FitFailed,
+                BadCovariance,
+                AllFitFailed,
+                CannotComputeCovariance,
+            ):
 
                 log.debug("1st fit failed")
 
@@ -276,7 +300,12 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
                     jl.fit(quiet=True)
 
-                except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+                except (
+                    FitFailed,
+                    BadCovariance,
+                    AllFitFailed,
+                    CannotComputeCovariance,
+                ):
 
                     log.debug("all MLE fits failed")
 
@@ -290,7 +319,8 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
             try:
                 final_polynomial.set_covariace_matrix(
-                    jl.results.covariance_matrix)
+                    jl.results.covariance_matrix
+                )
 
             except:
 
@@ -309,7 +339,8 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
                     v.bounds = (0, None)
                     v.prior = Log_normal(
-                        mu=np.log(avg), sigma=np.max([np.log(avg/2), 1]))
+                        mu=np.log(avg), sigma=np.max([np.log(avg / 2), 1])
+                    )
                     v.value = 1
 
                 else:
@@ -343,7 +374,8 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
             final_polynomial = Polynomial(coeff)
 
             final_polynomial.set_covariace_matrix(
-                ba.results.estimate_covariance_matrix())
+                ba.results.estimate_covariance_matrix()
+            )
 
             min_log_likelihood = xy.get_log_like()
 
@@ -352,11 +384,16 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
     return final_polynomial, -min_log_likelihood
 
 
-def unbinned_polyfit(events: Iterable[float], grade: int,
-                     t_start: Iterable[float], t_stop: Iterable[float],
-                     exposure: float, bayes: bool) -> Tuple[Polynomial, float]:
+def unbinned_polyfit(
+    events: Iterable[float],
+    grade: int,
+    t_start: Iterable[float],
+    t_stop: Iterable[float],
+    exposure: float,
+    bayes: bool,
+) -> Tuple[Polynomial, float]:
     """
-    function to fit a polynomial to unbinned event data. 
+    function to fit a polynomial to unbinned event data.
     not a member to allow parallel computation
 
     :param events: the events to fit
@@ -373,10 +410,9 @@ def unbinned_polyfit(events: Iterable[float], grade: int,
     # create 3ML plugins and fit them with 3ML!
 
     # select the model based on the grade
-    bayes = get_value("bayes",
-                      bayes,
-                      bool,
-                      threeML_config.time_series.fit.bayes)
+    bayes = get_value(
+        "bayes", bayes, bool, threeML_config.time_series.fit.bayes
+    )
 
     if len(events) == 0:
 
@@ -392,9 +428,9 @@ def unbinned_polyfit(events: Iterable[float], grade: int,
 
         model = Model(ps)
 
-        observation = EventObservation(events, exposure,
-                                       t_start, t_stop,
-                                       for_timeseries=True)
+        observation = EventObservation(
+            events, exposure, t_start, t_stop, for_timeseries=True
+        )
 
         xy = UnbinnedPoissonLike("series", observation=observation)
 
@@ -429,11 +465,11 @@ def unbinned_polyfit(events: Iterable[float], grade: int,
 
             local_minimizer = LocalMinimization("minuit")
 
-            my_grid = {
-                model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 10)}
+            my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 10)}
 
             grid_minimizer.setup(
-                second_minimization=local_minimizer, grid=my_grid)
+                second_minimization=local_minimizer, grid=my_grid
+            )
 
             jl.set_minimizer(grid_minimizer)
 
@@ -443,17 +479,27 @@ def unbinned_polyfit(events: Iterable[float], grade: int,
 
                 jl.fit(quiet=True)
 
-            except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+            except (
+                FitFailed,
+                BadCovariance,
+                AllFitFailed,
+                CannotComputeCovariance,
+            ):
 
                 try:
 
                     jl.fit(quiet=True)
 
-                except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+                except (
+                    FitFailed,
+                    BadCovariance,
+                    AllFitFailed,
+                    CannotComputeCovariance,
+                ):
 
                     log.debug("all MLE fits failed, returning zero")
 
-                    return Polynomial([0]*(grade + 1)), 0
+                    return Polynomial([0] * (grade + 1)), 0
 
             coeff = [v.value for _, v in model.free_parameters.items()]
 
@@ -479,7 +525,7 @@ def unbinned_polyfit(events: Iterable[float], grade: int,
 
                 else:
 
-                    v.prior = Gaussian(mu=0, sigma=.5)
+                    v.prior = Gaussian(mu=0, sigma=0.5)
                     v.value = 0.1
 
             # we actually use a line here
@@ -508,7 +554,8 @@ def unbinned_polyfit(events: Iterable[float], grade: int,
             final_polynomial = Polynomial(coeff)
 
             final_polynomial.set_covariace_matrix(
-                ba.results.estimate_covariance_matrix())
+                ba.results.estimate_covariance_matrix()
+            )
 
             min_log_likelihood = xy.get_log_like()
 

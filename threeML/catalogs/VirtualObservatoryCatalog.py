@@ -24,8 +24,9 @@ astropy_old = True
 astropy_version = astropy.__version__
 if int(astropy_version[0]) == 4 and int(astropy_version[2]) >= 1:
     astropy_old = False
-elif int(astropy_version[0]) >=5:
+elif int(astropy_version[0]) >= 5:
     astropy_old = False
+
 
 class ConeSearchFailed(RuntimeError):
     pass
@@ -97,7 +98,9 @@ class VirtualObservatoryCatalog(object):
 
                 # Download failed
 
-                raise ConeSearchFailed("Cone search failed. Reason: %s" % exc.message)
+                raise ConeSearchFailed(
+                    "Cone search failed. Reason: %s" % exc.message
+                )
 
             else:
 
@@ -110,20 +113,22 @@ class VirtualObservatoryCatalog(object):
                 if table is None:
 
                     log.error("Your search returned nothing")
-                    
+
                     return None
-                    
+
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (
-                    table.to_pandas().set_index("name").sort_values("Search_Offset")
+                    table.to_pandas()
+                    .set_index("name")
+                    .sort_values("Search_Offset")
                 )
 
                 str_df = pandas_df.select_dtypes([object])
-                
+
                 if astropy_old:
                     str_df = str_df.stack().str.decode("utf-8").unstack()
-                
+
                 for col in str_df:
                     pandas_df[col] = str_df[col]
 
@@ -132,7 +137,7 @@ class VirtualObservatoryCatalog(object):
                     pandas_df.index = new_index
 
                 self._last_query_results = pandas_df
-                
+
                 out = self.apply_format(table)
 
                 # This is needed to avoid strange errors
@@ -211,13 +216,17 @@ class VirtualObservatoryCatalog(object):
 
         if valid_sources:
 
-            query_string = " | ".join(['(index == "%s")' % x for x in valid_sources])
+            query_string = " | ".join(
+                ['(index == "%s")' % x for x in valid_sources]
+            )
 
             query_results = self._vo_dataframe.query(query_string)
 
             table = astro_table.Table.from_pandas(query_results)
 
-            name_column = astro_table.Column(name="name", data=query_results.index)
+            name_column = astro_table.Column(
+                name="name", data=query_results.index
+            )
             table.add_column(name_column, index=0)
 
             out = self.apply_format(table)

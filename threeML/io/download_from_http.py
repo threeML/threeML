@@ -6,9 +6,11 @@ from pathlib import Path
 import requests
 
 from threeML.config.config import threeML_config
-from threeML.io.file_utils import (file_existing_and_readable,
-                                   path_exists_and_is_directory,
-                                   sanitize_filename)
+from threeML.io.file_utils import (
+    file_existing_and_readable,
+    path_exists_and_is_directory,
+    sanitize_filename,
+)
 from threeML.io.logging import setup_logger
 from threeML.utils.progress_bar import tqdm
 
@@ -45,7 +47,8 @@ class ApacheDirectory(object):
             else:
 
                 raise HTTPError(
-                    "HTTP request failed with reason: %s" % self._request_result.reason
+                    "HTTP request failed with reason: %s"
+                    % self._request_result.reason
                 )
 
         self._text = self._request_result.text
@@ -141,7 +144,8 @@ class ApacheDirectory(object):
         )
 
         destination_path: Path = sanitize_filename(
-            destination_path, abspath=True)
+            destination_path, abspath=True
+        )
 
         assert path_exists_and_is_directory(destination_path), (
             f"Provided destination {destination_path} does not exist or "
@@ -178,7 +182,8 @@ class ApacheDirectory(object):
             # Add a .gz at the end of the file path
 
             log.debug(
-                f"file {remote_filename} will be downloaded and compressed")
+                f"file {remote_filename} will be downloaded and compressed"
+            )
 
             local_path: Path = Path(f"{local_path}.gz")
 
@@ -282,7 +287,8 @@ class ApacheDirectory(object):
                     continue
 
             this_local_file = self.download(
-                file, destination_path, progress=progress)
+                file, destination_path, progress=progress
+            )
 
             local_files.append(this_local_file)
 

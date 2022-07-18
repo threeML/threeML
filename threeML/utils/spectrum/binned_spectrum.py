@@ -104,14 +104,14 @@ class Quality(object):
         """
         Read in quality from an OGIP file
 
-        :param cls: 
-        :type cls: 
-        :param ogip_quality: 
-        :type ogip_quality: 
-        :returns: 
+        :param cls:
+        :type cls:
+        :param ogip_quality:
+        :type ogip_quality:
+        :returns:
 
         """
-        
+
         ogip_quality = np.atleast_1d(ogip_quality)
         good = ogip_quality == 0
         warn = ogip_quality == 2
@@ -167,7 +167,7 @@ class BinnedSpectrum(Histogram):
         ebounds: Union[np.ndarray, ChannelSet],
         count_errors: Optional[np.ndarray] = None,
         sys_errors: Optional[np.ndarray] = None,
-        quality: Optional[Quality] =None,
+        quality: Optional[Quality] = None,
         scale_factor: float = 1.0,
         is_poisson: bool = False,
         mission: Optional[str] = None,
@@ -206,7 +206,8 @@ class BinnedSpectrum(Histogram):
             # make one from the edges
 
             ebounds: ChannelSet = ChannelSet.from_list_of_edges(
-                ebounds)  # type: ChannelSet
+                ebounds
+            )  # type: ChannelSet
 
         self._ebounds: ChannelSet = ebounds
 
@@ -585,11 +586,9 @@ class BinnedSpectrum(Histogram):
         return pd.DataFrame(out_dict)
 
     @classmethod
-    def from_time_series(cls,
-                         time_series,
-                         use_poly=False,
-                         from_model=False,
-                         **kwargs):
+    def from_time_series(
+        cls, time_series, use_poly=False, from_model=False, **kwargs
+    ):
         """
 
         :param time_series:
@@ -609,15 +608,16 @@ class BinnedSpectrum(Histogram):
             mission=pha_information.telescope,
             tstart=pha_information.tstart,
             tstop=pha_information.start + pha_information.telapse,
-            #telapse=pha_information["telapse,
+            # telapse=pha_information["telapse,
             # channel=pha_information.channel,
             counts=pha_information.counts,
             count_errors=pha_information.counts_error,
             quality=pha_information.quality,
-            #grouping=pha_information.grouping,
+            # grouping=pha_information.grouping,
             exposure=pha_information.exposure,
             is_poisson=is_poisson,
-            ebounds=pha_information.edges)
+            ebounds=pha_information.edges,
+        )
 
     def __add__(self, other):
         assert self == other, "The bins are not equal"
@@ -636,7 +636,9 @@ class BinnedSpectrum(Histogram):
             assert (
                 self.count_errors is not None or other.count_errors is not None
             ), "only one of the two spectra have errors, can not add!"
-            new_count_errors = (self.count_errors ** 2 + other.count_errors ** 2) ** 0.5
+            new_count_errors = (
+                self.count_errors ** 2 + other.count_errors ** 2
+            ) ** 0.5
 
         new_counts = self.counts + other.counts
 
@@ -682,7 +684,9 @@ class BinnedSpectrum(Histogram):
         assert self == other, "The bins are not equal"
 
         if self.is_poisson or other.is_poisson:
-            raise Exception("Inverse_variance_weighting not implemented for poisson")
+            raise Exception(
+                "Inverse_variance_weighting not implemented for poisson"
+            )
 
         new_sys_errors = self.sys_errors
         if new_sys_errors is None:
@@ -761,11 +765,11 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         counts,
         exposure,
         response: InstrumentResponse,
-        count_errors: Optional[np.ndarray]=None,
-        sys_errors: Optional[np.ndarray]=None,
+        count_errors: Optional[np.ndarray] = None,
+        sys_errors: Optional[np.ndarray] = None,
         quality=None,
-        scale_factor: float=1.0,
-        is_poisson: bool=False,
+        scale_factor: float = 1.0,
+        is_poisson: bool = False,
         mission: Optional[str] = None,
         instrument: Optional[str] = None,
         tstart: Optional[float] = None,
@@ -787,12 +791,13 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         :param instrument:
         """
 
-        if not isinstance(response, InstrumentResponse ):
+        if not isinstance(response, InstrumentResponse):
 
-            log.error("The response is not a valid instance of InstrumentResponse")
+            log.error(
+                "The response is not a valid instance of InstrumentResponse"
+            )
 
             raise RuntimeError()
-            
 
         self._response: InstrumentResponse = response
 
@@ -894,7 +899,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return BinnedSpectrumWithDispersion(
             counts=new_counts,
             exposure=new_exposure,
-            response=self._response.clone(), # clone a NEW response
+            response=self._response.clone(),  # clone a NEW response
             count_errors=new_count_errors,
             sys_errors=new_sys_errors,
             quality=self._quality,

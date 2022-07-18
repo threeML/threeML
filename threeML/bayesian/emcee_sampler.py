@@ -28,32 +28,36 @@ class EmceeSampler(MCMCSampler):
         """
 
         super(EmceeSampler, self).__init__(
-            likelihood_model, data_list, **kwargs)
+            likelihood_model, data_list, **kwargs
+        )
 
-    def setup(self, n_iterations: int,
-              n_burn_in: Optional[int] = None,
-              n_walkers: int = 20,
-              seed=None,
-              **kwargs):
+    def setup(
+        self,
+        n_iterations: int,
+        n_burn_in: Optional[int] = None,
+        n_walkers: int = 20,
+        seed=None,
+        **kwargs,
+    ):
 
         """TODO describe function
 
-        :param n_iterations: 
+        :param n_iterations:
         :type n_iterations: int
-        :param n_burn_in: 
+        :param n_burn_in:
         :type n_burn_in: Optional[int]
-        :param n_walkers: 
+        :param n_walkers:
         :type n_walkers: int
-        :param seed: 
-        :type seed: 
-        :returns: 
+        :param seed:
+        :type seed:
+        :returns:
 
         """
 
-        
-        
-        log.debug(f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"
-                  f"n_walkers: {n_walkers}, seed: {seed}.")
+        log.debug(
+            f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"
+            f"n_walkers: {n_walkers}, seed: {seed}."
+        )
 
         self._n_iterations = int(n_iterations)
 
@@ -150,29 +154,32 @@ class EmceeSampler(MCMCSampler):
             # Run the true sampling
 
             _ = sampler.run_mcmc(
-                initial_state=state, nsteps=self._n_iterations, progress=progress)
+                initial_state=state,
+                nsteps=self._n_iterations,
+                progress=progress,
+            )
 
-        acc=np.mean(sampler.acceptance_fraction)
+        acc = np.mean(sampler.acceptance_fraction)
 
         log.info(f"Mean acceptance fraction: {acc}")
 
-        self._sampler=sampler
-        self._raw_samples=sampler.get_chain(flat=True)
+        self._sampler = sampler
+        self._raw_samples = sampler.get_chain(flat=True)
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior=[self._log_prior(x) for x in self._raw_samples]
+        log_prior = [self._log_prior(x) for x in self._raw_samples]
 
         # Now we get the log posterior and we remove the log prior
 
-        self._log_like_values=sampler.get_log_prob(flat=True) - log_prior
+        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
 
         # we also want to store the log probability
 
-        self._log_probability_values=sampler.get_log_prob(flat=True)
+        self._log_probability_values = sampler.get_log_prob(flat=True)
 
-        self._marginal_likelihood=None
+        self._marginal_likelihood = None
 
         self._build_samples_dictionary()
 

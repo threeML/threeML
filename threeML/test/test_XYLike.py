@@ -3,6 +3,7 @@ from threeML.plugins.XYLike import XYLike
 import os
 import numpy as np
 
+
 def get_signal():
     # Generate a test signal
     generator = Line() + Gaussian()
@@ -240,7 +241,9 @@ def test_XYLike_poisson():
 
     # print res[0]['value']
     assert np.allclose(
-        res[0]["value"], [40.344599, 0.783748, 71.560055, 4.989727, 0.330570], rtol=0.05
+        res[0]["value"],
+        [40.344599, 0.783748, 71.560055, 4.989727, 0.330570],
+        rtol=0.05,
     )
 
 

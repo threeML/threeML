@@ -27,18 +27,22 @@ def aic(log_like, n_parameters, n_data_points):
     try:
         val = -2.0 * log_like + 2 * n_parameters
         val += (
-            2 * n_parameters * (n_parameters + 1) / float(n_data_points - n_parameters - 1)
+            2
+            * n_parameters
+            * (n_parameters + 1)
+            / float(n_data_points - n_parameters - 1)
         )
 
     except:
 
         val = 0
 
-        
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn("AIC was NAN. Recording zero, but you should examine your fit.")
+        warnings.warn(
+            "AIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return val
 
@@ -52,7 +56,9 @@ def bic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn("BIC was NAN. Recording zero, but you should examine your fit.")
+        warnings.warn(
+            "BIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return val
 
@@ -95,7 +101,9 @@ def dic(bayes_analysis):
         elpd_dic = 0
         pdic = 0
 
-        warnings.warn("DIC was NAN. Recording zero, but you should examine your fit.")
+        warnings.warn(
+            "DIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return -2 * elpd_dic, pdic
 
@@ -303,7 +311,7 @@ class Significance(object):
         which is appropriate when the observation is Poisson distributed but
         the background has been modeled and thus has Gaussian distributed errors.
 
-        :param sigma_b: The gaussian 1 sigma errors on the background  
+        :param sigma_b: The gaussian 1 sigma errors on the background
         :return:
 
         """

@@ -4,8 +4,10 @@ import numpy as np
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
-from threeML.utils.bayesian_blocks import (bayesian_blocks,
-                                           bayesian_blocks_not_unique)
+from threeML.utils.bayesian_blocks import (
+    bayesian_blocks,
+    bayesian_blocks_not_unique,
+)
 from threeML.utils.numba_utils import VectorFloat64, VectorInt64
 from threeML.utils.progress_bar import tqdm
 from threeML.utils.statistics.stats_tools import Significance
@@ -33,8 +35,10 @@ class Rebinner(object):
 
         if total < min_value_per_bin:
 
-            log.error("Vector total is %s, cannot rebin at %s per bin"
-                      % (total, min_value_per_bin))
+            log.error(
+                "Vector total is %s, cannot rebin at %s per bin"
+                % (total, min_value_per_bin)
+            )
 
             raise NotEnoughData()
 
@@ -88,7 +92,7 @@ class Rebinner(object):
                     if n_grouped_bins > 1:
 
                         # group all these bins
-                        self._grouping[index - n_grouped_bins + 1: index] = -1
+                        self._grouping[index - n_grouped_bins + 1 : index] = -1
                         self._grouping[index] = 1
 
                     # reset the number of bins in this group
@@ -126,7 +130,7 @@ class Rebinner(object):
                     if n_grouped_bins > 1:
 
                         # group all these bins
-                        self._grouping[index - n_grouped_bins + 1: index] = -1
+                        self._grouping[index - n_grouped_bins + 1 : index] = -1
                         self._grouping[index] = 1
 
                     # reset the number of bins in this group
@@ -139,7 +143,8 @@ class Rebinner(object):
             self._stops.append(len(vector_to_rebin_on))
 
         assert len(self._starts) == len(self._stops), (
-            "This is a bug: the starts and stops of the bins are not in " "equal number"
+            "This is a bug: the starts and stops of the bins are not in "
+            "equal number"
         )
 
         self._min_value_per_bin = min_value_per_bin
@@ -149,7 +154,8 @@ class Rebinner(object):
         self._stops = np.array(self._stops)
 
         log.debug(
-            f"Vector was rebinned from {len(vector_to_rebin_on)} to {self._n_bins}")
+            f"Vector was rebinned from {len(vector_to_rebin_on)} to {self._n_bins}"
+        )
 
     @property
     def n_bins(self):
@@ -181,13 +187,27 @@ class Rebinner(object):
 
             if vector.dtype == np.int64:
 
-                rebinned_vectors.append(_rebin_vector_int(
-                    vector, self._starts, self._stops, self._mask, self._n_bins))
+                rebinned_vectors.append(
+                    _rebin_vector_int(
+                        vector,
+                        self._starts,
+                        self._stops,
+                        self._mask,
+                        self._n_bins,
+                    )
+                )
 
             else:
 
-                rebinned_vectors.append(_rebin_vector_float(
-                    vector, self._starts, self._stops, self._mask, self._n_bins))
+                rebinned_vectors.append(
+                    _rebin_vector_float(
+                        vector,
+                        self._starts,
+                        self._stops,
+                        self._mask,
+                        self._n_bins,
+                    )
+                )
 
         return rebinned_vectors
 
@@ -217,7 +237,8 @@ class Rebinner(object):
             for low_bound, hi_bound in zip(self._starts, self._stops):
 
                 rebinned_vector.append(
-                    np.sqrt(np.sum(vector[low_bound:hi_bound] ** 2)))
+                    np.sqrt(np.sum(vector[low_bound:hi_bound] ** 2))
+                )
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
@@ -225,13 +246,16 @@ class Rebinner(object):
 
     def get_new_start_and_stop(self, old_start, old_stop):
 
-        assert len(old_start) == len(self._mask) and len(
-            old_stop) == len(self._mask)
+        assert len(old_start) == len(self._mask) and len(old_stop) == len(
+            self._mask
+        )
 
         new_start = np.zeros(len(self._starts))
         new_stop = np.zeros(len(self._starts))
 
-        for i, (low_bound, hi_bound) in enumerate(zip(self._starts, self._stops)):
+        for i, (low_bound, hi_bound) in enumerate(
+            zip(self._starts, self._stops)
+        ):
             new_start[i] = old_start[low_bound]
             new_stop[i] = old_stop[hi_bound - 1]
 
@@ -342,7 +366,8 @@ class TemporalBinner(TimeIntervalSet):
         if threeML_config.interface.progress_bars:
 
             pbar = tqdm(
-                total=arrival_times.shape[0], desc="Binning by significance")
+                total=arrival_times.shape[0], desc="Binning by significance"
+            )
 
         while not end_all_search:
 
@@ -394,7 +419,8 @@ class TemporalBinner(TimeIntervalSet):
 
                             # mark where we are in the interval
                             start_idx = searchsorted(
-                                arrival_times, current_stop)
+                                arrival_times, current_stop
+                            )
 
                             # then we also want to go ahead and get out of the fast search
                             end_fast_search = True
@@ -442,12 +468,13 @@ class TemporalBinner(TimeIntervalSet):
 
                     if background_error_getter is not None:
 
-                        bkg_error = background_error_getter(
-                            current_start, time)
+                        bkg_error = background_error_getter(current_start, time)
 
-                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(
-                            bkg_error
-                        )[0]
+                        sigma = (
+                            sig.li_and_ma_equivalent_for_gaussian_background(
+                                bkg_error
+                            )[0]
+                        )
 
                     else:
 
@@ -506,7 +533,9 @@ class TemporalBinner(TimeIntervalSet):
         return cls.from_starts_and_stops(starts, stops)
 
     @classmethod
-    def bin_by_bayesian_blocks(cls, arrival_times, p0, bkg_integral_distribution=None):
+    def bin_by_bayesian_blocks(
+        cls, arrival_times, p0, bkg_integral_distribution=None
+    ):
         """Divide a series of events characterized by their arrival time in blocks
         of perceptibly constant count rate. If the background integral distribution
         is given, divide the series in blocks where the difference with respect to
@@ -610,7 +639,8 @@ class TemporalBinner(TimeIntervalSet):
             bkg_error = background_error_getter(start, stop)
 
             sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[
-                0]
+                0
+            ]
 
         else:
 
@@ -655,20 +685,13 @@ def _rebin_vector_float(vector, start, stop, mask, N):
 
     for n in range(N):
 
-        rebinned_vector.append(np.sum(vector[start[n]:stop[n]]))
+        rebinned_vector.append(np.sum(vector[start[n] : stop[n]]))
 
     arr = rebinned_vector.arr
 
-    test = np.abs(
-        (np.sum(arr) + 1e-100)
-        / (np.sum(vector[mask]) + 1e-100)
-        - 1
-    )
+    test = np.abs((np.sum(arr) + 1e-100) / (np.sum(vector[mask]) + 1e-100) - 1)
 
-    assert (
-
-        test < 1e-4
-    )
+    assert test < 1e-4
 
     return arr
 
@@ -682,19 +705,12 @@ def _rebin_vector_int(vector, start, stop, mask, N):
 
     for n in range(N):
 
-        rebinned_vector.append(np.sum(vector[start[n]:stop[n]]))
+        rebinned_vector.append(np.sum(vector[start[n] : stop[n]]))
 
     arr = rebinned_vector.arr
 
-    test = np.abs(
-        (np.sum(arr) + 1e-100)
-        / (np.sum(vector[mask]) + 1e-100)
-        - 1
-    )
+    test = np.abs((np.sum(arr) + 1e-100) / (np.sum(vector[mask]) + 1e-100) - 1)
 
-    assert (
-
-        test < 1e-4
-    )
+    assert test < 1e-4
 
     return arr

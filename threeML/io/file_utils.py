@@ -11,7 +11,8 @@ from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 
-def sanitize_filename(filename, abspath: bool=False) -> Path:
+
+def sanitize_filename(filename, abspath: bool = False) -> Path:
 
     path: Path = Path(filename)
 
@@ -27,7 +28,7 @@ def sanitize_filename(filename, abspath: bool=False) -> Path:
 
 
 def file_existing_and_readable(filename) -> bool:
-    
+
     sanitized_filename: Path = sanitize_filename(filename)
 
     return sanitized_filename.is_file()
@@ -40,9 +41,8 @@ def fits_file_existing_and_readable(filename) -> bool:
 
     """
     base_filename = str(filename).split("{")[0]
-    
+
     return file_existing_and_readable(base_filename)
-    
 
 
 def path_exists_and_is_directory(path) -> bool:
@@ -98,7 +98,7 @@ def temporary_directory(prefix="", within_directory=None):
     directory = tempfile.mkdtemp(prefix=prefix, dir=within_directory)
 
     log.debug(f"created temp directory {directory}")
-    
+
     yield directory
 
     try:

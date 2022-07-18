@@ -21,7 +21,11 @@ log = setup_logger(__name__)
 
 
 class LikelihoodRatioTest(object):
-    def __init__(self, joint_likelihood_instance0: JointLikelihood, joint_likelihood_instance1: JointLikelihood) -> None:
+    def __init__(
+        self,
+        joint_likelihood_instance0: JointLikelihood,
+        joint_likelihood_instance1: JointLikelihood,
+    ) -> None:
 
         self._joint_likelihood_instance0: JointLikelihood = (
             joint_likelihood_instance0
@@ -42,11 +46,18 @@ class LikelihoodRatioTest(object):
         # Safety check that the user has provided the models in the right order
         if self._reference_TS < 0:
 
-            log.warning( "The reference TS is negative, either you specified the likelihood objects ")
-            log.warning("in the wrong order, or the fit for the alternative hyp. has failed. Since the ")
-            log.warning("two hyp. are nested, by definition the more complex hypothesis should give a ")
-            log.warning("better or equal fit with respect to the null hypothesis.")
-
+            log.warning(
+                "The reference TS is negative, either you specified the likelihood objects "
+            )
+            log.warning(
+                "in the wrong order, or the fit for the alternative hyp. has failed. Since the "
+            )
+            log.warning(
+                "two hyp. are nested, by definition the more complex hypothesis should give a "
+            )
+            log.warning(
+                "better or equal fit with respect to the null hypothesis."
+            )
 
         # Check that the dataset is the same
 
@@ -58,11 +69,19 @@ class LikelihoodRatioTest(object):
             # Since this check might fail if the user loaded twice the same data, only issue a warning, instead of
             # an exception.
 
-            log.warning( "The data lists for the null hyp. and for the alternative hyp. seems to be different.")
-            log.warning(" If you loaded twice the same data and made the same data selections, disregard this ")
-            log.warning("message. Otherwise, consider the fact that the LRT is meaningless if the two data ")
-            log.warning("sets are not exactly the same. We will use the data loaded as part of the null ")
-            log.warning("hypothesis JointLikelihood object" )
+            log.warning(
+                "The data lists for the null hyp. and for the alternative hyp. seems to be different."
+            )
+            log.warning(
+                " If you loaded twice the same data and made the same data selections, disregard this "
+            )
+            log.warning(
+                "message. Otherwise, consider the fact that the LRT is meaningless if the two data "
+            )
+            log.warning(
+                "sets are not exactly the same. We will use the data loaded as part of the null "
+            )
+            log.warning("hypothesis JointLikelihood object")
 
         # For saving pha files
         self._save_pha = False
@@ -74,13 +93,14 @@ class LikelihoodRatioTest(object):
 
         new_datas = []
 
-        for dataset in list(self._joint_likelihood_instance0.data_list.values()):
+        for dataset in list(
+            self._joint_likelihood_instance0.data_list.values()
+        ):
 
             # Make sure that the active likelihood model is the null hypothesis
             # This is needed if the user has used the same DataList instance for both
             # JointLikelihood instances
-            dataset.set_model(
-                self._joint_likelihood_instance0.likelihood_model)
+            dataset.set_model(self._joint_likelihood_instance0.likelihood_model)
 
             new_data = dataset.get_simulated_dataset("%s_sim" % dataset.name)
 
@@ -100,13 +120,17 @@ class LikelihoodRatioTest(object):
         # also always restart from the best fit (instead of the last iteration)
 
         new_model0 = clone_model(
-            self._joint_likelihood_instance0.likelihood_model)
+            self._joint_likelihood_instance0.likelihood_model
+        )
         new_model1 = clone_model(
-            self._joint_likelihood_instance1.likelihood_model)
+            self._joint_likelihood_instance1.likelihood_model
+        )
 
         return new_model0, new_model1
 
-    def by_mc(self, n_iterations=1000, continue_on_failure=False, save_pha=False):
+    def by_mc(
+        self, n_iterations=1000, continue_on_failure=False, save_pha=False
+    ):
         """
         Compute the Likelihood Ratio Test by generating Monte Carlo datasets and fitting the current models on them.
         The fraction of synthetic datasets which have a value for the TS larger or equal to the observed one gives
@@ -125,7 +149,7 @@ class LikelihoodRatioTest(object):
         # Create the joint likelihood set
 
         log.debug("preparing to do joint likelihood LRT")
-        
+
         jl_set: JointLikelihoodSet = JointLikelihoodSet(
             self.get_simulated_data,
             self.get_models,
@@ -139,7 +163,8 @@ class LikelihoodRatioTest(object):
 
         # Run the set
         data_frame, like_data_frame = jl_set.go(
-            continue_on_failure=continue_on_failure)
+            continue_on_failure=continue_on_failure
+        )
 
         # Get the TS values
 
@@ -147,8 +172,6 @@ class LikelihoodRatioTest(object):
             like_data_frame["-log(likelihood)"][:, "model_0", "total"]
             - like_data_frame["-log(likelihood)"][:, "model_1", "total"]
         )  # type: pd.Series
-
-
 
         TS = pd.Series(TS_.values, name="TS")
 
@@ -171,29 +194,38 @@ class LikelihoodRatioTest(object):
     def plot_TS_distribution(self, show_chi2=True, scale=1.0, **hist_kwargs):
         """
 
-        :param show_chi2: 
-        :param scale: 
-        :param hist_kwargs: 
-        :return: 
+        :param show_chi2:
+        :param scale:
+        :param hist_kwargs:
+        :return:
         """
 
         fig, ax = plt.subplots()
 
         counts, bins, _ = ax.hist(
-            self._TS_distribution, density=True, label="monte carlo", **hist_kwargs
+            self._TS_distribution,
+            density=True,
+            label="monte carlo",
+            **hist_kwargs
         )
 
         ax.axvline(self._reference_TS, color="r", ls="--", label="Ref. TS")
 
         if show_chi2:
 
-            x_plot = np.linspace(bins[0], bins[-1], 100,)
+            x_plot = np.linspace(
+                bins[0],
+                bins[-1],
+                100,
+            )
 
             # get the difference in number of free parameters
 
             dof = len(
                 self._joint_likelihood_instance1.likelihood_model.free_parameters
-            ) - len(self._joint_likelihood_instance0.likelihood_model.free_parameters)
+            ) - len(
+                self._joint_likelihood_instance0.likelihood_model.free_parameters
+            )
 
             assert (
                 dof >= 0

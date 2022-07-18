@@ -247,7 +247,9 @@ class Histogram(IntervalSet):
 
         return new_hist
 
-    def display(self, fill=False, fill_min=0.0, x_label="x", y_label="y", **kwargs):
+    def display(
+        self, fill=False, fill_min=0.0, x_label="x", y_label="y", **kwargs
+    ):
 
         fig, ax = plt.subplots()
 

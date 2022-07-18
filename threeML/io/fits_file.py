@@ -141,7 +141,9 @@ class FITSExtension(object):
 
                     # Try to infer it. Note that this could unwillingly upscale a float16 to a float32, for example
 
-                    format = _NUMPY_TO_FITS_CODE[np.array(test_value.value).dtype.type]
+                    format = _NUMPY_TO_FITS_CODE[
+                        np.array(test_value.value).dtype.type
+                    ]
 
                 # check if this is a vector of quantities
 
@@ -166,7 +168,9 @@ class FITSExtension(object):
 
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
 
-            elif isinstance(test_value, list) or isinstance(test_value, np.ndarray):
+            elif isinstance(test_value, list) or isinstance(
+                test_value, np.ndarray
+            ):
 
                 # Probably a column array
                 # Check that we can convert it to a proper numpy type
@@ -203,7 +207,9 @@ class FITSExtension(object):
 
                     if test_value.dtype.type == np.string_:
 
-                        max_string_length = max(column_data, key=len).dtype.itemsize
+                        max_string_length = max(
+                            column_data, key=len
+                        ).dtype.itemsize
 
                         format = "%iA" % max_string_length
 
@@ -212,7 +218,10 @@ class FITSExtension(object):
                         # All good. Check the length
                         # NOTE: variable length arrays are not supported
                         line_length = len(test_value)
-                        format = "%i%s" % (line_length, _NUMPY_TO_FITS_CODE[col_type])
+                        format = "%i%s" % (
+                            line_length,
+                            _NUMPY_TO_FITS_CODE[col_type],
+                        )
 
             else:
 

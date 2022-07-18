@@ -7,7 +7,10 @@ import pytest
 from .conftest import get_test_datasets_directory
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
+from threeML.utils.time_series.event_list import (
+    EventListWithDeadTime,
+    EventList,
+)
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 datasets_dir = get_test_datasets_directory()
@@ -97,7 +100,7 @@ def test_unbinned_fit(event_time_series):
 
 
 def test_binned_fit(event_time_series):
-    
+
     start, stop = 0, 50
 
     poly = [1]

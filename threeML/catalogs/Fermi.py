@@ -63,7 +63,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"][
+                "GBM burst catalog"
+            ].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -130,7 +132,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = np.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
+            idx = np.array(
+                list(map(int, row["scat_detector_mask"])), dtype=bool
+            )
             detector_selection = self._gbm_detector_lookup[idx]
 
             # get the location
@@ -151,7 +155,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             post_bkg = "%f-%f" % (hi_start, hi_stop)
             full_bkg = "%s,%s" % (pre_bkg, post_bkg)
 
-            background_dict = {"pre": pre_bkg, "post": post_bkg, "full": full_bkg}
+            background_dict = {
+                "pre": pre_bkg,
+                "post": post_bkg,
+                "full": full_bkg,
+            }
 
             # now we want the fluence interval and peak flux intervals
 
@@ -491,7 +499,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
-        The Fermi-GBM trigger catalog. 
+        The Fermi-GBM trigger catalog.
 
         :param update: force update the XML VO table
         """
@@ -500,7 +508,9 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMTriggerCatalog, self).__init__(
             "fermigtrig",
-            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM trigger catalog"].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"][
+                "GBM trigger catalog"
+            ].url,
             "Fermi-GBM trigger catalog",
         )
 
@@ -517,8 +527,7 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
             "ra",
             "dec",
             "trigger_time",
-            "localization_source"
-            
+            "localization_source",
         ]
 
         new_table["ra"].format = "5.3f"
@@ -531,8 +540,6 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
         return _gbm_and_lle_valid_source_check(source)
 
 
-
-    
 #########
 
 threefgl_types = {
@@ -564,7 +571,10 @@ threefgl_types = {
 
 def _sanitize_3fgl_name(fgl_name):
     swap = (
-        fgl_name.replace(" ", "_").replace("+", "p").replace("-", "m").replace(".", "d")
+        fgl_name.replace(" ", "_")
+        .replace("+", "p")
+        .replace("-", "m")
+        .replace(".", "d")
     )
 
     if swap[0] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
@@ -588,7 +598,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
         this_spectrum = Powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.index = float(catalog_entry["pl_index"]) * -1
         this_spectrum.index.fix = fix
@@ -606,7 +618,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
         this_spectrum = Log_parabola()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
         this_spectrum.alpha.fix = fix
@@ -626,7 +640,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
         this_spectrum = Cutoff_powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
         this_spectrum.index.fix = fix
@@ -648,7 +664,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
         this_spectrum = Super_cutoff_powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
         a = float(catalog_entry["plec_exp_factor_s"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
@@ -659,7 +677,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.gamma.fix = fix
         this_spectrum.piv = E0 * u.MeV
         this_spectrum.K = (
-            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            conv
+            * float(catalog_entry["plec_flux_density"])
+            / (u.cm ** 2 * u.s * u.MeV)
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -789,7 +809,9 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # to the dictionary above
 
         table["short_source_type"] = table["source_type"]
-        table["source_type"] = np.array(list(map(translate, table["short_source_type"])))
+        table["source_type"] = np.array(
+            list(map(translate, table["short_source_type"]))
+        )
 
         if "Search_Offset" in table.columns:
 
@@ -810,7 +832,12 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         else:
 
             new_table = table[
-                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name",
+                "source_type",
+                "short_source_type" "ra",
+                "dec",
+                "assoc_name",
+                "tevcat_assoc",
             ]
 
             return new_table.group_by("name")

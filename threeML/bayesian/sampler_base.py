@@ -29,8 +29,10 @@ from astromodels.functions.function import ModelAssertionViolation
 
 from threeML.analysis_results import BayesianResults
 from threeML.data_list import DataList
-from threeML.exceptions.custom_exceptions import (LikelihoodIsInfinite,
-                                                  custom_warnings)
+from threeML.exceptions.custom_exceptions import (
+    LikelihoodIsInfinite,
+    custom_warnings,
+)
 from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -157,7 +159,9 @@ class SamplerBase(metaclass=abc.ABCMeta):
         Sets the model parameters to the mean of the marginal distributions
         """
         idx = self._log_probability_values.argmax()
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            self._free_parameters.items()
+        ):
 
             par = self._samples[parameter_name][idx]
 
@@ -172,7 +176,9 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         self._samples = collections.OrderedDict()
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            self._free_parameters.items()
+        ):
             # Add the samples for this parameter for this source
 
             self._samples[parameter_name] = self._raw_samples[:, i]
@@ -189,7 +195,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
         # set the median fit
 
         self.restore_median_fit()
-        
+
         # Find maximum of the log posterior
         idx = self._log_probability_values.argmax()
 
@@ -230,12 +236,10 @@ class SamplerBase(metaclass=abc.ABCMeta):
         # compute the point estimates
 
         statistical_measures["AIC"] = aic(
-            total_log_posterior, len(
-                self._free_parameters), total_n_data_points
+            total_log_posterior, len(self._free_parameters), total_n_data_points
         )
         statistical_measures["BIC"] = bic(
-            total_log_posterior, len(
-                self._free_parameters), total_n_data_points
+            total_log_posterior, len(self._free_parameters), total_n_data_points
         )
 
         this_dic, pdic = dic(self)
@@ -258,7 +262,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
             self._raw_samples,
             log_posteriors,
             statistical_measures=statistical_measures,
-            log_probabilty=self._log_like_values
+            log_probabilty=self._log_like_values,
         )
 
     def _update_free_parameters(self):
@@ -286,7 +290,9 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         # with use_
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            self._free_parameters.items()
+        ):
 
             prior_value = parameter.prior(trial_values[i])
 
@@ -314,7 +320,9 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         log_prior = 0
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(
+            self._free_parameters.items()
+        ):
 
             prior_value = parameter.prior(trial_values[i])
 
@@ -356,8 +364,10 @@ class SamplerBase(metaclass=abc.ABCMeta):
                 # Precalc the spectrum for all different Ebin_in that are used in the plugins
                 precalc_fluxes = []
 
-                for base_key, e_edges in zip(self._share_spectrum_object.base_plugin_key,
-                                            self._share_spectrum_object.data_ein_edges):
+                for base_key, e_edges in zip(
+                    self._share_spectrum_object.base_plugin_key,
+                    self._share_spectrum_object.data_ein_edges,
+                ):
                     if e_edges is None:
                         precalc_fluxes.append(None)
                     else:
@@ -368,8 +378,12 @@ class SamplerBase(metaclass=abc.ABCMeta):
                 # Use these precalculated spectra to get the log_like for all plugins
                 for i, dataset in enumerate(list(self._data_list.values())):
                     # call get log_like with precalculated spectrum
-                    if self._share_spectrum_object.data_ein_edges[
-                            self._share_spectrum_object.data_ebin_connect[i]] is not None:
+                    if (
+                        self._share_spectrum_object.data_ein_edges[
+                            self._share_spectrum_object.data_ebin_connect[i]
+                        ]
+                        is not None
+                    ):
                         log_like_values[i] = dataset.get_log_like(
                             precalc_fluxes=precalc_fluxes[
                                 self._share_spectrum_object.data_ebin_connect[i]
@@ -414,8 +428,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 class MCMCSampler(SamplerBase):
     def __init__(self, likelihood_model, data_list, **kwargs):
 
-        super(MCMCSampler, self).__init__(
-            likelihood_model, data_list, **kwargs)
+        super(MCMCSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def _get_starting_points(self, n_walkers, variance=0.1):
 
@@ -442,7 +455,8 @@ class UnitCubeSampler(SamplerBase):
     def __init__(self, likelihood_model, data_list, **kwargs):
 
         super(UnitCubeSampler, self).__init__(
-            likelihood_model, data_list, **kwargs)
+            likelihood_model, data_list, **kwargs
+        )
 
     def _construct_unitcube_posterior(self, return_copy=False):
         """

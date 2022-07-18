@@ -119,7 +119,9 @@ class TimeIntervalSet(IntervalSet):
         """
 
         new_set = self.new()
-        new_set.extend([time_interval + number for time_interval in self._intervals])
+        new_set.extend(
+            [time_interval + number for time_interval in self._intervals]
+        )
 
         return new_set
 

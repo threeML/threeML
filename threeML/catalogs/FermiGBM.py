@@ -19,6 +19,7 @@ from .catalog_utils import _gbm_and_lle_valid_source_check
 
 log = setup_logger(__name__)
 
+
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
@@ -32,7 +33,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"][
+                "GBM burst catalog"
+            ].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -99,7 +102,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = numpy.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
+            idx = numpy.array(
+                list(map(int, row["scat_detector_mask"])), dtype=bool
+            )
             detector_selection = self._gbm_detector_lookup[idx]
 
             # get the location
@@ -120,7 +125,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             post_bkg = "%f-%f" % (hi_start, hi_stop)
             full_bkg = "%s,%s" % (pre_bkg, post_bkg)
 
-            background_dict = {"pre": pre_bkg, "post": post_bkg, "full": full_bkg}
+            background_dict = {
+                "pre": pre_bkg,
+                "post": post_bkg,
+                "full": full_bkg,
+            }
 
             # now we want the fluence interval and peak flux intervals
 
@@ -468,7 +477,9 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMTriggerCatalog, self).__init__(
             "fermigtrig",
-            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM trigger catalog"].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"][
+                "GBM trigger catalog"
+            ].url,
             "Fermi-GBM trigger catalog",
         )
 
@@ -485,8 +496,7 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
             "ra",
             "dec",
             "trigger_time",
-            "localization_source"
-            
+            "localization_source",
         ]
 
         new_table["ra"].format = "5.3f"
@@ -497,4 +507,3 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
     def _source_is_valid(self, source):
 
         return _gbm_and_lle_valid_source_check(source)
-

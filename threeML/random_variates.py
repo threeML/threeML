@@ -179,7 +179,9 @@ class RandomVariates(np.ndarray):
         # Find the extremes of the shortest interval
 
         hpd_left_bound = ordered[idx_of_minimum]
-        hpd_right_bound = ordered[idx_of_minimum + index_of_rightmost_possibility]
+        hpd_right_bound = ordered[
+            idx_of_minimum + index_of_rightmost_possibility
+        ]
 
         return hpd_left_bound, hpd_right_bound
 

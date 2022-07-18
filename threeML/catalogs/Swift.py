@@ -9,8 +9,7 @@ import numpy as np
 import pandas as pd
 from future import standard_library
 
-from threeML.catalogs.VirtualObservatoryCatalog import \
-    VirtualObservatoryCatalog
+from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
@@ -38,7 +37,9 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         super(SwiftGRBCatalog, self).__init__(
             "swiftgrb",
-            threeML_config["catalogs"]["Swift"]["catalogs"]["Swift GRB catalog"].url,
+            threeML_config["catalogs"]["Swift"]["catalogs"][
+                "Swift GRB catalog"
+            ].url,
             "Swift GRB catalog",
         )
 
@@ -75,7 +76,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
     def _source_is_valid(self, source):
 
         warn_string = (
-            "The trigger %s is not valid. Must be in the form GRB080916009" % source
+            "The trigger %s is not valid. Must be in the form GRB080916009"
+            % source
         )
 
         match = _trigger_name_match.match(source)
@@ -134,9 +136,10 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         for instrument in instruments:
 
-            assert instrument in self._other_observings_instruments, (
-                "Other instrument choices include %s"
-                % (" ,".join(self._other_observings_instruments))
+            assert (
+                instrument in self._other_observings_instruments
+            ), "Other instrument choices include %s" % (
+                " ,".join(self._other_observings_instruments)
             )
 
             query_string = (
@@ -153,7 +156,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             table = astro_table.Table.from_pandas(query_results)
 
             name_column = astro_table.Column(
-                name="name", data=query_results.index)
+                name="name", data=query_results.index
+            )
             table.add_column(name_column, index=0)
 
             out = self.apply_format(table)
@@ -205,7 +209,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
                 trigger_number = (
                     re.search(
-                        "GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string)
+                        "GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string
+                    )
                     .group(1)
                     .replace(".", "")
                 )
@@ -216,7 +221,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
                     trigger_number = (
                         re.search(
-                            "trigger *\d* *, *trigcat *(\d{9}|\d{6}\.\d{3})", string
+                            "trigger *\d* *, *trigcat *(\d{9}|\d{6}\.\d{3})",
+                            string,
                         )
                         .group(1)
                         .replace(".", "")
@@ -228,7 +234,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
                         trigger_number = (
                             re.search(
-                                "trigger *.* */ *\D{0,3}(\d{9}|\d{6}\.\d{3})", string
+                                "trigger *.* */ *\D{0,3}(\d{9}|\d{6}\.\d{3})",
+                                string,
                             )
                             .group(1)
                             .replace(".", "")
@@ -313,7 +320,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             sources[name] = obs_instrument
 
         sources = pd.concat(
-            list(map(pd.DataFrame, list(sources.values()))), keys=list(sources.keys())
+            list(map(pd.DataFrame, list(sources.values()))),
+            keys=list(sources.keys()),
         )
 
         return sources
@@ -391,7 +399,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         # build the data frame
         sources = pd.concat(
-            list(map(pd.DataFrame, list(sources.values()))), keys=list(sources.keys())
+            list(map(pd.DataFrame, list(sources.values()))),
+            keys=list(sources.keys()),
         )
 
         display(sources)

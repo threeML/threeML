@@ -636,14 +636,19 @@ class SpectrumLike(PluginPrototype):
 
                 log.debug("this is a normal background observation")
 
-                self._background_scale_factor = (self._background_spectrum.scale_factor)
-                
+                self._background_scale_factor = (
+                    self._background_spectrum.scale_factor
+                )
+
                 self._background_exposure = self._background_spectrum.exposure
 
-            self._area_ratio = float(self._observed_spectrum.scale_factor) / float(self._background_scale_factor)
+            self._area_ratio = float(
+                self._observed_spectrum.scale_factor
+            ) / float(self._background_scale_factor)
 
-            self._exposure_ratio = float(self._observed_spectrum.exposure) / float(self._background_exposure)
-            
+            self._exposure_ratio = float(
+                self._observed_spectrum.exposure
+            ) / float(self._background_exposure)
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
 
@@ -2250,8 +2255,8 @@ class SpectrumLike(PluginPrototype):
         min_value: Union[int, float] = 0.8,
         max_value: Union[int, float] = 1.2,
         use_gaussian_prior: bool = False,
-        mu:float=1,
-        sigma: float=0.1
+        mu: float = 1,
+        sigma: float = 0.1,
     ) -> None:
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
@@ -2279,7 +2284,9 @@ class SpectrumLike(PluginPrototype):
         # Use a uniform prior by default
         if use_gaussian_prior:
 
-            self._nuisance_parameter.prior = Truncated_gaussian(mu=mu, sigma=sigma, lower_bound=min_value, upper_bound=max_value)
+            self._nuisance_parameter.prior = Truncated_gaussian(
+                mu=mu, sigma=sigma, lower_bound=min_value, upper_bound=max_value
+            )
 
         else:
 
@@ -2319,7 +2326,6 @@ class SpectrumLike(PluginPrototype):
             )
             self._integral_flux = integral
 
-
     def __set_model_integrate_method(self, value: str) -> None:
 
         self.set_model_integrate_method(value)
@@ -2339,7 +2345,7 @@ class SpectrumLike(PluginPrototype):
     model_integrate_method = property(
         ___get_model_integrate_method,
         ___set_model_integrate_method,
-    doc="""The method used to integrate the model across the response matrix """
+        doc="""The method used to integrate the model across the response matrix """,
     )
 
     def set_background_integrate_method(self, method: str) -> None:
@@ -2366,7 +2372,6 @@ class SpectrumLike(PluginPrototype):
             )
             self._background_integral_flux = integral
 
-
     def __set_background_integrate_method(self, value: str) -> None:
 
         self.set_background_integrate_method(value)
@@ -2386,7 +2391,7 @@ class SpectrumLike(PluginPrototype):
     background_integrate_method = property(
         ___get_background_integrate_method,
         ___set_background_integrate_method,
-    doc="""The method used to integrate the_background across the response matrix """
+        doc="""The method used to integrate the_background across the response matrix """,
     )
 
     @property
@@ -3831,4 +3836,4 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
 @nb.njit(fastmath=True, cache=True)
 def _rsum(model_mid_points, de):
 
-    return np.multiply(model_mid_points,de)
+    return np.multiply(model_mid_points, de)

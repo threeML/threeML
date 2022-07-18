@@ -6,10 +6,10 @@ import numpy as np
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 from threeML.io.uncertainty_formatter import uncertainty_formatter
+
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
-
 
 
 def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
@@ -80,7 +80,9 @@ def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
 
     powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
 
-    res = jl.get_contours(powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30)
+    res = jl.get_contours(
+        powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30
+    )
 
     exp_p1, exp_p2 = (
         np.array(
@@ -157,7 +159,9 @@ def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
     assert np.allclose(res[1], exp_p2, rtol=0.1)
 
 
-def test_basic_bayesian_analysis_results(completed_bn090217206_bayesian_analysis):
+def test_basic_bayesian_analysis_results(
+    completed_bn090217206_bayesian_analysis,
+):
 
     bayes, samples = completed_bn090217206_bayesian_analysis
 
@@ -174,11 +178,17 @@ def test_basic_analsis_multicomp_results(
     fitted_joint_likelihood_bn090217206_nai_multicomp,
 ):
 
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai_multicomp
+    (
+        jl,
+        fit_results,
+        like_frame,
+    ) = fitted_joint_likelihood_bn090217206_nai_multicomp
 
     jl.restore_best_fit()
 
-    expected = np.array([1.88098173e00, -1.20057690e00, 6.50915964e-06, 4.35643006e01])
+    expected = np.array(
+        [1.88098173e00, -1.20057690e00, 6.50915964e-06, 4.35643006e01]
+    )
 
     assert np.allclose(fit_results["value"].values, expected, rtol=0.1)
 
@@ -195,7 +205,7 @@ def test_basic_bayesian_analysis_results_multicomp(
         [1.90814527e00, -1.20941618e00, 6.45755638e-06, 4.36948057e01]
     )
     expected_negative_errors = np.array(
-#        [-3.02301749e-01, -2.93259914e-02, -1.70958890e-06, -3.92505021e00]
+        #        [-3.02301749e-01, -2.93259914e-02, -1.70958890e-06, -3.92505021e00]
         [-2.91662847e-01, -3.10753350e-02, -1.91482744e-06, -4.28729636e00]
     )
     expected_positive_errors = np.array(
@@ -238,7 +248,9 @@ def test_gbm_workflow():
     for det in gbm_detectors:
 
         ts_cspec = TimeSeriesBuilder.from_gbm_cspec_or_ctime(
-            det, cspec_or_ctime_file=dload[det]["cspec"], rsp_file=dload[det]["rsp"]
+            det,
+            cspec_or_ctime_file=dload[det]["cspec"],
+            rsp_file=dload[det]["rsp"],
         )
 
         ts_cspec.set_background_interval(*background_interval.split(","))
@@ -293,10 +305,7 @@ def test_gbm_workflow():
     [x.unlink() for x in dl_files]
 
 
-
-
 def test_uncertainty_formatter():
-
 
     assert '1.0 -2.0 +1.0' == uncertainty_formatter(1, -1, 2)
 
@@ -306,12 +315,10 @@ def test_uncertainty_formatter():
 
     assert '1.0 +0 +1.0' == uncertainty_formatter(1, np.nan, 2)
 
-    assert  '1.0 +/- 0' == uncertainty_formatter(1, np.nan, np.nan)
-
+    assert '1.0 +/- 0' == uncertainty_formatter(1, np.nan, np.nan)
 
     assert '1.0 -2.0 +inf' == uncertainty_formatter(1, -1, np.inf)
 
     assert '1.0 +inf +1.0' == uncertainty_formatter(1, np.inf, 2)
 
     assert '1.0 +/- inf' == uncertainty_formatter(1, np.inf, np.inf)
-    

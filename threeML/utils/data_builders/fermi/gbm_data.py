@@ -8,8 +8,9 @@ import pandas as pd
 import requests
 
 from threeML.io.logging import setup_logger
-from threeML.utils.fermi_relative_mission_time import \
-    compute_fermi_relative_mission_times
+from threeML.utils.fermi_relative_mission_time import (
+    compute_fermi_relative_mission_times,
+)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
 log = setup_logger(__name__)
@@ -95,9 +96,11 @@ class GBMTTEFile(object):
     @trigger_time.setter
     def trigger_time(self, val) -> None:
 
-        assert self._start_events <= val <= self._stop_events, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._start_events, self._stop_events)
+        assert (
+            self._start_events <= val <= self._stop_events
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events,
+            self._stop_events,
         )
 
         self._trigger_time = val
@@ -152,7 +155,9 @@ class GBMTTEFile(object):
 
         """
         self._deadtime = np.zeros_like(self._events)
-        overflow_mask = self._pha == 127  # specific to gbm! should work for CTTE
+        overflow_mask = (
+            self._pha == 127
+        )  # specific to gbm! should work for CTTE
 
         # From Meegan et al. (2009)
         # Dead time for overflow (note, overflow sometimes changes)
@@ -212,12 +217,12 @@ class GBMTTEFile(object):
 
     def _output(self):
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = collections.OrderedDict()
@@ -281,9 +286,11 @@ class GBMCdata(object):
     @trigger_time.setter
     def trigger_time(self, val) -> None:
 
-        assert self._start_events <= val <= self._stop_events, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._start_events, self._stop_events)
+        assert (
+            self._start_events <= val <= self._stop_events
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events,
+            self._stop_events,
         )
 
         self._trigger_time = val
@@ -373,12 +380,12 @@ class GBMCdata(object):
 
     def _output(self):
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = collections.OrderedDict()

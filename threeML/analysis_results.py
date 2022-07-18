@@ -1158,11 +1158,11 @@ class BayesianResults(_AnalysisResults):
             cmap.with_extremes(
                 under=corner_style.extremes,
                 over=corner_style.extremes,
-               bad=corner_style.extremes,
+                bad=corner_style.extremes,
             )
             cmap.set_extremes(
-               under=corner_style.extremes,
-               over=corner_style.extremes,
+                under=corner_style.extremes,
+                over=corner_style.extremes,
                 bad=corner_style.extremes,
             )
         except:

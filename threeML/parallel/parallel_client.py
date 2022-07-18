@@ -75,7 +75,6 @@ def parallel_computation(profile=None, start_cluster=True):
         log.warning(
             "You requested parallel computation, but no parallel environment is available. You need "
             "to install the ipyparallel package. Continuing with serial computation...",
-
         )
 
         threeML_config.parallel.use_parallel = False
@@ -240,18 +239,22 @@ if has_parallel:
                 if chunk_size is None:
 
                     chunk_size = int(
-                        math.ceil(n_items / float(n_active_engines) / 20))
+                        math.ceil(n_items / float(n_active_engines) / 20)
+                    )
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
-                worker, items_to_process,
-                #chunksize=chunk_size,
-                ordered=ordered
+                worker,
+                items_to_process,
+                # chunksize=chunk_size,
+                ordered=ordered,
             )
 
             return self._current_amr
 
-        def execute_with_progress_bar(self, worker, items, chunk_size=None, name="progress"):
+        def execute_with_progress_bar(
+            self, worker, items, chunk_size=None, name="progress"
+        ):
 
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
@@ -273,7 +276,9 @@ if has_parallel:
                 results.append(res)
 
             # Reorder the list according to the id
-            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
+            return list(
+                map(lambda x: x[1], sorted(results, key=lambda x: x[0]))
+            )
 
 
 else:

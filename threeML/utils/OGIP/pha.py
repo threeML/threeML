@@ -67,7 +67,12 @@ class PHAWrite(object):
 
         self._spec_iterator = 1
 
-    def write(self, outfile_name: str, overwrite: bool = True, force_rsp_write: bool = False) -> None:
+    def write(
+        self,
+        outfile_name: str,
+        overwrite: bool = True,
+        force_rsp_write: bool = False,
+    ) -> None:
         """
         Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
         if BAK files should be generated.
@@ -126,14 +131,17 @@ class PHAWrite(object):
                 if pha_info[key].background_file is not None:
 
                     log.debug(
-                        f" keeping original bak file: {pha_info[key].background_file}")
+                        f" keeping original bak file: {pha_info[key].background_file}"
+                    )
 
                     self._backfile[key].append(pha_info[key].background_file)
 
                 else:
 
                     log.debug(
-                        f"creating new bak file: {self._outfile_basename}_bak.pha" + "{%d}" % self._spec_iterator)
+                        f"creating new bak file: {self._outfile_basename}_bak.pha"
+                        + "{%d}" % self._spec_iterator
+                    )
 
                     self._backfile[key].append(
                         f"{self._outfile_basename}_bak.pha"
@@ -165,7 +173,8 @@ class PHAWrite(object):
             if pha_info["rsp"].rsp_filename is not None and not force_rsp_write:
 
                 log.debug(
-                    f"not creating a new response and keeping {pha_info['rsp'].rsp_filename}")
+                    f"not creating a new response and keeping {pha_info['rsp'].rsp_filename}"
+                )
 
                 self._respfile[key].append(pha_info["rsp"].rsp_filename)
 
@@ -175,12 +184,13 @@ class PHAWrite(object):
                 # e.g. if we want to use weighted DRMs from GBM.
 
                 rsp_file_name = (
-                    f"{self._outfile_basename}.rsp" +
-                    "{%d}" % self._spec_iterator
+                    f"{self._outfile_basename}.rsp"
+                    + "{%d}" % self._spec_iterator
                 )
 
                 log.debug(
-                    f"creating a new response and saving it to {rsp_file_name}")
+                    f"creating a new response and saving it to {rsp_file_name}"
+                )
 
                 self._respfile[key].append(rsp_file_name)
 
@@ -220,16 +230,17 @@ class PHAWrite(object):
             else:
 
                 self._sys_err[key].append(
-                    np.zeros_like(pha_info[key].rates,
-                                  dtype=np.float32).tolist()
+                    np.zeros_like(
+                        pha_info[key].rates, dtype=np.float32
+                    ).tolist()
                 )
 
             self._exposure[key].append(pha_info[key].exposure)
             self._quality[key].append(ogip.quality.to_ogip().tolist())
             self._grouping[key].append(ogip.grouping.tolist())
             self._channel[key].append(
-                np.arange(pha_info[key].n_channels,
-                          dtype=np.int32) + first_channel
+                np.arange(pha_info[key].n_channels, dtype=np.int32)
+                + first_channel
             )
             self._instrument[key] = pha_info[key].instrument
             self._mission[key] = pha_info[key].mission
@@ -245,7 +256,8 @@ class PHAWrite(object):
                 else:
 
                     log.error(
-                        "OGIP TSTART is a number but TSTOP is None. This is a bug.")
+                        "OGIP TSTART is a number but TSTOP is None. This is a bug."
+                    )
 
                     RuntimeError()
 
@@ -273,34 +285,35 @@ class PHAWrite(object):
             # Assuming background and pha files have the same
             # number of channels
 
-            if len(self._rate["pha"][0]) != len(
-                self._rate["bak"][0]
-            ):
+            if len(self._rate["pha"][0]) != len(self._rate["bak"][0]):
 
                 log.error(
-                    "PHA and BAK files do not have the same number of channels. Something is wrong.")
+                    "PHA and BAK files do not have the same number of channels. Something is wrong."
+                )
                 raise RuntimeError()
 
             if self._instrument["pha"] != self._instrument["bak"]:
 
-                log.error("Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
-                          % (self._instrument["pha"], self._instrument["bak"])
-                          )
+                log.error(
+                    "Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
+                    % (self._instrument["pha"], self._instrument["bak"])
+                )
 
                 raise RuntimeError()
 
             if self._mission["pha"] != self._mission["bak"]:
 
-                log.error("Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
-                          % (self._mission["pha"], self._mission["bak"])
-                          )
+                log.error(
+                    "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
+                    % (self._mission["pha"], self._mission["bak"])
+                )
 
                 raise RuntimeError()
 
         if self._write_bak_file:
 
             log.debug("will attempt to also write a BAK file")
-            
+
             keys = ["pha", "bak"]
 
         else:
@@ -353,7 +366,9 @@ class PHAWrite(object):
             extensions.extend(
                 [
                     SPECRESP_MATRIX(
-                        this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix
+                        this_rsp.monte_carlo_energies,
+                        this_rsp.ebounds,
+                        this_rsp.matrix,
                     )
                     for this_rsp in self._out_rsp
                 ]
@@ -407,14 +422,26 @@ class SPECTRUM(FITSExtension):
         ("EXTNAME", "SPECTRUM", "Extension name"),
         ("CONTENT", "OGIP PHA data", "File content"),
         ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
-        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUVERS",
+            "1.1.0   ",
+            "Version of format (OGIP memo CAL/GEN/92-002a)",
+        ),
         (
             "HDUDOC",
             "OGIP memos CAL/GEN/92-002 & 92-002a",
             "Documents describing the forma",
         ),
-        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
-        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        (
+            "HDUVERS1",
+            "1.0.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
+        (
+            "HDUVERS2",
+            "1.1.0   ",
+            "Obsolete - included for backwards compatibility",
+        ),
         ("HDUCLAS1", "SPECTRUM", "Extension contains spectral data  "),
         ("HDUCLAS2", "TOTAL ", ""),
         ("HDUCLAS3", "RATE ", ""),
@@ -487,7 +514,8 @@ class SPECTRUM(FITSExtension):
             if is_poisson:
 
                 log.error(
-                    "Tying to enter STAT_ERR error but have POISSERR set true")
+                    "Tying to enter STAT_ERR error but have POISSERR set true"
+                )
 
                 raise RuntimeError()
             data_list.append(("STAT_ERR", stat_err))
@@ -660,10 +688,10 @@ class PHAII(FITSFile):
                         break
 
             spectrum = FITSExtension.from_fits_file_extension(
-                spectrum_extension)
+                spectrum_extension
+            )
 
-            out = FITSFile(primary_hdu=f["PRIMARY"],
-                           fits_extensions=[spectrum])
+            out = FITSFile(primary_hdu=f["PRIMARY"], fits_extensions=[spectrum])
 
         return out
 

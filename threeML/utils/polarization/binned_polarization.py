@@ -108,7 +108,9 @@ class BinnedModulationCurve(BinnedSpectrum):
         :return:
         """
 
-        assert not (use_poly and extract), "You cannot use both at the same time"
+        assert not (
+            use_poly and extract
+        ), "You cannot use both at the same time"
 
         pha_information = time_series.get_information_dict(use_poly, extract)
 

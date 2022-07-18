@@ -26,7 +26,9 @@ def internet_connection_is_active():
         try:
 
             socket.setdefaulttimeout(timeout)
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
+                (host, port)
+            )
 
         except Exception as ex:
 

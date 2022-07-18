@@ -14,8 +14,9 @@ from astropy import units as u
 from threeML.config import threeML_config
 from threeML.config.point_source_structure import IntegrateMethod
 from threeML.io.logging import setup_logger
-from threeML.utils.fitted_objects.fitted_source_handler import \
-    GenericFittedSourceHandler
+from threeML.utils.fitted_objects.fitted_source_handler import (
+    GenericFittedSourceHandler,
+)
 
 log = setup_logger(__name__)
 
@@ -99,7 +100,8 @@ class FluxConversion(object):
         else:
 
             self._conversion = tmp.unit.to(
-                self._flux_unit, equivalencies=u.spectral())
+                self._flux_unit, equivalencies=u.spectral()
+            )
             self._is_dimensionless = False
 
     @property
@@ -170,7 +172,7 @@ class DifferentialFluxConversion(FluxConversion):
 
 def trap_integral(func, e1, e2, **args):
 
-    if e2/e1 > 100:
+    if e2 / e1 > 100:
 
         e_grid = np.logspace(np.log10(e1), np.log10(e2), 50)
 
@@ -181,18 +183,18 @@ def trap_integral(func, e1, e2, **args):
 
     return _trapz(y, e_grid)
 
-    
+
 class IntegralFluxConversion(FluxConversion):
     def __init__(self, flux_unit, energy_unit, flux_model, test_model):
         """
-         Handles integral flux conversion and model building
-         for point sources
+        Handles integral flux conversion and model building
+        for point sources
 
 
-         :param flux_unit: an astropy unit string for integral flux
-         :param energy_unit: an astropy unit string for energy
-         :param flux_model: the base flux model to use
-         """
+        :param flux_unit: an astropy unit string for integral flux
+        :param energy_unit: an astropy unit string for energy
+        :param flux_model: the base flux model to use
+        """
 
         self._flux_lookup = {
             "photon_flux": 1.0 / (u.cm ** 2 * u.s),
@@ -215,8 +217,11 @@ class IntegralFluxConversion(FluxConversion):
         def nufnu_integrand(x, param_specification):
             return x * x * flux_model(x, **param_specification)
 
-        if threeML_config.point_source.integrate_flux_method == IntegrateMethod.trapz:
-        
+        if (
+            threeML_config.point_source.integrate_flux_method
+            == IntegrateMethod.trapz
+        ):
+
             self._model_builder = {
                 "photon_flux": lambda e1, e2, **param_specification: trap_integral(
                     photon_integrand, e1, e2, **param_specification
@@ -228,18 +233,27 @@ class IntegralFluxConversion(FluxConversion):
                     nufnu_integrand, e1, e2, **param_specification
                 ),
             }
-        elif threeML_config.point_source.integrate_flux_method == IntegrateMethod.quad:
-            
+        elif (
+            threeML_config.point_source.integrate_flux_method
+            == IntegrateMethod.quad
+        ):
+
             self._model_builder = {
                 "photon_flux": lambda e1, e2, **param_specification: integrate.quad(
                     photon_integrand, e1, e2, args=(param_specification)
-                )[0],
+                )[
+                    0
+                ],
                 "energy_flux": lambda e1, e2, **param_specification: integrate.quad(
                     energy_integrand, e1, e2, args=(param_specification)
-                )[0],
+                )[
+                    0
+                ],
                 "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(
                     nufnu_integrand, e1, e2, args=(param_specification)
-                )[0],
+                )[
+                    0
+                ],
             }
 
         else:
@@ -247,9 +261,10 @@ class IntegralFluxConversion(FluxConversion):
             log.error("This is not a valid integratio method")
 
             raise RuntimeError
-            
+
         super(IntegralFluxConversion, self).__init__(
-            flux_unit, energy_unit, flux_model)
+            flux_unit, energy_unit, flux_model
+        )
 
 
 class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):

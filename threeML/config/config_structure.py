@@ -54,10 +54,14 @@ class Config:
     plotting: GenericPlotting = GenericPlotting()
     model_plot: ModelPlotting = ModelPlotting()
     point_source: PointSourceDefaults = PointSourceDefaults()
-    
-    LAT: PublicDataServer = PublicDataServer(public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
-                                             public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat",
-                                             query_form="https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi")
-    GBM: PublicDataServer = PublicDataServer(public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
-                                             public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm")
+
+    LAT: PublicDataServer = PublicDataServer(
+        public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
+        public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat",
+        query_form="https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi",
+    )
+    GBM: PublicDataServer = PublicDataServer(
+        public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
+        public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm",
+    )
     catalogs: Catalogs = Catalogs()

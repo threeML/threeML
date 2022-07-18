@@ -3,7 +3,11 @@ from builtins import map
 from astromodels import Model, PointSource, Uniform_prior, Log_uniform_prior
 from threeML.data_list import DataList
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.minimizer.tutorial_material import Simple, Complex, CustomLikelihoodLike
+from threeML.minimizer.tutorial_material import (
+    Simple,
+    Complex,
+    CustomLikelihoodLike,
+)
 
 from astromodels import use_astromodels_memoization
 
@@ -154,10 +158,12 @@ def plot_sample_path(bayes, burn_in=None, truth=None):
     """
 
     qx_ = np.array(
-        bayes.likelihood_model.test.spectrum.main.shape._traversed_points, dtype=float
+        bayes.likelihood_model.test.spectrum.main.shape._traversed_points,
+        dtype=float,
     )
     qy_ = np.array(
-        bayes.likelihood_model.test.spectrum.main.shape._returned_values, dtype=float
+        bayes.likelihood_model.test.spectrum.main.shape._returned_values,
+        dtype=float,
     )
 
     fig, (ax, ax1) = plt.subplots(

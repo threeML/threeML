@@ -1,8 +1,14 @@
 from __future__ import print_function
-from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make
+from threeML.io.file_utils import (
+    sanitize_filename,
+    if_directory_not_existing_then_make,
+)
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
-from threeML.io.download_from_http import ApacheDirectory, RemoteDirectoryNotFound
+from threeML.io.download_from_http import (
+    ApacheDirectory,
+    RemoteDirectoryNotFound,
+)
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
     _validate_fermi_trigger_name,
@@ -35,7 +41,9 @@ def download_LLE_trigger_data(trigger_name, destination_directory="."):
     sanitized_trigger_name_ = _validate_fermi_trigger_name(trigger_name)
 
     # create output directory if it does not exists
-    destination_directory = sanitize_filename(destination_directory, abspath=True)
+    destination_directory = sanitize_filename(
+        destination_directory, abspath=True
+    )
     if_directory_not_existing_then_make(destination_directory)
 
     # Figure out the directory on the server

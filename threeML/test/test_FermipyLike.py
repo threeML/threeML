@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 
 from threeML.io.logging import setup_logger
+
 log = setup_logger(__name__)
 
 from threeML import *
@@ -12,7 +13,8 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
 )
 
 skip_if_fermipy_is_not_available = pytest.mark.skipif(
-    not is_plugin_available("FermipyLike"), reason="No LAT environment installed"
+    not is_plugin_available("FermipyLike"),
+    reason="No LAT environment installed",
 )
 
 update_logging_level("INFO")
@@ -62,7 +64,7 @@ def test_FermipyLike_fromVO():
     # Download data from Jan 01 2010 to Jan 2 2010
 
     tstart = "2010-01-01 00:00:00"
-    tstop  = "2010-01-08 00:00:00"
+    tstop = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
@@ -80,14 +82,18 @@ def test_FermipyLike_fromVO():
         )
 
     except RuntimeError:
-    
-        log.warning("Problems with LAT data download, will not proceed with tests.")
-        
+
+        log.warning(
+            "Problems with LAT data download, will not proceed with tests."
+        )
+
         return
 
     # Configuration for Fermipy
 
-    config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
+    config = FermipyLike.get_basic_config(
+        evfile=evfile, scfile=scfile, ra=ra, dec=dec
+    )
 
     # Let's create an instance of the plugin
     # Note that here no processing is made, because fermipy still doesn't know
@@ -105,6 +111,7 @@ def test_FermipyLike_fromVO():
     jl = JointLikelihood(model, data)
 
     res = jl.fit()
+
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
@@ -130,14 +137,16 @@ def test_FermipyLike_fromDisk():
 
     assert model.get_number_of_extended_sources() == 3
 
-    assert set(model.extended_sources.keys() ) == set( ['Crab_IC', 'Sim_147', 'IC_443'] )
+    assert set(model.extended_sources.keys()) == set(
+        ['Crab_IC', 'Sim_147', 'IC_443']
+    )
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)
     model.free_extended_sources_within_radius(3.0, normalization_only=True)
-    
+
     assert len(model.free_parameters) == 5
-    
+
     # but then let's fix the sync and the IC components of the Crab
     # (cannot fit them with just one day of data)
     # (these two methods are equivalent)
@@ -149,13 +158,12 @@ def test_FermipyLike_fromDisk():
     # However, let's free the index of the Crab
     model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.free = True
 
-
     assert len(model.free_parameters) == 4
 
     # Download data from Jan 01 2010 to Jan 2 2010
 
     tstart = "2010-01-01 00:00:00"
-    tstop  = "2010-01-08 00:00:00"
+    tstop = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
@@ -173,14 +181,18 @@ def test_FermipyLike_fromDisk():
         )
 
     except RuntimeError:
-    
-        log.warning("Problems with LAT data download, will not proceed with tests.")
-        
+
+        log.warning(
+            "Problems with LAT data download, will not proceed with tests."
+        )
+
         return
 
     # Configuration for Fermipy
 
-    config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
+    config = FermipyLike.get_basic_config(
+        evfile=evfile, scfile=scfile, ra=ra, dec=dec
+    )
 
     # Let's create an instance of the plugin
     # Note that here no processing is made, because fermipy still doesn't know
@@ -196,10 +208,8 @@ def test_FermipyLike_fromDisk():
 
     # Here is where the fermipy processing happens (the .setup method)
 
-
     jl = JointLikelihood(model, data)
 
     jl.set_minimizer("minuit")
-
 
     res = jl.fit()

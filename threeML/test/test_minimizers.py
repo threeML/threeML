@@ -46,8 +46,20 @@ skip_if_pygmo_is_not_available = pytest.mark.skipif(
 
 def check_results(fit_results):
 
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'] - 2.531028) < 5e-2
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'] + 1.1831566000728451) < 1e-2
+    assert (
+        abs(
+            fit_results['value']['bn090217206.spectrum.main.Powerlaw.K']
+            - 2.531028
+        )
+        < 5e-2
+    )
+    assert (
+        abs(
+            fit_results['value']['bn090217206.spectrum.main.Powerlaw.index']
+            + 1.1831566000728451
+        )
+        < 1e-2
+    )
 
 
 def do_analysis(jl, minimizer):
@@ -61,22 +73,31 @@ def do_analysis(jl, minimizer):
     fit_results = jl.get_errors()
 
     check_results(fit_results)
-    
+
+
 def do_contours_check(jl, minimizer):
 
-    #make sure that model is restored after contour calculation
+    # make sure that model is restored after contour calculation
 
     jl.set_minimizer(minimizer)
-    
+
     _ = jl.fit()
-    
+
     model_clone = clone_model(jl._likelihood_model)
 
-    _ = jl.get_contours( jl._likelihood_model.bn090217206.spectrum.main.Powerlaw.index, -3.5, -0.5, 30 )
+    _ = jl.get_contours(
+        jl._likelihood_model.bn090217206.spectrum.main.Powerlaw.index,
+        -3.5,
+        -0.5,
+        30,
+    )
 
     for param in jl._likelihood_model.parameters:
-        assert jl._likelihood_model.parameters[param].value == model_clone[param].value
-    
+        assert (
+            jl._likelihood_model.parameters[param].value
+            == model_clone[param].value
+        )
+
 
 def test_minuit_simple(joint_likelihood_bn090217206_nai):
 
@@ -90,14 +111,13 @@ def test_minuit_complete(joint_likelihood_bn090217206_nai):
 
     do_analysis(joint_likelihood_bn090217206_nai, minuit)
 
-    do_contours_check( joint_likelihood_bn090217206_nai, "minuit" )
+    do_contours_check(joint_likelihood_bn090217206_nai, "minuit")
 
 
 @skip_if_ROOT_is_not_available
 def test_ROOT_simple(joint_likelihood_bn090217206_nai):
 
     do_analysis(joint_likelihood_bn090217206_nai, "ROOT")
-
 
 
 @skip_if_ROOT_is_not_available
@@ -108,7 +128,7 @@ def test_ROOT_complete(joint_likelihood_bn090217206_nai):
 
     do_analysis(joint_likelihood_bn090217206_nai, root)
 
-    do_contours_check( joint_likelihood_bn090217206_nai, "minuit" )
+    do_contours_check(joint_likelihood_bn090217206_nai, "minuit")
 
 
 def test_grid(joint_likelihood_bn090217206_nai):
@@ -147,8 +167,8 @@ def test_pagmo(joint_likelihood_bn090217206_nai):
     do_analysis(joint_likelihood_bn090217206_nai, pagmo)
 
 
-#@skip_if_ROOT_is_available
-#def test_parallel_pagmo(joint_likelihood_bn090217206_nai):
+# @skip_if_ROOT_is_available
+# def test_parallel_pagmo(joint_likelihood_bn090217206_nai):
 #
 #    with parallel_computation(start_cluster=False):
 #

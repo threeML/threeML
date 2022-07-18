@@ -36,14 +36,14 @@ _hesse_status_translation = {
     300: "Covariance matrix is not positive defined",
 }
 
-#root_class = None
-#try:
+# root_class = None
+# try:
 #    root_class = ROOT.TPyMultiGenFunction
-#except AttributeError:
+# except AttributeError:
 #    root_class = ROOT.Math.IMultiGenFunction
 
+
 class FuncWrapper(ROOT.Math.IMultiGenFunction):
-    
     def setup(self, function, dimensions):
         self.function = function
         self.dimensions = int(dimensions)
@@ -54,7 +54,7 @@ class FuncWrapper(ROOT.Math.IMultiGenFunction):
     def DoEval(self, args):
         new_args = [args[i] for i in range(self.dimensions)]
         return self.function(*new_args)
-    
+
     def Clone(self):
         f = FuncWrapper()
         f.setup(f.function, f.dimensions)
@@ -68,7 +68,9 @@ class ROOTMinimizer(LocalMinimizer):
 
     def __init__(self, function, parameters, verbosity=0, setup_dict=None):
 
-        super(ROOTMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
+        super(ROOTMinimizer, self).__init__(
+            function, parameters, verbosity, setup_dict
+        )
 
     def _setup(self, user_setup_dict):
 
@@ -100,9 +102,10 @@ class ROOTMinimizer(LocalMinimizer):
 
         # Set up the parameters in internal reference
 
-        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(
-            self._internal_parameters.items()
-        ):
+        for i, (
+            par_name,
+            (cur_value, cur_delta, cur_min, cur_max),
+        ) in enumerate(self._internal_parameters.items()):
 
             if cur_min is not None and cur_max is not None:
 

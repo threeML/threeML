@@ -81,7 +81,9 @@ def show_configuration(sub_menu: Optional[str] = None):
     print(tr(out_final))
 
 
-def get_current_configuration_copy(file_name: str = "threeML_config.yml", overwrite: bool = False):
+def get_current_configuration_copy(
+    file_name: str = "threeML_config.yml", overwrite: bool = False
+):
     """
     write a copy of the CURRENT configuration to the config directory
     """
@@ -107,7 +109,9 @@ def get_current_configuration_copy(file_name: str = "threeML_config.yml", overwr
 
         with outfile.open("w") as f:
 
-            f.write(OmegaConf.to_yaml(config_copy, sort_keys=True, resolve=True))
+            f.write(
+                OmegaConf.to_yaml(config_copy, sort_keys=True, resolve=True)
+            )
 
 
 def get_value(name, user_value, par_type, config_value):
@@ -126,8 +130,10 @@ def get_value(name, user_value, par_type, config_value):
         log.debug(f"Using default value {value} for parameter {name}.")
 
     if not isinstance(value, par_type):
-        log.error(f"Parameter {name} has wrong type. Must be {par_type} "
-                  f"but {name} is {value}.")
+        log.error(
+            f"Parameter {name} has wrong type. Must be {par_type} "
+            f"but {name} is {value}."
+        )
         raise AssertionError()
     return value
 

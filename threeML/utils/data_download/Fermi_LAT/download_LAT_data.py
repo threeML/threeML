@@ -80,7 +80,13 @@ class DivParser(html.parser.HTMLParser):
 _uid_fits_keyword = "QUERYUID"
 
 
-def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_merged.fits', Emin: float = 30.0, Emax: float = 1e6) -> Path:
+def merge_LAT_data(
+    ft1s,
+    destination_directory: str = ".",
+    outfile: str = 'ft1_merged.fits',
+    Emin: float = 30.0,
+    Emax: float = 1e6,
+) -> Path:
 
     outfile: Path = Path(destination_directory) / outfile
 
@@ -89,7 +95,6 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
             f"Existing merged event file {outfile} correspond to the same selection. "
             "We assume you did not tamper with it, so we will return it instead of merging it again. "
             "If you want to redo the FT1 file again, remove it from the outdir"
-
         )
         return outfile
 
@@ -139,8 +144,8 @@ def download_LAT_data(
     time_type: str,
     data_type: str = "Photon",
     destination_directory: str = ".",
-    Emin: float = 30.,
-    Emax: float = 1000000.
+    Emin: float = 30.0,
+    Emax: float = 1000000.0,
 ) -> Path:
     """
     Download data from the public LAT data server (of course you need a working internet connection). Data are
@@ -171,64 +176,64 @@ def download_LAT_data(
 
     if time_type not in _known_time_types:
         out = ",".join(_known_time_types)
-        log.error(
-            f"Time type must be one of {out}"
-        )
+        log.error(f"Time type must be one of {out}")
         raise TimeTypeNotKnown()
 
     valid_classes = ["Photon", "Extended"]
     if data_type not in valid_classes:
         out = ",".join(valid_classes)
-        log.error(
-            f"Data type must be one of {out}"
-        )
+        log.error(f"Data type must be one of {out}")
         raise TypeError()
 
     if radius <= 0:
-        log.error(
-            "Radius of the Region of Interest must be > 0"
-        )
+        log.error("Radius of the Region of Interest must be > 0")
         raise ValueError()
 
     if not (0 <= ra <= 360.0):
-        log.error(
-            "R.A. must be 0 <= ra <= 360"
-        )
+        log.error("R.A. must be 0 <= ra <= 360")
         raise ValueError()
 
     if not -90 <= dec <= 90:
-        log.error(
-            "Dec. must be -90 <= dec <= 90"
-        )
+        log.error("Dec. must be -90 <= dec <= 90")
         raise ValueError()
 
     fermiEmin = 30
     fermiEmax = 1e6
-    
+
     if Emin < fermiEmin:
-        log.warning( f"Setting Emin from {Emin} to 30 MeV (minimum available energy for Fermi-LAT data)" )
+        log.warning(
+            f"Setting Emin from {Emin} to 30 MeV (minimum available energy for Fermi-LAT data)"
+        )
         Emin = fermiEmin
-        
+
     if Emin > fermiEmax:
-        log.warning( f"Setting Emin from {Emin} to 1 TeV (maximum available energy for Fermi-LAT data)" )
+        log.warning(
+            f"Setting Emin from {Emin} to 1 TeV (maximum available energy for Fermi-LAT data)"
+        )
         Emin = fermiEmax
-    
+
     if Emax < fermiEmin:
-        log.warning( f"Setting Emax from {Emax} to 30 MeV (minimum available energy for Fermi-LAT data)" )
+        log.warning(
+            f"Setting Emax from {Emax} to 30 MeV (minimum available energy for Fermi-LAT data)"
+        )
         Emax = fermiEmin
-        
+
     if Emax > fermiEmax:
-        log.warning( f"Setting Emax from {Emax} to 1 TeV (maximum available energy for Fermi-LAT data)" )
+        log.warning(
+            f"Setting Emax from {Emax} to 1 TeV (maximum available energy for Fermi-LAT data)"
+        )
         Emax = fermiEmax
 
     if Emin >= Emax:
-        log.error( f"Minimum energy ({Emin}) must be less than maximum energy ({Emax}) for download." )
+        log.error(
+            f"Minimum energy ({Emin}) must be less than maximum energy ({Emax}) for download."
+        )
         raise ValueError()
-        
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(
-        destination_directory, abspath=True)
+        destination_directory, abspath=True
+    )
 
     if not destination_directory.exists():
 
@@ -265,10 +270,9 @@ def download_LAT_data(
 
         log.info("%30s = %s" % (k, v))
 
-
     # Compute a unique ID for this query
     query_unique_id = get_unique_deterministic_tag(str(query_parameters))
-    log.info( "Query ID: %s" % query_unique_id)
+    log.info("Query ID: %s" % query_unique_id)
 
     # Look if there are FT1 and FT2 files in the output directory matching this unique ID
 
@@ -316,7 +320,6 @@ def download_LAT_data(
             f"Existing event file {prev_downloaded_ft1s} and Spacecraft file {prev_downloaded_ft2} correspond to the same selection. "
             "We assume you did not tamper with them, so we will return those instead of downloading them again. "
             "If you want to download them again, remove them from the outdir"
-
         )
 
         return (
@@ -324,12 +327,11 @@ def download_LAT_data(
                 prev_downloaded_ft1s,
                 destination_directory,
                 outfile="L%s_FT1.fits" % query_unique_id,
-                Emin = Emin,
-                Emax = Emax
+                Emin=Emin,
+                Emax=Emax,
             ),
             prev_downloaded_ft2,
         )
-
 
     # POST encoding
 
@@ -353,25 +355,24 @@ def download_LAT_data(
     # Get the form compiled
     try:
         urllib.request.urlretrieve(
-            url, temporaryFileName, lambda x, y, z: 0, postData)
+            url, temporaryFileName, lambda x, y, z: 0, postData
+        )
     except socket.timeout:
 
         log.error(
             "Time out when connecting to the server. Check your internet connection, or that the "
             f"form at {url} is accessible, then retry"
         )
-        raise RuntimeError(
-
-        )
+        raise RuntimeError()
     except Exception as e:
 
         log.error(e)
-        log.exception("Problems with the download. Check your internet connection, or that the "
-                      f"form at {url} is accessible, then retry")
-
-        raise RuntimeError(
-
+        log.exception(
+            "Problems with the download. Check your internet connection, or that the "
+            f"form at {url} is accessible, then retry"
         )
+
+        raise RuntimeError()
 
     # Now open the file, parse it and get the query ID
 
@@ -426,7 +427,6 @@ def download_LAT_data(
 
         log.info(
             f"Estimated complete time for your query: {estimated_time_for_the_query} seconds"
-
         )
 
     http_address = [
@@ -435,16 +435,15 @@ def download_LAT_data(
 
     log.info(
         f"If this download fails, you can find your data at {http_address} (when ready)"
-
     )
 
     # Now periodically check if the query is complete
 
     startTime = time.time()
     timeout = max(
-        1.5 * max(5.0, float(estimated_time_for_the_query)), 120)  # Seconds
-    refreshTime = min(float(estimated_time_for_the_query) /
-                      2.0, 5.0)  # Seconds
+        1.5 * max(5.0, float(estimated_time_for_the_query)), 120
+    )  # Seconds
+    refreshTime = min(float(estimated_time_for_the_query) / 2.0, 5.0)  # Seconds
 
     # precompile Url regular expression
     regexpr = re.compile("wget (.*.fits)")
@@ -471,10 +470,10 @@ def download_LAT_data(
 
             log.exception(
                 "Time out when connecting to the server. Check your internet connection, or that "
-                f"you can access {threeML_config.LAT.query_form}, then retry")
-
-            raise RuntimeError(
+                f"you can access {threeML_config.LAT.query_form}, then retry"
             )
+
+            raise RuntimeError()
 
         except Exception as e:
 
@@ -482,12 +481,12 @@ def download_LAT_data(
 
             urllib.request.urlcleanup()
 
-            log.exception("Problems with the download. Check your connection or that you can access "
-                          f"{threeML_config.LAT.query_form}, then retry.")
-
-            raise RuntimeError(
-
+            log.exception(
+                "Problems with the download. Check your connection or that you can access "
+                f"{threeML_config.LAT.query_form}, then retry."
             )
+
+            raise RuntimeError()
 
         with open(fakeName) as f:
 
@@ -534,9 +533,7 @@ def download_LAT_data(
 
     else:
 
-        log.error(
-            "Could not download LAT Standard data"
-        )
+        log.error("Could not download LAT Standard data")
 
         raise RuntimeError()
 
@@ -569,103 +566,132 @@ def download_LAT_data(
             FT1,
             destination_directory,
             outfile="L%s_FT1.fits" % query_unique_id,
-            Emin = Emin,
-            Emax = Emax
+            Emin=Emin,
+            Emax=Emax,
         ),
-        FT2
+        FT2,
     )
 
-class LAT_dataset():
 
+class LAT_dataset:
     def __init__(self):
-        self.ft1=None
-        self.ft2=None
+        self.ft1 = None
+        self.ft2 = None
         pass
 
-    def make_LAT_dataset(self,
-                         ra: float,
-                         dec: float,
-                         radius: float,
-                         trigger_time : float,
-                         tstart: float,
-                         tstop: float,
-                         data_type: str = "Photon",
-                         destination_directory: str = ".",
-                         Emin: float = 30.,
-                         Emax: float = 1000000.):
+    def make_LAT_dataset(
+        self,
+        ra: float,
+        dec: float,
+        radius: float,
+        trigger_time: float,
+        tstart: float,
+        tstop: float,
+        data_type: str = "Photon",
+        destination_directory: str = ".",
+        Emin: float = 30.0,
+        Emax: float = 1000000.0,
+    ):
 
         self.trigger_time = trigger_time
-        self.ra           = ra
-        self.dec          = dec
-        self.METstart     = tstart+trigger_time
-        self.METstop      = tstop+trigger_time
-        self.Emin         = Emin
-        self.Emax         = Emax
+        self.ra = ra
+        self.dec = dec
+        self.METstart = tstart + trigger_time
+        self.METstop = tstop + trigger_time
+        self.Emin = Emin
+        self.Emax = Emax
 
         self.destination_directory = destination_directory
 
-
         import datetime
-        from GtBurst.dataHandling import met2date,_makeDatasetsOutOfLATdata
+        from GtBurst.dataHandling import met2date, _makeDatasetsOutOfLATdata
 
         metdate = 239241601
 
-        if tstart>metdate: assert("Start time must bge relative to triggertime")
-        if tstop>metdate:  assert("Stop time must bge relative to triggertime")
+        if tstart > metdate:
+            assert "Start time must bge relative to triggertime"
+        if tstop > metdate:
+            assert "Stop time must bge relative to triggertime"
 
         grb_name = met2date(trigger_time, opt='grbname')
 
-        destination_directory = os.path.join(destination_directory,'bn%s' % grb_name)
+        destination_directory = os.path.join(
+            destination_directory, 'bn%s' % grb_name
+        )
 
-        new_ft1 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft1', grb_name))
+        new_ft1 = os.path.join(
+            destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft1', grb_name)
+        )
 
-        new_ft2 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft2', grb_name))
+        new_ft2 = os.path.join(
+            destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft2', grb_name)
+        )
 
-        eboundsFilename = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.rsp" % ('cspec', grb_name))
+        eboundsFilename = os.path.join(
+            destination_directory,
+            "gll_%s_tr_bn%s_v00.rsp" % ('cspec', grb_name),
+        )
 
-        if (not os.path.exists(new_ft1) or not os.path.exists(new_ft2) or not os.path.exists(eboundsFilename)) :
-            ft1,ft2 = download_LAT_data(
-                                        ra,
-                                        dec,
-                                        radius,
-                                        trigger_time + tstart,
-                                        trigger_time + tstop,
-                                        time_type='MET',
-                                        data_type=data_type,
-                                        destination_directory=destination_directory,
-                                        Emin=Emin,
-                                        Emax=Emax
+        if (
+            not os.path.exists(new_ft1)
+            or not os.path.exists(new_ft2)
+            or not os.path.exists(eboundsFilename)
+        ):
+            ft1, ft2 = download_LAT_data(
+                ra,
+                dec,
+                radius,
+                trigger_time + tstart,
+                trigger_time + tstop,
+                time_type='MET',
+                data_type=data_type,
+                destination_directory=destination_directory,
+                Emin=Emin,
+                Emax=Emax,
             )
 
+            os.rename(str(ft1), new_ft1)
 
-            os.rename(str(ft1), new_ft1 )
+            os.rename(str(ft2), new_ft2)
 
-            os.rename(str(ft2), new_ft2 )
-
-            _, eboundsFilename, _, cspecfile = _makeDatasetsOutOfLATdata(new_ft1, new_ft2,
-                                                                             grb_name,
-                                                                             tstart, tstop,
-                                                                             ra, dec,
-                                                                             trigger_time,
-                                                                             destination_directory,
-                                                                             cspecstart=tstart,
-                                                                             cspecstop=tstop)
+            _, eboundsFilename, _, cspecfile = _makeDatasetsOutOfLATdata(
+                new_ft1,
+                new_ft2,
+                grb_name,
+                tstart,
+                tstop,
+                ra,
+                dec,
+                trigger_time,
+                destination_directory,
+                cspecstart=tstart,
+                cspecstop=tstop,
+            )
         self.grb_name = grb_name
-        self.ft1      = new_ft1
-        self.ft2      = new_ft2
-        self.rspfile     = eboundsFilename
+        self.ft1 = new_ft1
+        self.ft2 = new_ft2
+        self.rspfile = eboundsFilename
         pass
 
-
-    def extract_events(self,roi, zmax, irf, thetamax=180.0,strategy='time'):
+    def extract_events(self, roi, zmax, irf, thetamax=180.0, strategy='time'):
         from GtBurst import dataHandling
+
         global lastDisplay
 
         LATdata = dataHandling.LATData(self.ft1, self.rspfile, self.ft2)
 
-        self.filt_file, nEvents = LATdata.performStandardCut(self.ra, self.dec, roi, irf, self.METstart, self.METstop, self.Emin, self.Emax, zmax,
-                                                           thetamax,
-                                                           True, strategy=strategy.lower())
+        self.filt_file, nEvents = LATdata.performStandardCut(
+            self.ra,
+            self.dec,
+            roi,
+            irf,
+            self.METstart,
+            self.METstop,
+            self.Emin,
+            self.Emax,
+            zmax,
+            thetamax,
+            True,
+            strategy=strategy.lower(),
+        )
         log.info('Extracted %s events' % nEvents)
-
-

@@ -11,7 +11,7 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 
 from threeML.io.logging import setup_logger
 
-log =setup_logger(__name__)
+log = setup_logger(__name__)
 # def set_external_property(method):
 #     """
 #     Sets external property values if they exist
@@ -63,7 +63,6 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
     def get_name(self):
         log.warning(
             "Do not use get_name() for plugins, use the .name property",
-           
         )
 
         return self.name

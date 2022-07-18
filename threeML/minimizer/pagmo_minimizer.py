@@ -21,7 +21,12 @@ class PAGMOWrapper(object):
         minima = []
         maxima = []
 
-        for param, (cur_value, cur_delta, cur_min, cur_max) in parameters.items():
+        for param, (
+            cur_value,
+            cur_delta,
+            cur_min,
+            cur_max,
+        ) in parameters.items():
 
             if cur_min is None or cur_max is None:
 
@@ -121,7 +126,9 @@ class PAGMOMinimizer(GlobalMinimizer):
         if is_parallel_computation_active():
 
             wrapper = PAGMOWrapper(
-                function=self.function, parameters=self._internal_parameters, dim=Npar
+                function=self.function,
+                parameters=self._internal_parameters,
+                dim=Npar,
             )
 
             # use the archipelago, which uses the ipyparallel computation
@@ -175,7 +182,9 @@ class PAGMOMinimizer(GlobalMinimizer):
             # do not use ipyparallel. Evolve populations on islands serially
 
             wrapper = PAGMOWrapper(
-                function=self.function, parameters=self._internal_parameters, dim=Npar
+                function=self.function,
+                parameters=self._internal_parameters,
+                dim=Npar,
             )
 
             xOpts = []
@@ -193,8 +202,6 @@ class PAGMOMinimizer(GlobalMinimizer):
 
                 xOpts.append(pop.champion_x)
                 fOpts[island_id] = pop.champion_f[0]
-
-
 
         # Find best and worst islands
 

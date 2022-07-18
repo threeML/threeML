@@ -68,7 +68,7 @@ def cmap_intervals(length=50, cmap="YlOrBr", start=None, stop=None):
 
         if base_n_colors < length:
 
-            factor = int(np.floor_divide(length, base_n_colors))+1
+            factor = int(np.floor_divide(length, base_n_colors)) + 1
 
             cmap_list = np.tile(cmap_list, (factor, 1))
 

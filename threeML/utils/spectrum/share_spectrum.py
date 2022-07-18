@@ -3,6 +3,7 @@ import numpy as np
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.io.logging import setup_logger
+
 log = setup_logger(__name__)
 
 
@@ -20,9 +21,10 @@ class ShareSpectrum(object):
         # List with the information which plugins have the same spectrum integration
         # with same input energy bins
         self._data_ebin_connect = []
-        #TODO add check if same integration method is set
-        for j, (key, d) in enumerate(zip(list(datalist.keys()),
-                                         list(datalist.values()))):
+        # TODO add check if same integration method is set
+        for j, (key, d) in enumerate(
+            zip(list(datalist.keys()), list(datalist.values()))
+        ):
             if isinstance(d, DispersionSpectrumLike):
                 e = d.response.monte_carlo_energies
                 share_spec_possible = True
@@ -30,10 +32,10 @@ class ShareSpectrum(object):
                 e = d.observed_spectrum.edges
                 share_spec_possible = True
             else:
-                log.debug(f"Plugin {j} can not share spectrum calculation (Not SpectrumLike or DispersionSpectrumLike)")
-                self._data_ein_edges.append(
-                    None
+                log.debug(
+                    f"Plugin {j} can not share spectrum calculation (Not SpectrumLike or DispersionSpectrumLike)"
                 )
+                self._data_ein_edges.append(None)
                 self._base_plugin_key.append(key)
                 self._data_ebin_connect.append(j)
                 share_spec_possible = False
@@ -46,7 +48,9 @@ class ShareSpectrum(object):
                     if self._data_ein_edges[i] is not None:
                         if len(e) == len(self._data_ein_edges[i]):
                             if np.all(np.equal(e, self._data_ein_edges[i])):
-                                log.debug(f"Plugin {j} shares the spectrum calculation with plugin {i}")
+                                log.debug(
+                                    f"Plugin {j} shares the spectrum calculation with plugin {i}"
+                                )
                                 self._data_ebin_connect.append(i)
                                 found = True
                                 break

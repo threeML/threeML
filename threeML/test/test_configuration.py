@@ -11,7 +11,6 @@ from threeML.config.config_structure import Config
 from pathlib import Path
 
 
-
 def test_default_configuration():
 
     # We just need to instance the Config class, as it contains in itself the check for a valid
@@ -21,44 +20,35 @@ def test_default_configuration():
 
     show_configuration()
 
-
     show_configuration("LAT")
-
 
     with pytest.raises(AssertionError):
 
         show_configuration("doesnotexist")
 
-
     _file_name = "_tmp_config.yml"
 
     path = get_path_of_user_config() / _file_name
 
-
     get_current_configuration_copy(_file_name, overwrite=False)
-
 
     with pytest.raises(RuntimeError):
 
         get_current_configuration_copy(_file_name, overwrite=False)
 
-
     get_current_configuration_copy(_file_name, overwrite=True)
-
 
     path.unlink()
 
-    
 
-
-    
-        
 def test_user_configuration():
 
     dummy_config = OmegaConf.structured(Config)
 
-    configs = [{"logging": {"usr": "off"}}, {
-        "parallel": {"profile_name": "test"}}]
+    configs = [
+        {"logging": {"usr": "off"}},
+        {"parallel": {"profile_name": "test"}},
+    ]
 
     for i, c in enumerate(configs):
 
@@ -74,8 +64,6 @@ def test_user_configuration():
 
         path.unlink()
 
-
-    
 
 def test_frozen_config():
 

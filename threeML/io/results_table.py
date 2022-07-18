@@ -62,7 +62,9 @@ class ResultsTable(object):
             lower_bound = value + row["negative_error"]
             upper_bound = value + row["positive_error"]
 
-            pretty_string = uncertainty_formatter(value, lower_bound, upper_bound)
+            pretty_string = uncertainty_formatter(
+                value, lower_bound, upper_bound
+            )
 
             return pretty_string
 
@@ -70,7 +72,9 @@ class ResultsTable(object):
         new_frame = self._data_frame.copy(deep=True)  # type: pd.DataFrame
 
         # Add new column which will become the new index
-        new_frame["parameter"] = [key_formatter(x) for x in new_frame.index.values]
+        new_frame["parameter"] = [
+            key_formatter(x) for x in new_frame.index.values
+        ]
 
         # Set it as the index
         new_frame.set_index("parameter", drop=True, inplace=True)

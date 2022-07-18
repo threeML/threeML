@@ -6,6 +6,7 @@ from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 
+
 class IntervalsDoNotOverlap(RuntimeError):
     pass
 
@@ -15,7 +16,9 @@ class IntervalsNotContiguous(RuntimeError):
 
 
 class Interval(object):
-    def __init__(self, start: float, stop: float, swap_if_inverted: bool=False):
+    def __init__(
+        self, start: float, stop: float, swap_if_inverted: bool = False
+    ):
 
         self._start: float = float(start)
         self._stop: float = float(stop)
@@ -69,7 +72,7 @@ class Interval(object):
         )
 
     def intersect(self, interval):
-        #type: (Interval) -> Interval 
+        # type: (Interval) -> Interval
         """
         Returns a new time interval corresponding to the intersection between this interval and the provided one.
 
@@ -80,10 +83,10 @@ class Interval(object):
         """
 
         if not self.overlaps_with(interval):
-            log.exception("Current interval does not overlap with provided interval")
-            raise IntervalsDoNotOverlap(
-                
+            log.exception(
+                "Current interval does not overlap with provided interval"
             )
+            raise IntervalsDoNotOverlap()
 
         new_start = max(self._start, interval.start)
         new_stop = min(self._stop, interval.stop)
@@ -91,7 +94,7 @@ class Interval(object):
         return self.new(new_start, new_stop)
 
     def merge(self, interval):
-        #type: (Interval) -> Interval 
+        # type: (Interval) -> Interval
         """
         Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals
         must overlap.
@@ -110,10 +113,12 @@ class Interval(object):
 
         else:
 
-            raise IntervalsDoNotOverlap("Could not merge non-overlapping intervals!")
+            raise IntervalsDoNotOverlap(
+                "Could not merge non-overlapping intervals!"
+            )
 
     def overlaps_with(self, interval):
-        #type: (Interval) -> bool 
+        # type: (Interval) -> bool
         """
         Returns whether the current time interval and the provided one overlap or not
 
@@ -225,7 +230,8 @@ class IntervalSet(object):
         # like "-10 --5","-10 - -5", "-10-5", "5-10" and so on
 
         tokens = re.match(
-            "(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)", time_interval
+            "(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)",
+            time_interval,
         ).groups()
 
         return [float(x) for x in tokens]
@@ -243,9 +249,11 @@ class IntervalSet(object):
         :return:
         """
 
-        assert len(starts) == len(stops), (
-            "starts length: %d and stops length: %d must have same length"
-            % (len(starts), len(stops))
+        assert len(starts) == len(
+            stops
+        ), "starts length: %d and stops length: %d must have same length" % (
+            len(starts),
+            len(stops),
         )
 
         list_of_intervals = []
@@ -336,7 +344,9 @@ class IntervalSet(object):
 
                 if new_intervals[-1].overlaps_with(sorted_intervals[0]):
 
-                    new_intervals[-1] = new_intervals[-1].merge(sorted_intervals[0])
+                    new_intervals[-1] = new_intervals[-1].merge(
+                        sorted_intervals[0]
+                    )
 
                 else:
 
@@ -373,7 +383,9 @@ class IntervalSet(object):
 
     def __eq__(self, other):
 
-        for interval_this, interval_other in zip(self.argsort(), other.argsort()):
+        for interval_this, interval_other in zip(
+            self.argsort(), other.argsort()
+        ):
 
             if not self[interval_this] == other[interval_other]:
                 return False
@@ -397,7 +409,9 @@ class IntervalSet(object):
 
         else:
 
-            return self.new(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
+            return self.new(
+                np.atleast_1d(itemgetter(*self.argsort())(self._intervals))
+            )
 
     def argsort(self):
         """

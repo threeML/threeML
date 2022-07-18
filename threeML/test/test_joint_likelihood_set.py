@@ -35,6 +35,7 @@ def test_joint_likelihood_set(data_list_bn090217206_nai6):
 
     jlset.go(compute_covariance=False)
 
+
 @skip_if_ROOT_is_available
 def test_joint_likelihood_set_parallel(data_list_bn090217206_nai6):
     def get_data(id):

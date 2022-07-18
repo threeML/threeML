@@ -49,25 +49,28 @@ log = setup_logger(__name__)
 
 
 class MultiNestSampler(UnitCubeSampler):
-    def __init__(self,
-                 likelihood_model: Optional[Model] = None,
-                 data_list: Optional[DataList] = None,
-                 **kwargs):
+    def __init__(
+        self,
+        likelihood_model: Optional[Model] = None,
+        data_list: Optional[DataList] = None,
+        **kwargs,
+    ):
         """
         Implements the MultiNest sampler of https://github.com/farhanferoz/MultiNest
         via the python wrapper of https://github.com/JohannesBuchner/PyMultiNest
 
-        :param likelihood_model: 
-        :param data_list: 
-        :returns: 
-        :rtype: 
+        :param likelihood_model:
+        :param data_list:
+        :returns:
+        :rtype:
 
         """
 
         assert has_pymultinest, "You must install MultiNest to use this sampler"
 
         super(MultiNestSampler, self).__init__(
-            likelihood_model, data_list, **kwargs)
+            likelihood_model, data_list, **kwargs
+        )
 
     def setup(
         self,
@@ -76,7 +79,7 @@ class MultiNestSampler(UnitCubeSampler):
         resume: bool = False,
         importance_nested_sampling: bool = False,
         auto_clean: bool = False,
-        **kwargs
+        **kwargs,
     ):
         """
         Setup the MultiNest Sampler. For details see:
@@ -87,13 +90,15 @@ class MultiNestSampler(UnitCubeSampler):
         :resume: resume from previous fit
         :param importance_nested_sampling: use INS
         :param auto_clean: automatically remove multinest chains after run
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
-        log.debug(f"Setup for MultiNest sampler: n_live_points:{n_live_points}, chain_name:{chain_name},"
-                  f"resume: {resume}, importance_nested_sampling: {importance_nested_sampling}."
-                  f"Other input: {kwargs}")
+        log.debug(
+            f"Setup for MultiNest sampler: n_live_points:{n_live_points}, chain_name:{chain_name},"
+            f"resume: {resume}, importance_nested_sampling: {importance_nested_sampling}."
+            f"Other input: {kwargs}"
+        )
         self._kwargs = {}
         self._kwargs["n_live_points"] = n_live_points
         self._kwargs["outputfiles_basename"] = chain_name
@@ -106,15 +111,15 @@ class MultiNestSampler(UnitCubeSampler):
             self._kwargs[k] = v
 
         self._auto_clean = auto_clean
-            
+
         self._is_setup = True
 
     def sample(self, quiet: bool = False):
         """
         sample using the MultiNest numerical integration method
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
         if not self._is_setup:
@@ -160,15 +165,13 @@ class MultiNestSampler(UnitCubeSampler):
                 # create mcmc chains directory only on first engine
 
                 if not chain_dir.exists():
-                    log.debug(
-                        f"Create {chain_dir} for multinest output")
+                    log.debug(f"Create {chain_dir} for multinest output")
                     chain_dir.mkdir()
 
         else:
 
             if not chain_dir.exists():
-                log.debug(
-                    f"Create {chain_dir} for multinest output")
+                log.debug(f"Create {chain_dir} for multinest output")
                 chain_dir.mkdir()
 
         # Multinest must be run parallel via an external method
@@ -177,11 +180,11 @@ class MultiNestSampler(UnitCubeSampler):
         if threeML_config["parallel"]["use_parallel"]:
 
             log.error(
-                "If you want to run multinest in parallell you need to use an ad-hoc method")
-
+                "If you want to run multinest in parallell you need to use an ad-hoc method"
+            )
 
             raise RuntimeError()
-            
+
         else:
 
             with use_astromodels_memoization(False):
@@ -226,15 +229,15 @@ class MultiNestSampler(UnitCubeSampler):
             )
 
             # Get the log. likelihood values from the chain
-            self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[
-                :, -1
-            ]
+            self._log_like_values = (
+                multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+            )
 
             self._sampler = sampler
 
-            self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[
-                :, :-1
-            ]
+            self._raw_samples = (
+                multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+            )
 
             # now get the log probability
 
@@ -255,13 +258,11 @@ class MultiNestSampler(UnitCubeSampler):
                 self._results.display()
 
             # now clean up the chains if requested
-            
+
             if self._auto_clean:
 
                 log.info(f"deleting the chain directory {chain_dir}")
-                
-                shutil.rmtree(chain_dir)
 
-                
+                shutil.rmtree(chain_dir)
 
             return self.samples

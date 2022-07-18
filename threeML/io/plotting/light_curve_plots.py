@@ -46,13 +46,15 @@ def binned_light_curve_plot(
     light_curve_color = threeML_config.time_series.light_curve_color
     selection_color = threeML_config.time_series.selection_color
     background_color = threeML_config.time_series.background_color
-    background_selection_color = threeML_config.time_series.background_selection_color
+    background_selection_color = (
+        threeML_config.time_series.background_selection_color
+    )
 
     # first plot the full lightcurve
 
     step_plot(
         time_bins,
-        cnts/ width,
+        cnts / width,
         ax,
         color=light_curve_color,
         label="Light Curve",
@@ -66,7 +68,8 @@ def binned_light_curve_plot(
 
         for tmin, tmax in selection:
             tmp_mask = np.logical_and(
-                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
+                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax
+            )
 
             all_masks.append(tmp_mask)
 
@@ -101,7 +104,8 @@ def binned_light_curve_plot(
         all_masks = []
         for tmin, tmax in bkg_selections:
             tmp_mask = np.logical_and(
-                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
+                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax
+            )
 
             all_masks.append(tmp_mask)
 
@@ -133,7 +137,7 @@ def binned_light_curve_plot(
     if bkg is not None:
 
         # now plot the estimated background
-        # the bkg is a rate 
+        # the bkg is a rate
         ax.plot(mean_time, bkg, background_color, lw=2.0, label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
@@ -239,8 +243,7 @@ def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
 
     bins = np.arange(start, stop, step=dt)
 
-    counts, bins = np.histogram(
-        tte.arrival_times - tte.trigger_time, bins=bins)
+    counts, bins = np.histogram(tte.arrival_times - tte.trigger_time, bins=bins)
 
     width = np.diff(bins)
 

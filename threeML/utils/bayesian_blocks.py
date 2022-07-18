@@ -31,7 +31,9 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
     # Create initial cell edges (Voronoi tessellation) using the unique time stamps
 
-    edges = np.concatenate([[tstart], 0.5 * (unique_t[1:] + unique_t[:-1]), [tstop]])
+    edges = np.concatenate(
+        [[tstart], 0.5 * (unique_t[1:] + unique_t[:-1]), [tstop]]
+    )
 
     # The last block length is 0 by definition
     block_length = tstop - edges
@@ -83,8 +85,6 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
 
-    
-
     for R in tqdm(range(N)):
         br = block_length[R + 1]
         T_k = block_length[: R + 1] - br
@@ -117,8 +117,6 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
         last[R] = i_max
         best[R] = A_R[i_max]
-
-        
 
     numexpr.set_vml_accuracy_mode(oldaccuracy)
 

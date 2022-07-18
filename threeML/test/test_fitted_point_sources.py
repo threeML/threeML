@@ -163,9 +163,7 @@ def test_fitted_point_source_plotting(analysis_to_test):
 
             for x in analysis_to_test:
 
-                _ = plot_spectra(
-                    x, flux_unit=u1, energy_unit=e_unit, num_ene=5
-                )
+                _ = plot_spectra(x, flux_unit=u1, energy_unit=e_unit, num_ene=5)
 
                 _ = plot_spectra(x, **plot_keywords)
 
@@ -187,7 +185,11 @@ def test_fitted_point_source_flux_calculations(analysis_to_test):
     }
 
     _calculate_point_source_flux(
-        1, 10, analysis_to_test[0], flux_unit=good_i_flux_units[0], energy_unit="keV"
+        1,
+        10,
+        analysis_to_test[0],
+        flux_unit=good_i_flux_units[0],
+        energy_unit="keV",
     )
 
     _calculate_point_source_flux(1, 10, analysis_to_test[-2], **flux_keywords)

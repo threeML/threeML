@@ -13,8 +13,15 @@ from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
 
 
-_possible_samplers = ["emcee", "mutinest", "zeus", "ultranest",
-                      "dynesty_nested", "dynesty_dynamic", "autoemcee"]
+_possible_samplers = [
+    "emcee",
+    "mutinest",
+    "zeus",
+    "ultranest",
+    "dynesty_nested",
+    "dynesty_dynamic",
+    "autoemcee",
+]
 
 
 _available_samplers = {}
@@ -27,7 +34,7 @@ try:
 
     _available_samplers["emcee"] = EmceeSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no emcee")
 
@@ -36,13 +43,16 @@ try:
 
     import dynesty
 
-    from threeML.bayesian.dynesty_sampler import (DynestyDynamicSampler,
-                                                  DynestyNestedSampler)
+    from threeML.bayesian.dynesty_sampler import (
+        DynestyDynamicSampler,
+        DynestyNestedSampler,
+    )
+
     _available_samplers["dynesty_nested"] = DynestyNestedSampler
     _available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
 
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no dynesty")
 
@@ -54,7 +64,7 @@ try:
 
     _available_samplers["multinest"] = MultiNestSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no multinest")
 
@@ -66,7 +76,7 @@ try:
 
     _available_samplers["zeus"] = ZeusSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no zeus")
 
@@ -80,7 +90,7 @@ try:
     _available_samplers["ultranest"] = UltraNestSampler
 
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no ultranest")
 
@@ -93,7 +103,7 @@ try:
 
     _available_samplers["autoemcee"] = AutoEmceeSampler
 
-except(ImportError):
+except (ImportError):
 
     log.debug("no autoemcee")
 
@@ -118,7 +128,7 @@ class BayesianAnalysis(object):
         :return:
 
         :example:
-        
+
         """
 
         self._analysis_type = "bayesian"
@@ -142,7 +152,9 @@ class BayesianAnalysis(object):
 
         self._sampler = None
 
-    def _register_model_and_data(self, likelihood_model: Model, data_list: DataList):
+    def _register_model_and_data(
+        self, likelihood_model: Model, data_list: DataList
+    ):
         """
 
         make sure the model and data list are set up
@@ -157,7 +169,10 @@ class BayesianAnalysis(object):
         log.debug("REGISTER MODEL")
 
         # Verify that all the free parameters have priors
-        for parameter_name, parameter in likelihood_model.free_parameters.items():
+        for (
+            parameter_name,
+            parameter,
+        ) in likelihood_model.free_parameters.items():
 
             if not parameter.has_prior():
                 log.error(
@@ -183,7 +198,9 @@ class BayesianAnalysis(object):
             # plugins might need to adjust the number of nuisance parameters depending on the
             # likelihood model
 
-            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
+            for parameter_name, parameter in list(
+                dataset.nuisance_parameters.items()
+            ):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
@@ -220,7 +237,8 @@ class BayesianAnalysis(object):
         if sampler_name not in _available_samplers:
 
             log.error(
-                f"{sampler_name} is not a valid sampler please choose from {','.join(list(_available_samplers.keys()))}")
+                f"{sampler_name} is not a valid sampler please choose from {','.join(list(_available_samplers.keys()))}"
+            )
 
             raise RuntimeError()
 
@@ -254,17 +272,17 @@ class BayesianAnalysis(object):
 
         If no algorithm as been set, then the configured default algorithm
         we default parameters will be run
-        
+
         :param quiet: if True, then no output is displayed
-        :type quiet: 
-        :returns: 
+        :type quiet:
+        :returns:
 
         """
         if self._sampler is None:
 
             # assuming the default sampler
             self.set_sampler()
-        
+
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)
@@ -380,7 +398,9 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self.results.convergence_plots(n_samples_in_each_subset, n_subsets)
+        return self.results.convergence_plots(
+            n_samples_in_each_subset, n_subsets
+        )
 
     def restore_median_fit(self):
         """

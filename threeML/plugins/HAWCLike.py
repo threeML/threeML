@@ -21,6 +21,7 @@ from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
 
 from threeML.io.logging import setup_logger
+
 log = setup_logger(__name__)
 
 
@@ -54,10 +55,14 @@ class HAWCLike(PluginPrototype):
         # Check that they exists and can be read
 
         if not file_existing_and_readable(self._maptree):
-            raise IOError("MapTree %s does not exist or is not readable" % maptree)
+            raise IOError(
+                "MapTree %s does not exist or is not readable" % maptree
+            )
 
         if not file_existing_and_readable(self._response):
-            raise IOError("Response %s does not exist or is not readable" % response)
+            raise IOError(
+                "Response %s does not exist or is not readable" % response
+            )
 
         # Post-pone the creation of the LIFF instance to when
         # we have the likelihood model
@@ -75,7 +80,9 @@ class HAWCLike(PluginPrototype):
 
         # Default list of bins
 
-        self._bin_list = self._min_and_max_to_list(defaultMinChannel, defaultMaxChannel)
+        self._bin_list = self._min_and_max_to_list(
+            defaultMinChannel, defaultMaxChannel
+        )
 
         # By default the fit of the CommonNorm is deactivated
         # NOTE: this flag sets the internal common norm minimization of LiFF, not
@@ -131,7 +138,13 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = galactic
 
     def set_strip_ROI(
-        self, rastart, rastop, decstart, decstop, fixed_ROI=False, galactic=False
+        self,
+        rastart,
+        rastop,
+        decstart,
+        decstop,
+        fixed_ROI=False,
+        galactic=False,
     ):
 
         self._check_fullsky("set_ROI")
@@ -227,7 +240,9 @@ class HAWCLike(PluginPrototype):
                 + "instance"
             )
 
-    def set_active_measurements(self, minChannel=None, maxChannel=None, bin_list=None):
+    def set_active_measurements(
+        self, minChannel=None, maxChannel=None, bin_list=None
+    ):
 
         if bin_list is not None:
             assert minChannel is None and maxChannel is None, (
@@ -265,7 +280,9 @@ class HAWCLike(PluginPrototype):
                 lat_max,
             ) = self._model.get_extended_source_boundaries(id)
 
-            self._pymodel.setExtSourceBoundaries(id, lon_min, lon_max, lat_min, lat_max)
+            self._pymodel.setExtSourceBoundaries(
+                id, lon_min, lon_max, lat_min, lat_max
+            )
 
         # Set positions for point source
         # NOTE: this should not change so much that the response is not valid anymore
@@ -325,7 +342,9 @@ class HAWCLike(PluginPrototype):
 
             if self._roi_ra is None and self._roi_fits is None:
 
-                raise RuntimeError("You have to define a ROI with the setROI method")
+                raise RuntimeError(
+                    "You have to define a ROI with the setROI method"
+                )
 
         # Now if an ROI is set, try to use it
 
@@ -355,7 +374,10 @@ class HAWCLike(PluginPrototype):
             elif len(self._roi_ra) > 2:
 
                 self._theLikeHAWC.SetROI(
-                    self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic
+                    self._roi_ra,
+                    self._roi_dec,
+                    self._fixed_ROI,
+                    self._roi_galactic,
                 )
 
             else:
@@ -411,7 +433,9 @@ class HAWCLike(PluginPrototype):
         for id in range(n_extended):
 
             # Get the positions for this extended source
-            positions = np.array(self._theLikeHAWC.GetPositions(id, False), order="C")
+            positions = np.array(
+                self._theLikeHAWC.GetPositions(id, False), order="C"
+            )
 
             ras = positions[:, 0]
             decs = positions[:, 1]
@@ -421,7 +445,9 @@ class HAWCLike(PluginPrototype):
             # LiFF needs "per MeV"
 
             cube = (
-                self._model.get_extended_source_fluxes(id, ras, decs, self._energies)
+                self._model.get_extended_source_fluxes(
+                    id, ras, decs, self._energies
+                )
                 * 1000.0
             )
 
@@ -454,7 +480,9 @@ class HAWCLike(PluginPrototype):
             # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
 
             this_spectrum = (
-                self._model.get_point_source_fluxes(id, self._energies, tag=self._tag)
+                self._model.get_point_source_fluxes(
+                    id, self._energies, tag=self._tag
+                )
                 * 1000.0
             )
 
@@ -558,7 +586,9 @@ class HAWCLike(PluginPrototype):
 
         for srcid in range(nsrc):
             ra, dec = self._model.get_point_source_position(srcid)
-            figs.append(self.display_residuals_at_position(ra, dec, radius, pulls))
+            figs.append(
+                self.display_residuals_at_position(ra, dec, radius, pulls)
+            )
 
         return figs
 
@@ -566,7 +596,7 @@ class HAWCLike(PluginPrototype):
 
         """
         Plot model&data/residuals vs HAWC analysis bins at arbitrary location.
-    
+
         :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
         :param dec: Declination of center of disk.
         :param radius: Radius of disk (in degrees). Default 0.5. Can also be a list with one element per analysis bin.
@@ -596,7 +626,9 @@ class HAWCLike(PluginPrototype):
 
             model = np.array(
                 [
-                    self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius[i])[i]
+                    self._theLikeHAWC.GetTopHatExpectedExcesses(
+                        ra, dec, radius[i]
+                    )[i]
                     for i in bin_index
                 ]
             )
@@ -610,7 +642,9 @@ class HAWCLike(PluginPrototype):
 
             bkg = np.array(
                 [
-                    self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius[i])[i]
+                    self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius[i])[
+                        i
+                    ]
                     for i in bin_index
                 ]
             )
@@ -623,9 +657,13 @@ class HAWCLike(PluginPrototype):
                 self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius)
             )
 
-            signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+            signal = np.array(
+                self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius)
+            )
 
-            bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+            bkg = np.array(
+                self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius)
+            )
 
         total = signal + bkg
 
@@ -685,7 +723,8 @@ class HAWCLike(PluginPrototype):
         sub1.set_xlabel("Analysis bin")
 
         sub1.set_ylabel(
-            r"$\frac{{excess - " "mod.}}{{{}.}}$".format("err" if pulls else "mod")
+            r"$\frac{{excess - "
+            "mod.}}{{{}.}}$".format("err" if pulls else "mod")
         )
 
         sub1.set_xlim(x_limits)
@@ -723,7 +762,7 @@ class HAWCLike(PluginPrototype):
 
         """
         Calculates radial profiles of data - background & model.
-    
+
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
@@ -732,7 +771,7 @@ class HAWCLike(PluginPrototype):
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
-        
+
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
 
@@ -762,7 +801,9 @@ class HAWCLike(PluginPrototype):
 
         model = np.array(
             [
-                self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r + 0.5 * delta_r)
+                self._theLikeHAWC.GetTopHatExpectedExcesses(
+                    ra, dec, r + 0.5 * delta_r
+                )
                 for r in radii
             ]
         )
@@ -782,7 +823,9 @@ class HAWCLike(PluginPrototype):
 
         bkg = np.array(
             [
-                self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, r + 0.5 * delta_r)
+                self._theLikeHAWC.GetTopHatBackgrounds(
+                    ra, dec, r + 0.5 * delta_r
+                )
                 for r in radii
             ]
         )
@@ -841,7 +884,13 @@ class HAWCLike(PluginPrototype):
         )
         excess_model = np.average(old_div(model, area), weights=weight, axis=1)
 
-        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
+        return (
+            radii,
+            excess_model,
+            excess_data,
+            excess_error,
+            sorted(list_of_bin_names),
+        )
 
     def plot_radial_profile(
         self,
@@ -856,7 +905,7 @@ class HAWCLike(PluginPrototype):
 
         """
         Plots radial profiles of data - background & model.
-    
+
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
@@ -865,7 +914,7 @@ class HAWCLike(PluginPrototype):
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
-        
+
         :return: plot of data - background vs model radial profiles.
         """
 

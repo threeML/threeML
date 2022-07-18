@@ -44,6 +44,7 @@ except:
 
 log = setup_logger(__name__)
 
+
 class ZeusSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
@@ -56,19 +57,21 @@ class ZeusSampler(MCMCSampler):
         """
         set up the zeus sampler
 
-        :param n_iterations: 
-        :type n_iterations: 
-        :param n_burn_in: 
-        :type n_burn_in: 
-        :param n_walkers: 
-        :type n_walkers: 
-        :param seed: 
-        :type seed: 
-        :returns: 
+        :param n_iterations:
+        :type n_iterations:
+        :param n_burn_in:
+        :type n_burn_in:
+        :param n_walkers:
+        :type n_walkers:
+        :param seed:
+        :type seed:
+        :returns:
 
         """
-        log.debug(f"Setup for Zeus sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"\
-                  f"n_walkers: {n_walkers}, seed: {seed}.")
+        log.debug(
+            f"Setup for Zeus sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"
+            f"n_walkers: {n_walkers}, seed: {seed}."
+        )
 
         self._n_iterations = int(n_iterations)
 
@@ -125,7 +128,9 @@ class ZeusSampler(MCMCSampler):
                     # Run the true sampling
                     log.debug("Start zeus run")
                     _ = sampler.run(
-                        p0, self._n_iterations + self._n_burn_in, progress=loud,
+                        p0,
+                        self._n_iterations + self._n_burn_in,
+                        progress=loud,
                     )
                     log.debug("Zeus run done")
 
@@ -144,7 +149,9 @@ class ZeusSampler(MCMCSampler):
             else:
 
                 sampler = zeus.sampler(
-                    logprob_fn=self.get_posterior, nwalkers=self._n_walkers, ndim=n_dim
+                    logprob_fn=self.get_posterior,
+                    nwalkers=self._n_walkers,
+                    ndim=n_dim,
                 )
 
             # If a seed is provided, set the random number seed
@@ -155,19 +162,23 @@ class ZeusSampler(MCMCSampler):
             # Sample the burn-in
             if not using_mpi:
                 log.debug("Start zeus run")
-                _ = sampler.run(p0, self._n_iterations + self._n_burn_in, progress=loud)
+                _ = sampler.run(
+                    p0, self._n_iterations + self._n_burn_in, progress=loud
+                )
                 log.debug("Zeus run done")
 
         self._sampler = sampler
-        self._raw_samples = sampler.get_chain(flat=True, discard=self._n_burn_in)
+        self._raw_samples = sampler.get_chain(
+            flat=True, discard=self._n_burn_in
+        )
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
         log_prior = np.array([self._log_prior(x) for x in self._raw_samples])
-        self._log_probability_values = sampler.get_log_prob(flat=True, discard=self._n_burn_in)
-
-
+        self._log_probability_values = sampler.get_log_prob(
+            flat=True, discard=self._n_burn_in
+        )
 
         # np.array(
         #     [self.get_posterior(x) for x in self._raw_samples]

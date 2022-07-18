@@ -76,7 +76,9 @@ def hawc_point_source_fitted_joint_like():
 
     # Define the spectral and spatial models for the source
     spectrum = Cutoff_powerlaw()
-    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+    source = PointSource(
+        "TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum
+    )
 
     spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
@@ -161,7 +163,9 @@ def test_hawc_fullsky_options():
 
     # Define the spectral and spatial models for the source
     spectrum = Cutoff_powerlaw()
-    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+    source = PointSource(
+        "TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum
+    )
 
     spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
@@ -240,7 +244,9 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     )
     assert is_within_tolerance(
         -2.33736923856,
-        parameter_frame["value"]["TestSource.spectrum.main.Cutoff_powerlaw.index"],
+        parameter_frame["value"][
+            "TestSource.spectrum.main.Cutoff_powerlaw.index"
+        ],
     )
     assert is_within_tolerance(
         37478522636.504425,
@@ -300,7 +306,9 @@ def test_hawc_extended_source_fit():
 
     shape = Disk_on_sphere()
 
-    source = ExtendedSource("ExtSource", spatial_shape=shape, spectral_shape=spectrum)
+    source = ExtendedSource(
+        "ExtSource", spatial_shape=shape, spectral_shape=spectrum
+    )
 
     shape.lon0 = 100.0
     shape.lon0.fix = True
@@ -355,10 +363,13 @@ def test_hawc_extended_source_fit():
     )
     assert is_within_tolerance(
         -2.44931279819,
-        parameter_frame["value"]["ExtSource.spectrum.main.Cutoff_powerlaw.index"],
+        parameter_frame["value"][
+            "ExtSource.spectrum.main.Cutoff_powerlaw.index"
+        ],
     )
     assert is_within_tolerance(
-        1.4273457159139373, parameter_frame["value"]["ExtSource.Disk_on_sphere.radius"]
+        1.4273457159139373,
+        parameter_frame["value"]["ExtSource.Disk_on_sphere.radius"],
     )
 
     assert is_within_tolerance(186389.581117, like["-log(likelihood)"]["HAWC"])
@@ -544,8 +555,12 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
 
     for i in range(0, n_bins):
         assert is_within_tolerance(radii[i], correct_radii[i])
-        assert is_null_within_tolerance(excess_model[i], 0.01 * correct_model[i])
-        assert is_within_tolerance(excess_data[i], correct_data[i] - correct_model[i])
+        assert is_null_within_tolerance(
+            excess_model[i], 0.01 * correct_model[i]
+        )
+        assert is_within_tolerance(
+            excess_data[i], correct_data[i] - correct_model[i]
+        )
         assert is_within_tolerance(excess_error[i], correct_error[i])
 
 
@@ -570,7 +585,9 @@ def test_CommonNorm_fit():
 
     # Define the spectral and spatial models for the source
     spectrum = Cutoff_powerlaw()
-    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+    source = PointSource(
+        "TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum
+    )
 
     spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV

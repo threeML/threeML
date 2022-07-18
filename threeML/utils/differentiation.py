@@ -44,7 +44,10 @@ def _get_wrapper(function, point, minima, maxima):
 
         scaled_value = scaled_point[i]
 
-        scaled_min_value, scaled_max_value = (scaled_minima[i], scaled_maxima[i])
+        scaled_min_value, scaled_max_value = (
+            scaled_minima[i],
+            scaled_maxima[i],
+        )
 
         if scaled_value == scaled_min_value or scaled_value == scaled_max_value:
 
@@ -83,7 +86,9 @@ def _get_wrapper(function, point, minima, maxima):
 
         if scaled_point[i] == 0.0:
 
-            scaled_deltas[i] = min([1e-5, distance_to_max / 2.5, distance_to_min / 2.5])
+            scaled_deltas[i] = min(
+                [1e-5, distance_to_max / 2.5, distance_to_min / 2.5]
+            )
 
         else:
 
@@ -106,7 +111,8 @@ def _get_wrapper(function, point, minima, maxima):
         except SettingOutOfBounds:
 
             raise CannotComputeHessian(
-                "Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x
+                "Cannot compute Hessian, parameters out of bounds at %s"
+                % scaled_back_x
             )
 
         else:
@@ -118,9 +124,13 @@ def _get_wrapper(function, point, minima, maxima):
 
 def get_jacobian(function, point, minima, maxima):
 
-    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(
-        function, point, minima, maxima
-    )
+    (
+        wrapper,
+        scaled_deltas,
+        scaled_point,
+        orders_of_magnitude,
+        n_dim,
+    ) = _get_wrapper(function, point, minima, maxima)
 
     # Compute the Jacobian matrix at best_fit_values
     jacobian_vector = nd.Jacobian(wrapper, scaled_deltas, method="central")(
@@ -140,9 +150,13 @@ def get_jacobian(function, point, minima, maxima):
 
 def get_hessian(function, point, minima, maxima):
 
-    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(
-        function, point, minima, maxima
-    )
+    (
+        wrapper,
+        scaled_deltas,
+        scaled_point,
+        orders_of_magnitude,
+        n_dim,
+    ) = _get_wrapper(function, point, minima, maxima)
 
     # Compute the Hessian matrix at best_fit_values
 
@@ -157,6 +171,8 @@ def get_hessian(function, point, minima, maxima):
 
         for j in range(n_dim):
 
-            hessian_matrix[i, j] /= orders_of_magnitude[i] * orders_of_magnitude[j]
+            hessian_matrix[i, j] /= (
+                orders_of_magnitude[i] * orders_of_magnitude[j]
+            )
 
     return hessian_matrix
