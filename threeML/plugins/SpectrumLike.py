@@ -2032,22 +2032,26 @@ class SpectrumLike(PluginPrototype):
         if not without_mask:
             if self._rebinner is not None:
 
+
+
                 (model,) = self._rebinner.rebin(
-                    self._evaluate_background_model()
+                    self._background_plugin._evaluate_model()
                     * self._background_exposure
                 )
 
             else:
 
                 model = (
-                    self._evaluate_background_model()[self._mask]
+                    self._background_plugin._evaluate_model()[self._mask]
                     * self._background_exposure
                 )
 
         else:
 
+
+
             model = (
-                self._evaluate_background_model() * self._background_exposure
+                self._background_plugin._evaluate_model() * self._background_exposure
             )
 
         # TODO: should I use the constant here?
