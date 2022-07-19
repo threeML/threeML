@@ -208,12 +208,6 @@ class SpectrumLike(PluginPrototype):
 
                 # now get the background likelihood model
 
-                differential_flux, integral = self._get_diff_flux_and_integral(
-                    self._background_plugin.likelihood_model,
-                    integrate_method=self._background_integrate_method,
-                )
-
-                self._background_integral_flux = integral
 
         super(SpectrumLike, self).__init__(name, nuisance_parameters)
 
@@ -1991,35 +1985,6 @@ class SpectrumLike(PluginPrototype):
             )
 
         return self._nuisance_parameter.value * model
-
-    def _evaluate_background_model(self) -> np.ndarray:
-        """
-        Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
-        This can be overloaded to convolve the model with a response, for example
-
-
-        :return:
-        """
-
-        if self._has_contiguous_energies:
-
-            if self._predefined_energies is None:
-
-                return self._background_integral_flux(
-                    self._observed_spectrum.edges
-                )
-
-            else:
-
-                return self._background_integral_flux()
-
-        else:
-            return np.array(
-                [
-                    self._background_integral_flux(emin, emax)
-                    for emin, emax in self._observed_spectrum.bin_stack
-                ]
-            )
 
     def get_background_model(self, without_mask: bool = False) -> np.ndarray:
         """
