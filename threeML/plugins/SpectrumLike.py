@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import collections
 import copy
 import types
@@ -15,7 +13,7 @@ import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
-from astromodels.functions.priors import Uniform_prior
+from astromodels.functions.priors import Uniform_prior, Truncated_gaussian
 from astromodels.utils.valid_variable import is_valid_variable_name
 from past.utils import old_div
 
@@ -2062,7 +2060,7 @@ class SpectrumLike(PluginPrototype):
         self, likelihood_model: Model, integrate_method: str = "simpson"
     ) -> Tuple[types.FunctionType, types.FunctionType]:
 
-        if not integrate_method in ["simpson", "trapz"]:
+        if not integrate_method in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid integral_methods.")
 
@@ -2183,22 +2181,31 @@ class SpectrumLike(PluginPrototype):
 
         elif integrate_method == "trapz":
 
-            def integral(e1, e2):
-                # Trapz rule
-                if isinstance(e1, Iterable):
-                    # Energy given as list or array
+            if self._has_contiguous_energies:
 
-                    # Make sure we do not calculate the flux two times at the same energy
-                    e_edges = np.append(e1, e2[-1])
-                    diff_fluxes_edges = differential_flux(e_edges)
+                if self._predefined_energies is None:
 
-                    return _trapz(
-                        np.array(
-                            [diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]
-                        ).T,
-                        np.array([e1, e2]).T,
-                    )
+                    raise NotImplementedError("This is not yet here")
+
                 else:
+
+                    e_edges = np.array(self._predefined_energies)
+                    ee1 = e_edges[:-1]
+                    ee2 = e_edges[1:]
+
+                    def integral():
+                        diff_fluxes_edges = differential_flux(e_edges)
+
+                        return _trapz(
+                            np.array(
+                                [diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]
+                            ).T,
+                            np.array([ee1, ee2]).T,
+                        )
+
+            else:
+
+                def integral(e1, e2):
                     # single energy values given
                     return _trapz(
                         np.array(
@@ -2207,12 +2214,44 @@ class SpectrumLike(PluginPrototype):
                         np.array([e1, e2]),
                     )
 
+        elif integrate_method == "riemann":
+
+            if self._has_contiguous_energies:
+
+                if self._predefined_energies is None:
+
+                    pass
+
+                else:
+
+                    e_edges = np.array(self._predefined_energies)
+                    ee1 = e_edges[:-1]
+                    ee2 = e_edges[1:]
+
+                    e_m = (ee1 + ee2) / 2.0
+
+                    # energy width
+                    de = ee2 - ee1
+
+                    def integral():
+
+                        return _rsum(differential_flux(e_m), de)
+
+            else:
+
+                def integral(e1, e2):
+
+                    return differential_flux(0.5 * (e1 + e2)) * (e2 - e1)
+
         return differential_flux, integral
 
     def use_effective_area_correction(
         self,
         min_value: Union[int, float] = 0.8,
         max_value: Union[int, float] = 1.2,
+        use_gaussian_prior: bool = False,
+        mu:float=1,
+        sigma: float=0.1
     ) -> None:
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
@@ -2225,7 +2264,10 @@ class SpectrumLike(PluginPrototype):
         with other OGIPLike-type detectors
 
         :param min_value: minimum allowed value (default: 0.8, corresponding to a 20% - effect)
-        :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect
+        :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect)
+        :param use_gaussian_prior: use a gaussian prior on the constant
+        :param mu: the center of the gaussian
+        :param sigma: the spread of the gaussian
         :return:
         """
         log.info(
@@ -2235,8 +2277,13 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.bounds = (min_value, max_value)
 
         # Use a uniform prior by default
+        if use_gaussian_prior:
 
-        self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
+            self._nuisance_parameter.prior = Truncated_gaussian(mu=mu, sigma=sigma, lower_bound=min_value, upper_bound=max_value)
+
+        else:
+
+            self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
 
     def fix_effective_area_correction(
         self, value: Union[int, float] = 1
@@ -2256,7 +2303,7 @@ class SpectrumLike(PluginPrototype):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        if not method in ["simpson", "trapz"]:
+        if not method in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
@@ -2272,12 +2319,35 @@ class SpectrumLike(PluginPrototype):
             )
             self._integral_flux = integral
 
+
+    def __set_model_integrate_method(self, value: str) -> None:
+
+        self.set_model_integrate_method(value)
+
+    def ___set_model_integrate_method(self, value: str) -> None:
+
+        self.__set_model_integrate_method(value)
+
+    def __get_model_integrate_method(self) -> str:
+
+        return self._model_integrate_method
+
+    def ___get_model_integrate_method(self) -> str:
+
+        self.__set_model_integrate_method()
+
+    model_integrate_method = property(
+        ___get_model_integrate_method,
+        ___set_model_integrate_method,
+    doc="""The method used to integrate the model across the response matrix """
+    )
+
     def set_background_integrate_method(self, method: str) -> None:
         """
         Change the integrate method for the background integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        if not method in ["simpson", "trapz"]:
+        if not method in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
@@ -2295,6 +2365,29 @@ class SpectrumLike(PluginPrototype):
                 integrate_method=method,
             )
             self._background_integral_flux = integral
+
+
+    def __set_background_integrate_method(self, value: str) -> None:
+
+        self.set_background_integrate_method(value)
+
+    def ___set_background_integrate_method(self, value: str) -> None:
+
+        self.__set_background_integrate_method(value)
+
+    def __get_background_integrate_method(self) -> str:
+
+        return self._background_integrate_method
+
+    def ___get_background_integrate_method(self) -> str:
+
+        self.__set_background_integrate_method()
+
+    background_integrate_method = property(
+        ___get_background_integrate_method,
+        ___set_background_integrate_method,
+    doc="""The method used to integrate the_background across the response matrix """
+    )
 
     @property
     def mask(self) -> np.ndarray:
@@ -3733,3 +3826,9 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
         / 6.0
         * (diff_fluxes_edges[:-1] + 4 * diff_fluxes_mid + diff_fluxes_edges[1:])
     )
+
+
+@nb.njit(fastmath=True, cache=True)
+def _rsum(model_mid_points, de):
+
+    return np.multiply(model_mid_points,de)
