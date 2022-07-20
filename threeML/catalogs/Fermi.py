@@ -63,9 +63,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["catalogs"][
-                "GBM burst catalog"
-            ].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -132,9 +130,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = np.array(
-                list(map(int, row["scat_detector_mask"])), dtype=bool
-            )
+            idx = np.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
             # get the location
@@ -508,9 +504,7 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMTriggerCatalog, self).__init__(
             "fermigtrig",
-            threeML_config["catalogs"]["Fermi"]["catalogs"][
-                "GBM trigger catalog"
-            ].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM trigger catalog"].url,
             "Fermi-GBM trigger catalog",
         )
 
@@ -571,10 +565,7 @@ threefgl_types = {
 
 def _sanitize_3fgl_name(fgl_name):
     swap = (
-        fgl_name.replace(" ", "_")
-        .replace("+", "p")
-        .replace("-", "m")
-        .replace(".", "d")
+        fgl_name.replace(" ", "_").replace("+", "p").replace("-", "m").replace(".", "d")
     )
 
     if swap[0] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
@@ -677,9 +668,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.gamma.fix = fix
         this_spectrum.piv = E0 * u.MeV
         this_spectrum.K = (
-            conv
-            * float(catalog_entry["plec_flux_density"])
-            / (u.cm ** 2 * u.s * u.MeV)
+            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (

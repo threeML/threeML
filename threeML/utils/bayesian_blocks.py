@@ -31,9 +31,7 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
     # Create initial cell edges (Voronoi tessellation) using the unique time stamps
 
-    edges = np.concatenate(
-        [[tstart], 0.5 * (unique_t[1:] + unique_t[:-1]), [tstop]]
-    )
+    edges = np.concatenate([[tstart], 0.5 * (unique_t[1:] + unique_t[:-1]), [tstop]])
 
     # The last block length is 0 by definition
     block_length = tstop - edges

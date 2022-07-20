@@ -25,9 +25,7 @@ class DispersionSpectrumLike(SpectrumLike):
         self,
         name: str,
         observation: BinnedSpectrumWithDispersion,
-        background: Optional[
-            Union[BinnedSpectrum, SpectrumLike, XYLike]
-        ] = None,
+        background: Optional[Union[BinnedSpectrum, SpectrumLike, XYLike]] = None,
         background_exposure: Optional[float] = None,
         verbose: bool = True,
         tstart: Optional[float] = None,
@@ -84,9 +82,7 @@ class DispersionSpectrumLike(SpectrumLike):
             tstop=tstop,
         )
 
-        self._predefined_energies: np.ndarray = (
-            self._response.monte_carlo_energies
-        )
+        self._predefined_energies: np.ndarray = self._response.monte_carlo_energies
 
     def set_model(self, likelihoodModel: Model) -> None:
         """
@@ -120,9 +116,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         self._response.set_function(self._integral_flux)
 
-    def _evaluate_model(
-        self, precalc_fluxes: Optional[np.array] = None
-    ) -> np.ndarray:
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
         """
         evaluates the full model over all channels
         :return:
@@ -197,9 +191,7 @@ class DispersionSpectrumLike(SpectrumLike):
     def _output(self):
         # type: () -> pd.Series
 
-        super_out = super(
-            DispersionSpectrumLike, self
-        )._output()  # type: pd.Series
+        super_out = super(DispersionSpectrumLike, self)._output()  # type: pd.Series
 
         the_df = pd.Series({"response": self._response.rsp_filename})
 
@@ -259,9 +251,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         if not ("response" in kwargs):
 
-            log.error(
-                "A response was not provided. Cannot build synthetic observation"
-            )
+            log.error("A response was not provided. Cannot build synthetic observation")
 
             raise RuntimeError()
 

@@ -6,9 +6,7 @@ from threeML.utils.time_interval import TimeIntervalSet
 
 
 class BinnedSpectrumSet(object):
-    def __init__(
-        self, binned_spectrum_list, reference_time=0.0, time_intervals=None
-    ):
+    def __init__(self, binned_spectrum_list, reference_time=0.0, time_intervals=None):
         """
         a set of binned spectra with optional time intervals
 
@@ -17,9 +15,7 @@ class BinnedSpectrumSet(object):
         :param time_intervals: optional timeinterval set
         """
 
-        self._binned_spectrum_list = (
-            binned_spectrum_list
-        )  # type: list(BinnedSpectrum)
+        self._binned_spectrum_list = binned_spectrum_list  # type: list(BinnedSpectrum)
         self._reference_time = reference_time
 
         # normalize the time intervals if there are any
@@ -90,9 +86,7 @@ class BinnedSpectrumSet(object):
     @property
     def quality_per_bin(self):
 
-        return np.array(
-            [spectrum.quality for spectrum in self._binned_spectrum_list]
-        )
+        return np.array([spectrum.quality for spectrum in self._binned_spectrum_list])
 
     @property
     def n_channels(self):
@@ -102,9 +96,7 @@ class BinnedSpectrumSet(object):
     @property
     def counts_per_bin(self):
 
-        return np.array(
-            [spectrum.counts for spectrum in self._binned_spectrum_list]
-        )
+        return np.array([spectrum.counts for spectrum in self._binned_spectrum_list])
 
     @property
     def count_errors_per_bin(self):
@@ -116,9 +108,7 @@ class BinnedSpectrumSet(object):
     @property
     def rates_per_bin(self):
 
-        return np.array(
-            [spectrum.rates for spectrum in self._binned_spectrum_list]
-        )
+        return np.array([spectrum.rates for spectrum in self._binned_spectrum_list])
 
     @property
     def rate_errors_per_bin(self):
@@ -137,9 +127,7 @@ class BinnedSpectrumSet(object):
     @property
     def exposure_per_bin(self):
 
-        return np.array(
-            [spectrum.exposure for spectrum in self._binned_spectrum_list]
-        )
+        return np.array([spectrum.exposure for spectrum in self._binned_spectrum_list])
 
     @property
     def time_intervals(self):

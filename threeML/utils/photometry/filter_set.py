@@ -81,9 +81,7 @@ class FilterSet(object):
                     tmp.append(response)
 
             self._filters = spec_filters.FilterSequence(tmp)
-            self._names = np.array(
-                [name.split("-")[1] for name in self._filters.names]
-            )
+            self._names = np.array([name.split("-")[1] for name in self._filters.names])
             self._long_name = self._filters.names
 
         # haven't set a likelihood model yet
@@ -147,9 +145,7 @@ class FilterSet(object):
 
         """
 
-        conversion_factor = (constants.c ** 2 * constants.h ** 2).to(
-            "keV2 * cm2"
-        )
+        conversion_factor = (constants.c ** 2 * constants.h ** 2).to("keV2 * cm2")
 
         self._zero_points = np.empty(self._n_filters)
         self._wavelengths = []
@@ -282,9 +278,7 @@ class FilterSet(object):
 
 
 @nb.njit(fastmath=True)
-def _conolve_and_convert(
-    diff_flux, factor, response, wavelength, zero_point, N
-):
+def _conolve_and_convert(diff_flux, factor, response, wavelength, zero_point, N):
 
     for n in range(N):
 

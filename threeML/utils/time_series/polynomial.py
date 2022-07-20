@@ -38,9 +38,7 @@ _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
 
 
 class Polynomial:
-    def __init__(
-        self, coefficients: Iterable[float], is_integral: bool = False
-    ):
+    def __init__(self, coefficients: Iterable[float], is_integral: bool = False):
         """
         A polynomial
 
@@ -57,9 +55,7 @@ class Polynomial:
             list(range(1, self._degree + 1 + 1)), dtype=float
         )
 
-        self._cov_matrix: np.ndarray = np.zeros(
-            (self._degree + 1, self._degree + 1)
-        )
+        self._cov_matrix: np.ndarray = np.zeros((self._degree + 1, self._degree + 1))
 
         # we can fix some things for speed
         # we only need to set the coeff for the
@@ -212,9 +208,7 @@ def polyfit(
     # return a "zero polynomial"
     log.debug(f"starting polyfit with grade {grade} ")
 
-    bayes = get_value(
-        "bayes", bayes, bool, threeML_config.time_series.fit.bayes
-    )
+    bayes = get_value("bayes", bayes, bool, threeML_config.time_series.fit.bayes)
 
     nan_mask = np.isnan(y)
 
@@ -318,9 +312,7 @@ def polyfit(
             final_polynomial = Polynomial(coeff)
 
             try:
-                final_polynomial.set_covariace_matrix(
-                    jl.results.covariance_matrix
-                )
+                final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
 
             except Exception:
 
@@ -410,9 +402,7 @@ def unbinned_polyfit(
     # create 3ML plugins and fit them with 3ML!
 
     # select the model based on the grade
-    bayes = get_value(
-        "bayes", bayes, bool, threeML_config.time_series.fit.bayes
-    )
+    bayes = get_value("bayes", bayes, bool, threeML_config.time_series.fit.bayes)
 
     if len(events) == 0:
 
@@ -467,9 +457,7 @@ def unbinned_polyfit(
 
             my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 10)}
 
-            grid_minimizer.setup(
-                second_minimization=local_minimizer, grid=my_grid
-            )
+            grid_minimizer.setup(second_minimization=local_minimizer, grid=my_grid)
 
             jl.set_minimizer(grid_minimizer)
 

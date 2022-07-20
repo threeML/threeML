@@ -130,9 +130,7 @@ class LLEFile(object):
 
             # create an index of all the FT2 bins falling within this interval
 
-            tmp_idx = np.logical_and(
-                start <= self._ft2_tstart, self._ft2_tstop <= stop
-            )
+            tmp_idx = np.logical_and(start <= self._ft2_tstart, self._ft2_tstop <= stop)
 
             # add them to the already selected idx
             filter_idx = np.logical_or(filter_idx, tmp_idx)
@@ -160,9 +158,7 @@ class LLEFile(object):
         for start, stop in zip(self._gti_start, self._gti_stop):
 
             # capture all the events within that interval
-            tmp_idx = np.logical_and(
-                start <= self._events, self._events <= stop
-            )
+            tmp_idx = np.logical_and(start <= self._events, self._events <= stop)
 
             # combine with the already selected events
             filter_idx = np.logical_or(filter_idx, tmp_idx)

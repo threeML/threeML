@@ -53,9 +53,7 @@ class AutoEmceeSampler(UnitCubeSampler):
 
         assert has_autoemcee, "You must install AutoEmcee to use this sampler"
 
-        super(AutoEmceeSampler, self).__init__(
-            likelihood_model, data_list, **kwargs
-        )
+        super(AutoEmceeSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
         self,
@@ -140,9 +138,7 @@ class AutoEmceeSampler(UnitCubeSampler):
 
         n_dim = len(param_names)
 
-        loglike, autoemcee_prior = self._construct_unitcube_posterior(
-            return_copy=True
-        )
+        loglike, autoemcee_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # We need to check if the MCMC
         # chains will have a place on

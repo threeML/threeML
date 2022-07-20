@@ -47,9 +47,7 @@ class FilterLibrary(object):
 
             self._instruments = []
 
-            for observatory in tqdm(
-                f.keys(), desc="Loading photometric filters"
-            ):
+            for observatory in tqdm(f.keys(), desc="Loading photometric filters"):
 
                 log.debug(f"loading {observatory}")
 

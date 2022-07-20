@@ -7,9 +7,7 @@ _custom_config_path = os.environ.get("THREEML_CONFIG")
 
 
 def get_path_of_data_file(data_file) -> Path:
-    file_path = pkg_resources.resource_filename(
-        "threeML", "data/%s" % data_file
-    )
+    file_path = pkg_resources.resource_filename("threeML", "data/%s" % data_file)
 
     return Path(file_path)
 

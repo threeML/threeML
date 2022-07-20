@@ -152,9 +152,7 @@ class BayesianAnalysis(object):
 
         self._sampler = None
 
-    def _register_model_and_data(
-        self, likelihood_model: Model, data_list: DataList
-    ):
+    def _register_model_and_data(self, likelihood_model: Model, data_list: DataList):
         """
 
         make sure the model and data list are set up
@@ -198,9 +196,7 @@ class BayesianAnalysis(object):
             # plugins might need to adjust the number of nuisance parameters depending on the
             # likelihood model
 
-            for parameter_name, parameter in list(
-                dataset.nuisance_parameters.items()
-            ):
+            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
@@ -393,9 +389,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self.results.convergence_plots(
-            n_samples_in_each_subset, n_subsets
-        )
+        return self.results.convergence_plots(n_samples_in_each_subset, n_subsets)
 
     def restore_median_fit(self):
         """

@@ -76,9 +76,7 @@ class XYLike(PluginPrototype):
 
             self._has_errors = False
 
-            log.info(
-                "Using unweighted Gaussian (equivalent to chi^2) statistic."
-            )
+            log.info("Using unweighted Gaussian (equivalent to chi^2) statistic.")
 
         else:
 
@@ -116,9 +114,7 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(
-        cls, name, function, x, yerr=None, exposure=None, **kwargs
-    ):
+    def from_function(cls, name, function, x, yerr=None, exposure=None, **kwargs):
         """
         Generate an XYLike plugin from an astromodels function instance
 
@@ -132,9 +128,7 @@ class XYLike(PluginPrototype):
 
         y = function(x)
 
-        xyl_gen = XYLike(
-            "generator", x, y, yerr=yerr, exposure=exposure, **kwargs
-        )
+        xyl_gen = XYLike("generator", x, y, yerr=yerr, exposure=exposure, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
@@ -337,9 +331,7 @@ class XYLike(PluginPrototype):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert (
-                self._source_name in likelihood_model_instance.point_sources
-            ), (
+            assert self._source_name in likelihood_model_instance.point_sources, (
                 "This XYLike plugin refers to the source %s, "
                 "but that source is not a point source in the likelihood model"
                 % (self._source_name)
@@ -351,9 +343,7 @@ class XYLike(PluginPrototype):
 
         if self._source_name is None:
 
-            n_point_sources = (
-                self._likelihood_model.get_number_of_point_sources()
-            )
+            n_point_sources = self._likelihood_model.get_number_of_point_sources()
 
             assert (
                 n_point_sources > 0
@@ -367,9 +357,7 @@ class XYLike(PluginPrototype):
             expectation = np.sum(
                 [
                     source(self._x, tag=self._tag)
-                    for source in list(
-                        self._likelihood_model.point_sources.values()
-                    )
+                    for source in list(self._likelihood_model.point_sources.values())
                 ],
                 axis=0,
             )
@@ -382,9 +370,9 @@ class XYLike(PluginPrototype):
 
             if self._source_name in self._likelihood_model.point_sources:
 
-                expectation = self._likelihood_model.point_sources[
-                    self._source_name
-                ](self._x)
+                expectation = self._likelihood_model.point_sources[self._source_name](
+                    self._x
+                )
 
             else:
 
@@ -491,9 +479,7 @@ class XYLike(PluginPrototype):
 
         return new_xy
 
-    def plot(
-        self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"
-    ):
+    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"):
 
         fig, sub = plt.subplots(1, 1)
 
@@ -548,9 +534,7 @@ class XYLike(PluginPrototype):
 
         self.set_model(model)
 
-        self._joint_like_obj = JointLikelihood(
-            model, DataList(self), verbose=verbose
-        )
+        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=verbose)
 
         self._joint_like_obj.set_minimizer(minimizer)
 

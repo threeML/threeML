@@ -248,9 +248,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         self._kwargs["ndim"] = ndim
 
-        loglike, dynesty_prior = self._construct_unitcube_posterior(
-            return_copy=True
-        )
+        loglike, dynesty_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # check if we are doing to do things in parallel
 
@@ -284,9 +282,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         rstate = np.random
 
-        if (
-            abs(np.sum(weights) - 1.0) > SQRTEPS
-        ):  # same tol as in np.random.choice.
+        if abs(np.sum(weights) - 1.0) > SQRTEPS:  # same tol as in np.random.choice.
             raise ValueError("Weights do not sum to 1.")
 
         # Make N subdivisions and choose positions with a consistent random offset.
@@ -320,9 +316,7 @@ class DynestyNestedSampler(UnitCubeSampler):
             [self._log_prior(samples) for samples in self._raw_samples]
         )
 
-        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(
-            10.0
-        )
+        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(10.0)
 
         self._build_samples_dictionary()
 
@@ -593,9 +587,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         self._kwargs["ndim"] = ndim
 
-        loglike, dynesty_prior = self._construct_unitcube_posterior(
-            return_copy=True
-        )
+        loglike, dynesty_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # check if we are doing to do things in parallel
 
@@ -627,9 +619,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         rstate = np.random
 
-        if (
-            abs(np.sum(weights) - 1.0) > SQRTEPS
-        ):  # same tol as in np.random.choice.
+        if abs(np.sum(weights) - 1.0) > SQRTEPS:  # same tol as in np.random.choice.
             raise ValueError("Weights do not sum to 1.")
 
         # Make N subdivisions and choose positions with a consistent random offset.
@@ -661,9 +651,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
             [self._log_prior(samples) for samples in self._raw_samples]
         )
 
-        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(
-            10.0
-        )
+        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(10.0)
 
         self._build_samples_dictionary()
 

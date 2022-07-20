@@ -49,9 +49,7 @@ class GridMinimizer(GlobalMinimizer):
             user_setup_dict is not None
         ), "You have to setup a grid for this minimizer"
 
-        assert (
-            "grid" in user_setup_dict
-        ), "You have to setup a grid for this minimizer"
+        assert "grid" in user_setup_dict, "You have to setup a grid for this minimizer"
 
         assert (
             "second_minimization" in user_setup_dict
@@ -106,8 +104,7 @@ class GridMinimizer(GlobalMinimizer):
         if isinstance(parameter, Parameter):
 
             assert parameter in list(self.parameters.values()), (
-                "Parameter %s is not part of the "
-                "current model" % parameter.name
+                "Parameter %s is not part of the " "current model" % parameter.name
             )
 
         else:
@@ -126,8 +123,7 @@ class GridMinimizer(GlobalMinimizer):
             except ValueError:
 
                 log.error(
-                    "Could not find parameter %s in current model"
-                    % parameter_path
+                    "Could not find parameter %s in current model" % parameter_path
                 )
 
                 raise ValueError()

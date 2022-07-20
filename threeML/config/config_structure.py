@@ -23,11 +23,11 @@ class LoggingLevel(IntEnum):
 class Logging:
 
     path: str = "~/.threeml/log"
-    developer: bool = 'off'
-    usr: bool = 'on'
-    console: bool = 'on'
+    developer: bool = "off"
+    usr: bool = "on"
+    console: bool = "on"
     level: LoggingLevel = LoggingLevel.INFO
-    startup_warnings: bool = 'on'
+    startup_warnings: bool = "on"
 
 
 @dataclass
@@ -38,8 +38,8 @@ class Parallel:
 
 @dataclass
 class Interface:
-    progress_bars: bool = 'on'
-    multi_progress_color: bool = 'on'
+    progress_bars: bool = "on"
+    multi_progress_color: bool = "on"
     multi_progress_cmap: str = "viridis"
     progress_bar_color: str = "#9C04FF"
 

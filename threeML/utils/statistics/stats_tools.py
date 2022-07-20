@@ -34,9 +34,7 @@ def aic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn(
-            "AIC was NAN. Recording zero, but you should examine your fit."
-        )
+        warnings.warn("AIC was NAN. Recording zero, but you should examine your fit.")
 
     return val
 
@@ -50,9 +48,7 @@ def bic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn(
-            "BIC was NAN. Recording zero, but you should examine your fit."
-        )
+        warnings.warn("BIC was NAN. Recording zero, but you should examine your fit.")
 
     return val
 
@@ -95,9 +91,7 @@ def dic(bayes_analysis):
         elpd_dic = 0
         pdic = 0
 
-        warnings.warn(
-            "DIC was NAN. Recording zero, but you should examine your fit."
-        )
+        warnings.warn("DIC was NAN. Recording zero, but you should examine your fit.")
 
     return -2 * elpd_dic, pdic
 

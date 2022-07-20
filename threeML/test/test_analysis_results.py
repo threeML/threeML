@@ -265,10 +265,7 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
     res = p1 + p2
 
-    assert (
-        old_div(abs(res.value - (p1.value + p2.value)), (p1.value + p2.value))
-        < 0.01
-    )
+    assert old_div(abs(res.value - (p1.value + p2.value)), (p1.value + p2.value)) < 0.01
 
     # Make ratio with error 0
     res = old_div(p1, p1)

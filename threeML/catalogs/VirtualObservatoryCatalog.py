@@ -98,9 +98,7 @@ class VirtualObservatoryCatalog(object):
 
                 # Download failed
 
-                raise ConeSearchFailed(
-                    "Cone search failed. Reason: %s" % exc.message
-                )
+                raise ConeSearchFailed("Cone search failed. Reason: %s" % exc.message)
 
             else:
 
@@ -119,9 +117,7 @@ class VirtualObservatoryCatalog(object):
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (
-                    table.to_pandas()
-                    .set_index("name")
-                    .sort_values("Search_Offset")
+                    table.to_pandas().set_index("name").sort_values("Search_Offset")
                 )
 
                 str_df = pandas_df.select_dtypes([object])
@@ -216,17 +212,13 @@ class VirtualObservatoryCatalog(object):
 
         if valid_sources:
 
-            query_string = " | ".join(
-                ['(index == "%s")' % x for x in valid_sources]
-            )
+            query_string = " | ".join(['(index == "%s")' % x for x in valid_sources])
 
             query_results = self._vo_dataframe.query(query_string)
 
             table = astro_table.Table.from_pandas(query_results)
 
-            name_column = astro_table.Column(
-                name="name", data=query_results.index
-            )
+            name_column = astro_table.Column(name="name", data=query_results.index)
             table.add_column(name_column, index=0)
 
             out = self.apply_format(table)

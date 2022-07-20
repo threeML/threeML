@@ -586,9 +586,7 @@ class BinnedSpectrum(Histogram):
         return pd.DataFrame(out_dict)
 
     @classmethod
-    def from_time_series(
-        cls, time_series, use_poly=False, from_model=False, **kwargs
-    ):
+    def from_time_series(cls, time_series, use_poly=False, from_model=False, **kwargs):
         """
 
         :param time_series:
@@ -636,9 +634,7 @@ class BinnedSpectrum(Histogram):
             assert (
                 self.count_errors is not None or other.count_errors is not None
             ), "only one of the two spectra have errors, can not add!"
-            new_count_errors = (
-                self.count_errors ** 2 + other.count_errors ** 2
-            ) ** 0.5
+            new_count_errors = (self.count_errors ** 2 + other.count_errors ** 2) ** 0.5
 
         new_counts = self.counts + other.counts
 
@@ -684,9 +680,7 @@ class BinnedSpectrum(Histogram):
         assert self == other, "The bins are not equal"
 
         if self.is_poisson or other.is_poisson:
-            raise Exception(
-                "Inverse_variance_weighting not implemented for poisson"
-            )
+            raise Exception("Inverse_variance_weighting not implemented for poisson")
 
         new_sys_errors = self.sys_errors
         if new_sys_errors is None:
@@ -793,9 +787,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
         if not isinstance(response, InstrumentResponse):
 
-            log.error(
-                "The response is not a valid instance of InstrumentResponse"
-            )
+            log.error("The response is not a valid instance of InstrumentResponse")
 
             raise RuntimeError()
 

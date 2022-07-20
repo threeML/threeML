@@ -19,7 +19,7 @@ class Sampler(Enum):
     autoemcee = "autoemcee"
 
 
-_sampler_default = {'emcee': {'n_burnin': 1}}
+_sampler_default = {"emcee": {"n_burnin": 1}}
 
 
 class Optimizer(Enum):
@@ -33,8 +33,8 @@ class BayesianDefault:
     default_sampler: Sampler = Sampler.emcee
     emcee_setup: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
-            'n_burnin': None,
-            'n_iterations': 500,
+            "n_burnin": None,
+            "n_iterations": 500,
             "n_walkers": 50,
             "seed": 5123,
         }
@@ -42,8 +42,8 @@ class BayesianDefault:
 
     multinest_setup: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
-            'n_live_points': 400,
-            'chain_name': "chains/fit-",
+            "n_live_points": 400,
+            "chain_name": "chains/fit-",
             "resume": False,
             "importance_nested_sampling": False,
             "auto_clean": False,
@@ -61,14 +61,14 @@ class BayesianDefault:
             "update_interval_volume_fraction": 0.8,
             "cluster_num_live_points": 40,
             "use_mlfriends": True,
-            "resume": 'overwrite',
+            "resume": "overwrite",
         }
     )
 
     zeus_setup: Optional[Dict[str, Any]] = field(
         default_factory=lambda: {
-            'n_burnin': None,
-            'n_iterations': 500,
+            "n_burnin": None,
+            "n_iterations": 500,
             "n_walkers": 50,
             "seed": 5123,
         }
@@ -180,12 +180,12 @@ class MLEDefault:
     default_minimizer_algorithm: Optional[str] = None
     default_minimizer_callback: Optional[str] = None
     contour_cmap: MPLCmap = MPLCmap.Pastel1
-    contour_background: str = 'white'
-    contour_level_1: str = '#ffa372'
-    contour_level_2: str = '#ed6663'
-    contour_level_3: str = '#0f4c81'
-    profile_color: str = 'k'
+    contour_background: str = "white"
+    contour_level_1: str = "#ffa372"
+    contour_level_2: str = "#ed6663"
+    contour_level_3: str = "#0f4c81"
+    profile_color: str = "k"
 
-    profile_level_1: str = '#ffa372'
-    profile_level_2: str = '#ed6663'
-    profile_level_3: str = '#0f4c81'
+    profile_level_1: str = "#ffa372"
+    profile_level_2: str = "#ed6663"
+    profile_level_3: str = "#0f4c81"

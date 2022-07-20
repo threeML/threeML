@@ -125,10 +125,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert pha_info["pha"].rate_errors is None
 
         assert (
-            sum(
-                pha_info["pha"].sys_errors
-                == np.zeros_like(pha_info["pha"].rates)
-            )
+            sum(pha_info["pha"].sys_errors == np.zeros_like(pha_info["pha"].rates))
             == pha_info["bak"].n_channels
         )
 
@@ -172,10 +169,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert len(pha_info["bak"].rate_errors) == pha_info["bak"].n_channels
 
         assert (
-            sum(
-                pha_info["bak"].sys_errors
-                == np.zeros_like(pha_info["pha"].rates)
-            )
+            sum(pha_info["bak"].sys_errors == np.zeros_like(pha_info["pha"].rates))
             == pha_info["bak"].n_channels
         )
 
@@ -207,10 +201,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info["pha"].rate_errors is None
 
         assert (
-            sum(
-                pha_info["pha"].sys_errors
-                == np.zeros_like(pha_info["pha"].rates)
-            )
+            sum(pha_info["pha"].sys_errors == np.zeros_like(pha_info["pha"].rates))
             == pha_info["bak"].n_channels
         )
         assert (
@@ -251,10 +242,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert len(pha_info["bak"].rate_errors) == pha_info["bak"].n_channels
 
         assert (
-            sum(
-                pha_info["bak"].sys_errors
-                == np.zeros_like(pha_info["pha"].rates)
-            )
+            sum(pha_info["bak"].sys_errors == np.zeros_like(pha_info["pha"].rates))
             == pha_info["bak"].n_channels
         )
 
@@ -394,9 +382,7 @@ def test_simulating_data_sets():
 
         # Now check that generationing a lot of data sets works
 
-        sim_data_sets = [
-            ogip.get_simulated_dataset("sim%d" % i) for i in range(100)
-        ]
+        sim_data_sets = [ogip.get_simulated_dataset("sim%d" % i) for i in range(100)]
 
         assert len(sim_data_sets) == ogip._n_synthetic_datasets
 
@@ -543,9 +529,7 @@ def test_pha_write_no_bkg():
 
         ogip.write_pha("test_write_nobkg", overwrite=True)
 
-        written_ogip = OGIPLike(
-            "write_ogip", observation="test_write_nobkg.pha{1}"
-        )
+        written_ogip = OGIPLike("write_ogip", observation="test_write_nobkg.pha{1}")
 
         pha_info = written_ogip.get_pha_files()
 

@@ -95,15 +95,11 @@ def test_OGIP_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = old_div(
-            powerlaw.K.value, (powerlaw.index.value + 1)
-        )
+        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
 
         powerlaw_integral.display()
 
-        integral_function = lambda e1, e2: powerlaw_integral(
-            e2
-        ) - powerlaw_integral(e1)
+        integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
 
         # Now check that the two convoluted model give the same number of counts in each channel
 
@@ -213,13 +209,9 @@ def test_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = old_div(
-            powerlaw.K.value, (powerlaw.index.value + 1)
-        )
+        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
 
-        integral_function = lambda e1, e2: powerlaw_integral(
-            e2
-        ) - powerlaw_integral(e1)
+        integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
 
         # Now check that the two convoluted model give the same number of counts in each channel
 

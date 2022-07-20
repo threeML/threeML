@@ -47,8 +47,7 @@ class ApacheDirectory(object):
             else:
 
                 raise HTTPError(
-                    "HTTP request failed with reason: %s"
-                    % self._request_result.reason
+                    "HTTP request failed with reason: %s" % self._request_result.reason
                 )
 
         self._text = self._request_result.text
@@ -143,9 +142,7 @@ class ApacheDirectory(object):
             self._request_result.url,
         )
 
-        destination_path: Path = sanitize_filename(
-            destination_path, abspath=True
-        )
+        destination_path: Path = sanitize_filename(destination_path, abspath=True)
 
         assert path_exists_and_is_directory(destination_path), (
             f"Provided destination {destination_path} does not exist or "
@@ -181,9 +178,7 @@ class ApacheDirectory(object):
         if compress:
             # Add a .gz at the end of the file path
 
-            log.debug(
-                f"file {remote_filename} will be downloaded and compressed"
-            )
+            log.debug(f"file {remote_filename} will be downloaded and compressed")
 
             local_path: Path = Path(f"{local_path}.gz")
 
@@ -228,7 +223,7 @@ class ApacheDirectory(object):
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
 
-            total_size = int(this_request.headers.get('content-length', 0))
+            total_size = int(this_request.headers.get("content-length", 0))
 
             bar = tqdm(
                 initial=first_byte,
@@ -286,9 +281,7 @@ class ApacheDirectory(object):
 
                     continue
 
-            this_local_file = self.download(
-                file, destination_path, progress=progress
-            )
+            this_local_file = self.download(file, destination_path, progress=progress)
 
             local_files.append(this_local_file)
 

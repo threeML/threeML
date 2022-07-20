@@ -31,9 +31,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["catalogs"][
-                "GBM burst catalog"
-            ].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -100,9 +98,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = numpy.array(
-                list(map(int, row["scat_detector_mask"])), dtype=bool
-            )
+            idx = numpy.array(list(map(int, row["scat_detector_mask"])), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
             # get the location
@@ -475,9 +471,7 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMTriggerCatalog, self).__init__(
             "fermigtrig",
-            threeML_config["catalogs"]["Fermi"]["catalogs"][
-                "GBM trigger catalog"
-            ].url,
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM trigger catalog"].url,
             "Fermi-GBM trigger catalog",
         )
 

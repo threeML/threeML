@@ -83,17 +83,13 @@ def test_FermipyLike_fromVO():
 
     except RuntimeError:
 
-        log.warning(
-            "Problems with LAT data download, will not proceed with tests."
-        )
+        log.warning("Problems with LAT data download, will not proceed with tests.")
 
         return
 
     # Configuration for Fermipy
 
-    config = FermipyLike.get_basic_config(
-        evfile=evfile, scfile=scfile, ra=ra, dec=dec
-    )
+    config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
 
     # Let's create an instance of the plugin
     # Note that here no processing is made, because fermipy still doesn't know
@@ -137,9 +133,7 @@ def test_FermipyLike_fromDisk():
 
     assert model.get_number_of_extended_sources() == 3
 
-    assert set(model.extended_sources.keys()) == set(
-        ['Crab_IC', 'Sim_147', 'IC_443']
-    )
+    assert set(model.extended_sources.keys()) == set(["Crab_IC", "Sim_147", "IC_443"])
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)
@@ -182,17 +176,13 @@ def test_FermipyLike_fromDisk():
 
     except RuntimeError:
 
-        log.warning(
-            "Problems with LAT data download, will not proceed with tests."
-        )
+        log.warning("Problems with LAT data download, will not proceed with tests.")
 
         return
 
     # Configuration for Fermipy
 
-    config = FermipyLike.get_basic_config(
-        evfile=evfile, scfile=scfile, ra=ra, dec=dec
-    )
+    config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
 
     # Let's create an instance of the plugin
     # Note that here no processing is made, because fermipy still doesn't know

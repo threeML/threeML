@@ -75,9 +75,7 @@ class MultinestMinimizer(GlobalMinimizer):
 
             if min_value > 0:
 
-                orders_of_magnitude_span = math.log10(max_value) - math.log10(
-                    min_value
-                )
+                orders_of_magnitude_span = math.log10(max_value) - math.log10(min_value)
 
                 if orders_of_magnitude_span > 2:
 
@@ -102,15 +100,13 @@ class MultinestMinimizer(GlobalMinimizer):
 
         def prior(params, ndim, nparams):
 
-            for i, (parameter_name, parameter) in enumerate(
-                self.parameters.items()
-            ):
+            for i, (parameter_name, parameter) in enumerate(self.parameters.items()):
 
                 try:
 
-                    params[i] = self._param_priors[
-                        parameter_name
-                    ].from_unit_cube(params[i])
+                    params[i] = self._param_priors[parameter_name].from_unit_cube(
+                        params[i]
+                    )
 
                 except AttributeError:
 
@@ -183,9 +179,7 @@ class MultinestMinimizer(GlobalMinimizer):
                 )
 
             # Get the function value from the chain
-            func_values = multinest_analyzer.get_equal_weighted_posterior()[
-                :, -1
-            ]
+            func_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
 
             # Store the sample for further use (if needed)
 
@@ -193,9 +187,7 @@ class MultinestMinimizer(GlobalMinimizer):
 
             # Get the samples from the sampler
 
-            _raw_samples = multinest_analyzer.get_equal_weighted_posterior()[
-                :, :-1
-            ]
+            _raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
 
         # Find the minimum of the function (i.e. the maximum of func_wrapper)
 

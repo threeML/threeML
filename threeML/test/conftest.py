@@ -171,9 +171,7 @@ def joint_likelihood_bn090217206_nai6_nai9_bgo1(
 
     model = get_grb_model(powerlaw)
 
-    jl = JointLikelihood(
-        model, data_list_bn090217206_nai6_nai9_bgo1, verbose=False
-    )
+    jl = JointLikelihood(model, data_list_bn090217206_nai6_nai9_bgo1, verbose=False)
 
     return jl
 
@@ -421,18 +419,10 @@ def xy_completed_bayesian_analysis(xy_fitted_joint_likelihood):
     model = jl.likelihood_model
     data = jl.data_list
 
-    model.fake.spectrum.main.composite.a_1.set_uninformative_prior(
-        Uniform_prior
-    )
-    model.fake.spectrum.main.composite.b_1.set_uninformative_prior(
-        Uniform_prior
-    )
-    model.fake.spectrum.main.composite.F_2.set_uninformative_prior(
-        Log_uniform_prior
-    )
-    model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(
-        Uniform_prior
-    )
+    model.fake.spectrum.main.composite.a_1.set_uninformative_prior(Uniform_prior)
+    model.fake.spectrum.main.composite.b_1.set_uninformative_prior(Uniform_prior)
+    model.fake.spectrum.main.composite.F_2.set_uninformative_prior(Log_uniform_prior)
+    model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(Uniform_prior)
     model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(
         Log_uniform_prior
     )
@@ -567,9 +557,7 @@ def poisson_generator(tstart, tstop, slope, intercept, seed=1234):
 @pytest.fixture(scope="session")
 def event_time_series():
 
-    events = poisson_generator(
-        tstart=-10, tstop=60, slope=0, intercept=100, seed=1234
-    )
+    events = poisson_generator(tstart=-10, tstop=60, slope=0, intercept=100, seed=1234)
 
     yield events
 
@@ -577,9 +565,7 @@ def event_time_series():
 @pytest.fixture(scope="session")
 def event_observation_contiguous():
 
-    events = poisson_generator(
-        tstart=0, tstop=10, slope=1.0, intercept=10, seed=1234
-    )
+    events = poisson_generator(tstart=0, tstop=10, slope=1.0, intercept=10, seed=1234)
 
     obs = EventObservation(events, exposure=10, start=0.0, stop=10.0)
 
@@ -589,18 +575,12 @@ def event_observation_contiguous():
 @pytest.fixture(scope="session")
 def event_observation_split():
 
-    events = poisson_generator(
-        tstart=0, tstop=2, slope=0.2, intercept=1, seed=1234
-    )
+    events = poisson_generator(tstart=0, tstop=2, slope=0.2, intercept=1, seed=1234)
     events = np.append(
         events,
-        poisson_generator(
-            tstart=30, tstop=40, slope=0.2, intercept=1, seed=1234
-        ),
+        poisson_generator(tstart=30, tstop=40, slope=0.2, intercept=1, seed=1234),
     )
 
-    obs = EventObservation(
-        events, exposure=12, start=[0.0, 30.0], stop=[2.0, 40.0]
-    )
+    obs = EventObservation(events, exposure=12, start=[0.0, 30.0], stop=[2.0, 40.0])
 
     yield obs

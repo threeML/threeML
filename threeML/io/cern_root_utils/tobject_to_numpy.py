@@ -17,12 +17,8 @@ def tgraph_to_arrays(tgraph):
     x_buffer = tgraph.GetX()
     y_buffer = tgraph.GetY()
 
-    x = np.array(
-        [float(x_buffer[i]) for i in range(n_points)]
-    )  # type: np.ndarray
-    y = np.array(
-        [float(y_buffer[i]) for i in range(n_points)]
-    )  # type: np.ndarray
+    x = np.array([float(x_buffer[i]) for i in range(n_points)])  # type: np.ndarray
+    y = np.array([float(y_buffer[i]) for i in range(n_points)])  # type: np.ndarray
 
     return x, y
 

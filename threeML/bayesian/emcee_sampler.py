@@ -26,9 +26,7 @@ class EmceeSampler(MCMCSampler):
 
         """
 
-        super(EmceeSampler, self).__init__(
-            likelihood_model, data_list, **kwargs
-        )
+        super(EmceeSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
         self,

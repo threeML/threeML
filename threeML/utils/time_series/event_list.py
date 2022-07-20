@@ -161,9 +161,7 @@ class EventList(TimeSeries):
             this_mask = np.zeros_like(self._arrival_times, dtype=bool)
 
             for channel in phas:
-                this_mask = np.logical_or(
-                    this_mask, self._measurement == channel
-                )
+                this_mask = np.logical_or(this_mask, self._measurement == channel)
 
             events = self._arrival_times[this_mask]
 
@@ -203,9 +201,7 @@ class EventList(TimeSeries):
         """
 
         events = self._arrival_times[
-            np.logical_and(
-                self._arrival_times >= start, self._arrival_times <= stop
-            )
+            np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)
         ]
 
         self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
@@ -226,9 +222,7 @@ class EventList(TimeSeries):
     def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
 
         events = self._arrival_times[
-            np.logical_and(
-                self._arrival_times >= start, self._arrival_times <= stop
-            )
+            np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)
         ]
 
         # self._temporal_binner = TemporalBinner(events)
@@ -244,9 +238,7 @@ class EventList(TimeSeries):
 
         else:
 
-            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
-                events, p0
-            )
+            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events, p0)
 
     def view_lightcurve(
         self,
@@ -352,9 +344,7 @@ class EventList(TimeSeries):
         )
         cnts = np.sum(cnts, axis=1)
 
-        time_bins = np.array(
-            [[bins[i], bins[i + 1]] for i in range(len(bins) - 1)]
-        )
+        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         # now we want to get the estimated background from the polynomial fit
 
@@ -371,9 +361,7 @@ class EventList(TimeSeries):
 
                 # sum up the counts over this interval
 
-                for poly in self.polynomials[
-                    use_echans_start : use_echans_stop + 1
-                ]:
+                for poly in self.polynomials[use_echans_start : use_echans_stop + 1]:
 
                     tmpbkg += poly.integral(tb[0], tb[1])
 
@@ -463,9 +451,7 @@ class EventList(TimeSeries):
         :return:
         """
 
-        return np.logical_and(
-            start <= self._arrival_times, self._arrival_times <= stop
-        )
+        return np.logical_and(start <= self._arrival_times, self._arrival_times <= stop)
 
     def _fit_polynomials(self, bayes=False):
         """
@@ -525,9 +511,7 @@ class EventList(TimeSeries):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
-            exposure_per_bin.append(
-                self.exposure_over_interval(bins[i], bins[i + 1])
-            )
+            exposure_per_bin.append(self.exposure_over_interval(bins[i], bins[i + 1]))
 
         mean_time = np.array(mean_time)
 
@@ -563,8 +547,7 @@ class EventList(TimeSeries):
             )
 
             log.info(
-                "Auto-determined polynomial order: %d"
-                % self._optimal_polynomial_grade
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
             )
 
         else:
@@ -696,8 +679,7 @@ class EventList(TimeSeries):
             )
 
             log.info(
-                "Auto-determined polynomial order: "
-                f"{self._optimal_polynomial_grade}"
+                "Auto-determined polynomial order: " f"{self._optimal_polynomial_grade}"
             )
 
         else:
@@ -826,9 +808,7 @@ class EventList(TimeSeries):
 
         tmp_counts = []  # Temporary list to hold the total counts per chan
 
-        for chan in range(
-            self._first_channel, self._n_channels + self._first_channel
-        ):
+        for chan in range(self._first_channel, self._n_channels + self._first_channel):
 
             channel_mask = self._measurement == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
@@ -844,9 +824,7 @@ class EventList(TimeSeries):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!"
-                )
+                raise RuntimeError("A polynomial fit to the channels does not exist!")
 
             for chan in range(self._n_channels):
 
@@ -1037,8 +1015,7 @@ class EventListWithDeadTimeFraction(EventList):
             self._dead_time_fraction = np.asarray(dead_time_fraction)
 
             assert (
-                self._arrival_times.shape[0]
-                == self._dead_time_fraction.shape[0]
+                self._arrival_times.shape[0] == self._dead_time_fraction.shape[0]
             ), "Arrival time (%d) and Dead Time (%d) have different shapes" % (
                 self._arrival_times.shape[0],
                 self._dead_time_fraction.shape[0],
@@ -1063,9 +1040,7 @@ class EventListWithDeadTimeFraction(EventList):
 
         if self._dead_time_fraction is not None:
 
-            interval_deadtime = (
-                self._dead_time_fraction[mask]
-            ).mean() * interval
+            interval_deadtime = (self._dead_time_fraction[mask]).mean() * interval
 
         else:
 
@@ -1177,10 +1152,7 @@ class EventListWithLiveTime(EventList):
 
             # we want to take a fraction of the live time covered
 
-            dt = (
-                self._live_time_stops[inside_idx]
-                - self._live_time_starts[inside_idx]
-            )
+            dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
             fraction = old_div((stop - start), dt)
 
@@ -1213,15 +1185,11 @@ class EventListWithLiveTime(EventList):
 
             # we want the distance to the stop of this bin
 
-            distance_from_next_bin = (
-                self._live_time_stops[left_remainder_idx] - start
-            )
+            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - start
 
             fraction = old_div(distance_from_next_bin, dt)
 
-            left_fractional_livetime = (
-                self._live_time[left_remainder_idx] * fraction
-            )
+            left_fractional_livetime = self._live_time[left_remainder_idx] * fraction
 
             # Get the fractional part of the right bin
 
@@ -1236,15 +1204,11 @@ class EventListWithLiveTime(EventList):
 
             # we want the distance from the last full bin
 
-            distance_from_next_bin = (
-                stop - self._live_time_starts[right_remainder_idx]
-            )
+            distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
 
             fraction = old_div(distance_from_next_bin, dt)
 
-            right_fractional_livetime = (
-                self._live_time[right_remainder_idx] * fraction
-            )
+            right_fractional_livetime = self._live_time[right_remainder_idx] * fraction
 
             # sum up all the live time
 

@@ -51,9 +51,7 @@ class BinnedStatistic(object):
 class GaussianObservedStatistic(BinnedStatistic):
     def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
 
-        model_counts = self._spectrum_plugin.get_model(
-            precalc_fluxes=precalc_fluxes
-        )
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
         chi2_ = half_chi2(
             self._spectrum_plugin.current_observed_counts,
@@ -71,9 +69,7 @@ class GaussianObservedStatistic(BinnedStatistic):
 
             source_model_counts[0] = 0
 
-            log.warning(
-                "simulated spectrum had infinite counts in first channel"
-            )
+            log.warning("simulated spectrum had infinite counts in first channel")
             log.warning("setting to ZERO")
 
         idx = self._spectrum_plugin.observed_count_errors > 0
@@ -110,9 +106,7 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
-        model_counts = self._spectrum_plugin.get_model(
-            precalc_fluxes=precalc_fluxes
-        )
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
         loglike, _ = poisson_log_likelihood_ideal_bkg(
             self._spectrum_plugin.current_observed_counts,
@@ -132,9 +126,7 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
 
             source_model_counts[0] = 0
 
-            log.warning(
-                "simulated spectrum had infinite counts in first channel"
-            )
+            log.warning("simulated spectrum had infinite counts in first channel")
             log.warning("setting to ZERO")
 
         randomized_source_counts = np.random.poisson(
@@ -156,9 +148,7 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
-        model_counts = self._spectrum_plugin.get_model(
-            precalc_fluxes=precalc_fluxes
-        )
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
         # we scale the background model to the observation
 
@@ -190,14 +180,11 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
             source_model_counts[0] = 0
 
-            log.warning(
-                "simulated spectrum had infinite counts in first channel"
-            )
+            log.warning("simulated spectrum had infinite counts in first channel")
             log.warning("setting to ZERO")
 
         randomized_source_counts = np.random.poisson(
-            source_model_counts
-            + self._synthetic_background_plugin.observed_counts
+            source_model_counts + self._synthetic_background_plugin.observed_counts
         )
 
         return randomized_source_counts
@@ -222,9 +209,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
-        model_counts = self._spectrum_plugin.get_model(
-            precalc_fluxes=precalc_fluxes
-        )
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
         background_model_counts = np.zeros_like(model_counts)
 
@@ -244,9 +229,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
 
             source_model_counts[0] = 0
 
-            log.warning(
-                "simulated spectrum had infinite counts in first channel"
-            )
+            log.warning("simulated spectrum had infinite counts in first channel")
             log.warning("setting to ZERO")
 
         randomized_source_counts = np.random.poisson(source_model_counts)
@@ -257,9 +240,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
 class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
     def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
         # Scale factor between source and background spectrum
-        model_counts = self._spectrum_plugin.get_model(
-            precalc_fluxes=precalc_fluxes
-        )
+        model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
         loglike, bkg_model = poisson_observed_poisson_background(
             self._spectrum_plugin.current_observed_counts,
@@ -280,9 +261,7 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
             source_model_counts[0] = 0
 
-            log.warning(
-                "simulated spectrum had infinite counts in first channel"
-            )
+            log.warning("simulated spectrum had infinite counts in first channel")
             log.warning("setting to ZERO")
 
         # Now randomize the expectations
@@ -360,9 +339,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
             source_model_counts[0] = 0
 
-            log.warning(
-                "simulated spectrum had infinite counts in first channel"
-            )
+            log.warning("simulated spectrum had infinite counts in first channel")
             log.warning("setting to ZERO")
 
         # Now randomize the expectations

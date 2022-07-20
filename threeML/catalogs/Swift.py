@@ -37,9 +37,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         super(SwiftGRBCatalog, self).__init__(
             "swiftgrb",
-            threeML_config["catalogs"]["Swift"]["catalogs"][
-                "Swift GRB catalog"
-            ].url,
+            threeML_config["catalogs"]["Swift"]["catalogs"]["Swift GRB catalog"].url,
             "Swift GRB catalog",
         )
 
@@ -76,8 +74,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
     def _source_is_valid(self, source):
 
         warn_string = (
-            "The trigger %s is not valid. Must be in the form GRB080916009"
-            % source
+            "The trigger %s is not valid. Must be in the form GRB080916009" % source
         )
 
         match = _trigger_name_match.match(source)
@@ -155,9 +152,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
             table = astro_table.Table.from_pandas(query_results)
 
-            name_column = astro_table.Column(
-                name="name", data=query_results.index
-            )
+            name_column = astro_table.Column(name="name", data=query_results.index)
             table.add_column(name_column, index=0)
 
             out = self.apply_format(table)
@@ -208,9 +203,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             try:
 
                 trigger_number = (
-                    re.search(
-                        "GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string
-                    )
+                    re.search("GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string)
                     .group(1)
                     .replace(".", "")
                 )

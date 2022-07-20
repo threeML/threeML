@@ -68,9 +68,7 @@ class MultiNestSampler(UnitCubeSampler):
 
         assert has_pymultinest, "You must install MultiNest to use this sampler"
 
-        super(MultiNestSampler, self).__init__(
-            likelihood_model, data_list, **kwargs
-        )
+        super(MultiNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
         self,
@@ -229,15 +227,15 @@ class MultiNestSampler(UnitCubeSampler):
             )
 
             # Get the log. likelihood values from the chain
-            self._log_like_values = (
-                multinest_analyzer.get_equal_weighted_posterior()[:, -1]
-            )
+            self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[
+                :, -1
+            ]
 
             self._sampler = sampler
 
-            self._raw_samples = (
-                multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
-            )
+            self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[
+                :, :-1
+            ]
 
             # now get the log probability
 

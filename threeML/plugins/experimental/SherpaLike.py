@@ -168,9 +168,7 @@ class SherpaLike(PluginPrototype):
         plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
         energies = datastack.ui.get_data_plot(1).x
         dlne = np.log(energies[1:]) - np.log(energies[:-1])
-        dlne = np.append(
-            dlne[0], dlne
-        )  # TODO do this properly for arbitrary binning
+        dlne = np.append(dlne[0], dlne)  # TODO do this properly for arbitrary binning
         de = np.power(10, np.log10(energies) + dlne) - np.power(
             10, np.log10(energies) - dlne
         )
@@ -179,16 +177,8 @@ class SherpaLike(PluginPrototype):
         model = np.zeros(len(energies))
         bkg = np.zeros(len(energies))
         for id in self.ds.ids:
-            counts += (
-                datastack.ui.get_data_plot(id).y
-                * datastack.get_exposure(id)
-                * de
-            )
-            model += (
-                datastack.ui.get_model_plot(id).y
-                * datastack.get_exposure(id)
-                * de
-            )
+            counts += datastack.ui.get_data_plot(id).y * datastack.get_exposure(id) * de
+            model += datastack.ui.get_model_plot(id).y * datastack.get_exposure(id) * de
             bkg += (
                 datastack.ui.get_bkg_plot(id).y
                 * datastack.get_exposure(id)
@@ -216,9 +206,7 @@ class SherpaLike(PluginPrototype):
             fmt="ko",
             capsize=0,
         )
-        axarr[1].plot(
-            energies, np.zeros(len(energies)), color="k", linestyle="--"
-        )
+        axarr[1].plot(energies, np.zeros(len(energies)), color="k", linestyle="--")
         axarr[0].set_xscale("log")
         axarr[1].set_xscale("log")
         axarr[0].set_yscale("log")

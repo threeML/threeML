@@ -35,9 +35,7 @@ def Vector(numba_type):
             if self.n:
                 return self.full_arr[self.n - 1]
             else:
-                raise IndexError(
-                    "This numbavec has no elements: cannot return 'last'."
-                )
+                raise IndexError("This numbavec has no elements: cannot return 'last'.")
 
         @property
         def first(self):

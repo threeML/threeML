@@ -84,9 +84,7 @@ def test_unbinned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=True
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=True)
 
     results = evt_list.get_poly_info()["coefficients"]
 
@@ -116,9 +114,7 @@ def test_binned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=False
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
     evt_list.set_active_time_intervals("0-1")
 

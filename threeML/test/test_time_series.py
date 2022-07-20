@@ -90,9 +90,7 @@ def test_unbinned_fit(event_time_series):
 
     evt_list.set_active_time_intervals("0-10")
 
-    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges(
-        [0, 10]
-    )
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 10])
 
     print(evt_list._poly_counts)
 
@@ -118,9 +116,7 @@ def test_binned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=False
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
     evt_list.set_active_time_intervals("0-1")
 
@@ -165,9 +161,7 @@ def test_no_poly_fit(event_time_series):
     assert evt_list.bkg_intervals[0].stop_time == stop - 1
 
     # Now with poly fit
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=False
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
     results = evt_list.get_poly_info()["coefficients"]
 
@@ -231,9 +225,7 @@ def test_read_gbm_cspec():
         nai3 = TimeSeriesBuilder.from_gbm_cspec_or_ctime(
             "NAI3",
             os.path.join(data_dir, "glg_cspec_n3_bn080916009_v01.pha"),
-            rsp_file=os.path.join(
-                data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"
-            ),
+            rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
             poly_order=1,
         )
 
@@ -259,9 +251,7 @@ def test_read_gbm_cspec():
 
         assert speclike.background_spectrum.is_poisson
 
-        nai3.write_pha_from_binner(
-            "test_from_nai3", start=0, stop=2, overwrite=True
-        )
+        nai3.write_pha_from_binner("test_from_nai3", start=0, stop=2, overwrite=True)
 
 
 def test_read_gbm_tte():
@@ -271,9 +261,7 @@ def test_read_gbm_tte():
         nai3 = TimeSeriesBuilder.from_gbm_tte(
             "NAI3",
             os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-            rsp_file=os.path.join(
-                data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"
-            ),
+            rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
             poly_order=-1,
         )
 
@@ -384,12 +372,8 @@ def test_reading_of_written_pha():
 
         # make sure we can read spectrum number
 
-        _ = OGIPLike(
-            "test", observation="test_from_nai3.pha", spectrum_number=1
-        )
-        _ = OGIPLike(
-            "test", observation="test_from_nai3.pha", spectrum_number=2
-        )
+        _ = OGIPLike("test", observation="test_from_nai3.pha", spectrum_number=1)
+        _ = OGIPLike("test", observation="test_from_nai3.pha", spectrum_number=2)
 
         os.remove("test_from_nai3.pha")
 

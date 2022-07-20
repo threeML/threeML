@@ -154,9 +154,7 @@ class GBMTTEFile:
 
         """
         self._deadtime = np.zeros_like(self._events)
-        overflow_mask = (
-            self._pha == 127
-        )  # specific to gbm! should work for CTTE
+        overflow_mask = self._pha == 127  # specific to gbm! should work for CTTE
 
         # From Meegan et al. (2009)
         # Dead time for overflow (note, overflow sometimes changes)

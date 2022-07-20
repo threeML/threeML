@@ -143,8 +143,7 @@ class Rebinner(object):
             self._stops.append(len(vector_to_rebin_on))
 
         assert len(self._starts) == len(self._stops), (
-            "This is a bug: the starts and stops of the bins are not in "
-            "equal number"
+            "This is a bug: the starts and stops of the bins are not in " "equal number"
         )
 
         self._min_value_per_bin = min_value_per_bin
@@ -236,9 +235,7 @@ class Rebinner(object):
 
             for low_bound, hi_bound in zip(self._starts, self._stops):
 
-                rebinned_vector.append(
-                    np.sqrt(np.sum(vector[low_bound:hi_bound] ** 2))
-                )
+                rebinned_vector.append(np.sqrt(np.sum(vector[low_bound:hi_bound] ** 2)))
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
@@ -246,16 +243,12 @@ class Rebinner(object):
 
     def get_new_start_and_stop(self, old_start, old_stop):
 
-        assert len(old_start) == len(self._mask) and len(old_stop) == len(
-            self._mask
-        )
+        assert len(old_start) == len(self._mask) and len(old_stop) == len(self._mask)
 
         new_start = np.zeros(len(self._starts))
         new_stop = np.zeros(len(self._starts))
 
-        for i, (low_bound, hi_bound) in enumerate(
-            zip(self._starts, self._stops)
-        ):
+        for i, (low_bound, hi_bound) in enumerate(zip(self._starts, self._stops)):
             new_start[i] = old_start[low_bound]
             new_stop[i] = old_stop[hi_bound - 1]
 
@@ -365,9 +358,7 @@ class TemporalBinner(TimeIntervalSet):
 
         if threeML_config.interface.progress_bars:
 
-            pbar = tqdm(
-                total=arrival_times.shape[0], desc="Binning by significance"
-            )
+            pbar = tqdm(total=arrival_times.shape[0], desc="Binning by significance")
 
         while not end_all_search:
 
@@ -418,9 +409,7 @@ class TemporalBinner(TimeIntervalSet):
                         ) >= arrival_times[-1]:
 
                             # mark where we are in the interval
-                            start_idx = searchsorted(
-                                arrival_times, current_stop
-                            )
+                            start_idx = searchsorted(arrival_times, current_stop)
 
                             # then we also want to go ahead and get out of the fast search
                             end_fast_search = True
@@ -470,11 +459,9 @@ class TemporalBinner(TimeIntervalSet):
 
                         bkg_error = background_error_getter(current_start, time)
 
-                        sigma = (
-                            sig.li_and_ma_equivalent_for_gaussian_background(
-                                bkg_error
-                            )[0]
-                        )
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(
+                            bkg_error
+                        )[0]
 
                     else:
 
@@ -533,9 +520,7 @@ class TemporalBinner(TimeIntervalSet):
         return cls.from_starts_and_stops(starts, stops)
 
     @classmethod
-    def bin_by_bayesian_blocks(
-        cls, arrival_times, p0, bkg_integral_distribution=None
-    ):
+    def bin_by_bayesian_blocks(cls, arrival_times, p0, bkg_integral_distribution=None):
         """Divide a series of events characterized by their arrival time in blocks
         of perceptibly constant count rate. If the background integral distribution
         is given, divide the series in blocks where the difference with respect to
@@ -638,9 +623,7 @@ class TemporalBinner(TimeIntervalSet):
 
             bkg_error = background_error_getter(start, stop)
 
-            sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[
-                0
-            ]
+            sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
 
         else:
 

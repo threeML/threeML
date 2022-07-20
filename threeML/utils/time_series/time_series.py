@@ -247,9 +247,7 @@ class TimeSeries:
 
         return total_counts
 
-    def get_total_poly_error(
-        self, start: float, stop: float, mask=None
-    ) -> float:
+    def get_total_poly_error(self, start: float, stop: float, mask=None) -> float:
         """
 
         Get the total poly error
@@ -390,10 +388,7 @@ class TimeSeries:
         if fit_poly:
             log.debug("Fit a polynominal to the background time intervals.")
             self.fit_polynomial(**options)
-            log.debug(
-                "Fitting a polynominal to the background "
-                "time intervals done."
-            )
+            log.debug("Fitting a polynominal to the background " "time intervals done.")
         else:
             if self._poly_fit_exists:
                 # if we already did a poly fit and change the bkg interval
@@ -407,9 +402,7 @@ class TimeSeries:
                 )
                 self._delete_polynominal_fit()
 
-            log.debug(
-                "Did not fit a polynominal to the background " "time intervals."
-            )
+            log.debug("Did not fit a polynominal to the background " "time intervals.")
 
     def fit_polynomial(self, **kwargs):
         """
@@ -475,9 +468,7 @@ class TimeSeries:
         # recalculate the selected counts
 
         if self._time_selection_exists:
-            self.set_active_time_intervals(
-                *self._time_intervals.to_string().split(",")
-            )
+            self.set_active_time_intervals(*self._time_intervals.to_string().split(","))
 
     def _select_background_time_interval(self, *time_intervals):
 
@@ -576,9 +567,7 @@ class TimeSeries:
         # Find out if we want to binned or unbinned.
         if "unbinned" in kwargs:
             unbinned = kwargs.pop("unbinned")
-            assert (
-                type(unbinned) == bool
-            ), "unbinned option must be True or False"
+            assert type(unbinned) == bool, "unbinned option must be True or False"
 
         else:
 
@@ -697,9 +686,7 @@ class TimeSeries:
         # recalculate the selected counts
 
         if self._time_selection_exists:
-            self.set_active_time_intervals(
-                *self._time_intervals.to_string().split(",")
-            )
+            self.set_active_time_intervals(*self._time_intervals.to_string().split(","))
 
     def get_information_dict(
         self, use_poly: bool = False, extract: bool = False
@@ -822,16 +809,12 @@ class TimeSeries:
         if self._poly_fit_exists:
 
             for i, interval in enumerate(self.bkg_intervals):
-                info_dict[
-                    "polynomial selection (%d)" % (i + 1)
-                ] = interval.__repr__()
+                info_dict["polynomial selection (%d)" % (i + 1)] = interval.__repr__()
 
             info_dict["polynomial order"] = self._optimal_polynomial_grade
 
             info_dict["polynomial fit type"] = self._fit_method_info["bin type"]
-            info_dict["polynomial fit method"] = self._fit_method_info[
-                "fit method"
-            ]
+            info_dict["polynomial fit method"] = self._fit_method_info["fit method"]
 
         return pd.Series(info_dict, index=list(info_dict.keys()))
 
@@ -861,9 +844,7 @@ class TimeSeries:
 
             def worker(grade):
 
-                polynomial, log_like = polyfit(
-                    bins, cnts, grade, exposure, bayes=bayes
-                )
+                polynomial, log_like = polyfit(bins, cnts, grade, exposure, bayes=bayes)
 
                 return log_like
 
@@ -881,18 +862,13 @@ class TimeSeries:
                 min_grade, max_grade + 1, desc="Finding best polynomial Order"
             ):
 
-                polynomial, log_like = polyfit(
-                    bins, cnts, grade, exposure, bayes=bayes
-                )
+                polynomial, log_like = polyfit(bins, cnts, grade, exposure, bayes=bayes)
 
                 log_likelihoods.append(log_like)
 
         # Found the best one
         delta_loglike = np.array(
-            [
-                2 * (x[0] - x[1])
-                for x in zip(log_likelihoods[:-1], log_likelihoods[1:])
-            ]
+            [2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
         )
 
         log.debug(f"log likes {log_likelihoods}")
@@ -970,10 +946,7 @@ class TimeSeries:
 
         # Found the best one
         delta_loglike = np.array(
-            [
-                2 * (x[0] - x[1])
-                for x in zip(log_likelihoods[:-1], log_likelihoods[1:])
-            ]
+            [2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
         )
 
         log.debug(f"log likes {log_likelihoods}")
@@ -1048,9 +1021,7 @@ class TimeSeries:
 
             if self._poly_fit_exists:
 
-                coeff = np.empty(
-                    (self._n_channels, self._optimal_polynomial_grade + 1)
-                )
+                coeff = np.empty((self._n_channels, self._optimal_polynomial_grade + 1))
                 err = np.empty(
                     (
                         self._n_channels,
@@ -1113,9 +1084,7 @@ class TimeSeries:
 
                 cov = covariance[i]
 
-                self._polynomials.append(
-                    Polynomial.from_previous_fit(coeff, cov)
-                )
+                self._polynomials.append(Polynomial.from_previous_fit(coeff, cov))
 
             metadata = store.attrs
 
@@ -1156,9 +1125,7 @@ class TimeSeries:
 
         self._bkg_selected_counts = np.sum(self._bkg_selected_counts, axis=0)
         if self._time_selection_exists:
-            self.set_active_time_intervals(
-                *self._time_intervals.to_string().split(",")
-            )
+            self.set_active_time_intervals(*self._time_intervals.to_string().split(","))
 
     def view_lightcurve(
         self,

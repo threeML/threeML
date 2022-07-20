@@ -126,8 +126,7 @@ def poisson_observed_poisson_background_xs(
     )
 
     first_term = (
-        expected_model_counts
-        + (1 + exposure_ratio) * background_nuisance_parameter
+        expected_model_counts + (1 + exposure_ratio) * background_nuisance_parameter
     )
 
     # we regularize the log so it will not give NaN if expected_model_counts and background_nuisance_parameter are both
@@ -185,18 +184,13 @@ def poisson_observed_poisson_background(
             * (alpha + alpha ** 2)
             * background_counts[idx]
             * expected_model_counts[idx]
-            + ((alpha + 1) * expected_model_counts[idx] - alpha * (o_plus_b))
-            ** 2
+            + ((alpha + 1) * expected_model_counts[idx] - alpha * (o_plus_b)) ** 2
         )
 
         B_mle[idx] = (
             1
             / (2.0 * alpha * (1 + alpha))
-            * (
-                alpha * (o_plus_b)
-                - (alpha + 1) * expected_model_counts[idx]
-                + sqr
-            )
+            * (alpha * (o_plus_b) - (alpha + 1) * expected_model_counts[idx] + sqr)
         )
 
         # Profile likelihood
@@ -253,8 +247,7 @@ def poisson_observed_gaussian_background(
 
             log_likes[idx] = (
                 -((b[idx] - background_counts[idx]) ** 2) / (2 * s2)
-                + observed_counts[idx]
-                * log(b[idx] + expected_model_counts[idx])
+                + observed_counts[idx] * log(b[idx] + expected_model_counts[idx])
                 - b[idx]
                 - expected_model_counts[idx]
                 - logfactorial(observed_counts[idx])

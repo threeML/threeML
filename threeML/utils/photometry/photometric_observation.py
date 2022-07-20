@@ -179,9 +179,9 @@ class PhotometericObservation(object):
 
     def __repr__(self):
         args = [
-            f'{k} = {m} +/- {me}'
+            f"{k} = {m} +/- {me}"
             for (k, m, me) in zip(
                 self._band_names, self._ab_magnitudes, self._ab_magnitude_errors
             )
         ]
-        return 'PhotometricObservation({})'.format(', '.join(args))
+        return "PhotometricObservation({})".format(", ".join(args))

@@ -122,9 +122,7 @@ def download_GBM_trigger_data(
     sanitized_trigger_name_: str = _validate_fermi_trigger_name(trigger_name)
 
     # create output directory if it does not exists
-    destination_directory: Path = sanitize_filename(
-        destination_directory, abspath=True
-    )
+    destination_directory: Path = sanitize_filename(destination_directory, abspath=True)
 
     if_directory_not_existing_then_make(destination_directory)
 
@@ -324,9 +322,7 @@ def download_GBM_daily_data(
     sanitized_trigger_name_: str = _validate_fermi_date(year, month, day)
 
     # create output directory if it does not exists
-    destination_directory: Path = sanitize_filename(
-        destination_directory, abspath=True
-    )
+    destination_directory: Path = sanitize_filename(destination_directory, abspath=True)
 
     if_directory_not_existing_then_make(destination_directory)
 

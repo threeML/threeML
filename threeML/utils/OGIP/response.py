@@ -109,9 +109,7 @@ class InstrumentResponse(object):
 
             if not isinstance(coverage_interval, TimeInterval):
 
-                log.error(
-                    "The coverage interval must be a TimeInterval instance"
-                )
+                log.error("The coverage interval must be a TimeInterval instance")
 
                 raise RuntimeError()
 
@@ -394,9 +392,7 @@ class InstrumentResponse(object):
 
         # create the dummy matrix
 
-        dummy_matrix = np.eye(
-            ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1
-        )
+        dummy_matrix = np.eye(ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1)
 
         return InstrumentResponse(dummy_matrix, ebounds, monte_carlo_energies)
 
@@ -430,9 +426,7 @@ class OGIPResponse(InstrumentResponse):
 
         if not fits_file_existing_and_readable(rsp_file):
 
-            log.error(
-                f"OGIPResponse file {rsp_file} not existing or not readable"
-            )
+            log.error(f"OGIPResponse file {rsp_file} not existing or not readable")
 
             raise RuntimeError()
 
@@ -584,9 +578,7 @@ class OGIPResponse(InstrumentResponse):
         """
         return int(self._first_channel)
 
-    def _read_matrix(
-        self, data, header, column_name: str = "MATRIX"
-    ) -> np.ndarray:
+    def _read_matrix(self, data, header, column_name: str = "MATRIX") -> np.ndarray:
 
         n_channels = header.get("DETCHANS")
 
@@ -690,9 +682,7 @@ class OGIPResponse(InstrumentResponse):
 
         if not fits_file_existing_and_readable(arf_file):
 
-            log.error(
-                f"Ancillary file {arf_file} not existing or not " "readable"
-            )
+            log.error(f"Ancillary file {arf_file} not existing or not " "readable")
 
             raise RuntimeError()
 
@@ -882,9 +872,7 @@ class InstrumentResponseSet(object):
         rsp_file: Path = sanitize_filename(rsp2_file)
 
         if not file_existing_and_readable(rsp_file):
-            log.error(
-                "OGIPResponse file %s not existing or not readable" % rsp_file
-            )
+            log.error("OGIPResponse file %s not existing or not readable" % rsp_file)
 
             raise RuntimeError()
 
@@ -899,9 +887,7 @@ class InstrumentResponseSet(object):
             # we will read all the matrices and save them
             for rsp_number in range(1, n_responses + 1):
 
-                this_response = OGIPResponse(
-                    str(rsp2_file) + "{%i}" % rsp_number
-                )
+                this_response = OGIPResponse(str(rsp2_file) + "{%i}" % rsp_number)
 
                 list_of_matrices.append(this_response)
 
@@ -968,9 +954,7 @@ class InstrumentResponseSet(object):
 
         return self._get_weighted_matrix("counts", *intervals)
 
-    def _get_weighted_matrix(
-        self, switch: str, *intervals
-    ) -> InstrumentResponse:
+    def _get_weighted_matrix(self, switch: str, *intervals) -> InstrumentResponse:
 
         if not len(intervals) > 0:
 
@@ -1028,8 +1012,7 @@ class InstrumentResponseSet(object):
         # NOTE: this is a mask of the same length as _matrix_list and _coverage_intervals
 
         matrices_mask = [
-            c_i.overlaps_with(interval_of_interest)
-            for c_i in self._coverage_intervals
+            c_i.overlaps_with(interval_of_interest) for c_i in self._coverage_intervals
         ]
 
         # Check that we have at least one matrix
@@ -1040,9 +1023,7 @@ class InstrumentResponseSet(object):
                 "Could not find any matrix applicable to %s\n Have intervals:%s"
                 % (
                     interval_of_interest,
-                    ", ".join(
-                        [str(interval) for interval in self._coverage_intervals]
-                    ),
+                    ", ".join([str(interval) for interval in self._coverage_intervals]),
                 )
             )
 
@@ -1298,9 +1279,7 @@ class SPECRESP_MATRIX(MATRIX):
 
         # This is essentially exactly the same as MATRIX, but with a different extension name
 
-        super(SPECRESP_MATRIX, self).__init__(
-            mc_energies, channel_energies, matrix
-        )
+        super(SPECRESP_MATRIX, self).__init__(mc_energies, channel_energies, matrix)
 
         # Change the extension name
         self.hdu.header.set("EXTNAME", "SPECRESP MATRIX")
@@ -1313,9 +1292,7 @@ class RMF(FITSFile):
 
     """
 
-    def __init__(
-        self, mc_energies, ebounds, matrix, telescope_name, instrument_name
-    ):
+    def __init__(self, mc_energies, ebounds, matrix, telescope_name, instrument_name):
 
         # Make sure that the provided iterables are of the right type for the FITS format
 
@@ -1344,9 +1321,7 @@ class RSP(FITSFile):
 
     """
 
-    def __init__(
-        self, mc_energies, ebounds, matrix, telescope_name, instrument_name
-    ):
+    def __init__(self, mc_energies, ebounds, matrix, telescope_name, instrument_name):
 
         # Make sure that the provided iterables are of the right type for the FITS format
 

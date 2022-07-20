@@ -97,9 +97,7 @@ class FluxConversion:
 
         else:
 
-            self._conversion = tmp.unit.to(
-                self._flux_unit, equivalencies=u.spectral()
-            )
+            self._conversion = tmp.unit.to(self._flux_unit, equivalencies=u.spectral())
             self._is_dimensionless = False
 
     @property
@@ -215,10 +213,7 @@ class IntegralFluxConversion(FluxConversion):
         def nufnu_integrand(x, param_specification):
             return x * x * flux_model(x, **param_specification)
 
-        if (
-            threeML_config.point_source.integrate_flux_method
-            == IntegrateMethod.trapz
-        ):
+        if threeML_config.point_source.integrate_flux_method == IntegrateMethod.trapz:
 
             self._model_builder = {
                 "photon_flux": lambda e1, e2, **param_specification: trap_integral(
@@ -231,27 +226,18 @@ class IntegralFluxConversion(FluxConversion):
                     nufnu_integrand, e1, e2, **param_specification
                 ),
             }
-        elif (
-            threeML_config.point_source.integrate_flux_method
-            == IntegrateMethod.quad
-        ):
+        elif threeML_config.point_source.integrate_flux_method == IntegrateMethod.quad:
 
             self._model_builder = {
                 "photon_flux": lambda e1, e2, **param_specification: integrate.quad(
                     photon_integrand, e1, e2, args=(param_specification)
-                )[
-                    0
-                ],
+                )[0],
                 "energy_flux": lambda e1, e2, **param_specification: integrate.quad(
                     energy_integrand, e1, e2, args=(param_specification)
-                )[
-                    0
-                ],
+                )[0],
                 "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(
                     nufnu_integrand, e1, e2, args=(param_specification)
-                )[
-                    0
-                ],
+                )[0],
             }
 
         else:
@@ -260,9 +246,7 @@ class IntegralFluxConversion(FluxConversion):
 
             raise RuntimeError
 
-        super(IntegralFluxConversion, self).__init__(
-            flux_unit, energy_unit, flux_model
-        )
+        super(IntegralFluxConversion, self).__init__(flux_unit, energy_unit, flux_model)
 
 
 class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):

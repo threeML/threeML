@@ -52,7 +52,7 @@ def test_all_toggles():
 
 def test_progress_bars():
 
-    threeML_config.interface.progress_bars = 'on'
+    threeML_config.interface.progress_bars = "on"
 
     toggle_progress_bars()
 

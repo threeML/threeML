@@ -109,9 +109,7 @@ def get_current_configuration_copy(
 
         with outfile.open("w") as f:
 
-            f.write(
-                OmegaConf.to_yaml(config_copy, sort_keys=True, resolve=True)
-            )
+            f.write(OmegaConf.to_yaml(config_copy, sort_keys=True, resolve=True))
 
 
 def get_value(name, user_value, par_type, config_value):

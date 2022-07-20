@@ -91,9 +91,7 @@ def test_download_LLE_data():
 
     with pytest.raises(TypeError):
 
-        download_LLE_trigger_data(
-            trigger_name=80916009, destination_directory=temp_dir
-        )
+        download_LLE_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
 
     with pytest.raises(NameError):
 

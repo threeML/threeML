@@ -68,9 +68,7 @@ def get_minimizer(minimizer_type):
 
     except KeyError:
 
-        log.error(
-            "Minimizer %s is not available on your system" % minimizer_type
-        )
+        log.error("Minimizer %s is not available on your system" % minimizer_type)
 
         raise MinimizerNotAvailable()
 
@@ -113,9 +111,7 @@ class FunctionWrapper(object):
         # Note that this function will receive the trial values in internal reference (after the transformations,
         # if any)
 
-        self._all_values[
-            self._indexes_of_fixed_par
-        ] = self._fixed_parameters_values
+        self._all_values[self._indexes_of_fixed_par] = self._fixed_parameters_values
         self._all_values[~self._indexes_of_fixed_par] = trial_values
 
         return self._function(*self._all_values)
@@ -186,9 +182,9 @@ class ProfileLikelihood(object):
 
         if self._all_parameters[parameter_name].has_transformation():
 
-            new_steps = self._all_parameters[
-                parameter_name
-            ].transformation.forward(steps)
+            new_steps = self._all_parameters[parameter_name].transformation.forward(
+                steps
+            )
 
             return new_steps
 
@@ -289,9 +285,7 @@ class ProfileLikelihood(object):
 
         if threeML_config.interface.progress_bars:
 
-            p = tqdm(
-                total=len(steps1) * len(steps2), desc="Profiling likelihood"
-            )
+            p = tqdm(total=len(steps1) * len(steps2), desc="Profiling likelihood")
 
         for i, step1 in enumerate(steps1):
 
@@ -305,9 +299,7 @@ class ProfileLikelihood(object):
 
                     try:
 
-                        _, this_log_like = self._optimizer.minimize(
-                            compute_covar=False
-                        )
+                        _, this_log_like = self._optimizer.minimize(compute_covar=False)
 
                     except FitFailed:
 
@@ -495,9 +487,9 @@ class Minimizer(object):
 
                 # No boundaries, use 2% of value as initial delta
 
-                if abs(current_delta) < abs(
-                    current_value
-                ) * 0.02 or not np.isfinite(current_delta):
+                if abs(current_delta) < abs(current_value) * 0.02 or not np.isfinite(
+                    current_delta
+                ):
 
                     current_delta = abs(current_value) * 0.02
 
@@ -560,9 +552,7 @@ class Minimizer(object):
                             % par.name
                         )
 
-                        current_value = current_value - 0.04 * abs(
-                            current_value
-                        )
+                        current_value = current_value - 0.04 * abs(current_value)
 
                         current_delta = 0.02 * abs(current_value)
 
@@ -660,9 +650,7 @@ class Minimizer(object):
 
         if compute_covar:
 
-            covariance = self._compute_covariance_matrix(
-                internal_best_fit_values
-            )
+            covariance = self._compute_covariance_matrix(internal_best_fit_values)
 
         else:
 
@@ -670,9 +658,7 @@ class Minimizer(object):
 
         # Finally store everything
 
-        self._store_fit_results(
-            internal_best_fit_values, function_minimum, covariance
-        )
+        self._store_fit_results(internal_best_fit_values, function_minimum, covariance)
 
         return external_best_fit_values, function_minimum
 
@@ -733,9 +719,7 @@ class Minimizer(object):
 
                 else:
 
-                    log.warning(
-                        "Negative element on diagonal of covariance matrix"
-                    )
+                    log.warning("Negative element on diagonal of covariance matrix")
 
                     error = np.nan
 
@@ -860,9 +844,7 @@ class Minimizer(object):
 
         try:
 
-            hessian_matrix = get_hessian(
-                self.function, best_fit_values, minima, maxima
-            )
+            hessian_matrix = get_hessian(self.function, best_fit_values, minima, maxima)
 
         except ParameterOnBoundary:
 
@@ -961,9 +943,7 @@ class Minimizer(object):
 
             if extreme_allowed is None:
 
-                extreme_allowed = best_fit_value + sign * 10 * abs(
-                    best_fit_value
-                )
+                extreme_allowed = best_fit_value + sign * 10 * abs(best_fit_value)
 
             # We need to look for a value for the parameter where the difference between the minimum of the
             # log-likelihood and the likelihood for that value differs by more than target_delta_log_likelihood.
@@ -1057,9 +1037,7 @@ class Minimizer(object):
             if minimum_bound is None:
 
                 # Cannot find error in this direction (it's probably outside the allowed boundaries)
-                log.warning(
-                    "Cannot find boundary for parameter %s" % parameter_name
-                )
+                log.warning("Cannot find boundary for parameter %s" % parameter_name)
 
                 error = np.nan
                 break
@@ -1069,9 +1047,7 @@ class Minimizer(object):
                 # Define the "biased likelihood", since brenq only finds zeros of function
 
                 biased_likelihood = (
-                    lambda x: pl(x)
-                    - self._m_log_like_minimum
-                    - target_delta_log_like
+                    lambda x: pl(x) - self._m_log_like_minimum - target_delta_log_like
                 )
 
                 try:
@@ -1086,9 +1062,7 @@ class Minimizer(object):
 
                 except Exception:
 
-                    log.warning(
-                        f"Cannot find boundary for parameter {parameter_name}"
-                    )
+                    log.warning(f"Cannot find boundary for parameter {parameter_name}")
 
                     error = np.nan
                     break
@@ -1124,17 +1098,11 @@ class Minimizer(object):
 
             if parameter.has_transformation():
 
-                (
-                    _,
-                    negative_error_external,
-                ) = parameter.internal_to_external_delta(
+                (_, negative_error_external,) = parameter.internal_to_external_delta(
                     best_fit_values[parameter.path], negative_error
                 )
 
-                (
-                    _,
-                    positive_error_external,
-                ) = parameter.internal_to_external_delta(
+                (_, positive_error_external,) = parameter.internal_to_external_delta(
                     best_fit_values[parameter.path], positive_error
                 )
 
@@ -1326,9 +1294,7 @@ class Minimizer(object):
         return (
             param_1_steps,
             param_2_steps,
-            np.array(results).reshape(
-                (param_1_steps.shape[0], param_2_steps.shape[0])
-            ),
+            np.array(results).reshape((param_1_steps.shape[0], param_2_steps.shape[0])),
         )
 
 

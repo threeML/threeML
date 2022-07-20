@@ -196,9 +196,7 @@ def test_fitted_point_source_flux_calculations(analysis_to_test):
 
 def test_units_on_energy_range(analysis_to_test):
 
-    _ = plot_spectra(
-        analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1 * u.MeV
-    )
+    _ = plot_spectra(analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1 * u.MeV)
 
     with pytest.raises(RuntimeError):
         plot_spectra(analysis_to_test[0], ene_min=1.0, ene_max=1 * u.MeV)

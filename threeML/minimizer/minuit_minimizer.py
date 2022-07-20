@@ -300,9 +300,7 @@ class MinuitMinimizer(LocalMinimizer):
 
                 # Need to transform in the external reference
 
-                best_fit_value_internal = self._fit_results.loc[
-                    par.path, "value"
-                ]
+                best_fit_value_internal = self._fit_results.loc[par.path, "value"]
 
                 _, minus_error_external = par.internal_to_external_delta(
                     best_fit_value_internal, minus_error

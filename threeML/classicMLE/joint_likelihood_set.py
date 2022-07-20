@@ -258,9 +258,7 @@ class JointLikelihoodSet(object):
 
             with silence_console_log(and_progress_bars=False):
 
-                for i in trange(
-                    self._n_iterations, desc="Goodness of fit computation"
-                ):
+                for i in trange(self._n_iterations, desc="Goodness of fit computation"):
 
                     results.append(self.worker(i))
 

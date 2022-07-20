@@ -13,9 +13,7 @@ from threeML.plugins.UnbinnedPoissonLike import (
 from .conftest import event_observation_contiguous, event_observation_split
 
 
-def test_event_observation(
-    event_observation_contiguous, event_observation_split
-):
+def test_event_observation(event_observation_contiguous, event_observation_split):
 
     assert not event_observation_contiguous.is_multi_interval
 
@@ -32,9 +30,7 @@ def test_event_observation(
     assert isinstance(event_observation_contiguous.start, float)
     assert isinstance(event_observation_contiguous.stop, float)
 
-    for a, b in zip(
-        event_observation_split.start, event_observation_split.stop
-    ):
+    for a, b in zip(event_observation_split.start, event_observation_split.stop):
 
         assert a < b
 
@@ -43,9 +39,7 @@ def test_event_observation(
         EventObservation([0, 1, 2, 3], exposure=1, start=10, stop=1)
 
 
-def test_ubinned_poisson_full(
-    event_observation_contiguous, event_observation_split
-):
+def test_ubinned_poisson_full(event_observation_contiguous, event_observation_split):
 
     s = Line()
 

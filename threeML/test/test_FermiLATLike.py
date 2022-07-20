@@ -39,8 +39,8 @@ dec = -56.638333
 radius = 10.0
 zmax = 110.0
 thetamax = 180.0
-irf = 'p8_transient020e'
-datarepository = 'FermiData'
+irf = "p8_transient020e"
+datarepository = "FermiData"
 
 
 # @pytest.mark.xfail
@@ -62,17 +62,17 @@ def test_make_LAT_dataset():
         Emax=1000000.0,
     )
 
-    myLATdataset.extract_events(radius, zmax, irf, thetamax, strategy='time')
+    myLATdataset.extract_events(radius, zmax, irf, thetamax, strategy="time")
 
     analysis_builder = TransientLATDataBuilder(
         myLATdataset.grb_name,
         outfile=myLATdataset.grb_name,
         roi=radius,
-        tstarts='0,10',
-        tstops='10,100',
+        tstarts="0,10",
+        tstops="10,100",
         irf=irf,
-        galactic_model='template',
-        particle_model='isotr template',
+        galactic_model="template",
+        particle_model="isotr template",
         datarepository=datarepository,
     )
     analysis_builder.display()
@@ -105,8 +105,8 @@ def test_make_LAT_dataset():
 
     plot_spectra(
         *results,
-        flux_unit='erg2/(cm2 s keV)',
-        energy_unit='MeV',
+        flux_unit="erg2/(cm2 s keV)",
+        energy_unit="MeV",
         ene_min=10,
         ene_max=10e4
     )
@@ -118,6 +118,6 @@ def test_make_LAT_dataset():
     # myplug.display()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_make_LAT_dataset()
     plt.show()

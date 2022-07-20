@@ -56,16 +56,14 @@ class UltraNestSampler(UnitCubeSampler):
 
         assert has_ultranest, "You must install UltraNest to use this sampler"
 
-        super(UltraNestSampler, self).__init__(
-            likelihood_model, data_list, **kwargs
-        )
+        super(UltraNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
         self,
         min_num_live_points: int = 400,
         dlogz: float = 0.5,
         chain_name: Optional[str] = None,
-        resume: str = 'overwrite',
+        resume: str = "overwrite",
         wrapped_params=None,
         stepsampler=None,
         use_mlfriends: bool = True,
@@ -141,9 +139,7 @@ class UltraNestSampler(UnitCubeSampler):
 
         n_dim = len(param_names)
 
-        loglike, ultranest_prior = self._construct_unitcube_posterior(
-            return_copy=True
-        )
+        loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # We need to check if the MCMC
         # chains will have a place on
@@ -172,17 +168,13 @@ class UltraNestSampler(UnitCubeSampler):
                     # create mcmc chains directory only on first engine
 
                     if not os.path.exists(mcmc_chains_out_dir):
-                        log.debug(
-                            f"Create {mcmc_chains_out_dir} for ultranest output"
-                        )
+                        log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
 
             else:
 
                 if not os.path.exists(mcmc_chains_out_dir):
-                    log.debug(
-                        f"Create {mcmc_chains_out_dir} for ultranest output"
-                    )
+                    log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                     os.makedirs(mcmc_chains_out_dir)
 
         # Multinest must be run parallel via an external method
@@ -208,19 +200,17 @@ class UltraNestSampler(UnitCubeSampler):
                 wrapped_params=self._wrapped_params,
             )
 
-            if self._kwargs['stepsampler'] is not None:
+            if self._kwargs["stepsampler"] is not None:
 
-                sampler.stepsampler = self._kwargs['stepsampler']
+                sampler.stepsampler = self._kwargs["stepsampler"]
 
-            self._kwargs.pop('stepsampler')
+            self._kwargs.pop("stepsampler")
 
             # use a different region class
 
             if not self._use_mlfriends:
 
-                self._kwargs[
-                    "region_class"
-                ] = ultranest.mlfriends.RobustEllipsoidRegion
+                self._kwargs["region_class"] = ultranest.mlfriends.RobustEllipsoidRegion
 
             with use_astromodels_memoization(False):
                 log.debug("Start ultranest run")
@@ -263,20 +253,18 @@ class UltraNestSampler(UnitCubeSampler):
 
             # Workaround to support older versions of ultranest
             try:
-                wsamples = ws['v']
-                weights = ws['w']
-                logl = ws['L']
+                wsamples = ws["v"]
+                weights = ws["w"]
+                logl = ws["L"]
             except KeyError:
-                wsamples = ws['points']
-                weights = ws['weights']
-                logl = ws['logl']
+                wsamples = ws["points"]
+                weights = ws["weights"]
+                logl = ws["logl"]
 
             # Get the log. likelihood values from the chain
 
             SQRTEPS = (float(np.finfo(np.float64).eps)) ** 0.5
-            if (
-                abs(np.sum(weights) - 1.0) > SQRTEPS
-            ):  # same tol as in np.random.choice.
+            if abs(np.sum(weights) - 1.0) > SQRTEPS:  # same tol as in np.random.choice.
                 raise ValueError("weights do not sum to 1")
 
             rstate = np.random

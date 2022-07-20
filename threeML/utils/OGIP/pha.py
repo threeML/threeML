@@ -184,13 +184,10 @@ class PHAWrite(object):
                 # e.g. if we want to use weighted DRMs from GBM.
 
                 rsp_file_name = (
-                    f"{self._outfile_basename}.rsp"
-                    + "{%d}" % self._spec_iterator
+                    f"{self._outfile_basename}.rsp" + "{%d}" % self._spec_iterator
                 )
 
-                log.debug(
-                    f"creating a new response and saving it to {rsp_file_name}"
-                )
+                log.debug(f"creating a new response and saving it to {rsp_file_name}")
 
                 self._respfile[key].append(rsp_file_name)
 
@@ -230,17 +227,14 @@ class PHAWrite(object):
             else:
 
                 self._sys_err[key].append(
-                    np.zeros_like(
-                        pha_info[key].rates, dtype=np.float32
-                    ).tolist()
+                    np.zeros_like(pha_info[key].rates, dtype=np.float32).tolist()
                 )
 
             self._exposure[key].append(pha_info[key].exposure)
             self._quality[key].append(ogip.quality.to_ogip().tolist())
             self._grouping[key].append(ogip.grouping.tolist())
             self._channel[key].append(
-                np.arange(pha_info[key].n_channels, dtype=np.int32)
-                + first_channel
+                np.arange(pha_info[key].n_channels, dtype=np.int32) + first_channel
             )
             self._instrument[key] = pha_info[key].instrument
             self._mission[key] = pha_info[key].mission
@@ -513,9 +507,7 @@ class SPECTRUM(FITSExtension):
 
             if is_poisson:
 
-                log.error(
-                    "Tying to enter STAT_ERR error but have POISSERR set true"
-                )
+                log.error("Tying to enter STAT_ERR error but have POISSERR set true")
 
                 raise RuntimeError()
             data_list.append(("STAT_ERR", stat_err))
@@ -687,9 +679,7 @@ class PHAII(FITSFile):
                         spectrum_extension.header["EXTNAME"] = "SPECTRUM"
                         break
 
-            spectrum = FITSExtension.from_fits_file_extension(
-                spectrum_extension
-            )
+            spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
             out = FITSFile(primary_hdu=f["PRIMARY"], fits_extensions=[spectrum])
 

@@ -167,9 +167,7 @@ class BinnedSpectrumSeries(TimeSeries):
             # use the actual exposure
 
             width_dead.append(
-                self.exposure_over_interval(
-                    time_bin.start_time, time_bin.stop_time
-                )
+                self.exposure_over_interval(time_bin.start_time, time_bin.stop_time)
             )
 
             # just use the "defined edges"
@@ -183,13 +181,9 @@ class BinnedSpectrumSeries(TimeSeries):
             bkg = []
             for j, time_bin in enumerate(bins):
                 tmpbkg = 0.0
-                for poly in self.polynomials[
-                    use_echans_start : use_echans_stop + 1
-                ]:
+                for poly in self.polynomials[use_echans_start : use_echans_stop + 1]:
 
-                    tmpbkg += poly.integral(
-                        time_bin.start_time, time_bin.stop_time
-                    )
+                    tmpbkg += poly.integral(time_bin.start_time, time_bin.stop_time)
 
                 bkg.append(tmpbkg / width[j])
 
@@ -297,12 +291,8 @@ class BinnedSpectrumSeries(TimeSeries):
 
         # get all the starts and stops from these time intervals
 
-        true_starts = np.array(
-            self._binned_spectrum_set.time_intervals.start_times
-        )
-        true_stops = np.array(
-            self._binned_spectrum_set.time_intervals.stop_times
-        )
+        true_starts = np.array(self._binned_spectrum_set.time_intervals.start_times)
+        true_stops = np.array(self._binned_spectrum_set.time_intervals.stop_times)
 
         new_starts = []
         new_stops = []
@@ -371,13 +361,9 @@ class BinnedSpectrumSeries(TimeSeries):
             # so the mask is selecting time.
             # a sum along axis=0 is a sum in time, while axis=1 is a sum in energy
 
-            selected_counts.extend(
-                self._binned_spectrum_set.counts_per_bin[mask]
-            )
+            selected_counts.extend(self._binned_spectrum_set.counts_per_bin[mask])
 
-            selected_exposure.extend(
-                self._binned_spectrum_set.exposure_per_bin[mask]
-            )
+            selected_exposure.extend(self._binned_spectrum_set.exposure_per_bin[mask])
             selected_midpoints.extend(
                 self._binned_spectrum_set.time_intervals.mid_points[mask]
             )
@@ -401,8 +387,7 @@ class BinnedSpectrumSeries(TimeSeries):
             )
 
             log.info(
-                "Auto-determined polynomial order: %d"
-                % self._optimal_polynomial_grade
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
             )
 
         else:
@@ -481,9 +466,7 @@ class BinnedSpectrumSeries(TimeSeries):
         time_intervals = self._adjust_to_true_intervals(time_intervals)
 
         # start out with no time bins selection
-        all_idx = np.zeros(
-            len(self._binned_spectrum_set.time_intervals), dtype=bool
-        )
+        all_idx = np.zeros(len(self._binned_spectrum_set.time_intervals), dtype=bool)
 
         # now we need to sum up the counts and total time
 
@@ -504,9 +487,7 @@ class BinnedSpectrumSeries(TimeSeries):
             total_time += interval.duration
 
         # sum along the time axis
-        self._counts = self._binned_spectrum_set.counts_per_bin[all_idx].sum(
-            axis=0
-        )
+        self._counts = self._binned_spectrum_set.counts_per_bin[all_idx].sum(axis=0)
 
         # the selected time intervals
 
@@ -518,9 +499,7 @@ class BinnedSpectrumSeries(TimeSeries):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!"
-                )
+                raise RuntimeError("A polynomial fit to the channels does not exist!")
 
             for chan in range(self._n_channels):
 
@@ -545,9 +524,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
             self._poly_count_err = np.array(tmp_err)
 
-        self._exposure = self._binned_spectrum_set.exposure_per_bin[
-            all_idx
-        ].sum()
+        self._exposure = self._binned_spectrum_set.exposure_per_bin[all_idx].sum()
 
         self._active_dead_time = total_time - self._exposure
 

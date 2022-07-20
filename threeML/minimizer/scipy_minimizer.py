@@ -67,10 +67,7 @@ class ScipyMinimizer(LocalMinimizer):
         """
         if algorithm not in _SUPPORTED_ALGORITHMS:
 
-            log.error(
-                "Supported algorithms are %s"
-                % (",".join(_SUPPORTED_ALGORITHMS))
-            )
+            log.error("Supported algorithms are %s" % (",".join(_SUPPORTED_ALGORITHMS)))
 
             raise AssertionError()
 

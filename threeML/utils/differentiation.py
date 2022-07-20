@@ -86,9 +86,7 @@ def _get_wrapper(function, point, minima, maxima):
 
         if scaled_point[i] == 0.0:
 
-            scaled_deltas[i] = min(
-                [1e-5, distance_to_max / 2.5, distance_to_min / 2.5]
-            )
+            scaled_deltas[i] = min([1e-5, distance_to_max / 2.5, distance_to_min / 2.5])
 
         else:
 
@@ -111,8 +109,7 @@ def _get_wrapper(function, point, minima, maxima):
         except SettingOutOfBounds:
 
             raise CannotComputeHessian(
-                "Cannot compute Hessian, parameters out of bounds at %s"
-                % scaled_back_x
+                "Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x
             )
 
         else:
@@ -171,8 +168,6 @@ def get_hessian(function, point, minima, maxima):
 
         for j in range(n_dim):
 
-            hessian_matrix[i, j] /= (
-                orders_of_magnitude[i] * orders_of_magnitude[j]
-            )
+            hessian_matrix[i, j] /= orders_of_magnitude[i] * orders_of_magnitude[j]
 
     return hessian_matrix

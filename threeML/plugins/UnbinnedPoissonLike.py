@@ -125,9 +125,7 @@ class UnbinnedPoissonLike(PluginPrototype):
             total_dt = 0
 
             if self._observation.is_multi_interval:
-                for start, stop in zip(
-                    self._observation.start, self._observation.stop
-                ):
+                for start, stop in zip(self._observation.start, self._observation.stop):
                     total_dt += stop - start
             else:
                 total_dt = self._observation.stop - self._observation.start
@@ -136,9 +134,7 @@ class UnbinnedPoissonLike(PluginPrototype):
         else:
             self._dead_corr = 1.0
 
-        super(UnbinnedPoissonLike, self).__init__(
-            name=name, nuisance_parameters={}
-        )
+        super(UnbinnedPoissonLike, self).__init__(name=name, nuisance_parameters={})
 
     def set_model(self, model: astromodels.Model) -> None:
         """
@@ -208,8 +204,7 @@ class UnbinnedPoissonLike(PluginPrototype):
 
                 raise KeyError(
                     "This plugin has been assigned to source %s, "
-                    "which does not exist in the current model"
-                    % self._source_name
+                    "which does not exist in the current model" % self._source_name
                 )
 
         # New way with simpson rule.
@@ -239,9 +234,7 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         if self._observation.is_multi_interval:
 
-            for start, stop in zip(
-                self._observation.start, self._observation.stop
-            ):
+            for start, stop in zip(self._observation.start, self._observation.stop):
 
                 n_expected_counts += self._integral_model(start, stop)
 

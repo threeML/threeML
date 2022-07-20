@@ -178,9 +178,7 @@ def test_spectrumlike_fit():
     kT_variates = jl.results.get_variates("mysource.spectrum.main.Blackbody.kT")
 
     assert np.all(
-        np.isclose(
-            [K_variates.average, kT_variates.average], [sim_K, sim_kT], atol=1
-        )
+        np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], atol=1)
     )
 
 
@@ -221,9 +219,7 @@ def test_dispersionspectrumlike_fit():
     kT_variates = jl.results.get_variates("mysource.spectrum.main.Blackbody.kT")
 
     assert np.all(
-        np.isclose(
-            [K_variates.average, kT_variates.average], [sim_K, sim_kT], atol=1
-        )
+        np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], atol=1)
     )
 
 
@@ -250,9 +246,7 @@ def test_spectrum_like_with_background_model():
         energy_max=high_edge,
     )
 
-    background_plugin = SpectrumLike.from_background(
-        "background", spectrum_generator
-    )
+    background_plugin = SpectrumLike.from_background("background", spectrum_generator)
 
     bb = Blackbody()
 
@@ -288,9 +282,7 @@ def test_spectrum_like_with_background_model():
     kT_variates = jl.results.get_variates("mysource.spectrum.main.Blackbody.kT")
 
     assert np.all(
-        np.isclose(
-            [K_variates.average, kT_variates.average], [sim_K, sim_kT], rtol=0.5
-        )
+        np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], rtol=0.5)
     )
 
     ## test with ogiplike

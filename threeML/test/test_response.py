@@ -89,9 +89,7 @@ def test_instrument_response_constructor():
 
         _ = InstrumentResponse(matrix, ebounds, mc_energies, "10-20")
 
-    rsp = InstrumentResponse(
-        matrix, ebounds, mc_energies, TimeInterval(10.0, 20.0)
-    )
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, TimeInterval(10.0, 20.0))
 
     assert rsp.rsp_filename is None
     assert rsp.arf_filename is None
@@ -204,9 +202,7 @@ def test_response_write_to_fits1():
 
     assert np.allclose(rsp_reloaded.matrix, rsp.matrix)
     assert np.allclose(rsp_reloaded.ebounds, rsp.ebounds)
-    assert np.allclose(
-        rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies
-    )
+    assert np.allclose(rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies)
 
     os.remove(temp_file)
 
@@ -227,9 +223,7 @@ def test_response_write_to_fits2():
 
     assert np.allclose(rsp_reloaded.matrix, rsp.matrix)
     assert np.allclose(rsp_reloaded.ebounds, rsp.ebounds)
-    assert np.allclose(
-        rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies
-    )
+    assert np.allclose(rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies)
 
     os.remove(temp_file)
 
@@ -252,9 +246,7 @@ def test_response_write_to_fits3():
 
     assert np.allclose(rsp_reloaded.matrix, rsp.matrix)
     assert np.allclose(rsp_reloaded.ebounds, rsp.ebounds)
-    assert np.allclose(
-        rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies
-    )
+    assert np.allclose(rsp_reloaded.monte_carlo_energies, rsp.monte_carlo_energies)
 
     os.remove(temp_file)
 
@@ -267,9 +259,7 @@ def test_response_set_constructor():
 
         # This should raise because there is no time information for the matrices
 
-        _ = InstrumentResponseSet(
-            [rsp_aw, rsp_bw], exposure_getter, counts_getter
-        )
+        _ = InstrumentResponseSet([rsp_aw, rsp_bw], exposure_getter, counts_getter)
 
     # Add the time information
 
@@ -280,18 +270,14 @@ def test_response_set_constructor():
     ) = get_matrix_set_elements_with_coverage()
 
     # This should work now
-    rsp_set = InstrumentResponseSet(
-        [rsp_a, rsp_b], exposure_getter, counts_getter
-    )
+    rsp_set = InstrumentResponseSet([rsp_a, rsp_b], exposure_getter, counts_getter)
 
     assert rsp_set[0] == rsp_a
     assert rsp_set[1] == rsp_b
 
     # Check that the constructor order the matrices by time when needed
     # This should work now
-    rsp_set = InstrumentResponseSet(
-        [rsp_b, rsp_a], exposure_getter, counts_getter
-    )
+    rsp_set = InstrumentResponseSet([rsp_b, rsp_a], exposure_getter, counts_getter)
 
     assert rsp_set[0] == rsp_a
     assert rsp_set[1] == rsp_b
@@ -312,18 +298,12 @@ def test_response_set_constructor():
     # Now test that we cannot initialize a response set with matrices which have non-contiguous coverage intervals
     matrix, mc_energies, ebounds = get_matrix_elements()
 
-    rsp_c = InstrumentResponse(
-        matrix, ebounds, mc_energies, TimeInterval(0.0, 10.0)
-    )
-    rsp_d = InstrumentResponse(
-        matrix, ebounds, mc_energies, TimeInterval(20.0, 30.0)
-    )
+    rsp_c = InstrumentResponse(matrix, ebounds, mc_energies, TimeInterval(0.0, 10.0))
+    rsp_d = InstrumentResponse(matrix, ebounds, mc_energies, TimeInterval(20.0, 30.0))
 
     with pytest.raises(RuntimeError):
 
-        _ = InstrumentResponseSet(
-            [rsp_c, rsp_d], exposure_getter, counts_getter
-        )
+        _ = InstrumentResponseSet([rsp_c, rsp_d], exposure_getter, counts_getter)
 
 
 def test_response_set_weighting():
@@ -334,9 +314,7 @@ def test_response_set_weighting():
         counts_getter,
     ) = get_matrix_set_elements_with_coverage()
 
-    rsp_set = InstrumentResponseSet(
-        [rsp_a, rsp_b], exposure_getter, counts_getter
-    )
+    rsp_set = InstrumentResponseSet([rsp_a, rsp_b], exposure_getter, counts_getter)
 
     # here we are waiting by exposure. We have:
 
@@ -368,18 +346,14 @@ def test_response_set_weighting():
 
     weighted_matrix = rsp_set.weight_by_counts("0.0 - 30.0")
 
-    assert np.allclose(
-        weighted_matrix.matrix, 0.5555555555555555 * rsp_a.matrix
-    )
+    assert np.allclose(weighted_matrix.matrix, 0.5555555555555555 * rsp_a.matrix)
 
     # Here we weight by counts in the interval 5.0 - 25.0
     # With the same math as before:
 
     weighted_matrix = rsp_set.weight_by_counts("5.0 - 25.0")
 
-    assert np.allclose(
-        weighted_matrix.matrix, 0.5625000000000001 * rsp_a.matrix
-    )
+    assert np.allclose(weighted_matrix.matrix, 0.5625000000000001 * rsp_a.matrix)
 
 
 def test_response_set_weighting_with_reference_time():
@@ -405,15 +379,11 @@ def test_response_set_weighting_with_reference_time():
 
     weighted_matrix = rsp_set.weight_by_counts("0.0 - 30.0")
 
-    assert np.allclose(
-        weighted_matrix.matrix, 0.5555555555555555 * rsp_a.matrix
-    )
+    assert np.allclose(weighted_matrix.matrix, 0.5555555555555555 * rsp_a.matrix)
 
     weighted_matrix = rsp_set.weight_by_counts("5.0 - 25.0")
 
-    assert np.allclose(
-        weighted_matrix.matrix, 0.5625000000000001 * rsp_a.matrix
-    )
+    assert np.allclose(weighted_matrix.matrix, 0.5625000000000001 * rsp_a.matrix)
 
 
 def test_response_set_weighting_with_disjoint_intervals():

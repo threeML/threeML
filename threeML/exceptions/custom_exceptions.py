@@ -115,9 +115,7 @@ class deprecated(object):
                 filename=filename,
                 lineno=lineno,
             )
-            custom_warnings.simplefilter(
-                "default", DeprecationWarning
-            )  # reset filter
+            custom_warnings.simplefilter("default", DeprecationWarning)  # reset filter
             return cls_or_func(*args, **kwargs)
 
         return new_func

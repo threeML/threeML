@@ -56,9 +56,7 @@ def test_spectrum_constructor():
     assert np.all(obs_spectrum.counts == obs_spectrum.rates)
     assert np.all(bkg_spectrum.counts == bkg_spectrum.rates)
 
-    specLike = SpectrumLike(
-        "fake", observation=obs_spectrum, background=bkg_spectrum
-    )
+    specLike = SpectrumLike("fake", observation=obs_spectrum, background=bkg_spectrum)
     specLike.set_model(model)
     specLike.get_model()
 
@@ -138,10 +136,7 @@ def addition_proof_weighted(x, y, z):
                 old_div(x.rates[3], x.rate_errors[3] ** 2)
                 + old_div(y.rates[3], y.rate_errors[3] ** 2)
             ),
-            (
-                old_div(1, x.rate_errors[3] ** 2)
-                + old_div(1, y.rate_errors[3] ** 2)
-            ),
+            (old_div(1, x.rate_errors[3] ** 2) + old_div(1, y.rate_errors[3] ** 2)),
         )
         == old_div(z.rates[3], z.exposure)
     )
@@ -158,14 +153,9 @@ def spectrum_addition(
 
     addition_proof(obs_spectrum_1, obs_spectrum_2, obs_spectrum)
 
-    assert (
-        obs_spectrum_1.exposure + obs_spectrum_2.exposure
-        == obs_spectrum.exposure
-    )
+    assert obs_spectrum_1.exposure + obs_spectrum_2.exposure == obs_spectrum.exposure
 
-    assert np.all(
-        obs_spectrum.counts == obs_spectrum.rates * obs_spectrum.exposure
-    )
+    assert np.all(obs_spectrum.counts == obs_spectrum.rates * obs_spectrum.exposure)
 
     specLike = SpectrumLike("fake", observation=obs_spectrum, background=None)
 
@@ -179,9 +169,7 @@ def spectrum_addition(
 
 def test_spectrum_addition():
     ebounds = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
-    ebounds_different = ChannelSet.from_list_of_edges(
-        np.array([0, 1, 2, 3, 4, 5])
-    )
+    ebounds_different = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
 
     obs_spectrum_1 = BinnedSpectrum(
         counts=np.ones(len(ebounds)),
@@ -223,9 +211,7 @@ def test_spectrum_addition():
 
 def test_spectrum_addition_poisson():
     ebounds = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
-    ebounds_different = ChannelSet.from_list_of_edges(
-        np.array([0, 1, 2, 3, 4, 5])
-    )
+    ebounds_different = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
 
     obs_spectrum_1 = BinnedSpectrum(
         counts=np.ones(len(ebounds)),

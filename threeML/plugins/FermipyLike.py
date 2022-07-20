@@ -70,16 +70,13 @@ def _get_unique_tag_from_configuration(configuration):
     for section, keys in keys_for_hash:
 
         if section not in configuration:
-            log.critical(
-                "Configuration lacks section %s, which is required" % section
-            )
+            log.critical("Configuration lacks section %s, which is required" % section)
 
         for key in keys:
 
             if key not in configuration[section]:
                 log.critical(
-                    "Section %s in configuration lacks key %s, which is required"
-                    % key
+                    "Section %s in configuration lacks key %s, which is required" % key
                 )
 
             string_to_hash.append("%s" % configuration[section][key])
@@ -254,9 +251,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
         gta.free_source(point_source.name, False)
 
         # This will substitute the current spectrum with a FileFunction with the same shape and flux
-        gta.set_source_spectrum(
-            point_source.name, "FileFunction", update_source=False
-        )
+        gta.set_source_spectrum(point_source.name, "FileFunction", update_source=False)
 
         # Get the energies at which to evaluate this source
         this_log_energies, _flux = gta.get_source_dnde(point_source.name)
@@ -273,9 +268,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
             # This is to make sure that all sources are evaluated at the same energies
 
             if not np.all(energies_keV == this_energies_keV):
-                log.critical(
-                    "All sources should be evaluated at the same energies."
-                )
+                log.critical("All sources should be evaluated at the same energies.")
 
         dnde = point_source(energies_keV)  # ph / (cm2 s keV)
         dnde_per_MeV = np.maximum(dnde * 1000.0, 1e-300)  # ph / (cm2 s MeV)
@@ -309,9 +302,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
             # This is to make sure that all sources are evaluated at the same energies
 
             if not np.all(energies_keV == this_energies_keV):
-                log.critical(
-                    "All sources should be evaluated at the same energies."
-                )
+                log.critical("All sources should be evaluated at the same energies.")
 
         dnde = extended_source.get_spatially_integrated_flux(
             energies_keV
@@ -361,9 +352,7 @@ class FermipyLike(PluginPrototype):
 
         nuisance_parameters = {}
 
-        super(FermipyLike, self).__init__(
-            name, nuisance_parameters=nuisance_parameters
-        )
+        super(FermipyLike, self).__init__(name, nuisance_parameters=nuisance_parameters)
 
         # Check whether the provided configuration is a file
 
@@ -420,9 +409,7 @@ class FermipyLike(PluginPrototype):
 
             # Sanitize file name, as fermipy is not very good at handling relative paths or env. variables
 
-            filename = str(
-                sanitize_filename(self._configuration["data"][datum], True)
-            )
+            filename = str(sanitize_filename(self._configuration["data"][datum], True))
 
             self._configuration["data"][datum] = filename
 
@@ -492,13 +479,11 @@ class FermipyLike(PluginPrototype):
 
         if not ((0 <= ra) and (ra <= 360)):
             log.critical(
-                "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0"
-                % ra
+                "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
             )
         if not ((-90 <= dec) and (dec <= 90)):
             log.critical(
-                "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0"
-                % dec
+                "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
             )
 
         basic_config["selection"]["ra"] = ra
@@ -601,18 +586,14 @@ class FermipyLike(PluginPrototype):
             ):
 
                 model_pos = point_source.position.sky_coord
-                fermipy_pos = self._gta.roi.get_source_by_name(
-                    point_source.name
-                ).skydir
+                fermipy_pos = self._gta.roi.get_source_by_name(point_source.name).skydir
 
                 if model_pos.separation(fermipy_pos).to("degree").value > delta:
                     # modeled after how this is done in fermipy
                     # (cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)
                     temp_source = self._gta.delete_source(point_source.name)
                     temp_source.set_position(model_pos)
-                    self._gta.add_source(
-                        point_source.name, temp_source, free=False
-                    )
+                    self._gta.add_source(point_source.name, temp_source, free=False)
                     self._gta.free_source(point_source.name, False)
                     self._gta.set_source_spectrum(
                         point_source.name,
@@ -643,9 +624,7 @@ class FermipyLike(PluginPrototype):
             theShape = extended_source.spatial_shape
             if theShape.has_free_parameters or force_update:
 
-                fermipySource = self._gta.roi.get_source_by_name(
-                    extended_source.name
-                )
+                fermipySource = self._gta.roi.get_source_by_name(extended_source.name)
                 fermipyPars = [
                     fermipySource["ra"],
                     fermipySource["dec"],
@@ -661,15 +640,13 @@ class FermipyLike(PluginPrototype):
                     ]
                     if not np.allclose(fermipyPars, amPars, 1e-10):
 
-                        temp_source = self._gta.delete_source(
-                            extended_source.name
-                        )
+                        temp_source = self._gta.delete_source(extended_source.name)
                         temp_source.set_spatial_model(
                             "RadialDisk",
                             {
-                                'ra': theShape.lon0.value,
-                                'dec': theShape.lat0.value,
-                                'SpatialWidth': theShape.radius.value,
+                                "ra": theShape.lon0.value,
+                                "dec": theShape.lat0.value,
+                                "SpatialWidth": theShape.radius.value,
                             },
                         )
                         # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.
@@ -692,15 +669,13 @@ class FermipyLike(PluginPrototype):
                     ]
                     if not np.allclose(fermipyPars, amPars, 1e-10):
 
-                        temp_source = self._gta.delete_source(
-                            extended_source.name
-                        )
+                        temp_source = self._gta.delete_source(extended_source.name)
                         temp_source.set_spatial_model(
                             "RadialGaussian",
                             {
-                                'ra': theShape.lon0.value,
-                                'dec': theShape.lat0.value,
-                                'SpatialWidth': 1.36 * theShape.sigma.value,
+                                "ra": theShape.lon0.value,
+                                "dec": theShape.lat0.value,
+                                "SpatialWidth": 1.36 * theShape.sigma.value,
                             },
                         )
                         # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.

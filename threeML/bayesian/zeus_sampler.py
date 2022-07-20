@@ -161,15 +161,11 @@ class ZeusSampler(MCMCSampler):
             # Sample the burn-in
             if not using_mpi:
                 log.debug("Start zeus run")
-                _ = sampler.run(
-                    p0, self._n_iterations + self._n_burn_in, progress=loud
-                )
+                _ = sampler.run(p0, self._n_iterations + self._n_burn_in, progress=loud)
                 log.debug("Zeus run done")
 
         self._sampler = sampler
-        self._raw_samples = sampler.get_chain(
-            flat=True, discard=self._n_burn_in
-        )
+        self._raw_samples = sampler.get_chain(flat=True, discard=self._n_burn_in)
 
         # Compute the corresponding values of the likelihood
 

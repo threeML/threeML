@@ -160,9 +160,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
         Sets the model parameters to the mean of the marginal distributions
         """
         idx = self._log_probability_values.argmax()
-        for i, (parameter_name, parameter) in enumerate(
-            self._free_parameters.items()
-        ):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
             par = self._samples[parameter_name][idx]
 
@@ -177,9 +175,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         self._samples = collections.OrderedDict()
 
-        for i, (parameter_name, parameter) in enumerate(
-            self._free_parameters.items()
-        ):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             # Add the samples for this parameter for this source
 
             self._samples[parameter_name] = self._raw_samples[:, i]
@@ -291,9 +287,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         # with use_
 
-        for i, (parameter_name, parameter) in enumerate(
-            self._free_parameters.items()
-        ):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
             prior_value = parameter.prior(trial_values[i])
 
@@ -321,9 +315,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         log_prior = 0
 
-        for i, (parameter_name, parameter) in enumerate(
-            self._free_parameters.items()
-        ):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
             prior_value = parameter.prior(trial_values[i])
 
@@ -417,9 +409,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
                 for key in keys
             ]
 
-            log.warning(
-                f"Likelihood value is infinite for parameters: {params}"
-            )
+            log.warning(f"Likelihood value is infinite for parameters: {params}")
 
             return -np.inf
 
@@ -455,9 +445,7 @@ class MCMCSampler(SamplerBase):
 class UnitCubeSampler(SamplerBase):
     def __init__(self, likelihood_model, data_list, **kwargs):
 
-        super(UnitCubeSampler, self).__init__(
-            likelihood_model, data_list, **kwargs
-        )
+        super(UnitCubeSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def _construct_unitcube_posterior(self, return_copy=False):
         """

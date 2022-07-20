@@ -80,9 +80,7 @@ def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
 
     powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
 
-    res = jl.get_contours(
-        powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30
-    )
+    res = jl.get_contours(powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30)
 
     exp_p1, exp_p2 = (
         np.array(
@@ -186,9 +184,7 @@ def test_basic_analsis_multicomp_results(
 
     jl.restore_best_fit()
 
-    expected = np.array(
-        [1.88098173e00, -1.20057690e00, 6.50915964e-06, 4.35643006e01]
-    )
+    expected = np.array([1.88098173e00, -1.20057690e00, 6.50915964e-06, 4.35643006e01])
 
     assert np.allclose(fit_results["value"].values, expected, rtol=0.1)
 
@@ -307,18 +303,18 @@ def test_gbm_workflow():
 
 def test_uncertainty_formatter():
 
-    assert '1.0 -2.0 +1.0' == uncertainty_formatter(1, -1, 2)
+    assert "1.0 -2.0 +1.0" == uncertainty_formatter(1, -1, 2)
 
-    assert '(1.0 +/- 1.0) x 10^3' == uncertainty_formatter(1e3, -1, 2)
+    assert "(1.0 +/- 1.0) x 10^3" == uncertainty_formatter(1e3, -1, 2)
 
-    assert '1.0 -2.0 +0' == uncertainty_formatter(1, -1, np.nan)
+    assert "1.0 -2.0 +0" == uncertainty_formatter(1, -1, np.nan)
 
-    assert '1.0 +0 +1.0' == uncertainty_formatter(1, np.nan, 2)
+    assert "1.0 +0 +1.0" == uncertainty_formatter(1, np.nan, 2)
 
-    assert '1.0 +/- 0' == uncertainty_formatter(1, np.nan, np.nan)
+    assert "1.0 +/- 0" == uncertainty_formatter(1, np.nan, np.nan)
 
-    assert '1.0 -2.0 +inf' == uncertainty_formatter(1, -1, np.inf)
+    assert "1.0 -2.0 +inf" == uncertainty_formatter(1, -1, np.inf)
 
-    assert '1.0 +inf +1.0' == uncertainty_formatter(1, np.inf, 2)
+    assert "1.0 +inf +1.0" == uncertainty_formatter(1, np.inf, 2)
 
-    assert '1.0 +/- inf' == uncertainty_formatter(1, np.inf, np.inf)
+    assert "1.0 +/- inf" == uncertainty_formatter(1, np.inf, np.inf)

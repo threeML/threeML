@@ -79,7 +79,7 @@ _uid_fits_keyword = "QUERYUID"
 def merge_LAT_data(
     ft1s,
     destination_directory: str = ".",
-    outfile: str = 'ft1_merged.fits',
+    outfile: str = "ft1_merged.fits",
     Emin: float = 30.0,
     Emax: float = 1e6,
 ) -> Path:
@@ -96,7 +96,7 @@ def merge_LAT_data(
 
     if len(ft1s) == 1:
 
-        log.warning('Only one FT1 file provided. Skipping the merge...')
+        log.warning("Only one FT1 file provided. Skipping the merge...")
         import shutil
 
         os.rename(ft1s[0], outfile)
@@ -106,27 +106,27 @@ def merge_LAT_data(
 
     infile: Path = Path(destination_directory) / _filelist
 
-    infile_list = infile.open('w')
+    infile_list = infile.open("w")
 
     for ft1 in ft1s:
-        infile_list.write(str(ft1) + '\n')
+        infile_list.write(str(ft1) + "\n")
 
     infile_list.close()
 
     from GtApp import GtApp
 
-    gtselect = GtApp('gtselect')
+    gtselect = GtApp("gtselect")
 
-    gtselect['infile'] = '@' + str(infile)
-    gtselect['outfile'] = str(outfile)
-    gtselect['ra'] = 'INDEF'
-    gtselect['dec'] = 'INDEF'
-    gtselect['rad'] = 'INDEF'
-    gtselect['tmin'] = 'INDEF'
-    gtselect['tmax'] = 'INDEF'
-    gtselect['emin'] = '%.3f' % Emin
-    gtselect['emax'] = '%.3f' % Emax
-    gtselect['zmax'] = 180
+    gtselect["infile"] = "@" + str(infile)
+    gtselect["outfile"] = str(outfile)
+    gtselect["ra"] = "INDEF"
+    gtselect["dec"] = "INDEF"
+    gtselect["rad"] = "INDEF"
+    gtselect["tmin"] = "INDEF"
+    gtselect["tmax"] = "INDEF"
+    gtselect["emin"] = "%.3f" % Emin
+    gtselect["emax"] = "%.3f" % Emax
+    gtselect["zmax"] = 180
     gtselect.run()
     return outfile
 
@@ -227,9 +227,7 @@ def download_LAT_data(
         raise ValueError()
 
     # create output directory if it does not exists
-    destination_directory = sanitize_filename(
-        destination_directory, abspath=True
-    )
+    destination_directory = sanitize_filename(destination_directory, abspath=True)
 
     if not destination_directory.exists():
 
@@ -350,9 +348,7 @@ def download_LAT_data(
 
     # Get the form compiled
     try:
-        urllib.request.urlretrieve(
-            url, temporaryFileName, lambda x, y, z: 0, postData
-        )
+        urllib.request.urlretrieve(url, temporaryFileName, lambda x, y, z: 0, postData)
     except socket.timeout:
 
         log.error(
@@ -441,9 +437,7 @@ def download_LAT_data(
     # Now periodically check if the query is complete
 
     startTime = time.time()
-    timeout = max(
-        1.5 * max(5.0, float(estimated_time_for_the_query)), 120
-    )  # Seconds
+    timeout = max(1.5 * max(5.0, float(estimated_time_for_the_query)), 120)  # Seconds
     refreshTime = min(float(estimated_time_for_the_query) / 2.0, 5.0)  # Seconds
 
     # precompile Url regular expression
@@ -615,23 +609,21 @@ class LAT_dataset:
         if tstop > metdate:
             assert "Stop time must bge relative to triggertime"
 
-        grb_name = met2date(trigger_time, opt='grbname')
+        grb_name = met2date(trigger_time, opt="grbname")
 
-        destination_directory = os.path.join(
-            destination_directory, 'bn%s' % grb_name
-        )
+        destination_directory = os.path.join(destination_directory, "bn%s" % grb_name)
 
         new_ft1 = os.path.join(
-            destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft1', grb_name)
+            destination_directory, "gll_%s_tr_bn%s_v00.fit" % ("ft1", grb_name)
         )
 
         new_ft2 = os.path.join(
-            destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft2', grb_name)
+            destination_directory, "gll_%s_tr_bn%s_v00.fit" % ("ft2", grb_name)
         )
 
         eboundsFilename = os.path.join(
             destination_directory,
-            "gll_%s_tr_bn%s_v00.rsp" % ('cspec', grb_name),
+            "gll_%s_tr_bn%s_v00.rsp" % ("cspec", grb_name),
         )
 
         if (
@@ -645,7 +637,7 @@ class LAT_dataset:
                 radius,
                 trigger_time + tstart,
                 trigger_time + tstop,
-                time_type='MET',
+                time_type="MET",
                 data_type=data_type,
                 destination_directory=destination_directory,
                 Emin=Emin,
@@ -675,7 +667,7 @@ class LAT_dataset:
         self.rspfile = eboundsFilename
         pass
 
-    def extract_events(self, roi, zmax, irf, thetamax=180.0, strategy='time'):
+    def extract_events(self, roi, zmax, irf, thetamax=180.0, strategy="time"):
         from GtBurst import dataHandling
 
         global lastDisplay
@@ -696,4 +688,4 @@ class LAT_dataset:
             True,
             strategy=strategy.lower(),
         )
-        log.info('Extracted %s events' % nEvents)
+        log.info("Extracted %s events" % nEvents)

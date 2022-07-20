@@ -191,10 +191,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
             source_names.append(this_name)
 
-            if (
-                "extended_source_name" in row
-                and row["extended_source_name"] != ""
-            ):
+            if "extended_source_name" in row and row["extended_source_name"] != "":
 
                 if "spatial_function" in row:
 
@@ -208,15 +205,11 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
                         "Source %s is extended, but morphology information is unavailable. "
                         "I will provide a point source instead" % name
                     )
-                    this_source = _get_point_source_from_fgl(
-                        this_name, row, fix=True
-                    )
+                    this_source = _get_point_source_from_fgl(this_name, row, fix=True)
 
             else:
 
-                this_source = _get_point_source_from_fgl(
-                    this_name, row, fix=True
-                )
+                this_source = _get_point_source_from_fgl(this_name, row, fix=True)
 
             sources.append(this_source)
 
@@ -247,9 +240,7 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
 
             except Exception:
 
-                log.error(
-                    f"Catalog {self._catalog_name} not available in fermipy"
-                )
+                log.error(f"Catalog {self._catalog_name} not available in fermipy")
 
             self._astropy_table = self._fermipy_catalog.table
 
@@ -263,9 +254,9 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
                     self._astropy_table.remove_column(column)
 
             # remove duplicate columns
-            if "Extended" in list(
+            if "Extended" in list(self._astropy_table.columns) and "extended" in list(
                 self._astropy_table.columns
-            ) and "extended" in list(self._astropy_table.columns):
+            ):
                 self._astropy_table.remove_column("Extended")
 
             self._astropy_table.convert_bytestring_to_unicode()

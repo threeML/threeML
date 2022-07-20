@@ -50,9 +50,7 @@ def test_download_GBM_data():
 
     with pytest.raises(TypeError):
 
-        download_GBM_trigger_data(
-            trigger_name=80916009, destination_directory=temp_dir
-        )
+        download_GBM_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
 
     with pytest.raises(NameError):
 

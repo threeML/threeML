@@ -41,9 +41,7 @@ def download_LLE_trigger_data(trigger_name, destination_directory="."):
     sanitized_trigger_name_ = _validate_fermi_trigger_name(trigger_name)
 
     # create output directory if it does not exists
-    destination_directory = sanitize_filename(
-        destination_directory, abspath=True
-    )
+    destination_directory = sanitize_filename(destination_directory, abspath=True)
     if_directory_not_existing_then_make(destination_directory)
 
     # Figure out the directory on the server

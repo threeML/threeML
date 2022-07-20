@@ -83,15 +83,8 @@ class ResidualPlot(object):
 
             if self._show_residuals:
 
-                self._fig, (
-                    self._data_axis,
-                    self._residual_axis,
-                ) = plt.subplots(
-                    2,
-                    1,
-                    sharex=True,
-                    gridspec_kw={"height_ratios": [2, 1]},
-                    **kwargs
+                self._fig, (self._data_axis, self._residual_axis,) = plt.subplots(
+                    2, 1, sharex=True, gridspec_kw={"height_ratios": [2, 1]}, **kwargs
                 )
 
             else:
@@ -196,9 +189,7 @@ class ResidualPlot(object):
         # if we want to show the data
 
         if show_data:
-            self._data_axis.errorbar(
-                x, y, yerr=yerr, xerr=xerr, label=label, **kwargs
-            )
+            self._data_axis.errorbar(x, y, yerr=yerr, xerr=xerr, label=label, **kwargs)
 
         # if we want to show the residuals
 
@@ -220,9 +211,7 @@ class ResidualPlot(object):
 
             residuals[idx] = 0.0
 
-            self._residual_axis.errorbar(
-                x, residuals, yerr=residual_yerr, **kwargs
-            )
+            self._residual_axis.errorbar(x, residuals, yerr=residual_yerr, **kwargs)
 
     def finalize(
         self,
