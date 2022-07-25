@@ -258,7 +258,10 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
                 "raj2000":        "ra",
                 "dej2000":        "dec",
                 "source_name":    "name",
-                "plec_expfactor": "plec_exp_factor"
+                "plec_expfactor": "plec_exp_factor",
+                "plec_indexs": "plec_index_s",
+                "plec_expfactors" :"plec_exp_factor_s"
+                
             }
                   
             self._vo_dataframe.rename(columns = rename_dict, inplace=True)

@@ -132,7 +132,8 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
         this_spectrum.xc.fix = fix
 
-    elif spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2"]:
+    #'plec_index_s' not in catalog_entry.keys() and
+    elif spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2", "PLSuperExpCutoff4" ]:
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
@@ -179,6 +180,29 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K.value * 1000,
         )
         this_spectrum.xc.fix = fix
+
+    elif ('plec_index_s' in catalog_entry.keys() ) or (spectrum_type == "PLSuperExpCutoff4"):
+
+        this_spectrum = Super_cutoff_powerlaw_fermi()
+
+        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
+        this_spectrum.IndexS = float(catalog_entry["plec_index_s"]) * -1
+        this_spectrum.IndexS.fix = fix
+        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+        this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
+            u.cm ** 2 * u.s * u.MeV
+        )
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (
+            this_spectrum.K.value / 1000.0,
+            this_spectrum.K.value * 1000,
+        )
+        this_spectrum.ExpfactorS = float(catalog_entry["plec_exp_factor_s"])
+        this_spectrum.ExpfactorS.fix = fix
+
+        this_spectrum.Index2 = float(catalog_entry["plec_exp_index"])
+        this_spectrum.Index2.fix = fix
 
     else:
 
@@ -329,6 +353,29 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K.value * 1000,
         )
         this_spectrum.xc.fix = fix
+
+    elif spectrum_type == "PLSuperExpCutoff4":
+
+        this_spectrum = Super_cutoff_powerlaw_fermi()
+
+        this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
+
+        this_spectrum.IndexS = float(catalog_entry["plec_indexs"]) * -1
+        this_spectrum.IndexS.fix = fix
+        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+        this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
+            u.cm ** 2 * u.s * u.MeV
+        )
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (
+            this_spectrum.K.value / 1000.0,
+            this_spectrum.K.value * 1000,
+        )
+        this_spectrum.ExpfactorS = float(catalog_entry["plec_expfactors"])
+        this_spectrum.ExpfactorS.fix = fix
+
+        this_spectrum.Index2 = float(catalog_entry["plec_exp_index"])
+        this_spectrum.Index2.fix = fix
 
     else:
         log.error(  "Spectrum type %s is not a valid 4FGL type" % spectrum_type )
