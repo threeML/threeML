@@ -203,16 +203,14 @@ class ResidualPlot(object):
 
             idx = np.isinf(residuals)
 
-            residuals[idx] = 0.
+            residuals[idx] = 0.0
 
+            idx = np.isnan(residuals)
+
+            residuals[idx] = 0.0
 
             self._residual_axis.axhline(0, linestyle="--", color="k")
 
-            idx = np.isinf(residuals)
-
-            residuals[idx] = 0.
-
-            
             self._residual_axis.errorbar(x, residuals, yerr=residual_yerr, **kwargs)
 
     def finalize(
