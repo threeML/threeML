@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Optional
 
-from astromodels.utils.file_utils import _get_data_file_path
+from astromodels import astromodels_config
 from astromodels.utils.logging import (LogFilter, _console_formatter,
                                        _dev_formatter, _usr_formatter,
                                        astromodels_console_log_handler,
@@ -72,7 +72,29 @@ threeML_usr_log_handler.setFormatter(_usr_formatter)
 
 # now set up the console logger
 
-mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
+_theme = {}
+
+# Banner
+_theme["h1"] = "deep_sky_blue3"
+_theme["status.spinner"] = "cyan2"
+_theme["status.text"] = "deep_sky_blue4"
+_theme["repr.filename"] = "blue"
+_theme["repr.number"] = "white"
+_theme["repr.path"] = "grey37"
+_theme["repr.str"] = "grey37"
+_theme["repr.tag_name"] = "white"
+_theme["repr.url"] = "not bold not italic underline grey84"
+_theme["log.time"] = "green1"
+_theme["log.message"] = f"{astromodels_config.logging.message_style}"
+_theme["logging.level.debug"] = f"{astromodels_config.logging.debug_style}"
+_theme["logging.level.error"] = f"{astromodels_config.logging.error_style}"
+_theme["logging.level.info"] = f"{astromodels_config.logging.info_style}"
+_theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
+
+
+
+#mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
+mytheme = Theme(_theme)
 console = Console(theme=mytheme)
 
 
