@@ -590,7 +590,7 @@ class OGIPResponse(InstrumentResponse):
         f_chan_column_pos = data.columns.names.index("F_CHAN") + 1
 
         try:
-            tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
+            tlmin_fchan = int(header[f"TLMIN{f_chan_column_pos}"])
 
         except (KeyError):
             log.warning(
