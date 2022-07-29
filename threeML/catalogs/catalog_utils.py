@@ -79,33 +79,48 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum = Powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
 
-        this_spectrum.index = float(catalog_entry["pl_index"]) * -1
+        if "pl_index" in catalog_entry:
+            this_spectrum.index = float(catalog_entry["pl_index"]) * -1
+            this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
+                u.cm ** 2 * u.s * u.MeV
+            )
+        else:
+            this_spectrum.index = float(catalog_entry["dnde_index"]) * -1
+            this_spectrum.K = float(catalog_entry["dnde"]) / (
+                u.cm ** 2 * u.s * u.MeV
+            )
         this_spectrum.index.fix = fix
-        this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
-        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
 
     elif spectrum_type == "LogParabola":
 
         this_spectrum = Log_parabola()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-
-        this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
-        this_spectrum.alpha.fix = fix
-        this_spectrum.beta = float(catalog_entry["lp_beta"])
-        this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
+        
+        if "lp_index" in catalog_entry:
+            this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
+            this_spectrum.beta = float(catalog_entry["lp_beta"])
+            this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
+                u.cm ** 2 * u.s * u.MeV
+            )
+        
+        else:
+            K = float(catalog_entry["dnde"])
+            this_spectrum.K.bounds = (K / 1000.0, K * 1000)
+            this_spectrum.alpha = float(catalog_entry["dnde_index"]) * -1
+            this_spectrum.beta = float(catalog_entry["beta"])
+            this_spectrum.K = K / (u.cm ** 2 * u.s * u.MeV)
+        
+        this_spectrum.alpha.fix = fix
+        this_spectrum.beta.fix = fix
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
@@ -118,27 +133,37 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
 
-        this_spectrum.index = float(catalog_entry["plec_index"]) * -1
-        this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
+
+        if "plec_index" in catalog_entry:
+            this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+            this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
+                u.cm ** 2 * u.s * u.MeV
+            )
+        else:
+            this_spectrum.index = float(catalog_entry["dnde_index"]) * -1
+            this_spectrum.K = float(catalog_entry["dnde"]) / (
+                u.cm ** 2 * u.s * u.MeV
+            )
+        
+        this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
+
+        this_spectrum.index.fix = fix
         this_spectrum.K.fix = fix
+        this_spectrum.xc.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
-        this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
-        this_spectrum.xc.fix = fix
-
-    elif spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2"]:
+        
+    elif spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2", "PLSuperExpCutoff4" ]:
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
         # new parameterization 4FGLDR3:
         if ('plec_index_s' in catalog_entry.keys()):
             d  = float(catalog_entry["plec_exp_factor_s"])
@@ -148,30 +173,34 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
             conv = numpy.exp(d/b ** 2)
             this_spectrum.index =  d/b - Gs
-            this_spectrum.index.fix = fix
             this_spectrum.gamma = d/b
-            this_spectrum.gamma.fix = fix
             this_spectrum.piv = E0
             this_spectrum.K = (
                 conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
             )
             this_spectrum.xc =  E0
         else:
-            # OLD parameterization 4FGL which is in fermipy:
-            a = float(catalog_entry["plec_exp_factor"])
-            E0 = float(catalog_entry["pivot_energy"])
-            b = float(catalog_entry["plec_exp_index"])
+            if "plec_exp_factor" in catalog_entry:
+                # OLD parameterization 4FGL which is in fermipy:
+                a = float(catalog_entry["plec_exp_factor"])
+                E0 = float(catalog_entry["pivot_energy"])
+                b = float(catalog_entry["plec_exp_index"])
+                K = float(catalog_entry["plec_flux_density"])
+                i = float(catalog_entry["plec_index"])
+            else:
+                a = float(catalog_entry["expfactor"])
+                E0 = float(catalog_entry["pivot_energy"])
+                b = float(catalog_entry["exp_index"])
+                K = float(catalog_entry["dnde"])
+                i = float(catalog_entry["dnde_index"])
 
             conv = numpy.exp(a * E0 ** b)
-            this_spectrum.index = float(catalog_entry["plec_index"]) * -1
-            this_spectrum.index.fix = fix
+            this_spectrum.index = i * -1
             this_spectrum.gamma = b
-            this_spectrum.gamma.fix = fix
             this_spectrum.piv = E0 * u.MeV
-            this_spectrum.K = (
-                    conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
-            )
+            this_spectrum.K = ( conv * K / (u.cm ** 2 * u.s * u.MeV))
             this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
+    
 
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -179,6 +208,8 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K.value * 1000,
         )
         this_spectrum.xc.fix = fix
+        this_spectrum.index.fix = fix
+        this_spectrum.gamma.fix = fix
 
     else:
 
