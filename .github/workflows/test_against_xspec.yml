@@ -322,6 +322,19 @@ jobs:
             with:
               python-version: 3.8
 
+          - name: Add conda ${{ matrix.python-version }} to system path
+            uses: conda-incubator/setup-miniconda@v2
+            with:
+                  activate-environment: "test_env"
+                  auto-activate-base: false
+                  mamba-version: "*"
+                  architecture: "x64"
+                  #conda-build-version: "*"
+                  python-version: ${{ matrix.python-version }}
+                  auto-update-conda: true
+                  channels: conda-forge, threeml, fermi, defaults
+                  use-only-tar-bz2: true
+
           - name: Cache XPSEC
             uses: actions/cache@v2
             id: cache-xspec
@@ -386,24 +399,19 @@ jobs:
               rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
               fi
 
+
+
+
           - name: Checkout
             uses: actions/checkout@v2
           - name: Install dependencies
+            shell: bash -l {0}
             run: |
               export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
               echo "loading xspec from " $HEADAS;
               source ${HEADAS}/headas-init.sh;
-              python -c 'import xspec' || true;
 
-              python -m pip install --upgrade pip wheel
-              python -m pip install numpy numba
-
-              git clone https://github.com/threeML/astromodels
-              cd astromodels
-              git checkout dev
-              python setup.py install
-
-              cd ..
+              conda install -c conda-forge -c threeml astromodels
 
               pip install --upgrade flake8 coverage pytest-cov cython
               pip install -e .
@@ -412,6 +420,7 @@ jobs:
 
 
           - name: Test xspec
+            shell: bash -l {0}
             run: |
               export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
               echo "loading xspec from " $HEADAS;
