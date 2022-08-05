@@ -1,11 +1,9 @@
 import logging
 import logging.handlers as handlers
-import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Optional
 
-from astromodels.utils.file_utils import _get_data_file_path
+from astromodels import astromodels_config
 from astromodels.utils.logging import (
     LogFilter,
     _console_formatter,
@@ -18,6 +16,7 @@ from astromodels.utils.logging import (
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
+
 from threeML.config.config import threeML_config
 
 # set up the console logging
@@ -44,7 +43,9 @@ def get_path_of_log_file(log_file: str) -> Path:
     """
     returns the path of the log files
     """
-    assert log_file in _log_file_names, f"{log_file} is not one of {_log_file_names}"
+    assert (
+        log_file in _log_file_names
+    ), f"{log_file} is not one of {_log_file_names}"
 
     return get_path_of_log_dir() / log_file
 
@@ -75,8 +76,28 @@ threeML_usr_log_handler.setLevel(logging.INFO)
 threeML_usr_log_handler.setFormatter(_usr_formatter)
 
 # now set up the console logger
+_theme = {}
 
-mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
+# Banner
+_theme["h1"] = "deep_sky_blue3"
+_theme["status.spinner"] = "cyan2"
+_theme["status.text"] = "deep_sky_blue4"
+_theme["repr.filename"] = "blue"
+_theme["repr.number"] = "white"
+_theme["repr.path"] = "grey37"
+_theme["repr.str"] = "grey37"
+_theme["repr.tag_name"] = "white"
+_theme["repr.url"] = "not bold not italic underline grey84"
+_theme["log.time"] = "green1"
+_theme["log.message"] = f"{astromodels_config.logging.message_style}"
+_theme["logging.level.debug"] = f"{astromodels_config.logging.debug_style}"
+_theme["logging.level.error"] = f"{astromodels_config.logging.error_style}"
+_theme["logging.level.info"] = f"{astromodels_config.logging.info_style}"
+_theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
+
+
+mytheme = Theme(_theme)
+
 console = Console(theme=mytheme)
 
 
@@ -121,9 +142,13 @@ class LoggingState(object):
         # store their current states
 
         self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
-        self.threeML_console_log_handler_state = threeML_console_log_handler.level
+        self.threeML_console_log_handler_state = (
+            threeML_console_log_handler.level
+        )
 
-        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
+        self.astromodels_usr_log_handler_state = (
+            astromodels_usr_log_handler.level
+        )
         self.astromodels_console_log_handler_state = (
             astromodels_console_log_handler.level
         )
@@ -131,16 +156,22 @@ class LoggingState(object):
     def _store_state(self):
 
         self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
-        self.threeML_console_log_handler_state = threeML_console_log_handler.level
+        self.threeML_console_log_handler_state = (
+            threeML_console_log_handler.level
+        )
 
-        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
+        self.astromodels_usr_log_handler_state = (
+            astromodels_usr_log_handler.level
+        )
         self.astromodels_console_log_handler_state = (
             astromodels_console_log_handler.level
         )
 
     def restore_last_state(self):
 
-        self.threeML_usr_log_handler.setLevel(self.threeML_usr_log_handler_state)
+        self.threeML_usr_log_handler.setLevel(
+            self.threeML_usr_log_handler_state
+        )
         self.threeML_console_log_handler.setLevel(
             self.threeML_console_log_handler_state
         )
