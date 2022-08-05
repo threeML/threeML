@@ -3529,7 +3529,6 @@ class SpectrumLike(PluginPrototype):
         step: bool = True,
         show_data: bool = True,
         show_residuals: bool = True,
-        show_model: bool = True,
         ratio_residuals: bool = False,
         show_legend: bool = True,
         min_rate: Union[int, float] = 1e-99,
