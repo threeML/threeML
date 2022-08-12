@@ -239,8 +239,8 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
             self._astropy_table = self._fermipy_catalog.table
 
             #Stupid but necessary: Remove catalog values if we're reading in a pre-fit ROI.
-            catalog_columns = ["GLAT", "GLON", "RAJ2000", "DEJ2000", "Pivot_Energy"]
-            prefit_columns = ["glat", "glon", "ra", "dec", "pivot_energy"]
+            catalog_columns = ["GLAT", "GLON", "RAJ2000", "DEJ2000"]
+            prefit_columns = ["glat", "glon", "ra", "dec"]
             for col1, col2 in zip( catalog_columns, prefit_columns):
                 if col1 in list(self._astropy_table.columns) and col2 in list(self._astropy_table.columns):
                     self._astropy_table.remove_column(col1)
@@ -255,6 +255,11 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
             
             self._astropy_table.convert_bytestring_to_unicode()
             self._vo_dataframe = self._astropy_table.to_pandas()
+
+            
+            if ("Pivot_Energy" in self._astropy_table.columns) and ("pivot_energy" in self._astropy_table.columns):
+                self._vo_dataframe.rename(columns = {"Pivot_Energy":"pivot_energy_catalog"}, inplace=True)
+
             self._vo_dataframe.rename(columns = str.lower, inplace=True)
 
             rename_dict = {
@@ -263,7 +268,7 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
                 "dej2000":        "dec",
                 "name":    "name_fermipy",
                 "source_name":    "name",
-                "plec_expfactor": "plec_exp_factor"
+                "plec_expfactor": "plec_exp_factor",
             }
                   
             self._vo_dataframe.rename(columns = rename_dict, inplace=True)
