@@ -121,7 +121,13 @@ class OGIPLike(DispersionSpectrumLike):
 
             log.debug(f"{name} has no bkg set")
 
+
+
             background = pha.background_file
+
+            if background is not None:
+
+                log.warning(f"Using background from FIT header: {background}")
 
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
 

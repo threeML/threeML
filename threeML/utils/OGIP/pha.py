@@ -1,13 +1,10 @@
-import os
-import warnings
-from builtins import object
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Optional
 
 import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np
-
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
@@ -16,7 +13,7 @@ from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 log = setup_logger(__name__)
 
 
-class PHAWrite(object):
+class PHAWrite:
     def __init__(self, *ogiplike):
         """
         This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as
