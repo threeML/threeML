@@ -76,6 +76,7 @@ threeML_usr_log_handler.setLevel(logging.INFO)
 threeML_usr_log_handler.setFormatter(_usr_formatter)
 
 # now set up the console logger
+
 _theme = {}
 
 # Banner
@@ -97,7 +98,6 @@ _theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
 
 
 mytheme = Theme(_theme)
-
 console = Console(theme=mytheme)
 
 
