@@ -21,7 +21,19 @@ def get_path_of_data_file(data_file) -> Path:
         "threeML", "data/%s" % data_file
     )
 
-    return Path(file_path)
+    p: Path = Path(file_path)
+
+    if p.is_file():
+
+        return p
+
+    else:
+
+        raise RuntimeError(
+            f" the file {data_file} is not in the threeml/data directory "
+            "it is possible you are using this function incorrectly "
+            "as it is only meant for internal files"
+        )
 
 
 def get_path_of_data_dir() -> Path:
