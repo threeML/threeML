@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
-from threeML.io.logging import invalid_plugin_name, setup_logger
+from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.XYLike import XYLike
@@ -72,7 +72,6 @@ class OGIPLike(DispersionSpectrumLike):
 
         """
 
-
         # Read the pha file (or the PHAContainer instance)
 
         for t in _valid_obs_types:
@@ -121,8 +120,6 @@ class OGIPLike(DispersionSpectrumLike):
 
             log.debug(f"{name} has no bkg set")
 
-
-
             background = pha.background_file
 
             if background is not None:
@@ -168,8 +165,10 @@ class OGIPLike(DispersionSpectrumLike):
             name=name, observation=pha, background=bak, verbose=verbose
         )
 
-    def get_simulated_dataset(self, new_name: str = None, **kwargs):
-        # type: (str, dict) -> OGIPLike
+    def get_simulated_dataset(
+        self, new_name: Optional[str] = None, **kwargs
+    ) -> "OGIPLike":
+
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
