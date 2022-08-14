@@ -3,8 +3,6 @@ from pathlib import Path
 
 import pkg_resources
 
-_custom_config_path = os.environ.get("THREEML_CONFIG")
-
 
 def get_path_of_data_file(data_file) -> Path:
     """
@@ -67,11 +65,13 @@ def get_path_of_user_dir() -> Path:
 
 def get_path_of_user_config() -> Path:
 
-    if _custom_config_path is not None:
+    if os.environ.get("THREEML_CONFIG") is not None:
 
-        config_path: Path = Path(_custom_config_path)
+        config_path: Path = Path(os.environ.get("THREEML_CONFIG"))
 
-    config_path: Path = Path().home() / ".config" / "threeML"
+    else:
+
+        config_path: Path = Path().home() / ".config" / "threeML"
 
     if not config_path.exists():
 
