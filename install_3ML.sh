@@ -146,7 +146,7 @@ install_conda() {
             
             # Mac OSX
             
-            python __download.py https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh Miniconda3-latest.sh
+            python __download.py https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh Miniconda3-latest.sh
             
             
     else
@@ -249,7 +249,7 @@ else
     
     # If we are here, we need to install conda
     
-    conda_path=${HOME}/miniconda
+    conda_path=${HOME}/miniconda3
     
     install_conda
     
@@ -273,6 +273,8 @@ fi
 
 conda config --add channels defaults
 
+conda config --add channels conda-forge
+
 conda config --add channels threeml
 
 if [[ "${DEV}" == "yes" ]]; then
@@ -280,8 +282,6 @@ if [[ "${DEV}" == "yes" ]]; then
     conda config --add channels threeml/label/dev
 
 fi
-
-conda config --add channels conda-forge
 
 PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2 iminuit>=2 h5py<=3.1.0"
 

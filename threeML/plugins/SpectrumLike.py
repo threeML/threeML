@@ -13,8 +13,8 @@ import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
-from astromodels.functions.priors import Truncated_gaussian, Uniform_prior
-from astromodels.utils.valid_variable import is_valid_variable_name
+from astromodels.functions.priors import Uniform_prior, Truncated_gaussian
+
 from past.utils import old_div
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
@@ -83,15 +83,8 @@ class SpectrumLike(PluginPrototype):
 
         # Just a toggle for verbosity
         self._verbose: bool = bool(verbose)
+
         self._name: str = name
-
-        if not is_valid_variable_name(name):
-
-            log.error(
-                f"Name {name} is not a valid name for a plugin. You must use a name which is "
-                "a valid python identifier: no spaces, no operators (+,-,/,*), "
-                "it cannot start with a number, no special characters"
-            )
 
         if not isinstance(observation, BinnedSpectrum):
 
@@ -619,14 +612,19 @@ class SpectrumLike(PluginPrototype):
 
                 log.debug("this is a normal background observation")
 
-                self._background_scale_factor = (self._background_spectrum.scale_factor)
-                
+                self._background_scale_factor = (
+                    self._background_spectrum.scale_factor
+                )
+
                 self._background_exposure = self._background_spectrum.exposure
 
-            self._area_ratio = float(self._observed_spectrum.scale_factor) / float(self._background_scale_factor)
+            self._area_ratio = float(
+                self._observed_spectrum.scale_factor
+            ) / float(self._background_scale_factor)
 
-            self._exposure_ratio = float(self._observed_spectrum.exposure) / float(self._background_exposure)
-            
+            self._exposure_ratio = float(
+                self._observed_spectrum.exposure
+            ) / float(self._background_exposure)
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
 
