@@ -92,6 +92,8 @@ class SpectrumLike(PluginPrototype):
         # Just a toggle for verbosity
         self._verbose: bool = bool(verbose)
 
+        self._name: str = name
+
         if not isinstance(observation, BinnedSpectrum):
 
             log.error(
