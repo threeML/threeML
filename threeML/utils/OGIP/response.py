@@ -413,6 +413,11 @@ class OGIPResponse(InstrumentResponse):
         :param arf_file:
         """
 
+
+        self._arf: Optional[np.ndarray] = None
+
+        self._rmf: Optional[np.ndarray] = None
+
         # Now make sure that the response file exist
 
         rsp_file: Path = sanitize_filename(rsp_file)
@@ -725,12 +730,33 @@ class OGIPResponse(InstrumentResponse):
                 "The ARF and the RMF have one or more MC channels which differ by more than 1%"
             )
 
+        # store the RMF and ARF separately
+
         # Multiply ARF and RMF
+        self._rmf = copy.deepcopy(self._matrix)
+        self._arf = arf
 
         matrix = self.matrix * arf
 
         # Override the matrix with the one multiplied by the arf
         self.replace_matrix(matrix)
+
+    @property
+    def arf(self) -> Optional[np.ndarray]:
+        """
+        The area response function
+        """
+
+        return self._arf
+
+    @property
+    def rmf(self) -> Optional[np.ndarray]:
+        """
+        The redistribution matrix function
+        """
+
+        return self._rmf
+
 
 
 class InstrumentResponseSet(object):
