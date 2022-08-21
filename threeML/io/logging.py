@@ -5,18 +5,41 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Optional
 
-from astromodels.utils.logging import (ColoredFormatter, LogFilter,
-                                       _console_formatter, _dev_formatter,
-                                       _usr_formatter,
-                                       astromodels_console_log_handler,
-                                       astromodels_dev_log_handler,
-                                       astromodels_usr_log_handler)
+from astromodels import astromodels_config
+from astromodels.utils.logging import (
+    LogFilter,
+    _console_formatter,
+    _dev_formatter,
+    _usr_formatter,
+    astromodels_console_log_handler,
+    astromodels_dev_log_handler,
+    astromodels_usr_log_handler,
+)
 
-
+from astromodels.utils.valid_variable import is_valid_variable_name
+from rich.console import Console
+from rich.logging import RichHandler
+from rich.theme import Theme
 from threeML.config.config import threeML_config
 
-
 # set up the console logging
+
+
+def invalid_plugin_name(name: str, log: logging.Logger) -> None:
+
+    if not is_valid_variable_name(name):
+
+        log.error(
+            f"Name {name} is not a valid name for a plugin. You must use a name which is "
+            "a valid python identifier: no spaces, no operators (+,-,/,*), "
+            "it cannot start with a number, no special characters"
+        )
+
+        raise AssertionError(
+            f"Name {name} is not a valid name for a plugin. You must use a name which is "
+            "a valid python identifier: no spaces, no operators (+,-,/,*), "
+            "it cannot start with a number, no special characters"
+        )
 
 
 def get_path_of_log_dir() -> Path:
@@ -24,7 +47,7 @@ def get_path_of_log_dir() -> Path:
     get the path to the logging directory
     """
 
-    log_path: Path = Path(threeML_config["logging"]["path"]).expanduser()
+    log_path: Path = Path(threeML_config.logging.path).expanduser()
 
     if not log_path.exists():
 
@@ -40,7 +63,9 @@ def get_path_of_log_file(log_file: str) -> Path:
     """
     returns the path of the log files
     """
-    assert log_file in _log_file_names, f"{log_file} is not one of {_log_file_names}"
+    assert (
+        log_file in _log_file_names
+    ), f"{log_file} is not one of {_log_file_names}"
 
     return get_path_of_log_dir() / log_file
 
@@ -72,14 +97,39 @@ threeML_usr_log_handler.setFormatter(_usr_formatter)
 
 # now set up the console logger
 
+_theme = {}
 
-threeML_console_log_handler = logging.StreamHandler(sys.stdout)
+# Banner
+_theme["h1"] = "deep_sky_blue3"
+_theme["status.spinner"] = "cyan2"
+_theme["status.text"] = "deep_sky_blue4"
+_theme["repr.filename"] = "blue"
+_theme["repr.number"] = "white"
+_theme["repr.path"] = "grey37"
+_theme["repr.str"] = "grey37"
+_theme["repr.tag_name"] = "white"
+_theme["repr.url"] = "not bold not italic underline grey84"
+_theme["log.time"] = "green1"
+_theme["log.message"] = f"{astromodels_config.logging.message_style}"
+_theme["logging.level.debug"] = f"{astromodels_config.logging.debug_style}"
+_theme["logging.level.error"] = f"{astromodels_config.logging.error_style}"
+_theme["logging.level.info"] = f"{astromodels_config.logging.info_style}"
+_theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
+
+
+# mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
+mytheme = Theme(_theme)
+console = Console(theme=mytheme)
+
+
+threeML_console_log_handler = RichHandler(
+    level="INFO", rich_tracebacks=True, markup=True, console=console
+)
 threeML_console_log_handler.setFormatter(_console_formatter)
-threeML_console_log_handler.setLevel(threeML_config["logging"]["level"])
+threeML_console_log_handler.setLevel(threeML_config.logging.level)
 
 
-astromodels_console_log_handler.setLevel(
-    threeML_config["logging"]["level"])
+astromodels_console_log_handler.setLevel(threeML_config.logging.level)
 
 
 warning_filter = LogFilter(logging.WARNING)
@@ -91,10 +141,13 @@ warning_filter = LogFilter(logging.WARNING)
 
 
 class LoggingState(object):
-
-    def __init__(self, threeML_usr_log_handler, threeML_console_log_handler,
-                 astromodels_usr_log_handler, astromodels_console_log_handler
-                 ):
+    def __init__(
+        self,
+        threeML_usr_log_handler,
+        threeML_console_log_handler,
+        astromodels_usr_log_handler,
+        astromodels_console_log_handler,
+    ):
         """
         A container to store the stat of the logs
         """
@@ -110,30 +163,46 @@ class LoggingState(object):
         # store their current states
 
         self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
-        self.threeML_console_log_handler_state = threeML_console_log_handler.level
+        self.threeML_console_log_handler_state = (
+            threeML_console_log_handler.level
+        )
 
-        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
-        self.astromodels_console_log_handler_state = astromodels_console_log_handler.level
+        self.astromodels_usr_log_handler_state = (
+            astromodels_usr_log_handler.level
+        )
+        self.astromodels_console_log_handler_state = (
+            astromodels_console_log_handler.level
+        )
 
     def _store_state(self):
 
         self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
-        self.threeML_console_log_handler_state = threeML_console_log_handler.level
+        self.threeML_console_log_handler_state = (
+            threeML_console_log_handler.level
+        )
 
-        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
-        self.astromodels_console_log_handler_state = astromodels_console_log_handler.level
+        self.astromodels_usr_log_handler_state = (
+            astromodels_usr_log_handler.level
+        )
+        self.astromodels_console_log_handler_state = (
+            astromodels_console_log_handler.level
+        )
 
     def restore_last_state(self):
 
         self.threeML_usr_log_handler.setLevel(
-            self.threeML_usr_log_handler_state)
+            self.threeML_usr_log_handler_state
+        )
         self.threeML_console_log_handler.setLevel(
-            self.threeML_console_log_handler_state)
+            self.threeML_console_log_handler_state
+        )
 
         self.astromodels_usr_log_handler.setLevel(
-            self.astromodels_usr_log_handler_state)
+            self.astromodels_usr_log_handler_state
+        )
         self.astromodels_console_log_handler.setLevel(
-            self.astromodels_console_log_handler_state)
+            self.astromodels_console_log_handler_state
+        )
 
     def silence_logs(self):
 
@@ -142,15 +211,11 @@ class LoggingState(object):
 
         # silence the logs
 
-        self.threeML_usr_log_handler.setLevel(
-            logging.CRITICAL)
-        self.threeML_console_log_handler.setLevel(
-            logging.CRITICAL)
+        self.threeML_usr_log_handler.setLevel(logging.CRITICAL)
+        self.threeML_console_log_handler.setLevel(logging.CRITICAL)
 
-        self.astromodels_usr_log_handler.setLevel(
-            logging.CRITICAL)
-        self.astromodels_console_log_handler.setLevel(
-            logging.CRITICAL)
+        self.astromodels_usr_log_handler.setLevel(logging.CRITICAL)
+        self.astromodels_console_log_handler.setLevel(logging.CRITICAL)
 
     def loud_logs(self):
 
@@ -159,15 +224,11 @@ class LoggingState(object):
 
         # silence the logs
 
-        self.threeML_usr_log_handler.setLevel(
-            logging.INFO)
-        self.threeML_console_log_handler.setLevel(
-            logging.INFO)
+        self.threeML_usr_log_handler.setLevel(logging.INFO)
+        self.threeML_console_log_handler.setLevel(logging.INFO)
 
-        self.astromodels_usr_log_handler.setLevel(
-            logging.INFO)
-        self.astromodels_console_log_handler.setLevel(
-            logging.INFO)
+        self.astromodels_usr_log_handler.setLevel(logging.INFO)
+        self.astromodels_console_log_handler.setLevel(logging.INFO)
 
     def debug_logs(self):
 
@@ -175,15 +236,17 @@ class LoggingState(object):
         self._store_state()
 
         # silence the logs
-        self.threeML_console_log_handler.setLevel(
-            logging.DEBUG)
+        self.threeML_console_log_handler.setLevel(logging.DEBUG)
 
-        self.astromodels_console_log_handler.setLevel(
-            logging.DEBUG)
+        self.astromodels_console_log_handler.setLevel(logging.DEBUG)
 
 
-_log_state = LoggingState(threeML_usr_log_handler, threeML_console_log_handler,
-                          astromodels_usr_log_handler, astromodels_console_log_handler)
+_log_state = LoggingState(
+    threeML_usr_log_handler,
+    threeML_console_log_handler,
+    astromodels_usr_log_handler,
+    astromodels_console_log_handler,
+)
 
 
 def silence_progress_bars():
@@ -198,7 +261,7 @@ def activate_progress_bars():
     """
     Turn on the progress bars
     """
-    threeML_config["interface"]["progress_bars"] = 'on'
+    threeML_config["interface"]["progress_bars"] = "on"
 
 
 def toggle_progress_bars():
@@ -312,7 +375,7 @@ def silence_console_log(and_progress_bars=True):
     if and_progress_bars:
         progress_state = threeML_config.interface.progress_bars
 
-        threeML_config.interface.progress_bars = 'off'
+        threeML_config.interface.progress_bars = "off"
 
     try:
         yield
@@ -327,7 +390,7 @@ def silence_console_log(and_progress_bars=True):
             threeML_config.interface.progress_bars = progress_state
 
 
-def setup_logger(name):
+def setup_logger(name: str) -> logging.Logger:
 
     # A logger with name name will be created
     # and then add it to the print stream

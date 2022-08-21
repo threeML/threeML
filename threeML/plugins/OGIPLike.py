@@ -2,8 +2,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
-from astromodels.utils.valid_variable import is_valid_variable_name
-
 from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -33,11 +31,46 @@ class OGIPLike(DispersionSpectrumLike):
         verbose: bool = True,
     ):
 
-        assert is_valid_variable_name(name), (
-            "Name %s is not a valid name for a plugin. You must use a name which is "
-            "a valid python identifier: no spaces, no operators (+,-,/,*), "
-            "it cannot start with a number, no special characters" % name
-        )
+        """
+        Create a DisperionSpectrumLike plugin from OGIP data. This is the
+        main plugin to use for 'XSPEC' style data from FITS files.
+
+        Basic usage:
+
+        plugin = OGIPLike('name',
+                          observation='my_observation.fits',
+                          background='my_background.fits',
+                          response='rsp.rmf',
+                          arf_file='arf.arf')
+
+        Various combinations of these arguments can be used.
+        For example, a background may not be required or the
+        RMF and ARF may be combined into one file and entered as the response.
+
+        If using another plugin as a background rather than a data file,
+        simply pass that plugin as the background argument.
+
+
+
+        :param name:
+        :type name: str
+        :param observation:
+        :type observation: Union[str, Path, PHASpectrum, PHAII]
+        :param background:
+        :type background: Optional[
+                    Union[str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike]
+                ]
+        :param response:
+        :type response: Optional[str]
+        :param arf_file:
+        :type arf_file: Optional[str]
+        :param spectrum_number:
+        :type spectrum_number: Optional[int]
+        :param verbose:
+        :type verbose: bool
+        :returns:
+
+        """
 
         # Read the pha file (or the PHAContainer instance)
 
@@ -89,6 +122,10 @@ class OGIPLike(DispersionSpectrumLike):
 
             background = pha.background_file
 
+            if background is not None:
+
+                log.warning(f"Using background from FIT header: {background}")
+
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
 
         # Get a PHA instance with the background, we pass the response to get the energy bounds in the
@@ -128,8 +165,10 @@ class OGIPLike(DispersionSpectrumLike):
             name=name, observation=pha, background=bak, verbose=verbose
         )
 
-    def get_simulated_dataset(self, new_name: str = None, **kwargs):
-        # type: (str, dict) -> OGIPLike
+    def get_simulated_dataset(
+        self, new_name: Optional[str] = None, **kwargs
+    ) -> "OGIPLike":
+
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
