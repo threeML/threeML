@@ -332,7 +332,7 @@ class PhotometryLike(XYLike):
         )
 
         return residual_plot.finalize(
-            xlabel=f"Wavelength\n({self._filter_set.waveunits,})",
+            xlabel=f"Wavelength\n({self._filter_set.waveunits})",
             ylabel="Magnitudes",
             xscale="linear",
             yscale="linear",
