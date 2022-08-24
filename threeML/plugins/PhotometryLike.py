@@ -1,16 +1,16 @@
 import collections
 import copy
-
 from typing import Union
+
 import matplotlib.pyplot as plt
-
-
 import numpy as np
 from speclite.filters import FilterResponse, FilterSequence
+from threeML.io.logging import setup_logger
 from threeML.io.plotting.data_residual_plot import ResidualPlot
-
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.photometry import FilterSet, PhotometericObservation
+
+log = setup_logger(__name__)
 
 __instrument_name = "Generic photometric data"
 
@@ -121,19 +121,27 @@ class PhotometryLike(XYLike):
 
         else:
 
+            log.error("filters must be A FilterResponse or a FilterSequence")
+
             RuntimeError("filters must be A FilterResponse or a FilterSequence")
 
         # since we may only have a few of the  filters in use
         # we will mask the filters not needed. The will stay fixed
         # during the life of the plugin
 
-        assert observation.is_compatible_with_filter_set(
-            filters
-        ), "The data and filters are not congruent"
+        if not observation.is_compatible_with_filter_set(filters):
+
+            log.error("The data and filters are not congruent")
+
+            raise AssertionError("The data and filters are not congruent")
 
         mask = observation.get_mask_from_filter_sequence(filters)
 
-        assert mask.sum() > 0, "There are no data in this observation!"
+        if not mask.sum() > 0:
+
+            log.error("There are no data in this observation!")
+
+            raise AssertionError("There are no data in this observation!")
 
         # create a filter set and use only the bands that were specified
 
@@ -313,7 +321,7 @@ class PhotometryLike(XYLike):
             residuals=residuals,
             label=self._name,
             color=data_color,
-            fmt="o"
+            fmt="o",
         )
 
         residual_plot.add_model(
