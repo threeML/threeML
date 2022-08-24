@@ -473,25 +473,34 @@ class XYLike(PluginPrototype):
 
         return new_xy
 
-    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"):
+    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear", ax = None):
 
-        fig, sub = plt.subplots(1, 1)
+        if ax is None:
 
-        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
+            fig, ax = plt.subplots(1, 1)
 
-        sub.set_xscale(x_scale)
-        sub.set_yscale(y_scale)
+        else:
 
-        sub.set_xlabel(x_label)
-        sub.set_ylabel(y_label)
+            fig = ax.get_figure()
+
+
+
+
+        ax.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
+
+        ax.set_xscale(x_scale)
+        ax.set_yscale(y_scale)
+
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
 
         if self._likelihood_model is not None:
 
             flux = self._get_total_expectation()
 
-            sub.plot(self.x, flux, "--", label="model")
+            ax.plot(self.x, flux, "--", label="model")
 
-            sub.legend(loc=0)
+            ax.legend(loc=0)
 
         return fig
 
