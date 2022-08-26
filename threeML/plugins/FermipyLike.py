@@ -763,5 +763,5 @@ class FermipyLike(PluginPrototype):
     def set_nuisance_parameter_value(self, paramName, value):
 
         srcName, parName = self._split_nuisance_parameter(paramName)
-        self.gta.set_parameter(srcName, parName, value, scale = 1, update_source=True)
+        self.gta.set_parameter(srcName, parName, value, scale = 1, update_source=False)
 
