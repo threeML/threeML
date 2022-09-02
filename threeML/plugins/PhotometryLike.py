@@ -1,10 +1,10 @@
 import collections
 import copy
-from typing import Union
+from typing import Any, Dict, Optional, Union
 
-import matplotlib.pyplot as plt
 import numpy as np
 from speclite.filters import FilterResponse, FilterSequence
+from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.plugins.XYLike import XYLike
@@ -291,8 +291,127 @@ class PhotometryLike(XYLike):
         return self._filter_set.plot_filters()
 
     def plot(
-        self, data_color: str = "r", model_color: str = "blue", **kwargs
+        self,
+        data_color: str = "r",
+        model_color: str = "blue",
+        show_data: bool = True,
+        show_residuals: bool = True,
+        show_legend: bool = True,
+        model_label: Optional[str] = None,
+        model_kwargs: Optional[Dict[str, Any]] = None,
+        data_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs,
     ) -> ResidualPlot:
+
+        """TODO describe function
+
+        :param data_color:
+        :type data_color: str
+        :param model_color:
+        :type model_color: str
+        :param show_data:
+        :type show_data: bool
+        :param show_residuals:
+        :type show_residuals: bool
+        :param show_legend:
+        :type show_legend: bool
+        :param model_label:
+        :type model_label: Optional[str]
+        :param model_kwargs:
+        :type model_kwargs: Optional[Dict[str, Any]]
+        :param data_kwargs:
+        :type data_kwargs: Optional[Dict[str, Any]]
+        :returns:
+
+        """
+
+        _default_model_kwargs = dict(color=model_color, alpha=1)
+
+        _sub_menu = threeML_config.plotting.residual_plot
+
+        _default_data_kwargs = dict(
+            color=data_color,
+            alpha=1,
+            fmt=_sub_menu.marker,
+            markersize=_sub_menu.size,
+            ls="",
+            elinewidth=_sub_menu.linewidth,
+            capsize=0,
+        )
+
+        # overwrite if these are in the confif
+
+        _kwargs_menu = threeML_config.plugins.photo.fit_plot
+
+        if _kwargs_menu.model_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.model_mpl_kwargs.items():
+
+                _default_model_kwargs[k] = v
+
+        if _kwargs_menu.data_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.data_mpl_kwargs.items():
+
+                _default_data_kwargs[k] = v
+
+        if model_kwargs is not None:
+
+            if not type(model_kwargs) == dict:
+
+                log.error("model_kwargs must be a dict")
+
+                raise RuntimeError()
+
+            for k, v in list(model_kwargs.items()):
+
+                if k in _default_model_kwargs:
+
+                    _default_model_kwargs[k] = v
+
+                else:
+
+                    _default_model_kwargs[k] = v
+
+        if data_kwargs is not None:
+
+            if not type(data_kwargs) == dict:
+
+                log.error("data_kwargs must be a dict")
+
+                raise RuntimeError()
+
+            for k, v in list(data_kwargs.items()):
+
+                if k in _default_data_kwargs:
+
+                    _default_data_kwargs[k] = v
+
+                else:
+
+                    _default_data_kwargs[k] = v
+
+        # since we define some defualts, lets not overwrite
+        # the users
+
+        _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
+
+        for d in _duplicates:
+
+            if (d[0] in _default_model_kwargs) and (
+                d[1] in _default_model_kwargs
+            ):
+
+                _default_model_kwargs.pop(d[0])
+
+            if (d[0] in _default_data_kwargs) and (
+                d[1] in _default_data_kwargs
+            ):
+
+                _default_data_kwargs.pop(d[0])
+
+        if model_label is None:
+            model_label = f"{self._name} Model"
 
         avg_wave_length = (
             self._filter_set.effective_wavelength.value
@@ -311,24 +430,24 @@ class PhotometryLike(XYLike):
 
         widths = self._filter_set.wavelength_bounds.widths[sort_idx]
 
-        residual_plot = ResidualPlot(**kwargs)
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
         residual_plot.add_data(
             x=avg_wave_length,
             y=magnitudes,
-            xerr=widths,
+            xerr=widths / 2.0,
             yerr=mag_errors,
             residuals=residuals,
             label=self._name,
-            color=data_color,
-            fmt="o",
+            show_data=show_data,
+            **_default_data_kwargs,
         )
 
         residual_plot.add_model(
             avg_wave_length,
             expected_model_magnitudes,
-            label=f"{self._name} Model",
-            color=model_color,
+            label=model_label,
+            **_default_model_kwargs,
         )
 
         return residual_plot.finalize(
@@ -337,6 +456,7 @@ class PhotometryLike(XYLike):
             xscale="linear",
             yscale="linear",
             invert_y=True,
+            show_legend=show_legend
         )
 
     def _new_plugin(self, name, x, y, yerr):

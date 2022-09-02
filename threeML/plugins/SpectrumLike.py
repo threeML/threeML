@@ -3293,7 +3293,8 @@ class SpectrumLike(PluginPrototype):
             rebinned_observed_counts,
             rebinned_background_counts
             + rebinned_model_counts / self._total_scale_factor,
-            min([self._total_scale_factor, 1.0]),
+            #min([self._total_scale_factor, 1.0])
+            self._total_scale_factor
         )
 
         # Divide the various cases
@@ -3408,7 +3409,6 @@ class SpectrumLike(PluginPrototype):
         background_kwargs: Optional[Dict[str, Any]] = None,
         source_only: bool = True,
         show_background: bool = False,
-        scale_data: float = 1.0,
         **kwargs,
     ) -> ResidualPlot:
         """
@@ -3567,12 +3567,12 @@ class SpectrumLike(PluginPrototype):
 
         if source_only:
             y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
-            weighted_data = scale_data * old_div(
+            weighted_data = old_div(
                 rebinned_quantities["new_observed_rate"]
                 - rebinned_quantities["new_background_rate"],
                 rebinned_quantities["new_chan_width"],
             )
-            weighted_error = scale_data * old_div(
+            weighted_error = old_div(
                 np.sqrt(
                     rebinned_quantities["new_observed_rate_err"] ** 2
                     + rebinned_quantities["new_background_rate_err"] ** 2
@@ -3589,6 +3589,12 @@ class SpectrumLike(PluginPrototype):
                 rebinned_quantities["new_observed_rate_err"],
                 rebinned_quantities["new_chan_width"],
             )
+        # weighted_data = old_div(
+        #    rebinned_quantities["new_rate"], rebinned_quantities["new_chan_width"]
+        # )
+        # weighted_error = old_div(
+        #    rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
+        # )
 
         residual_plot.add_data(
             rebinned_quantities["mean_energy"],
@@ -3626,7 +3632,7 @@ class SpectrumLike(PluginPrototype):
                 rebinned_quantities["new_energy_min"],
                 rebinned_quantities["new_energy_max"],
                 rebinned_quantities["new_chan_width"],
-                eff_model * scale_data,
+                eff_model,
                 label=model_label,
                 **_default_model_kwargs,
             )
@@ -3662,9 +3668,7 @@ class SpectrumLike(PluginPrototype):
                 axis=0,
             )
 
-            residual_plot.add_model(
-                x, y * scale_data, label=model_label, **_default_model_kwargs
-            )
+            residual_plot.add_model(x, y, label=model_label, **_default_model_kwargs)
 
         return residual_plot.finalize(
             xlabel="Energy\n(keV)",

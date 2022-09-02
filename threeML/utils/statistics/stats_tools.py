@@ -1,5 +1,6 @@
 from math import sqrt
 
+import numba as nb
 import numpy as np
 import scipy.interpolate
 import scipy.stats
@@ -36,7 +37,9 @@ def aic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        log.warning("AIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning(
+            "AIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return val
 
@@ -50,7 +53,9 @@ def bic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        log.warning("BIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning(
+            "BIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return val
 
@@ -93,11 +98,14 @@ def dic(bayes_analysis):
         elpd_dic = 0
         pdic = 0
 
-        log.warning("DIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning(
+            "DIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return -2 * elpd_dic, pdic
 
 
+@nb.njit(fastmath=True)
 def sqrt_sum_of_squares(arg):
     """
     :param arg: and array of number to be squared and summed
@@ -221,17 +229,37 @@ class Significance:
 
     def __init__(self, Non, Noff, alpha=1):
 
-        assert alpha > 0 and alpha <= 1, "alpha was %f" % alpha
+        # assert alpha > 0 and alpha <= 1, "alpha was %f" % alpha
 
-        self.Non = np.array(Non, dtype=float, ndmin=1)
+        self._Non = np.array(Non, dtype=float, ndmin=1)
 
-        self.Noff = np.array(Noff, dtype=float, ndmin=1)
+        self._Noff = np.array(Noff, dtype=float, ndmin=1)
 
-        self.alpha = float(alpha)
+        self._alpha = float(alpha)
 
-        self.expected = self.alpha * self.Noff
+        self._expected = self._alpha * self._Noff
 
-        self.net = self.Non - self.expected
+        self._net = self._Non - self._expected
+
+    @property
+    def Non(self) -> int:
+        return self._Non
+
+    @property
+    def Noff(self) -> int:
+        return self._Noff
+
+    @property
+    def alpha(self) -> float:
+        return self._alpha
+
+    @property
+    def expected(self) -> int:
+        return self._expected
+
+    @property
+    def net(self) -> int:
+        return self._net
 
     def known_background(self):
         """
@@ -253,7 +281,7 @@ class Significance:
         # Poisson probability of obtaining Non given Noff * alpha, in sigma units
 
         poisson_probability = PoissonResiduals(
-            self.Non, self.Noff, self.alpha
+            self._Non, self._Noff, self._alpha
         ).significance_one_side()
 
         return poisson_probability
@@ -268,24 +296,25 @@ class Significance:
         :return:
         """
 
-        one = np.zeros_like(self.Non, dtype=float)
+        one = np.zeros_like(self._Non, dtype=float)
 
-        idx = self.Non > 0
+        idx = self._Non > 0
 
-        one[idx] = self.Non[idx] * np.log(
-            ((1 + self.alpha) / self.alpha)
-            * ((self.Non[idx] / (self.Non[idx] + self.Noff[idx])))
+        one[idx] = self._Non[idx] * np.log(
+            ((1 + self._alpha) / self._alpha)
+            * ((self._Non[idx] / (self._Non[idx] + self._Noff[idx])))
         )
 
-        two = np.zeros_like(self.Noff, dtype=float)
+        two = np.zeros_like(self._Noff, dtype=float)
 
-        two[idx] = self.Noff[idx] * np.log(
-            (1 + self.alpha) * ((self.Noff[idx] / (self.Non[idx] + self.Noff[idx])))
+        two[idx] = self._Noff[idx] * np.log(
+            (1 + self._alpha)
+            * ((self._Noff[idx] / (self._Non[idx] + self._Noff[idx])))
         )
 
         if assign_sign:
 
-            sign = np.where(self.net > 0, 1, -1)
+            sign = np.where(self._net > 0, 1, -1)
 
         else:
 
@@ -309,17 +338,17 @@ class Significance:
 
         # Actually, you did (and beat J. Michael!) For details on this computation
 
-        b = self.expected
-        o = self.Non
+        b = self._expected
+        o = self._Non
 
         b0 = 0.5 * (
-            np.sqrt(b ** 2 - 2 * sigma_b ** 2 * (b - 2 * o) + sigma_b ** 4)
+            np.sqrt(b**2 - 2 * sigma_b**2 * (b - 2 * o) + sigma_b**4)
             + b
-            - sigma_b ** 2
+            - sigma_b**2
         )
 
         S = sqrt(2) * np.sqrt(
-            o * np.log(o / b0) + (((b0 - b) ** 2) / (2 * sigma_b ** 2)) + b0 - o
+            o * np.log(o / b0) + (((b0 - b) ** 2) / (2 * sigma_b**2)) + b0 - o
         )
 
         sign = np.where(o > b, 1, -1)
