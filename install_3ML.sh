@@ -8,7 +8,7 @@ INSTALL_XSPEC="no"
 INSTALL_ROOT="no"
 INSTALL_FERMI="no"
 BATCH="yes"
-PYTHON_VERSION="3.7"
+PYTHON_VERSION="3.9"
 ENV_NAME="threeML"
 DEV="no"
 
@@ -36,15 +36,15 @@ while [ "${1:-}" != "" ]; do
         DEV="yes"
         ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--no-batch] [--dev]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7 or 3.9}] [--env-name NAME] [-h] [--help] [--no-batch] [--dev]" && exit 0
         ;;
     esac
     shift
   done
 
-if [[ ${PYTHON_VERSION} != "2.7" ]] && [[ ${PYTHON_VERSION} != "3.7" ]]; then 
-    echo "WARNING: python version should 2.7 or 3.7. Setting to 3.7..."
-    export PYTHON_VERSION="3.7"
+if [[ ${PYTHON_VERSION} != "2.7" ]] && [[ ${PYTHON_VERSION} != "3.7" ]] && [[ ${PYTHON_VERSION} != "3.9" ]]; then 
+    echo "WARNING: python version should 2.7, 3.7 or 3.9. Setting to 3.9..."
+    export PYTHON_VERSION="3.9"
 fi
 
 echo ""
@@ -283,11 +283,11 @@ if [[ "${DEV}" == "yes" ]]; then
 
 fi
 
-PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2 iminuit>=2 h5py<=3.1.0"
+PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.25"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly"
     conda config --add channels xspecmodels
 
 fi
@@ -304,11 +304,12 @@ if [[ "${INSTALL_FERMI}" == "yes" ]]; then
     if [[ $PYTHON_VERSION == "2.7" ]]; then
         conda config --add channels fermi/label/master
         PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
-    else
+    elif [[ $PYTHON_VERSION == "3.7" ]]; then
         conda config --add channels fermi
         PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1 astroquery==0.4.3"
+    else
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools fermipy"
     fi
-    
 
 fi
 

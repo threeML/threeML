@@ -13,7 +13,9 @@ from threeML.data_list import DataList
 from threeML.io.package_data import get_path_of_data_file
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
-    half_chi2, poisson_log_likelihood_ideal_bkg)
+    half_chi2,
+    poisson_log_likelihood_ideal_bkg,
+)
 
 from ..io.logging import setup_logger
 
@@ -103,7 +105,9 @@ class XYLike(PluginPrototype):
 
             self._has_errors = False
 
-            log.info("Using unweighted Gaussian (equivalent to chi^2) statistic.")
+            log.info(
+                "Using unweighted Gaussian (equivalent to chi^2) statistic."
+            )
 
         else:
 
@@ -369,7 +373,9 @@ class XYLike(PluginPrototype):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert self._source_name in likelihood_model_instance.point_sources, (
+            assert (
+                self._source_name in likelihood_model_instance.point_sources
+            ), (
                 "This XYLike plugin refers to the source %s, "
                 "but that source is not a point source in the likelihood model"
                 % (self._source_name)
@@ -381,7 +387,9 @@ class XYLike(PluginPrototype):
 
         if self._source_name is None:
 
-            n_point_sources = self._likelihood_model.get_number_of_point_sources()
+            n_point_sources = (
+                self._likelihood_model.get_number_of_point_sources()
+            )
 
             if not n_point_sources > 0:
 
@@ -404,7 +412,9 @@ class XYLike(PluginPrototype):
             expectation = np.sum(
                 [
                     source(self._x, tag=self._tag)
-                    for source in list(self._likelihood_model.point_sources.values())
+                    for source in list(
+                        self._likelihood_model.point_sources.values()
+                    )
                 ],
                 axis=0,
             )
@@ -417,9 +427,9 @@ class XYLike(PluginPrototype):
 
             if self._source_name in self._likelihood_model.point_sources:
 
-                expectation = self._likelihood_model.point_sources[self._source_name](
-                    self._x
-                )
+                expectation = self._likelihood_model.point_sources[
+                    self._source_name
+                ](self._x)
 
             else:
 
@@ -448,7 +458,9 @@ class XYLike(PluginPrototype):
                 expectation[negative_mask] = 0.0
 
             return _poisson_like(
-                self._y[self._mask], self._zeros, expectation * self._exposure
+                self._y[self._mask],
+                self._zeros,
+                expectation * self._exposure[self._mask],
             )
 
         else:
@@ -457,7 +469,7 @@ class XYLike(PluginPrototype):
             return _chi2_like(
                 self._y[self._mask],
                 self._yerr[self._mask],
-                expectation * self._exposure,
+                expectation * self._exposure[self._mask],
             )
 
     def get_simulated_dataset(self, new_name: Optional[str] = None) -> "XYLike":
@@ -503,7 +515,11 @@ class XYLike(PluginPrototype):
         return self._new_plugin(new_name, self._x, new_y, yerr=self._yerr)
 
     def _new_plugin(
-        self, name: str, x: np.ndarray, y: np.ndarray, yerr: Optional[np.ndarray]
+        self,
+        name: str,
+        x: np.ndarray,
+        y: np.ndarray,
+        yerr: Optional[np.ndarray],
     ) -> "XYLike":
         """
         construct a new plugin. allows for returning a new plugin
@@ -536,41 +552,37 @@ class XYLike(PluginPrototype):
         return new_xy
 
     def plot(
-        self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"
-    ) -> plt.Figure:
+        self,
+        x_label="x",
+        y_label="y",
+        x_scale="linear",
+        y_scale="linear",
+        ax=None,
+    ):
 
-        """
+        if ax is None:
 
-        plot the data and fitting function
+            fig, ax = plt.subplots(1, 1)
 
-        :param x_label:
-        :type x_label:
-        :param y_label:
-        :type y_label:
-        :param x_scale:
-        :type x_scale:
-        :param y_scale:
-        :type y_scale:
-        :returns:
+        else:
 
-        """
-        fig, sub = plt.subplots(1, 1)
+            fig = ax.get_figure()
 
-        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
+        ax.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
 
-        sub.set_xscale(x_scale)
-        sub.set_yscale(y_scale)
+        ax.set_xscale(x_scale)
+        ax.set_yscale(y_scale)
 
-        sub.set_xlabel(x_label)
-        sub.set_ylabel(y_label)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
 
         if self._likelihood_model is not None:
 
             flux = self._get_total_expectation()
 
-            sub.plot(self.x, flux, "--", label="model")
+            ax.plot(self.x, flux, "--", label="model")
 
-            sub.legend(loc=0)
+            ax.legend(loc=0)
 
         return fig
 
@@ -590,7 +602,10 @@ class XYLike(PluginPrototype):
         return self._get_total_expectation()
 
     def fit(
-        self, function: Function, minimizer: str = "minuit", verbose: bool = False
+        self,
+        function: Function,
+        minimizer: str = "minuit",
+        verbose: bool = False,
     ) -> JointLikelihood:
         """
         Fit the data with the provided function (an astromodels function)
@@ -609,7 +624,9 @@ class XYLike(PluginPrototype):
 
         self.set_model(model)
 
-        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=verbose)
+        self._joint_like_obj = JointLikelihood(
+            model, DataList(self), verbose=verbose
+        )
 
         self._joint_like_obj.set_minimizer(minimizer)
 
