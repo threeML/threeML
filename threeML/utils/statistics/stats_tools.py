@@ -1,6 +1,5 @@
 from math import sqrt
 
-import numba as nb
 import numpy as np
 import scipy.interpolate
 import scipy.stats
@@ -105,7 +104,6 @@ def dic(bayes_analysis):
     return -2 * elpd_dic, pdic
 
 
-@nb.njit(fastmath=True)
 def sqrt_sum_of_squares(arg):
     """
     :param arg: and array of number to be squared and summed
