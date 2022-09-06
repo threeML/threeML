@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import copy
 
 import matplotlib.pyplot as plt
@@ -7,15 +5,15 @@ import numba as nb
 import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource
-
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
     half_chi2, poisson_log_likelihood_ideal_bkg)
+
+from ..io.logging import setup_logger
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
@@ -401,13 +399,13 @@ class XYLike(PluginPrototype):
             if negative_mask.sum() > 0:
                 expectation[negative_mask] = 0.0
 
-            return _poisson_like(self._y[self._mask], self._zeros, expectation * self._exposure
+            return _poisson_like(self._y[self._mask], self._zeros, expectation * self._exposure[self._mask]
                                  )
 
         else:
 
             # Chi squared
-            return _chi2_like(self._y[self._mask], self._yerr[self._mask], expectation * self._exposure)
+            return _chi2_like(self._y[self._mask], self._yerr[self._mask], expectation * self._exposure[self._mask])
 
     def get_simulated_dataset(self, new_name=None):
 
@@ -475,25 +473,34 @@ class XYLike(PluginPrototype):
 
         return new_xy
 
-    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"):
+    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear", ax = None):
 
-        fig, sub = plt.subplots(1, 1)
+        if ax is None:
 
-        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
+            fig, ax = plt.subplots(1, 1)
 
-        sub.set_xscale(x_scale)
-        sub.set_yscale(y_scale)
+        else:
 
-        sub.set_xlabel(x_label)
-        sub.set_ylabel(y_label)
+            fig = ax.get_figure()
+
+
+
+
+        ax.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
+
+        ax.set_xscale(x_scale)
+        ax.set_yscale(y_scale)
+
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
 
         if self._likelihood_model is not None:
 
             flux = self._get_total_expectation()
 
-            sub.plot(self.x, flux, "--", label="model")
+            ax.plot(self.x, flux, "--", label="model")
 
-            sub.legend(loc=0)
+            ax.legend(loc=0)
 
         return fig
 

@@ -30,8 +30,8 @@ def test_FermipyLike_fromVO():
 
     ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
 
-    assert np.isclose(ra, 83.633, atol=1e-3)
-    assert np.isclose(dec, 22.013, atol=1e-3)
+    assert np.isclose(ra, 83.633, atol=5e-3)
+    assert np.isclose(dec, 22.013, atol=5e-3)
 
     # This gets a 3ML model (a Model instance) from the table above, where every source
     # in the 3FGL becomes a Source instance. Note that by default all parameters of all
@@ -58,6 +58,11 @@ def test_FermipyLike_fromVO():
     model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.free = True
 
     assert len(model.free_parameters) == 4
+
+    #fix another weak source
+    model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
+
+    assert len(model.free_parameters) == 3
 
     # Download data from Jan 01 2010 to Jan 2 2010
 
@@ -104,7 +109,19 @@ def test_FermipyLike_fromVO():
     # Here is where the fermipy processing happens (the .setup method)
     jl = JointLikelihood(model, data)
 
+    jl.set_minimizer("minuit")
+
+    #check that nuisance parameters have been added and fix normalization of isodiff BG (not sensitive)
+    assert len(model.free_parameters) == 5
+    model.LAT_isodiff_Normalization.fix = True
+    assert len(model.free_parameters) == 4
+
     res = jl.fit()
+
+    #make sure galactic diffuse fit worked
+    assert np.isclose(model.LAT_galdiff_Prefactor.value, 1.0, rtol=0.2, atol=0.2)
+    
+    
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
@@ -117,8 +134,8 @@ def test_FermipyLike_fromDisk():
 
     ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
 
-    assert np.isclose(ra, 83.633, atol=1e-3)
-    assert np.isclose(dec, 22.013, atol=1e-3)
+    assert np.isclose(ra, 83.633, atol=5e-3)
+    assert np.isclose(dec, 22.013, atol=5e-3)
 
     # This gets a 3ML model (a Model instance) from the table above, where every source
     # in the 3FGL becomes a Source instance. Note that by default all parameters of all
@@ -151,6 +168,11 @@ def test_FermipyLike_fromDisk():
 
 
     assert len(model.free_parameters) == 4
+
+    #fix another weak source
+    model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
+
+    assert len(model.free_parameters) == 3
 
     # Download data from Jan 01 2010 to Jan 2 2010
 
@@ -201,5 +223,13 @@ def test_FermipyLike_fromDisk():
 
     jl.set_minimizer("minuit")
 
+    #check that nuisance parameters have been added and fix normalization of isodiff BG (not sensitive)
+    assert len(model.free_parameters) == 5
+    model.LAT_isodiff_Normalization.fix = True
+    assert len(model.free_parameters) == 4
 
     res = jl.fit()
+
+    #make sure galactic diffuse fit worked
+    assert np.isclose(model.LAT_galdiff_Prefactor.value, 1.0, rtol=0.2, atol=0.2)
+

@@ -11,7 +11,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.9
       - name: install latex
         uses: xu-cheng/texlive-action/small@v1
           
@@ -79,7 +79,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+          key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
@@ -88,7 +88,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
           channels: conda-forge, threeml, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: true
@@ -113,9 +113,6 @@ jobs:
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
-          # temporary fix for fermi tools
-          conda install -c conda-forge clhep=2.4.4.1
-
       - name: Install the package
         shell: bash -l {0}
         run: |
@@ -123,9 +120,7 @@ jobs:
           pip install -e .
 
           pip install black
-          pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
-          pip install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -151,7 +146,7 @@ jobs:
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -171,7 +166,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: 3.7
+          python-version: 3.9
           channels: conda-forge, fermi, threeml, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: true
@@ -203,8 +198,7 @@ jobs:
           pip install -e .
 
           pip install black
-          pip install --no-binary :all: root_numpy
-          pip install git+https://github.com/desihub/speclite.git
+          pip install fermipy
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -218,8 +212,8 @@ jobs:
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
 
           # Update GtBurst:
-          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
-          python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+          #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+          #python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
 
@@ -246,7 +240,7 @@ jobs:
           
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -257,7 +251,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-xspec_notebooks-python-3.7-${{ hashFiles('ci/environment_xspec.yml') }}
+          key: conda-xspec_notebooks-python-3.9-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
@@ -266,7 +260,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
           channels: conda-forge, threeml, xspecmodels, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: true
@@ -297,7 +291,6 @@ jobs:
           pip install -e .
 
           pip install black
-          pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
