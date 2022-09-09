@@ -14,7 +14,7 @@ jobs:
             fail-fast: false
             matrix:
                 os: ["ubuntu-latest", "macos-latest"]
-                python-version: [3.9]
+                python-version: [3.7, 3.9]
 
         steps:
             - name: Checkout
@@ -63,7 +63,7 @@ jobs:
 
                   if [[ "${ISDEV}" == "true" ]]; then
 
-                  mamba install -c threeml/label/dev "threeml/label/dev::astromodels"
+                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
               env:
@@ -105,7 +105,7 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest]
-                python-version: [3.9]
+                python-version: [3.7, 3.9]
 
         steps:
             - name: Checkout
