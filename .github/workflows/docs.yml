@@ -258,7 +258,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.9
           channels: conda-forge, threeml, xspecmodels, defaults
@@ -282,7 +282,15 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          
+          if [[ "${ISDEV}" == "true" ]]; then
+
+          mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
+          
+          fi
+        env:
+          ISDEV: ${{contains(github.ref, 'dev')}}
 
       - name: Install the package
         shell: bash -l {0}
@@ -375,7 +383,7 @@ jobs:
           pip install -e .
           pip install zeus_mcmc dynesty
           pip install black
-          pip install --no-binary :all: root_numpy
+          #pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
