@@ -176,14 +176,14 @@ class BayesianAnalysis:
 
             sampler_name = threeML_config.bayesian.default_sampler.value
 
-            log.info(f"using default sampler {sampler_name}")
+            log.info(f"using default sampler [blue]{sampler_name}[/blue]")
 
             using_default = True
 
         if sampler_name not in _available_samplers:
 
             log.error(
-                f"{sampler_name} is not a valid/available sampler please choose from {','.join(list(_available_samplers.keys()))}"
+                f"{sampler_name} is not a valid/available sampler please choose from [blue]{','.join(list(_available_samplers.keys()))}[/blue]"
             )
 
             raise RuntimeError()
@@ -194,7 +194,7 @@ class BayesianAnalysis:
 
         if not using_default:
 
-            log.info(f"sampler set to {sampler_name}")
+            log.info(f"sampler set to [blue]{sampler_name}[/blue]")
 
         else:
 
