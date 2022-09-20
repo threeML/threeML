@@ -69,7 +69,7 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.set_sampler("emcee")
 
-    ba.sampler.setup(n_burn_in=100, n_walkers=20, n_iterations=500)
+    ba.sampler.setup(n_burn_in=500, n_walkers=50, n_iterations=500)
 
     ba.sample(quiet=True)
 
@@ -93,7 +93,7 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.set_sampler("emcee")
 
-    ba.sampler.setup(n_burn_in=100, n_walkers=20, n_iterations=500)
+    ba.sampler.setup(n_burn_in=500, n_walkers=100, n_iterations=500)
 
     ba.sample(quiet=True)
 

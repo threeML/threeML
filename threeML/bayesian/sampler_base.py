@@ -61,7 +61,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
         self._log_like_values: Optional[np.ndarray] = None
         self._log_probability_values: Optional[np.ndarray] = None
         self._results: Optional[BayesianResults] = None
-        self._is_setu: bool = False
+        self._is_setup: bool = False
         self._is_registered: bool = False
         self._likelihood_model: Model = likelihood_model
         self._data_list: DataList = data_list
@@ -83,7 +83,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
             self._share_spectrum = False
 
     @abc.abstractmethod
-    def setup(self):
+    def setup(self) -> None:
         pass
 
     @abc.abstractmethod
