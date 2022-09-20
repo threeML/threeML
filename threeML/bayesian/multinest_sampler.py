@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from astromodels import use_astromodels_memoization
 from astromodels.core.model import Model
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
@@ -158,6 +158,12 @@ class MultiNestSampler(UnitCubeSampler):
                 if not chain_dir.exists():
                     log.debug(f"Create {chain_dir} for multinest output")
                     chain_dir.mkdir()
+
+        else:
+
+            if not chain_dir.exists():
+                log.debug(f"Create {chain_dir} for multinest output")
+                chain_dir.mkdir()
 
 
 
