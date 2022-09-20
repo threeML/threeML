@@ -321,7 +321,6 @@ jobs:
             uses: actions/setup-python@v2
             with:
               python-version: 3.9
-
           - name: Add conda ${{ matrix.python-version }} to system path
             uses: conda-incubator/setup-miniconda@v2
             with:
@@ -398,7 +397,6 @@ jobs:
               popd;
               rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
               fi
-
           - name: Checkout
             uses: actions/checkout@v2
           - name: Install dependencies

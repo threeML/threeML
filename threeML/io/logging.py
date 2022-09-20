@@ -3,7 +3,6 @@ import logging.handlers as handlers
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Optional
 
 from astromodels import astromodels_config
 from astromodels.utils.logging import (
@@ -96,7 +95,6 @@ threeML_usr_log_handler.setLevel(logging.INFO)
 threeML_usr_log_handler.setFormatter(_usr_formatter)
 
 # now set up the console logger
-
 _theme = {}
 
 # Banner
@@ -119,6 +117,7 @@ _theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
 
 # mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
 mytheme = Theme(_theme)
+
 console = Console(theme=mytheme)
 
 
