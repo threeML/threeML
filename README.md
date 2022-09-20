@@ -34,21 +34,42 @@ A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophy
 </div>
 
 
-Astrophysical sources are observed by different instruments at different wavelengths with an unprecedented quality. Putting all these data together to form a coherent view, however, is a very difficult task. Indeed, each instrument and data type has its own ad-hoc software and handling procedure, which present steep learning curves and do not talk to each other.
+Astrophysical sources are observed by different instruments at different
+wavelengths with an unprecedented quality. Putting all these data together to
+form a coherent view, however, is a very difficult task. Indeed, each instrument
+and data type has its own ad-hoc software and handling procedure, which present
+steep learning curves and do not talk to each other.
 
-The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-level interface and model definition, which allows for an easy, coherent and intuitive modeling of sources using all the available data, no matter their origin. At the same time, thanks to its architecture based on plug-ins, 3ML uses under the hood the official software of each instrument, the only one certified and maintained by the collaboration which built the instrument itself. This guarantees that 3ML is always using the best possible methodology to deal with the data of each instrument.
+The Multi-Mission Maximum Likelihood framework (3ML) provides a common
+high-level interface and model definition, which allows for an easy, coherent
+and intuitive modeling of sources using all the available data, no matter their
+origin. At the same time, thanks to its architecture based on plug-ins, 3ML uses
+under the hood the official software of each instrument, the only one certified
+and maintained by the collaboration which built the instrument itself. This
+guarantees that 3ML is always using the best possible methodology to deal with
+the data of each instrument.
 
 <img src="https://raw.githubusercontent.com/threeML/threeML/master/docs/media/3ml_flowchart.png" alt="drawing" width="800" align="right"/>
 
 
-Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an interface to several **Bayesian** inference algorithms such as MCMC and nested sampling as well as likelihood optimization algorithms. Each approach to analysis can be seamlessly switched between allowing users to try different approaches quickly and without having to rewrite their model or data interfaces. 
+Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an
+interface to several **Bayesian** inference algorithms such as MCMC and nested
+sampling as well as likelihood optimization algorithms. Each approach to
+analysis can be seamlessly switched between allowing users to try different
+approaches quickly and without having to rewrite their model or data interfaces.
 
-Like your [XPSEC](https://heasarc.gsfc.nasa.gov/xanadu/xspec/) models? You can use them in 3ML as well as our growing selection of 1-,2- and 3-D models from our fast and customizable modeling language [astromodels](http://astromodels.readthedocs.org/en/latest/).
+Like your [XPSEC](https://heasarc.gsfc.nasa.gov/xanadu/xspec/) models? You can
+use them in 3ML as well as our growing selection of 1-,2- and 3-D models from
+our fast and customizable modeling language
+[astromodels](http://astromodels.readthedocs.org/en/latest/).
 
 
 ## Installation
 
-Installing with pip or conda is easy
+Installing with pip or conda is easy. However, you want to include models from
+[XSPEC](https://heasarc.gsfc.nasa.gov/xanadu/xspec/manual/Models.html), the
+process can get tougher and we recommend the more detailed instructions:
+
 
 ```bash
 pip install astromodels threeml

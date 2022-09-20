@@ -4,7 +4,6 @@ import sys
 from contextlib import contextmanager
 from pathlib import Path
 
-
 from astromodels import astromodels_config
 from astromodels.utils.logging import (
     LogFilter,
