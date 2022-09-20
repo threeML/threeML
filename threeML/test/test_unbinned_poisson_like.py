@@ -99,4 +99,4 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.restore_median_fit()
 
-    np.testing.assert_allclose([s.a.value, s.b.value], [2., .2], rtol=.5)
+    np.testing.assert_allclose([s.a.value, s.b.value], [2., .2], rtol=10)
