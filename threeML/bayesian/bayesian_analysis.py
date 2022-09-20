@@ -1,11 +1,10 @@
-from __future__ import division, print_function
-
-from builtins import object
+from typing import Dict, Optional
 
 import numpy as np
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from astromodels import use_astromodels_memoization
 from astromodels.core.model import Model
-
+from threeML.analysis_results import BayesianResults
+from threeML.bayesian.sampler_base import SamplerBase
 from threeML.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
@@ -13,89 +12,59 @@ from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
 
 
-_possible_samplers = ["emcee", "mutinest", "zeus", "ultranest",
-                      "dynesty_nested", "dynesty_dynamic", "autoemcee"]
+_possible_samplers = {
+    "emcee": [
+        "emcee",
+        "from threeML.bayesian.emcee_sampler import EmceeSampler",
+        "EmceeSampler",
+    ],
+    "multinest": [
+        "pymultinest",
+        "from threeML.bayesian.multinest_sampler import MultiNestSampler",
+        "MultiNestSampler",
+    ],
+    "zeus": [
+        "zeus",
+        "from threeML.bayesian.zeus_sampler import ZeusSampler",
+        "ZeusSampler",
+    ],
+    "ultranest": [
+        "ultranest",
+        "from threeML.bayesian.ultranest_sampler import UltraNestSampler",
+        "UltraNestSampler",
+    ],
+    "dynesty_nested": [
+        "dynesty",
+        "from threeML.bayesian.dynesty_sampler import DynestyNestedSampler",
+        "DynestyNestedSampler",
+    ],
+    "dynesty_dynamic": [
+        "dynesty",
+        "from threeML.bayesian.dynesty_sampler import DynestyDynamicSampler",
+        "DynestyDynamicSampler",
+    ],
+    "autoemcee": [
+        "autoemcee",
+        "from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler",
+        "AutoEmceeSampler",
+    ],
+}
 
 
 _available_samplers = {}
 
-try:
+for k, v in _possible_samplers.items():
 
-    import emcee
+    try:
 
-    from threeML.bayesian.emcee_sampler import EmceeSampler
+        exec(f"import {v[0]}")
+        exec(f"{v[1]}")
+        exec(f"_available_samplers['{k}'] = {v[2]}")
 
-    _available_samplers["emcee"] = EmceeSampler
+    except (ImportError):
 
-except(ImportError):
+        log.debug(f"no {v[0]}")
 
-    log.debug("no emcee")
-
-
-try:
-
-    import dynesty
-
-    from threeML.bayesian.dynesty_sampler import (DynestyDynamicSampler,
-                                                  DynestyNestedSampler)
-    _available_samplers["dynesty_nested"] = DynestyNestedSampler
-    _available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
-
-
-except(ImportError):
-
-    log.debug("no dynesty")
-
-try:
-
-    import pymultinest
-
-    from threeML.bayesian.multinest_sampler import MultiNestSampler
-
-    _available_samplers["multinest"] = MultiNestSampler
-
-except(ImportError):
-
-    log.debug("no multinest")
-
-try:
-
-    import zeus
-
-    from threeML.bayesian.zeus_sampler import ZeusSampler
-
-    _available_samplers["zeus"] = ZeusSampler
-
-except(ImportError):
-
-    log.debug("no zeus")
-
-
-try:
-
-    import ultranest
-
-    from threeML.bayesian.ultranest_sampler import UltraNestSampler
-
-    _available_samplers["ultranest"] = UltraNestSampler
-
-
-except(ImportError):
-
-    log.debug("no ultranest")
-
-
-try:
-
-    import autoemcee
-
-    from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler
-
-    _available_samplers["autoemcee"] = AutoEmceeSampler
-
-except(ImportError):
-
-    log.debug("no autoemcee")
 
 # we should always have at least emcee available
 if len(_available_samplers) == 0:
@@ -103,10 +72,10 @@ if len(_available_samplers) == 0:
     log.error("There are NO samplers available!")
     log.error("emcee is installed by default, something is wrong!")
 
-    raise RuntimeError()
+    raise RuntimeError("There are NO samplers available!")
 
 
-class BayesianAnalysis(object):
+class BayesianAnalysis:
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
         Perform Bayesian analysis by passing your model and data.
@@ -118,31 +87,20 @@ class BayesianAnalysis(object):
         :return:
 
         :example:
-        
+
         """
 
-        self._analysis_type = "bayesian"
+        self._analysis_type: str = "bayesian"
 
-        self._is_registered = False
+        self._is_registered: bool = False
 
         self._register_model_and_data(likelihood_model, data_list)
 
-        # # Make sure that the current model is used in all data sets
-        #
-        # for dataset in self.data_list.values():
-        #     dataset.set_model(self._likelihood_model)
+        self._sampler: Optional[SamplerBase] = None
 
-        # Init the samples to None
-
-        self._samples = None
-        self._raw_samples = None
-        self._sampler = None
-        self._log_like_values = None
-        self._results = None
-
-        self._sampler = None
-
-    def _register_model_and_data(self, likelihood_model: Model, data_list: DataList):
+    def _register_model_and_data(
+        self, likelihood_model: Model, data_list: DataList
+    ) -> None:
         """
 
         make sure the model and data list are set up
@@ -157,7 +115,10 @@ class BayesianAnalysis(object):
         log.debug("REGISTER MODEL")
 
         # Verify that all the free parameters have priors
-        for parameter_name, parameter in likelihood_model.free_parameters.items():
+        for (
+            parameter_name,
+            parameter,
+        ) in likelihood_model.free_parameters.items():
 
             if not parameter.has_prior():
                 log.error(
@@ -183,7 +144,9 @@ class BayesianAnalysis(object):
             # plugins might need to adjust the number of nuisance parameters depending on the
             # likelihood model
 
-            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
+            for parameter_name, parameter in list(
+                dataset.nuisance_parameters.items()
+            ):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
@@ -220,7 +183,8 @@ class BayesianAnalysis(object):
         if sampler_name not in _available_samplers:
 
             log.error(
-                f"{sampler_name} is not a valid sampler please choose from {','.join(list(_available_samplers.keys()))}")
+                f"{sampler_name} is not a valid/available sampler please choose from {','.join(list(_available_samplers.keys()))}"
+            )
 
             raise RuntimeError()
 
@@ -243,43 +207,38 @@ class BayesianAnalysis(object):
 
             log.info("sampler is setup with default parameters")
 
-    @property
-    def sampler(self):
-
-        return self._sampler
-
-    def sample(self, quiet=False):
+    def sample(self, quiet=False) -> None:
         """
         sample the posterior of the model with the selected algorithm
 
         If no algorithm as been set, then the configured default algorithm
         we default parameters will be run
-        
+
         :param quiet: if True, then no output is displayed
-        :type quiet: 
-        :returns: 
+        :type quiet:
+        :returns:
 
         """
         if self._sampler is None:
 
             # assuming the default sampler
             self.set_sampler()
-        
+
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)
 
     @property
-    def results(self):
+    def results(self) -> Optional[BayesianResults]:
 
         return self._sampler.results
 
     @property
-    def analysis_type(self):
+    def analysis_type(self) -> str:
         return self._analysis_type
 
     @property
-    def log_like_values(self):
+    def log_like_values(self) -> Optional[np.ndarray]:
         """
         Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If
         you need to find the values of the parameters which generated a given value of the log. likelihood, remember
@@ -291,7 +250,7 @@ class BayesianAnalysis(object):
         return self._sampler.log_like_values
 
     @property
-    def log_probability_values(self):
+    def log_probability_values(self) -> Optional[np.ndarray]:
         """
         Returns the value of the log_probability (posterior) found by the bayesian sampler while sampling from the posterior. If
         you need to find the values of the parameters which generated a given value of the log. likelihood, remember
@@ -304,7 +263,7 @@ class BayesianAnalysis(object):
         return self._sampler.log_probability_values
 
     @property
-    def log_marginal_likelihood(self):
+    def log_marginal_likelihood(self) -> Optional[float]:
         """
                 Return the log marginal likelihood (evidence
         ) if computed
@@ -314,7 +273,7 @@ class BayesianAnalysis(object):
         return self._sampler.marginal_likelihood
 
     @property
-    def raw_samples(self):
+    def raw_samples(self) -> Optional[np.ndarray]:
         """
         Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,
         in the format returned by the sampler)
@@ -325,7 +284,7 @@ class BayesianAnalysis(object):
         return self._sampler.raw_samples
 
     @property
-    def samples(self):
+    def samples(self) -> Optional[Dict[str, np.ndarray]]:
         """
         Access the samples from the posterior distribution generated by the selected sampler
 
@@ -334,7 +293,7 @@ class BayesianAnalysis(object):
         return self._sampler.samples
 
     @property
-    def sampler(self):
+    def sampler(self) -> Optional[SamplerBase]:
         """
         Access the instance of the sampler used to sample the posterior distribution
         :return: an instance of the sampler
@@ -353,14 +312,14 @@ class BayesianAnalysis(object):
         return self.results.plot_chains(thin)
 
     @property
-    def likelihood_model(self):
+    def likelihood_model(self) -> Model:
         """
         :return: likelihood model (a Model instance)
         """
         return self._likelihood_model
 
     @property
-    def data_list(self):
+    def data_list(self) -> DataList:
         """
         :return: data list for this analysis
         """
@@ -380,7 +339,9 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self.results.convergence_plots(n_samples_in_each_subset, n_subsets)
+        return self.results.convergence_plots(
+            n_samples_in_each_subset, n_subsets
+        )
 
     def restore_median_fit(self):
         """
@@ -388,3 +349,10 @@ class BayesianAnalysis(object):
         """
 
         self._sampler.restore_median_fit()
+
+    def restore_MAP_fit(self) -> None:
+        """
+        Sets the model parameters to the MAP of the probability
+        """
+
+        self._sampler.restore_MAP_fit()

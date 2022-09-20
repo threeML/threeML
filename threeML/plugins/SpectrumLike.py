@@ -3293,7 +3293,8 @@ class SpectrumLike(PluginPrototype):
             rebinned_observed_counts,
             rebinned_background_counts
             + rebinned_model_counts / self._total_scale_factor,
-            min([self._total_scale_factor, 1.0]),
+            #min([self._total_scale_factor, 1.0])
+            self._total_scale_factor
         )
 
         # Divide the various cases
