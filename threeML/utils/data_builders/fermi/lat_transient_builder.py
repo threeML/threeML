@@ -82,7 +82,7 @@ class LATLikelihoodParameter(object):
 
         # make sure that the value set is allowed
         if self._allowed_values is not None:
-            assert self._current_value in self._allowed_values, 'The value of %s is not in %s' % (self._name, self._allowed_values )
+            assert self._current_value in set(self._allowed_values), 'The value of %s is not in %s' % (self._name, self._allowed_values )
 
         # construct the class
 
@@ -582,8 +582,8 @@ class TransientLATDataBuilder(object):
         """
         This builds the cmd string for the script
         """
-
-        cmd_str = '%s %s' % (os.path.join('fermitools', 'GtBurst', 'scripts', 'doTimeResolvedLike.py'),
+        executable = os.path.join('fermitools', 'GtBurst', 'scripts', 'doTimeResolvedLike.py')
+        cmd_str = '%s %s' % (executable,
                              self._triggername)
 
         for k, v in self._parameters.items():
@@ -618,7 +618,21 @@ class TransientLATDataBuilder(object):
         # located. This should be the first entry... might break in teh future!
 
         site_pkg = site.getsitepackages()[0]
+
         cmd = os.path.join(site_pkg, cmd)
+        executable   = cmd.split()[0]
+        gtapp_mp_dir = os.path.join(site_pkg,'fermitools', 'GtBurst', 'gtapps_mp')
+        executables  = [
+            executable,
+            os.path.join(gtapp_mp_dir, 'gtdiffrsp_mp.py'),
+            os.path.join(gtapp_mp_dir, 'gtexpmap_mp.py'),
+            os.path.join(gtapp_mp_dir, 'gtltcube_mp.py'),
+            os.path.join(gtapp_mp_dir, 'gttsmap_mp.py'),
+        ]
+        for _e in executables:
+            print ("Changing permission to %s" % _e)
+            os.chmod(_e, 0o755)
+
         log.info('About to run the following command:\n%s' % cmd)
 
         # see what we already have

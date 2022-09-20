@@ -10,10 +10,10 @@ jobs:
         name: Test against XSPEC
         runs-on: ubuntu-latest
         steps:
-          - name: Set up Python 3.8
+          - name: Set up Python 3.9
             uses: actions/setup-python@v2
             with:
-              python-version: 3.8
+              python-version: 3.9
        
           - name: Cache XPSEC
             uses: actions/cache@v2
@@ -107,10 +107,10 @@ jobs:
         name: Test against XSPEC astro master
         runs-on: ubuntu-latest
         steps:
-          - name: Set up Python 3.8
+          - name: Set up Python 3.9
             uses: actions/setup-python@v2
             with:
-              python-version: 3.8
+              python-version: 3.9
 
           - name: Cache XPSEC
             uses: actions/cache@v2
@@ -191,7 +191,7 @@ jobs:
               git clone https://github.com/threeML/astromodels
               cd astromodels
 
-              python setup.py install
+              pip install -e .
 
               cd ..
 
@@ -212,10 +212,10 @@ jobs:
         name: Test against XSPEC astro dev
         runs-on: ubuntu-latest
         steps:
-          - name: Set up Python 3.8
+          - name: Set up Python 3.9
             uses: actions/setup-python@v2
             with:
-              python-version: 3.8
+              python-version: 3.9
 
           - name: Cache XPSEC
             uses: actions/cache@v2
@@ -296,7 +296,7 @@ jobs:
               git clone https://github.com/threeML/astromodels
               cd astromodels
               git checkout dev
-              python setup.py install
+              pip install -e .
 
               cd ..
 
@@ -317,11 +317,10 @@ jobs:
         name: Test against XSPEC astro conda
         runs-on: ubuntu-latest
         steps:
-          - name: Set up Python 3.8
+          - name: Set up Python 3.9
             uses: actions/setup-python@v2
             with:
-              python-version: 3.8
-
+              python-version: 3.9
           - name: Add conda ${{ matrix.python-version }} to system path
             uses: conda-incubator/setup-miniconda@v2
             with:
@@ -398,10 +397,6 @@ jobs:
               popd;
               rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
               fi
-
-
-
-
           - name: Checkout
             uses: actions/checkout@v2
           - name: Install dependencies
