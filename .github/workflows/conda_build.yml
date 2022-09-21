@@ -13,8 +13,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-latest", "macos-10.15"]
-                python-version: [3.7,3.8,3.9]
+                os: ["ubuntu-latest", "macos-latest"]
+                python-version: [3.9]
 
         steps:
             - name: Checkout
@@ -24,7 +24,7 @@ jobs:
             - name: XCode
               uses: maxim-lobanov/setup-xcode@v1
               with:
-                  xcode-version: '12.4'
+                  xcode-version: latest
               if: runner.os == 'macOS'
             - name: Set up Python
               uses: actions/setup-python@v2
@@ -63,7 +63,7 @@ jobs:
 
                   if [[ "${ISDEV}" == "true" ]]; then
 
-                  mamba install -c threeml/label/dev "threeml/label/dev::astromodels"
+                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
               env:
@@ -80,14 +80,7 @@ jobs:
                   #conda install conda-build -n base
                   conda install -c conda-forge boa -n base
 
-                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
-
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
-
-                  else
-                  # there is some strange error about the prefix length
-                  conda mambabuild --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
-                  fi
 
                   conda install --use-local -c conda-forge threeml
 
@@ -111,8 +104,8 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-10.15]
-                python-version: [3.7,3.8,3.9]
+                os: [ubuntu-latest, macos-latest]
+                python-version: [3.9]
 
         steps:
             - name: Checkout
@@ -161,14 +154,8 @@ jobs:
                   #conda install conda-build -n base
                   conda install -c conda-forge boa -n base
 
-                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
-
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  else
-                  # there is some strange error about the prefix length
-                  conda mambabuild --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
-                  fi
 
             - name: Publish to Conda
               shell: bash -l {0}

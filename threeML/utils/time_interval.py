@@ -1,8 +1,8 @@
-from threeML.utils.interval import Interval, IntervalSet
-from threeML.io.rich_display import display
-
 import collections
+
 import pandas as pd
+from threeML.io.rich_display import display
+from threeML.utils.interval import Interval, IntervalSet
 
 
 class TimeInterval(Interval):

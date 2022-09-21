@@ -44,7 +44,7 @@ env variable that provides the explicit path to your XSPEC headers:
 
 ```bash
 
-export XPEC_INC_PATH=/path/to/xspec/headers
+export XSPEC_INC_PATH=/path/to/xspec/headers
 
 ```
 
@@ -54,7 +54,7 @@ with another env variable, e.g.:
 
 ```bash
 
-export ASTRO_XPEC_VERSION='12.12.1'
+export ASTRO_XSPEC_VERSION='12.12.1'
 
 ```
 

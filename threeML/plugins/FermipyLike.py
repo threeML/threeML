@@ -7,6 +7,10 @@ import yaml
 import astropy.io.fits as fits
 from astropy.stats import circmean
 from astropy import units as u
+import collections
+
+from astromodels import Model, Parameter
+from astromodels.core import parameter_transformation
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
@@ -70,13 +74,16 @@ def _get_unique_tag_from_configuration(configuration):
     for section, keys in keys_for_hash:
 
         if section not in configuration:
-            log.critical("Configuration lacks section %s, which is required" % section)
+            log.critical(
+                "Configuration lacks section %s, which is required" % section
+            )
 
         for key in keys:
 
             if key not in configuration[section]:
                 log.critical(
-                    "Section %s in configuration lacks key %s, which is required" % key
+                    "Section %s in configuration lacks key %s, which is required"
+                    % key
                 )
 
             string_to_hash.append("%s" % configuration[section][key])
@@ -247,16 +254,15 @@ def _get_fermipy_instance(configuration, likelihood_model):
         likelihood_model.point_sources.values()
     ):  # type: astromodels.PointSource
 
-        # Fix this source, so fermipy will not optimize by itself the parameters
-        gta.free_source(point_source.name, False)
-
         # This will substitute the current spectrum with a FileFunction with the same shape and flux
-        gta.set_source_spectrum(point_source.name, "FileFunction", update_source=False)
+        gta.set_source_spectrum(
+            point_source.name, "FileFunction", update_source=False
+        )
 
         # Get the energies at which to evaluate this source
         this_log_energies, _flux = gta.get_source_dnde(point_source.name)
         this_energies_keV = (
-            10 ** this_log_energies * 1e3
+            10**this_log_energies * 1e3
         )  # fermipy energies are in GeV, we need keV
 
         if energies_keV is None:
@@ -268,7 +274,9 @@ def _get_fermipy_instance(configuration, likelihood_model):
             # This is to make sure that all sources are evaluated at the same energies
 
             if not np.all(energies_keV == this_energies_keV):
-                log.critical("All sources should be evaluated at the same energies.")
+                log.critical(
+                    "All sources should be evaluated at the same energies."
+                )
 
         dnde = point_source(energies_keV)  # ph / (cm2 s keV)
         dnde_per_MeV = np.maximum(dnde * 1000.0, 1e-300)  # ph / (cm2 s MeV)
@@ -279,9 +287,6 @@ def _get_fermipy_instance(configuration, likelihood_model):
         likelihood_model.extended_sources.values()
     ):  # type: astromodels.ExtendedSource
 
-        # Fix this source, so fermipy will not optimize by itself the parameters
-        gta.free_source(extended_source.name, False)
-
         # This will substitute the current spectrum with a FileFunction with the same shape and flux
         gta.set_source_spectrum(
             extended_source.name, "FileFunction", update_source=False
@@ -290,7 +295,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
         # Get the energies at which to evaluate this source
         this_log_energies, _flux = gta.get_source_dnde(extended_source.name)
         this_energies_keV = (
-            10 ** this_log_energies * 1e3
+            10**this_log_energies * 1e3
         )  # fermipy energies are in GeV, we need keV
 
         if energies_keV is None:
@@ -302,7 +307,9 @@ def _get_fermipy_instance(configuration, likelihood_model):
             # This is to make sure that all sources are evaluated at the same energies
 
             if not np.all(energies_keV == this_energies_keV):
-                log.critical("All sources should be evaluated at the same energies.")
+                log.critical(
+                    "All sources should be evaluated at the same energies."
+                )
 
         dnde = extended_source.get_spatially_integrated_flux(
             energies_keV
@@ -352,7 +359,9 @@ class FermipyLike(PluginPrototype):
 
         nuisance_parameters = {}
 
-        super(FermipyLike, self).__init__(name, nuisance_parameters=nuisance_parameters)
+        super(FermipyLike, self).__init__(
+            name, nuisance_parameters=nuisance_parameters
+        )
 
         # Check whether the provided configuration is a file
 
@@ -409,7 +418,9 @@ class FermipyLike(PluginPrototype):
 
             # Sanitize file name, as fermipy is not very good at handling relative paths or env. variables
 
-            filename = str(sanitize_filename(self._configuration["data"][datum], True))
+            filename = str(
+                sanitize_filename(self._configuration["data"][datum], True)
+            )
 
             self._configuration["data"][datum] = filename
 
@@ -439,6 +450,8 @@ class FermipyLike(PluginPrototype):
 
         # This is empty at the beginning, will be instanced in the set_model method
         self._gta = None
+
+        self.set_inner_minimization(True)
 
     @staticmethod
     def get_basic_config(
@@ -479,11 +492,13 @@ class FermipyLike(PluginPrototype):
 
         if not ((0 <= ra) and (ra <= 360)):
             log.critical(
-                "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
+                "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0"
+                % ra
             )
         if not ((-90 <= dec) and (dec <= 90)):
             log.critical(
-                "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
+                "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0"
+                % dec
             )
 
         basic_config["selection"]["ra"] = ra
@@ -566,6 +581,10 @@ class FermipyLike(PluginPrototype):
         )
         self._update_model_in_fermipy(update_dictionary=True, force_update=True)
 
+        # Build the list of the nuisance parameters
+        new_nuisance_parameters = self._set_nuisance_parameters()
+        self.update_nuisance_parameters(new_nuisance_parameters)
+
     def _update_model_in_fermipy(
         self, update_dictionary=False, delta=0.0, force_update=False
     ):
@@ -586,14 +605,18 @@ class FermipyLike(PluginPrototype):
             ):
 
                 model_pos = point_source.position.sky_coord
-                fermipy_pos = self._gta.roi.get_source_by_name(point_source.name).skydir
+                fermipy_pos = self._gta.roi.get_source_by_name(
+                    point_source.name
+                ).skydir
 
                 if model_pos.separation(fermipy_pos).to("degree").value > delta:
                     # modeled after how this is done in fermipy
                     # (cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)
                     temp_source = self._gta.delete_source(point_source.name)
                     temp_source.set_position(model_pos)
-                    self._gta.add_source(point_source.name, temp_source, free=False)
+                    self._gta.add_source(
+                        point_source.name, temp_source, free=False
+                    )
                     self._gta.free_source(point_source.name, False)
                     self._gta.set_source_spectrum(
                         point_source.name,
@@ -624,7 +647,9 @@ class FermipyLike(PluginPrototype):
             theShape = extended_source.spatial_shape
             if theShape.has_free_parameters or force_update:
 
-                fermipySource = self._gta.roi.get_source_by_name(extended_source.name)
+                fermipySource = self._gta.roi.get_source_by_name(
+                    extended_source.name
+                )
                 fermipyPars = [
                     fermipySource["ra"],
                     fermipySource["dec"],
@@ -640,7 +665,9 @@ class FermipyLike(PluginPrototype):
                     ]
                     if not np.allclose(fermipyPars, amPars, 1e-10):
 
-                        temp_source = self._gta.delete_source(extended_source.name)
+                        temp_source = self._gta.delete_source(
+                            extended_source.name
+                        )
                         temp_source.set_spatial_model(
                             "RadialDisk",
                             {
@@ -669,7 +696,9 @@ class FermipyLike(PluginPrototype):
                     ]
                     if not np.allclose(fermipyPars, amPars, 1e-10):
 
-                        temp_source = self._gta.delete_source(extended_source.name)
+                        temp_source = self._gta.delete_source(
+                            extended_source.name
+                        )
                         temp_source.set_spatial_model(
                             "RadialGaussian",
                             {
@@ -718,8 +747,17 @@ class FermipyLike(PluginPrototype):
         # Update all sources on the fermipy side
         self._update_model_in_fermipy()
 
-        # Get value of the log likelihood
+        # update nuisance parameters
+        if self._fit_nuisance_params:
 
+            for parameter in self.nuisance_parameters:
+                self.set_nuisance_parameter_value(
+                    parameter, self.nuisance_parameters[parameter].value
+                )
+
+            # self.like.syncSrcParams()
+
+        # Get value of the log likelihood
         try:
 
             value = self._gta.like.logLike.value()
@@ -740,9 +778,27 @@ class FermipyLike(PluginPrototype):
         particular detector. If there are no nuisance parameters, simply return the
         logLike value.
         """
+
         return self.get_log_like()
 
-    def get_number_of_data_points(self) -> int:
+    def set_inner_minimization(self, flag: bool) -> None:
+
+        """
+        Turn on the minimization of the internal Fermi
+        parameters
+
+        :param flag: turing on and off the minimization  of the Fermipy internal parameters
+        :type flag: bool
+        :returns:
+
+        """
+        self._fit_nuisance_params: bool = bool(flag)
+
+        for parameter in self.nuisance_parameters:
+
+            self.nuisance_parameters[parameter].free = self._fit_nuisance_params
+
+    def get_number_of_data_points(self):
         """
         Return the number of spatial/energy bins
 
@@ -765,3 +821,62 @@ class FermipyLike(PluginPrototype):
             num = num * np.sum(self.geom.npix)
 
         return num
+
+    def _set_nuisance_parameters(self):
+
+        # Get the list of the sources
+        sources = list(self.gta.roi.get_sources())
+        sources = [s.name for s in sources if "diff" in s.name]
+
+        bg_param_names = []
+        nuisance_parameters = collections.OrderedDict()
+
+        for src_name in sources:
+
+            if self._fit_nuisance_params:
+                self.gta.free_norm(src_name)
+
+            pars = self.gta.get_free_source_params(src_name)
+
+            for par in pars:
+
+                thisName = f"{self.name}_{src_name}_{par}"
+                bg_param_names.append(thisName)
+
+                thePar = self.gta._get_param(src_name, par)
+
+                value = thePar["value"] * thePar["scale"]
+
+                nuisance_parameters[thisName] = Parameter(
+                    thisName,
+                    value,
+                    min_value=thePar["min"],
+                    max_value=thePar["max"],
+                    delta=0.01 * value,
+                    transformation=parameter_transformation.get_transformation(
+                        "log10"
+                    ),
+                )
+
+                nuisance_parameters[thisName].free = self._fit_nuisance_params
+
+                log.debug(
+                    f"Added nuisance parameter {nuisance_parameters[thisName]}"
+                )
+
+        return nuisance_parameters
+
+    def _split_nuisance_parameter(self, param_name):
+
+        tokens = param_name.split("_")
+        pname = tokens[-1]
+        src_name = "_".join(tokens[1:-1])
+
+        return src_name, pname
+
+    def set_nuisance_parameter_value(self, paramName, value):
+
+        srcName, parName = self._split_nuisance_parameter(paramName)
+        self.gta.set_parameter(
+            srcName, parName, value, scale=1, update_source=False
+        )

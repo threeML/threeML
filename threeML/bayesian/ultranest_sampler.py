@@ -1,12 +1,9 @@
 import logging
 import os
-import time
-from pathlib import Path
 from typing import Optional
 
 import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
-
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
@@ -137,8 +134,6 @@ class UltraNestSampler(UnitCubeSampler):
 
         param_names = list(self._free_parameters.keys())
 
-        n_dim = len(param_names)
-
         loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # We need to check if the MCMC
@@ -155,21 +150,20 @@ class UltraNestSampler(UnitCubeSampler):
 
             if using_mpi:
 
+                comm.Barrier()
+
                 # if we are running in parallel and this is not the
                 # first engine, then we want to wait and let everything finish
 
-                if rank != 0:
-
-                    # let these guys take a break
-                    time.sleep(1)
-
-                else:
+                if rank == 0:
 
                     # create mcmc chains directory only on first engine
 
                     if not os.path.exists(mcmc_chains_out_dir):
                         log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
+
+
 
             else:
 
@@ -224,20 +218,17 @@ class UltraNestSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
+            comm.Barrier()
+
             if rank != 0:
-
-                # let these guys take a break
-                time.sleep(5)
-
                 # these engines do not need to read
                 process_fit = False
 
             else:
 
-                # wait for a moment to allow it all to turn off
-                time.sleep(5)
-
                 process_fit = True
+
+
 
         else:
 

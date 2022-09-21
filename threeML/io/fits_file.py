@@ -1,5 +1,5 @@
-from builtins import object, str
-
+from astropy.io import fits
+import numpy as np
 import astropy.units as u
 import numpy as np
 import pkg_resources
@@ -49,7 +49,7 @@ _NUMPY_TO_FITS_CODE = {
 }
 
 
-class FITSFile(object):
+class FITSFile:
     def __init__(self, primary_hdu=None, fits_extensions=None):
 
         hdu_list = []

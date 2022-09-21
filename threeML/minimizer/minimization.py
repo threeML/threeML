@@ -709,7 +709,7 @@ class Minimizer(object):
             # so we need to make sure that the parameter has the best fit value)
             parameters_list[i]._set_internal_value(value)
 
-            if covariance_matrix is not None:
+            if (covariance_matrix is not None) and (covariance_matrix.ndim > 1):
 
                 element = covariance_matrix[i, i]
 
@@ -741,7 +741,7 @@ class Minimizer(object):
 
         self._correlation_matrix = np.zeros_like(self._covariance_matrix)
 
-        if covariance_matrix is not None:
+        if (covariance_matrix is not None) and (covariance_matrix.ndim > 1):
 
             for i in range(self.Npar):
 

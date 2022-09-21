@@ -1,7 +1,5 @@
 import collections
 import os
-
-
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
@@ -50,10 +48,14 @@ class HAWCLike(PluginPrototype):
         # Check that they exists and can be read
 
         if not file_existing_and_readable(self._maptree):
-            raise IOError("MapTree %s does not exist or is not readable" % maptree)
+            raise IOError(
+                "MapTree %s does not exist or is not readable" % maptree
+            )
 
         if not file_existing_and_readable(self._response):
-            raise IOError("Response %s does not exist or is not readable" % response)
+            raise IOError(
+                "Response %s does not exist or is not readable" % response
+            )
 
         # Post-pone the creation of the LIFF instance to when
         # we have the likelihood model
@@ -71,7 +73,9 @@ class HAWCLike(PluginPrototype):
 
         # Default list of bins
 
-        self._bin_list = self._min_and_max_to_list(defaultMinChannel, defaultMaxChannel)
+        self._bin_list = self._min_and_max_to_list(
+            defaultMinChannel, defaultMaxChannel
+        )
 
         # By default the fit of the CommonNorm is deactivated
         # NOTE: this flag sets the internal common norm minimization of LiFF, not
@@ -229,7 +233,9 @@ class HAWCLike(PluginPrototype):
                 + "instance"
             )
 
-    def set_active_measurements(self, minChannel=None, maxChannel=None, bin_list=None):
+    def set_active_measurements(
+        self, minChannel=None, maxChannel=None, bin_list=None
+    ):
 
         if bin_list is not None:
             assert minChannel is None and maxChannel is None, (
@@ -267,7 +273,9 @@ class HAWCLike(PluginPrototype):
                 lat_max,
             ) = self._model.get_extended_source_boundaries(id)
 
-            self._pymodel.setExtSourceBoundaries(id, lon_min, lon_max, lat_min, lat_max)
+            self._pymodel.setExtSourceBoundaries(
+                id, lon_min, lon_max, lat_min, lat_max
+            )
 
         # Set positions for point source
         # NOTE: this should not change so much that the response is not valid anymore
@@ -329,7 +337,9 @@ class HAWCLike(PluginPrototype):
 
                 log.error("You have to define a ROI with the setROI method")
 
-                raise RuntimeError("You have to define a ROI with the setROI method")
+                raise RuntimeError(
+                    "You have to define a ROI with the setROI method"
+                )
 
         # Now if an ROI is set, try to use it
 
@@ -418,7 +428,9 @@ class HAWCLike(PluginPrototype):
         for id in range(n_extended):
 
             # Get the positions for this extended source
-            positions = np.array(self._theLikeHAWC.GetPositions(id, False), order="C")
+            positions = np.array(
+                self._theLikeHAWC.GetPositions(id, False), order="C"
+            )
 
             ras = positions[:, 0]
             decs = positions[:, 1]
@@ -428,7 +440,9 @@ class HAWCLike(PluginPrototype):
             # LiFF needs "per MeV"
 
             cube = (
-                self._model.get_extended_source_fluxes(id, ras, decs, self._energies)
+                self._model.get_extended_source_fluxes(
+                    id, ras, decs, self._energies
+                )
                 * 1000.0
             )
 
@@ -461,7 +475,9 @@ class HAWCLike(PluginPrototype):
             # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
 
             this_spectrum = (
-                self._model.get_point_source_fluxes(id, self._energies, tag=self._tag)
+                self._model.get_point_source_fluxes(
+                    id, self._energies, tag=self._tag
+                )
                 * 1000.0
             )
 
@@ -565,7 +581,9 @@ class HAWCLike(PluginPrototype):
 
         for srcid in range(nsrc):
             ra, dec = self._model.get_point_source_position(srcid)
-            figs.append(self.display_residuals_at_position(ra, dec, radius, pulls))
+            figs.append(
+                self.display_residuals_at_position(ra, dec, radius, pulls)
+            )
 
         return figs
 
@@ -603,7 +621,9 @@ class HAWCLike(PluginPrototype):
 
             model = np.array(
                 [
-                    self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius[i])[i]
+                    self._theLikeHAWC.GetTopHatExpectedExcesses(
+                        ra, dec, radius[i]
+                    )[i]
                     for i in bin_index
                 ]
             )
@@ -617,7 +637,9 @@ class HAWCLike(PluginPrototype):
 
             bkg = np.array(
                 [
-                    self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius[i])[i]
+                    self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius[i])[
+                        i
+                    ]
                     for i in bin_index
                 ]
             )
@@ -630,9 +652,13 @@ class HAWCLike(PluginPrototype):
                 self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius)
             )
 
-            signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+            signal = np.array(
+                self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius)
+            )
 
-            bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+            bkg = np.array(
+                self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius)
+            )
 
         total = signal + bkg
 
@@ -692,7 +718,8 @@ class HAWCLike(PluginPrototype):
         sub1.set_xlabel("Analysis bin")
 
         sub1.set_ylabel(
-            r"$\frac{{excess - " "mod.}}{{{}.}}$".format("err" if pulls else "mod")
+            r"$\frac{{excess - "
+            "mod.}}{{{}.}}$".format("err" if pulls else "mod")
         )
 
         sub1.set_xlim(x_limits)
@@ -769,7 +796,9 @@ class HAWCLike(PluginPrototype):
 
         model = np.array(
             [
-                self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r + 0.5 * delta_r)
+                self._theLikeHAWC.GetTopHatExpectedExcesses(
+                    ra, dec, r + 0.5 * delta_r
+                )
                 for r in radii
             ]
         )
@@ -789,7 +818,9 @@ class HAWCLike(PluginPrototype):
 
         bkg = np.array(
             [
-                self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, r + 0.5 * delta_r)
+                self._theLikeHAWC.GetTopHatBackgrounds(
+                    ra, dec, r + 0.5 * delta_r
+                )
                 for r in radii
             ]
         )

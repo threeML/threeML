@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import pytest
 import numpy as np
-
+import pytest
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 from threeML.io.uncertainty_formatter import uncertainty_formatter
@@ -80,7 +79,9 @@ def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
 
     powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
 
-    res = jl.get_contours(powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30)
+    res = jl.get_contours(
+        powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30
+    )
 
     exp_p1, exp_p2 = (
         np.array(
@@ -184,7 +185,9 @@ def test_basic_analsis_multicomp_results(
 
     jl.restore_best_fit()
 
-    expected = np.array([1.88098173e00, -1.20057690e00, 6.50915964e-06, 4.35643006e01])
+    expected = np.array(
+        [1.88098173e00, -1.20057690e00, 6.50915964e-06, 4.35643006e01]
+    )
 
     assert np.allclose(fit_results["value"].values, expected, rtol=0.1)
 
@@ -198,14 +201,13 @@ def test_basic_bayesian_analysis_results_multicomp(
     frame = bayes.results.get_data_frame()
 
     expected_central_values = np.array(
-        [1.90814527e00, -1.20941618e00, 6.45755638e-06, 4.36948057e01]
+        [1.86699909e00, -1.19874605e00, 6.35591781e-06, 4.37783184e01]
     )
     expected_negative_errors = np.array(
-        #        [-3.02301749e-01, -2.93259914e-02, -1.70958890e-06, -3.92505021e00]
-        [-2.91662847e-01, -3.10753350e-02, -1.91482744e-06, -4.28729636e00]
+        [-2.91016381e-01, -3.29625316e-02, -1.59072260e-06, -4.83703088e00]
     )
     expected_positive_errors = np.array(
-        [2.65259894e-01, 3.24980566e-02, 1.78051424e-06, 4.00921638e00]
+        [3.50705889e-01, 3.53797125e-02, 2.41408813e-06, 4.29616142e00]
     )
 
     assert np.allclose(frame["value"].values, expected_central_values, rtol=0.1)

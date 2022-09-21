@@ -1,61 +1,39 @@
-from collections import OrderedDict
+
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from asciitree import LeftAligned
-from asciitree.drawing import BOX_DOUBLE, BoxStyle
 from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
-
-from threeML.io.package_data import get_path_of_user_config
+from rich.tree import Tree
 from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_user_config
 
 from .config import threeML_config
 
 log = setup_logger(__name__)
 
 
-def red(x) -> str:
+def recurse_dict(d, tree):
 
-    return f"\x1b[31;1m{x}\x1b[0m"
+    for k, v in d.items():
 
+        if (type(v) == dict) or isinstance(v, DictConfig):
 
-def blue(x) -> str:
+            branch = tree.add(
+                k, guide_style="bold medium_orchid", style="bold medium_orchid"
+            )
 
-    return f"\x1b[34;1m{x}\x1b[0m"
+            recurse_dict(v, branch)
 
+        else:
 
-def green(x) -> str:
+            tree.add(
+                f"{k}: [blink cornflower_blue]{v}",
+                guide_style="medium_spring_green",
+                style="medium_spring_green",
+            )
 
-    return f"\x1b[32;1m{x}\x1b[0m"
-
-
-def _to_dict(conf):
-
-    if not isinstance(conf, DictConfig):
-
-        dummy: Dict[str, Dict[str, Any]] = {}
-        dummy[red(f"{conf}")] = {}
-
-        return dummy
-
-    else:
-
-        out: Dict[str, Dict[str, Any]] = {}
-
-        for k, v in conf.items():
-
-            if not isinstance(v, DictConfig):
-
-                text = blue(f"{k}")
-
-            else:
-
-                text = green(f"{k}")
-
-            out[text] = _to_dict(v)
-
-        return out
+    return
 
 
 def show_configuration(sub_menu: Optional[str] = None):
@@ -64,21 +42,33 @@ def show_configuration(sub_menu: Optional[str] = None):
     provided
     """
 
-    tr = LeftAligned(draw=BoxStyle(gfx=BOX_DOUBLE, horiz_len=1))
-
-    out_final = {}
-
     if sub_menu is None:
 
-        out_final["CONFIG"] = _to_dict(threeML_config)
+        tree = Tree(
+            "config", guide_style="bold medium_orchid", style="bold medium_orchid"
+        )
+
+        recurse_dict(threeML_config, tree)
 
     else:
 
-        assert sub_menu in threeML_config, "not a valild topic"
+        if sub_menu in threeML_config:
 
-        out_final[sub_menu] = _to_dict(threeML_config[sub_menu])
+            tree = Tree(
+                "config", guide_style="bold medium_orchid", style="bold medium_orchid"
+            )
 
-    print(tr(out_final))
+            recurse_dict(threeML_config[sub_menu], tree)
+
+        else:
+
+            msg = f"{sub_menu} is not in the threeml configuration"
+
+            log.error(msg)
+
+            raise AssertionError(msg)
+
+    return tree
 
 
 def get_current_configuration_copy(

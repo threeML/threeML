@@ -224,7 +224,7 @@ def test_bayes_plots(completed_bn090217206_bayesian_analysis):
     bayes, samples = completed_bn090217206_bayesian_analysis
 
     with pytest.raises(AssertionError):
-        bayes.convergence_plots(n_samples_in_each_subset=100, n_subsets=2000)
+        bayes.convergence_plots(n_samples_in_each_subset=100000, n_subsets=20000)
 
     bayes.convergence_plots(n_samples_in_each_subset=10, n_subsets=5)
 

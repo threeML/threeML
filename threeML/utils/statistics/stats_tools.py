@@ -1,16 +1,20 @@
-import warnings
 from math import sqrt
+from typing import Tuple
 
 import numpy as np
 import scipy.interpolate
 import scipy.stats
-from past.utils import old_div
 from scipy.special import erfinv
+
+from threeML.io.logging import setup_logger
 
 # Provides some universal statistical utilities and stats comparison tools
 
 
-def aic(log_like, n_parameters, n_data_points):
+log = setup_logger(__name__)
+
+
+def aic(log_like, n_parameters, n_data_points) -> float:
     """
     The Aikake information criterion.
     A model comparison tool based of infomormation theory. It assumes that N is large i.e.,
@@ -34,12 +38,14 @@ def aic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn("AIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning(
+            "AIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return val
 
 
-def bic(log_like, n_parameters, n_data_points):
+def bic(log_like, n_parameters, n_data_points) -> float:
     """
     The Bayesian information criterion.
     """
@@ -48,7 +54,9 @@ def bic(log_like, n_parameters, n_data_points):
     if not np.isfinite(val):
         val = 0
 
-        warnings.warn("BIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning(
+            "BIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return val
 
@@ -57,7 +65,7 @@ def waic(bayesian_trace):
     raise NotImplementedError("Coming soon to a theater near you.")
 
 
-def dic(bayes_analysis):
+def dic(bayes_analysis) -> Tuple[float]:
     """
     elpd_DIC = log p(y|mean(parameters)) - p_DIC
 
@@ -91,12 +99,14 @@ def dic(bayes_analysis):
         elpd_dic = 0
         pdic = 0
 
-        warnings.warn("DIC was NAN. Recording zero, but you should examine your fit.")
+        log.warning(
+            "DIC was NAN. Recording zero, but you should examine your fit."
+        )
 
     return -2 * elpd_dic, pdic
 
 
-def sqrt_sum_of_squares(arg):
+def sqrt_sum_of_squares(arg) -> float:
     """
     :param arg: and array of number to be squared and summed
     :return: the sqrt of the sum of the squares
@@ -211,7 +221,7 @@ class PoissonResiduals:
         return out
 
 
-class Significance(object):
+class Significance:
     """
     Implements equations in Li&Ma 1983
 
@@ -219,17 +229,37 @@ class Significance(object):
 
     def __init__(self, Non, Noff, alpha=1):
 
-        assert alpha > 0 and alpha <= 1, "alpha was %f" % alpha
+        # assert alpha > 0 and alpha <= 1, "alpha was %f" % alpha
 
-        self.Non = np.array(Non, dtype=float, ndmin=1)
+        self._Non = np.array(Non, dtype=float, ndmin=1)
 
-        self.Noff = np.array(Noff, dtype=float, ndmin=1)
+        self._Noff = np.array(Noff, dtype=float, ndmin=1)
 
-        self.alpha = float(alpha)
+        self._alpha = float(alpha)
 
-        self.expected = self.alpha * self.Noff
+        self._expected = self._alpha * self._Noff
 
-        self.net = self.Non - self.expected
+        self._net = self._Non - self._expected
+
+    @property
+    def Non(self) -> int:
+        return self._Non
+
+    @property
+    def Noff(self) -> int:
+        return self._Noff
+
+    @property
+    def alpha(self) -> float:
+        return self._alpha
+
+    @property
+    def expected(self) -> int:
+        return self._expected
+
+    @property
+    def net(self) -> int:
+        return self._net
 
     def known_background(self):
         """
@@ -251,7 +281,7 @@ class Significance(object):
         # Poisson probability of obtaining Non given Noff * alpha, in sigma units
 
         poisson_probability = PoissonResiduals(
-            self.Non, self.Noff, self.alpha
+            self._Non, self._Noff, self._alpha
         ).significance_one_side()
 
         return poisson_probability
@@ -266,25 +296,25 @@ class Significance(object):
         :return:
         """
 
-        one = np.zeros_like(self.Non, dtype=float)
+        one = np.zeros_like(self._Non, dtype=float)
 
-        idx = self.Non > 0
+        idx = self._Non > 0
 
-        one[idx] = self.Non[idx] * np.log(
-            old_div((1 + self.alpha), self.alpha)
-            * (old_div(self.Non[idx], (self.Non[idx] + self.Noff[idx])))
+        one[idx] = self._Non[idx] * np.log(
+            ((1 + self._alpha) / self._alpha)
+            * ((self._Non[idx] / (self._Non[idx] + self._Noff[idx])))
         )
 
-        two = np.zeros_like(self.Noff, dtype=float)
+        two = np.zeros_like(self._Noff, dtype=float)
 
-        two[idx] = self.Noff[idx] * np.log(
-            (1 + self.alpha)
-            * (old_div(self.Noff[idx], (self.Non[idx] + self.Noff[idx])))
+        two[idx] = self._Noff[idx] * np.log(
+            (1 + self._alpha)
+            * ((self._Noff[idx] / (self._Non[idx] + self._Noff[idx])))
         )
 
         if assign_sign:
 
-            sign = np.where(self.net > 0, 1, -1)
+            sign = np.where(self._net > 0, 1, -1)
 
         else:
 
@@ -308,20 +338,17 @@ class Significance(object):
 
         # Actually, you did (and beat J. Michael!) For details on this computation
 
-        b = self.expected
-        o = self.Non
+        b = self._expected
+        o = self._Non
 
         b0 = 0.5 * (
-            np.sqrt(b ** 2 - 2 * sigma_b ** 2 * (b - 2 * o) + sigma_b ** 4)
+            np.sqrt(b**2 - 2 * sigma_b**2 * (b - 2 * o) + sigma_b**4)
             + b
-            - sigma_b ** 2
+            - sigma_b**2
         )
 
         S = sqrt(2) * np.sqrt(
-            o * np.log(old_div(o, b0))
-            + old_div((b0 - b) ** 2, (2 * sigma_b ** 2))
-            + b0
-            - o
+            o * np.log(o / b0) + (((b0 - b) ** 2) / (2 * sigma_b**2)) + b0 - o
         )
 
         sign = np.where(o > b, 1, -1)

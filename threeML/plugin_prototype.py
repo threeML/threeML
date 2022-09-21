@@ -3,13 +3,12 @@ Define the interface for a plugin class.
 """
 
 import abc
+from typing import Dict
 
-from builtins import object
+from astromodels import IndependentVariable, Model
+from astromodels.core.parameter import Parameter
 
-from astromodels import IndependentVariable
-from astromodels.utils.valid_variable import is_valid_variable_name
-
-from threeML.io.logging import setup_logger
+from threeML.io.logging import invalid_plugin_name, setup_logger
 
 log = setup_logger(__name__)
 # def set_external_property(method):
@@ -34,33 +33,41 @@ log = setup_logger(__name__)
 #     return wrapper
 
 
-class PluginPrototype(object, metaclass=abc.ABCMeta):
-    def __init__(self, name, nuisance_parameters):
-        assert is_valid_variable_name(name), (
-            "The name %s cannot be used as a name. You need to use a valid "
-            "python identifier: no spaces, cannot start with numbers, cannot contain "
-            "operators symbols such as -, +, *, /" % name
-        )
+class PluginPrototype(metaclass=abc.ABCMeta):
+    def __init__(self, name: str, nuisance_parameters: Dict[str, Parameter]):
+
+        invalid_plugin_name(name, log)
 
         # Make sure total is not used as a name (need to use it for other things, like the total value of the statistic)
-        assert (
-            name.lower() != "total"
-        ), "Sorry, you cannot use 'total' as name for a plugin."
 
-        self._name = name
+        if name.lower() == "total":
+
+            log.error("Sorry, you cannot use 'total' as name for a plugin.")
+
+            raise AssertionError(
+                "Sorry, you cannot use 'total' as name for a plugin."
+            )
+
+        self._name: str = name
 
         # This is just to make sure that the plugin is legal
 
-        assert isinstance(nuisance_parameters, dict)
+        if not isinstance(nuisance_parameters, dict):
 
-        self._nuisance_parameters = nuisance_parameters
+            log.error("nuisance_parameters are not a dict and are invalid!")
+
+            raise AssertionError(
+                "nuisance_parameters are not a dict and are invalid!"
+            )
+
+        self._nuisance_parameters: Dict[str, Parameter] = nuisance_parameters
 
         # These are the external properties (time, polarization, etc.)
         # self._external_properties = []
 
         self._tag = None
 
-    def get_name(self):
+    def get_name(self) -> str:
         log.warning(
             "Do not use get_name() for plugins, use the .name property",
         )
@@ -68,7 +75,7 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
         return self.name
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         Returns the name of this instance
 
@@ -77,7 +84,7 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
         return self._name
 
     @property
-    def nuisance_parameters(self):
+    def nuisance_parameters(self) -> Dict[str, Parameter]:
         """
         Returns a dictionary containing the nuisance parameters for this dataset
 
@@ -86,8 +93,17 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
 
         return self._nuisance_parameters
 
-    def update_nuisance_parameters(self, new_nuisance_parameters):
-        assert isinstance(new_nuisance_parameters, dict)
+    def update_nuisance_parameters(
+        self, new_nuisance_parameters: Dict[str, Parameter]
+    ) -> None:
+
+        if not isinstance(new_nuisance_parameters, dict):
+
+            log.error("nuisance_parameters are not a dict and are invalid!")
+
+            raise AssertionError(
+                "nuisance_parameters are not a dict and are invalid!"
+            )
 
         self._nuisance_parameters = new_nuisance_parameters
 
@@ -101,7 +117,7 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
     #
     #     self._external_properties.append((property, value))
 
-    def get_number_of_data_points(self):
+    def get_number_of_data_points(self) -> int:
         """
         This returns the number of data points that are used to evaluate the likelihood.
         For binned measurements, this is the number of active bins used in the fit. For
@@ -174,14 +190,14 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
     ######################################################################
 
     @abc.abstractmethod
-    def set_model(self, likelihood_model_instance):
+    def set_model(self, likelihood_model_instance: Model):
         """
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
         """
         pass
 
     @abc.abstractmethod
-    def get_log_like(self):
+    def get_log_like(self) -> float:
         """
         Return the value of the log-likelihood with the current values for the
         parameters

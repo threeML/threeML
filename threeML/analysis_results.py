@@ -6,7 +6,7 @@ import math
 import os
 from builtins import map, object, range, str
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 import astromodels
 import astropy.units as u
@@ -20,6 +20,7 @@ from astromodels.core.my_yaml import my_yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
 from past.utils import old_div
+from rich.console import Console
 
 from threeML import __version__
 from threeML.config.config import threeML_config
@@ -27,10 +28,8 @@ from threeML.exceptions.custom_exceptions import BadCovariance
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile, fits
-from threeML.io.hdf5_utils import (
-    recursively_load_dict_contents_from_group,
-    recursively_save_dict_contents_to_group,
-)
+from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
+                                   recursively_save_dict_contents_to_group)
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
@@ -42,6 +41,8 @@ from threeML.random_variates import RandomVariates
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 log = setup_logger(__name__)
+
+_rich_console = Console()
 
 try:
 
@@ -1016,7 +1017,15 @@ class BayesianResults(_AnalysisResults):
 
         best_fit_table = self._get_results_table(error_type, cl)
 
-        print("Maximum a posteriori probability (MAP) point:\n")
+        if threeML_config.bayesian.use_median_fit:
+
+            _rich_console.print("[medium_spring_green bold underline] Median posterior point:")
+
+        else:
+
+            _rich_console.print(
+                "[medium_spring_green bold underline]Maximum a posteriori probability (MAP) point:\n"
+            )
 
         best_fit_table.display()
 
@@ -1027,15 +1036,19 @@ class BayesianResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            print("\nCorrelation matrix:\n")
+            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
 
             display(corr_matrix)
 
-        print("\nValues of -log(posterior) at the minimum:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of -log(posterior) at the minimum:\n"
+        )
 
         display(self.get_statistic_frame())
 
-        print("\nValues of statistical measures:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of statistical measures:\n"
+        )
 
         display(self.get_statistic_measure_frame())
 
@@ -1781,7 +1794,7 @@ class MLEResults(_AnalysisResults):
             error_type="covariance", cl=cl, covariance=self.covariance_matrix
         )
 
-        print("Best fit values:\n")
+        _rich_console.print("[medium_spring_green bold underline]Best fit values:\n")
 
         best_fit_table.display()
 
@@ -1792,15 +1805,15 @@ class MLEResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            print("\nCorrelation matrix:\n")
+            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
 
             display(corr_matrix)
 
-        print("\nValues of -log(likelihood) at the minimum:\n")
+        _rich_console.print("[medium_spring_green bold underline]\nValues of -log(likelihood) at the minimum:\n")
 
         display(self.get_statistic_frame())
 
-        print("\nValues of statistical measures:\n")
+        _rich_console.print("[medium_spring_green bold underline]\nValues of statistical measures:\n")
 
         display(self.get_statistic_measure_frame())
 

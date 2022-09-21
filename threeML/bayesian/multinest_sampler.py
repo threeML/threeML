@@ -1,12 +1,10 @@
 import shutil
-import time
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from astromodels import use_astromodels_memoization
 from astromodels.core.model import Model
-
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
@@ -153,13 +151,9 @@ class MultiNestSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
-            if rank != 0:
+            comm.Barrier()
 
-                # let these guys take a break
-                time.sleep(1)
-
-            else:
-
+            if rank == 0:
                 # create mcmc chains directory only on first engine
 
                 if not chain_dir.exists():
@@ -171,6 +165,8 @@ class MultiNestSampler(UnitCubeSampler):
             if not chain_dir.exists():
                 log.debug(f"Create {chain_dir} for multinest output")
                 chain_dir.mkdir()
+
+
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
@@ -201,20 +197,18 @@ class MultiNestSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
-            if rank != 0:
+            comm.Barrier()
 
-                # let these guys take a break
-                time.sleep(5)
+            if rank != 0:
 
                 # these engines do not need to read
                 process_fit = False
 
             else:
 
-                # wait for a moment to allow it all to turn off
-                time.sleep(5)
-
                 process_fit = True
+
+
 
         else:
 

@@ -13,6 +13,8 @@ from astromodels.utils.logging import (
     astromodels_dev_log_handler,
     astromodels_usr_log_handler,
 )
+
+from astromodels.utils.valid_variable import is_valid_variable_name
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
@@ -20,6 +22,23 @@ from rich.theme import Theme
 from threeML.config.config import threeML_config
 
 # set up the console logging
+
+
+def invalid_plugin_name(name: str, log: logging.Logger) -> None:
+
+    if not is_valid_variable_name(name):
+
+        log.error(
+            f"Name {name} is not a valid name for a plugin. You must use a name which is "
+            "a valid python identifier: no spaces, no operators (+,-,/,*), "
+            "it cannot start with a number, no special characters"
+        )
+
+        raise AssertionError(
+            f"Name {name} is not a valid name for a plugin. You must use a name which is "
+            "a valid python identifier: no spaces, no operators (+,-,/,*), "
+            "it cannot start with a number, no special characters"
+        )
 
 
 def get_path_of_log_dir() -> Path:
@@ -97,7 +116,9 @@ _theme["logging.level.info"] = f"{astromodels_config.logging.info_style}"
 _theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
 
 
+# mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
 mytheme = Theme(_theme)
+
 console = Console(theme=mytheme)
 
 
@@ -369,7 +390,7 @@ def silence_console_log(and_progress_bars=True):
             threeML_config.interface.progress_bars = progress_state
 
 
-def setup_logger(name):
+def setup_logger(name: str) -> logging.Logger:
 
     # A logger with name name will be created
     # and then add it to the print stream

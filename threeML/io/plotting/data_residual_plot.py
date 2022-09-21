@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
@@ -15,7 +14,7 @@ plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 log = setup_logger(__name__)
 
 
-class ResidualPlot(object):
+class ResidualPlot:
     def __init__(self, **kwargs):
         """
         A class that makes data/residual plots
@@ -96,7 +95,17 @@ class ResidualPlot(object):
                 self._fig, self._data_axis = plt.subplots(**kwargs)
 
     @property
-    def figure(self):
+    def axes(self):
+
+        if self._show_residuals:
+
+            return [self._data_axis, self._residual_axis]
+
+        else:
+            return self._data_axis
+
+    @property
+    def figure(self) -> plt.Figure:
         """
 
         :return: the figure instance
@@ -105,7 +114,7 @@ class ResidualPlot(object):
         return self._fig
 
     @property
-    def data_axis(self):
+    def data_axis(self) -> plt.Axes:
         """
 
         :return: the top or data axis
@@ -114,7 +123,7 @@ class ResidualPlot(object):
         return self._data_axis
 
     @property
-    def residual_axis(self):
+    def residual_axis(self) -> plt.Axes:
         """
 
         :return: the bottom or residual axis
@@ -125,7 +134,7 @@ class ResidualPlot(object):
         return self._residual_axis
 
     @property
-    def show_residuals(self):
+    def show_residuals(self) -> bool:
         return self._show_residuals
 
     @property
@@ -211,11 +220,11 @@ class ResidualPlot(object):
 
             residuals[idx] = 0.0
 
-            idx = np.isnan(residuals)
+            self._residual_axis.axhline(0, linestyle="--", color="k")
+
+            idx = np.isinf(residuals)
 
             residuals[idx] = 0.0
-
-            self._residual_axis.axhline(0, linestyle="--", color="k")
 
             self._residual_axis.errorbar(
                 x, residuals, yerr=residual_yerr, **kwargs

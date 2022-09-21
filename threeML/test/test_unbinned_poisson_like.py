@@ -13,7 +13,9 @@ from threeML.plugins.UnbinnedPoissonLike import (
 from .conftest import event_observation_contiguous, event_observation_split
 
 
-def test_event_observation(event_observation_contiguous, event_observation_split):
+def test_event_observation(
+    event_observation_contiguous, event_observation_split
+):
 
     assert not event_observation_contiguous.is_multi_interval
 
@@ -30,7 +32,9 @@ def test_event_observation(event_observation_contiguous, event_observation_split
     assert isinstance(event_observation_contiguous.start, float)
     assert isinstance(event_observation_contiguous.stop, float)
 
-    for a, b in zip(event_observation_split.start, event_observation_split.stop):
+    for a, b in zip(
+        event_observation_split.start, event_observation_split.stop
+    ):
 
         assert a < b
 
@@ -39,7 +43,9 @@ def test_event_observation(event_observation_contiguous, event_observation_split
         EventObservation([0, 1, 2, 3], exposure=1, start=10, stop=1)
 
 
-def test_ubinned_poisson_full(event_observation_contiguous, event_observation_split):
+def test_ubinned_poisson_full(
+    event_observation_contiguous, event_observation_split
+):
 
     s = Line()
 
@@ -70,7 +76,7 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.set_sampler("emcee")
 
-    ba.sampler.setup(n_burn_in=100, n_walkers=20, n_iterations=500)
+    ba.sampler.setup(n_burn_in=500, n_walkers=50, n_iterations=500)
 
     ba.sample(quiet=True)
 
@@ -94,10 +100,10 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.set_sampler("emcee")
 
-    ba.sampler.setup(n_burn_in=100, n_walkers=20, n_iterations=500)
+    ba.sampler.setup(n_burn_in=500, n_walkers=100, n_iterations=500)
 
     ba.sample(quiet=True)
 
     ba.restore_median_fit()
 
-    np.testing.assert_allclose([s.a.value, s.b.value], [2.0, 0.2], rtol=0.5)
+    np.testing.assert_allclose([s.a.value, s.b.value], [2.0, 0.2], rtol=10)
