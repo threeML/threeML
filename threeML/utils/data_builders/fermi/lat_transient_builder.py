@@ -826,7 +826,7 @@ class TransientLATDataBuilder(object):
                     "You have choosen to recompute the time intervals in this folder"
                 )
 
-                tmp_dir = Path(f"tmp_{ str(uuid.uuid4()}")
+                tmp_dir = Path(f"tmp_{ str(uuid.uuid4())}")
 
                 log.info(f"The older entries will be moved to {tmp_dir}")
 
