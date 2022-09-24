@@ -208,7 +208,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     last = np.zeros(N, dtype=int)
 
     # eq. 21 from Scargle 2012
-    prior = 4 - np.log(73.53 * p0 * (N ** -0.478))
+    prior = 4 - np.log(73.53 * p0 * (N**-0.478))
 
     logger.debug("Finding blocks...")
 

@@ -62,9 +62,7 @@ def get_path_of_log_file(log_file: str) -> Path:
     """
     returns the path of the log files
     """
-    assert (
-        log_file in _log_file_names
-    ), f"{log_file} is not one of {_log_file_names}"
+    assert log_file in _log_file_names, f"{log_file} is not one of {_log_file_names}"
 
     return get_path_of_log_dir() / log_file
 
@@ -163,13 +161,9 @@ class LoggingState(object):
         # store their current states
 
         self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
-        self.threeML_console_log_handler_state = (
-            threeML_console_log_handler.level
-        )
+        self.threeML_console_log_handler_state = threeML_console_log_handler.level
 
-        self.astromodels_usr_log_handler_state = (
-            astromodels_usr_log_handler.level
-        )
+        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
         self.astromodels_console_log_handler_state = (
             astromodels_console_log_handler.level
         )
@@ -177,22 +171,16 @@ class LoggingState(object):
     def _store_state(self):
 
         self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
-        self.threeML_console_log_handler_state = (
-            threeML_console_log_handler.level
-        )
+        self.threeML_console_log_handler_state = threeML_console_log_handler.level
 
-        self.astromodels_usr_log_handler_state = (
-            astromodels_usr_log_handler.level
-        )
+        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
         self.astromodels_console_log_handler_state = (
             astromodels_console_log_handler.level
         )
 
     def restore_last_state(self):
 
-        self.threeML_usr_log_handler.setLevel(
-            self.threeML_usr_log_handler_state
-        )
+        self.threeML_usr_log_handler.setLevel(self.threeML_usr_log_handler_state)
         self.threeML_console_log_handler.setLevel(
             self.threeML_console_log_handler_state
         )

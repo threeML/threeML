@@ -166,8 +166,6 @@ class MultiNestSampler(UnitCubeSampler):
                 log.debug(f"Create {chain_dir} for multinest output")
                 chain_dir.mkdir()
 
-
-
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
@@ -207,8 +205,6 @@ class MultiNestSampler(UnitCubeSampler):
             else:
 
                 process_fit = True
-
-
 
         else:
 

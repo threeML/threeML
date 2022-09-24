@@ -342,7 +342,7 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
 
 def test_one_free_parameter_input_output():
 
-    fluxUnit = 1.0 / (u.TeV * u.cm ** 2 * u.s)
+    fluxUnit = 1.0 / (u.TeV * u.cm**2 * u.s)
 
     temp_file = "__test_mle.fits"
 

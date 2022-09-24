@@ -163,8 +163,6 @@ class UltraNestSampler(UnitCubeSampler):
                         log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
 
-
-
             else:
 
                 if not os.path.exists(mcmc_chains_out_dir):
@@ -227,8 +225,6 @@ class UltraNestSampler(UnitCubeSampler):
             else:
 
                 process_fit = True
-
-
 
         else:
 

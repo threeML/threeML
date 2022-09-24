@@ -596,7 +596,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index = float(catalog_entry["pl_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -619,7 +619,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -639,7 +639,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -661,14 +661,14 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         a = float(catalog_entry["plec_exp_factor_s"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
-        conv = math.exp(a * E0 ** b)
+        conv = math.exp(a * E0**b)
         this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.gamma = b
         this_spectrum.gamma.fix = fix
         this_spectrum.piv = E0 * u.MeV
         this_spectrum.K = (
-            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            conv * float(catalog_entry["plec_flux_density"]) / (u.cm**2 * u.s * u.MeV)
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (

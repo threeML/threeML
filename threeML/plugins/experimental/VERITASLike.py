@@ -167,7 +167,7 @@ class VERITASRun(object):
 
         # Get energies where the effective area is given
 
-        energies_eff = 10 ** self._log_eff_area_energies
+        energies_eff = 10**self._log_eff_area_energies
 
         # Get the unnormalized effective area x photon flux contained in the migration matrix
 
@@ -305,7 +305,7 @@ class VERITASRun(object):
     @staticmethod
     def _simulated_spectrum_f(e1, e2):
 
-        integral_f = lambda x: old_div(-3.0, (x ** 0.5))
+        integral_f = lambda x: old_div(-3.0, (x**0.5))
 
         return integral_f(e2) - integral_f(e1)
 

@@ -420,7 +420,6 @@ class OGIPResponse(InstrumentResponse):
         :param arf_file:
         """
 
-
         self._arf: Optional[np.ndarray] = None
 
         self._rmf: Optional[np.ndarray] = None
@@ -758,7 +757,6 @@ class OGIPResponse(InstrumentResponse):
         """
 
         return self._rmf
-
 
 
 class InstrumentResponseSet(object):

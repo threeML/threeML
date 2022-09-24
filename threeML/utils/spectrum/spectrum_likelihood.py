@@ -296,8 +296,10 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         loglike, bkg_model = poisson_observed_gaussian_background(
             self._spectrum_plugin.current_observed_counts,
-            self._spectrum_plugin.current_background_counts * self._spectrum_plugin.scale_factor,
-            self._spectrum_plugin.current_background_count_errors * self._spectrum_plugin.scale_factor,
+            self._spectrum_plugin.current_background_counts
+            * self._spectrum_plugin.scale_factor,
+            self._spectrum_plugin.current_background_count_errors
+            * self._spectrum_plugin.scale_factor,
             expected_model_counts,
         )
 

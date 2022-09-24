@@ -14,13 +14,13 @@ from threeML.utils.interval import IntervalSet
 _final_convert = (
     (
         1.0
-        * astro_units.cm ** 2
+        * astro_units.cm**2
         * astro_units.keV
         / (
             astro_units.erg
-            * astro_units.angstrom ** 2
+            * astro_units.angstrom**2
             * astro_units.s
-            * astro_units.cm ** 2
+            * astro_units.cm**2
         )
     )
     .to("1/(cm2 s)")
@@ -145,7 +145,7 @@ class FilterSet(object):
 
         """
 
-        conversion_factor = (constants.c ** 2 * constants.h ** 2).to("keV2 * cm2")
+        conversion_factor = (constants.c**2 * constants.h**2).to("keV2 * cm2")
 
         self._zero_points = np.empty(self._n_filters)
         self._wavelengths = []

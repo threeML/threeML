@@ -141,9 +141,9 @@ class DifferentialFluxConversion(FluxConversion):
         """
 
         self._flux_lookup = {
-            "photon_flux": 1.0 / (u.keV * u.cm ** 2 * u.s),
-            "energy_flux": old_div(u.erg, (u.keV * u.cm ** 2 * u.s)),
-            "nufnu_flux": old_div(u.erg ** 2, (u.keV * u.cm ** 2 * u.s)),
+            "photon_flux": 1.0 / (u.keV * u.cm**2 * u.s),
+            "energy_flux": old_div(u.erg, (u.keV * u.cm**2 * u.s)),
+            "nufnu_flux": old_div(u.erg**2, (u.keV * u.cm**2 * u.s)),
         }
 
         self._model_converter = {
@@ -193,15 +193,15 @@ class IntegralFluxConversion(FluxConversion):
         """
 
         self._flux_lookup = {
-            "photon_flux": 1.0 / (u.cm ** 2 * u.s),
-            "energy_flux": old_div(u.erg, (u.cm ** 2 * u.s)),
-            "nufnu_flux": old_div(u.erg ** 2, (u.cm ** 2 * u.s)),
+            "photon_flux": 1.0 / (u.cm**2 * u.s),
+            "energy_flux": old_div(u.erg, (u.cm**2 * u.s)),
+            "nufnu_flux": old_div(u.erg**2, (u.cm**2 * u.s)),
         }
 
         self._model_converter = {
             "photon_flux": lambda x: x * test_model(x),
             "energy_flux": lambda x: x * x * test_model(x),
-            "nufnu_flux": lambda x: x ** 3 * test_model(x),
+            "nufnu_flux": lambda x: x**3 * test_model(x),
         }
 
         def photon_integrand(x, param_specification):

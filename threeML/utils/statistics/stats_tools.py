@@ -38,9 +38,7 @@ def aic(log_like, n_parameters, n_data_points) -> float:
     if not np.isfinite(val):
         val = 0
 
-        log.warning(
-            "AIC was NAN. Recording zero, but you should examine your fit."
-        )
+        log.warning("AIC was NAN. Recording zero, but you should examine your fit.")
 
     return val
 
@@ -54,9 +52,7 @@ def bic(log_like, n_parameters, n_data_points) -> float:
     if not np.isfinite(val):
         val = 0
 
-        log.warning(
-            "BIC was NAN. Recording zero, but you should examine your fit."
-        )
+        log.warning("BIC was NAN. Recording zero, but you should examine your fit.")
 
     return val
 
@@ -99,9 +95,7 @@ def dic(bayes_analysis) -> Tuple[float]:
         elpd_dic = 0
         pdic = 0
 
-        log.warning(
-            "DIC was NAN. Recording zero, but you should examine your fit."
-        )
+        log.warning("DIC was NAN. Recording zero, but you should examine your fit.")
 
     return -2 * elpd_dic, pdic
 
@@ -308,8 +302,7 @@ class Significance:
         two = np.zeros_like(self._Noff, dtype=float)
 
         two[idx] = self._Noff[idx] * np.log(
-            (1 + self._alpha)
-            * ((self._Noff[idx] / (self._Non[idx] + self._Noff[idx])))
+            (1 + self._alpha) * ((self._Noff[idx] / (self._Non[idx] + self._Noff[idx])))
         )
 
         if assign_sign:

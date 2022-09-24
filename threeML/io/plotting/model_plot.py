@@ -131,14 +131,11 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
 
     else:
 
-        energy_range = (
-            np.logspace(
-                np.log10(_defaults["ene_min"]),
-                np.log10(_defaults["ene_max"]),
-                _defaults["num_ene"],
-            )
-            * u.Unit(_defaults["energy_unit"])
-        )
+        energy_range = np.logspace(
+            np.log10(_defaults["ene_min"]),
+            np.log10(_defaults["ene_max"]),
+            _defaults["num_ene"],
+        ) * u.Unit(_defaults["energy_unit"])
 
         # scale the units to the defaults
 

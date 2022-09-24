@@ -18,9 +18,7 @@ class IntervalsNotContiguous(RuntimeError):
 
 
 class Interval:
-    def __init__(
-        self, start: float, stop: float, swap_if_inverted: bool = False
-    ):
+    def __init__(self, start: float, stop: float, swap_if_inverted: bool = False):
 
         self._start: float = float(start)
         self._stop: float = float(stop)
@@ -85,9 +83,7 @@ class Interval:
         """
 
         if not self.overlaps_with(interval):
-            log.exception(
-                "Current interval does not overlap with provided interval"
-            )
+            log.exception("Current interval does not overlap with provided interval")
             raise IntervalsDoNotOverlap()
 
         new_start = max(self._start, interval.start)
@@ -115,9 +111,7 @@ class Interval:
 
         else:
 
-            raise IntervalsDoNotOverlap(
-                "Could not merge non-overlapping intervals!"
-            )
+            raise IntervalsDoNotOverlap("Could not merge non-overlapping intervals!")
 
     def overlaps_with(self, interval):
         # type: (Interval) -> bool
@@ -346,9 +340,7 @@ class IntervalSet:
 
                 if new_intervals[-1].overlaps_with(sorted_intervals[0]):
 
-                    new_intervals[-1] = new_intervals[-1].merge(
-                        sorted_intervals[0]
-                    )
+                    new_intervals[-1] = new_intervals[-1].merge(sorted_intervals[0])
 
                 else:
 
@@ -385,9 +377,7 @@ class IntervalSet:
 
     def __eq__(self, other):
 
-        for interval_this, interval_other in zip(
-            self.argsort(), other.argsort()
-        ):
+        for interval_this, interval_other in zip(self.argsort(), other.argsort()):
 
             if not self[interval_this] == other[interval_other]:
                 return False
@@ -411,9 +401,7 @@ class IntervalSet:
 
         else:
 
-            return self.new(
-                np.atleast_1d(itemgetter(*self.argsort())(self._intervals))
-            )
+            return self.new(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
 
     def argsort(self):
         """

@@ -81,7 +81,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index = float(catalog_entry["pl_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -104,7 +104,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -124,7 +124,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -150,7 +150,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             b = float(catalog_entry["plec_exp_index"])
             Gs = float(catalog_entry["plec_index_s"])
 
-            conv = numpy.exp(d / b ** 2)
+            conv = numpy.exp(d / b**2)
             this_spectrum.index = d / b - Gs
             this_spectrum.index.fix = fix
             this_spectrum.gamma = d / b
@@ -159,7 +159,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K = (
                 conv
                 * float(catalog_entry["plec_flux_density"])
-                / (u.cm ** 2 * u.s * u.MeV)
+                / (u.cm**2 * u.s * u.MeV)
             )
             this_spectrum.xc = E0
         else:
@@ -168,7 +168,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             E0 = float(catalog_entry["pivot_energy"])
             b = float(catalog_entry["plec_exp_index"])
 
-            conv = numpy.exp(a * E0 ** b)
+            conv = numpy.exp(a * E0**b)
             this_spectrum.index = float(catalog_entry["plec_index"]) * -1
             this_spectrum.index.fix = fix
             this_spectrum.gamma = b
@@ -177,7 +177,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K = (
                 conv
                 * float(catalog_entry["plec_flux_density"])
-                / (u.cm ** 2 * u.s * u.MeV)
+                / (u.cm**2 * u.s * u.MeV)
             )
             this_spectrum.xc = a ** (-1.0 / b) * u.MeV
 
@@ -248,7 +248,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index = float(catalog_entry["pl_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -271,7 +271,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -291,7 +291,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -318,7 +318,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
             b = float(catalog_entry["plec_exp_index"])
             Gs = float(catalog_entry["plec_index_s"])
 
-            conv = numpy.exp(d / b ** 2)
+            conv = numpy.exp(d / b**2)
             this_spectrum.index = d / b - Gs
             this_spectrum.index.fix = fix
             this_spectrum.gamma = d / b
@@ -327,7 +327,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K = (
                 conv
                 * float(catalog_entry["plec_flux_density"])
-                / (u.cm ** 2 * u.s * u.MeV)
+                / (u.cm**2 * u.s * u.MeV)
             )
             this_spectrum.xc = E0
         else:
@@ -336,7 +336,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
             E0 = float(catalog_entry["pivot_energy"])
             b = float(catalog_entry["plec_exp_index"])
 
-            conv = numpy.exp(a * E0 ** b)
+            conv = numpy.exp(a * E0**b)
             this_spectrum.index = float(catalog_entry["plec_index"]) * -1
             this_spectrum.index.fix = fix
             this_spectrum.gamma = b
@@ -345,7 +345,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K = (
                 conv
                 * float(catalog_entry["plec_flux_density"])
-                / (u.cm ** 2 * u.s * u.MeV)
+                / (u.cm**2 * u.s * u.MeV)
             )
             this_spectrum.xc = a ** (-1.0 / b) * u.MeV
 

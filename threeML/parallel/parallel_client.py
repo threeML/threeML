@@ -275,7 +275,6 @@ if has_parallel:
             # Reorder the list according to the id
             return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 
-
 else:
 
     # NO parallel environment available. Make a dumb object to avoid import problems, but this object will never

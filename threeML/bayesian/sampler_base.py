@@ -203,7 +203,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         # set the median or MAP
 
-                # Instance the result
+        # Instance the result
         if threeML_config.bayesian.use_median_fit:
 
             self.restore_median_fit()
@@ -211,7 +211,6 @@ class SamplerBase(metaclass=abc.ABCMeta):
         else:
 
             self.restore_MAP_fit()
-
 
         # Find maximum of the log posterior
 

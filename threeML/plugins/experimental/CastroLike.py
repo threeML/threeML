@@ -77,7 +77,7 @@ class IntervalContainer(object):
 
         assert res.success, "Could not find minimum"
 
-        self._minimum = (10 ** res.x, float(res.fun))
+        self._minimum = (10**res.x, float(res.fun))
 
     @property
     def start(self):
@@ -326,7 +326,7 @@ class CastroLike(PluginPrototype):
 
                 # Make an errorbar that is constant length in log space
                 dy_ = np.log10(y_hi) - 0.2
-                dy = y_hi - 10 ** dy_
+                dy = y_hi - 10**dy_
 
                 uls_yerrs.append(dy)
 

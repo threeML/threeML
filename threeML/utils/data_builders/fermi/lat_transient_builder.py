@@ -87,7 +87,7 @@ class LATLikelihoodParameter(object):
 
         # make sure that the value set is allowed
         if self._allowed_values is not None:
-            if notself._current_value in set(self._allowed_values):
+            if self._current_value not in set(self._allowed_values):
 
                 message = f"The value of {self._name} is not in {self._allowed_values}"
 
@@ -118,7 +118,7 @@ class LATLikelihoodParameter(object):
 
     def __set_value(self, value):
         if self._allowed_values is not None:
-            if not value in self._allowed_values:
+            if value not in self._allowed_values:
                 message = f"The value {value} of {self._name} is not in {self._allowed_values}"
 
                 log.error(message)
@@ -226,9 +226,7 @@ class TransientLATDataBuilder(object):
 
         # this keeps the user from erasing these objects accidentally
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         # and repeat
 
@@ -238,9 +236,7 @@ class TransientLATDataBuilder(object):
             name=name, help_string="R.A. of the object (J2000)", is_number=True
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -250,9 +246,7 @@ class TransientLATDataBuilder(object):
             name=name, help_string="Dec. of the object (J2000)", is_number=True
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -264,9 +258,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -279,9 +271,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -294,9 +284,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -309,9 +297,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -324,9 +310,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -339,9 +323,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -355,9 +337,7 @@ class TransientLATDataBuilder(object):
             allowed_values=irfs,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -370,9 +350,7 @@ class TransientLATDataBuilder(object):
             allowed_values=["template (fixed norm.)", "template", "none"],
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -391,9 +369,7 @@ class TransientLATDataBuilder(object):
             ],
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -407,9 +383,7 @@ class TransientLATDataBuilder(object):
             allowed_values=spectra.keys(),
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -422,9 +396,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -438,9 +410,7 @@ class TransientLATDataBuilder(object):
             allowed_values=["events", "time"],
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -453,9 +423,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -469,9 +437,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -485,9 +451,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -525,9 +489,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -540,9 +502,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -555,9 +515,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -570,9 +528,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -585,9 +541,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -600,9 +554,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -615,9 +567,7 @@ class TransientLATDataBuilder(object):
             is_number=True,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -630,9 +580,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -645,9 +593,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -661,9 +607,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -677,9 +621,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
 
@@ -693,9 +635,7 @@ class TransientLATDataBuilder(object):
             is_number=False,
         )
 
-        super(TransientLATDataBuilder, self).__setattr__(
-            name, self._parameters[name]
-        )
+        super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         # Now if there are keywords from a configuration to read,
         # lets do it
@@ -783,9 +723,7 @@ class TransientLATDataBuilder(object):
         # This is not the cleanest way to do this, but at the moment I see
         # no way around it as I do not want to rewrite the fermitools
 
-        cmd = (
-            self._get_command_string()
-        )  # should not allow you to be missing args!
+        cmd = self._get_command_string()  # should not allow you to be missing args!
 
         # now we want to get the site package directory to find where the script is
         # located. This should be the first entry... might break in teh future!
@@ -794,9 +732,7 @@ class TransientLATDataBuilder(object):
 
         cmd = os.path.join(site_pkg, cmd)
         executable = cmd.split()[0]
-        gtapp_mp_dir = os.path.join(
-            site_pkg, "fermitools", "GtBurst", "gtapps_mp"
-        )
+        gtapp_mp_dir = os.path.join(site_pkg, "fermitools", "GtBurst", "gtapps_mp")
         executables = [
             executable,
             os.path.join(gtapp_mp_dir, "gtdiffrsp_mp.py"),
@@ -948,9 +884,7 @@ class TransientLATDataBuilder(object):
                 )
 
                 if not file_existing_and_readable(livetime_cube):
-                    log.info(
-                        "The livetime_cube does not exist. Please examine!"
-                    )
+                    log.info("The livetime_cube does not exist. Please examine!")
 
                 # optional bin_file parameter
                 # if self._parameters['bin_file'].value is not None:

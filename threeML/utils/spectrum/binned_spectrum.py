@@ -634,7 +634,7 @@ class BinnedSpectrum(Histogram):
             assert (
                 self.count_errors is not None or other.count_errors is not None
             ), "only one of the two spectra have errors, can not add!"
-            new_count_errors = (self.count_errors ** 2 + other.count_errors ** 2) ** 0.5
+            new_count_errors = (self.count_errors**2 + other.count_errors**2) ** 0.5
 
         new_counts = self.counts + other.counts
 
@@ -692,20 +692,20 @@ class BinnedSpectrum(Histogram):
 
         new_rate_errors = np.array(
             [
-                (e1 ** -2 + e2 ** -2) ** -0.5
+                (e1**-2 + e2**-2) ** -0.5
                 for e1, e2 in zip(self.rate_errors, other._errors)
             ]
         )
         new_rates = (
             np.array(
                 [
-                    (c1 * e1 ** -2 + c2 * e2 ** -2)
+                    (c1 * e1**-2 + c2 * e2**-2)
                     for c1, e1, c2, e2 in zip(
                         self.rates, self._errors, other.rates, other._errors
                     )
                 ]
             )
-            * new_rate_errors ** 2
+            * new_rate_errors**2
         )
 
         new_count_errors = new_rate_errors * new_exposure
