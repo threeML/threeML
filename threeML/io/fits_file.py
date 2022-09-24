@@ -1,5 +1,3 @@
-from astropy.io import fits
-import numpy as np
 import astropy.units as u
 import numpy as np
 import pkg_resources
