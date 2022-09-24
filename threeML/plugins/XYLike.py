@@ -17,7 +17,7 @@ from threeML.utils.statistics.likelihood_functions import (
     poisson_log_likelihood_ideal_bkg,
 )
 
-from ..io.logging import setup_logger
+from threeML.io.logging import setup_logger
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
