@@ -72,10 +72,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
     'sphinx_gallery.load_style',
-    'sphinx_gallery.gen_gallery',
-
     "sphinx_rtd_dark_mode",
-
 
 ]
 
@@ -86,13 +83,6 @@ napoleon_use_param = False
 default_dark_mode = True
 
 
-# SPHINX gallery
-
-sphinx_gallery_conf = {
-     'examples_dirs': '../example_notebooks' ,
-
-     'gallery_dirs': 'tutorials',
-}
 
 
 
