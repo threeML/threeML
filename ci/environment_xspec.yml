@@ -2,12 +2,14 @@
 # when xspec is needed
 name: test_env
 channels:
-  - conda-forge
   - threeml
   - xspecmodels
+    - conda-forge
   - defaults
 dependencies:
   - pip
+  - astromodels>=2
+  - xspec-modelsonly
   - pytest
   - pytest-cov
   - codecov
@@ -22,7 +24,6 @@ dependencies:
   - pyyaml>=5.1
   - dill
   - iminuit>=2
-  - astromodels>=2
   - astroquery
   - corner>=1.0.2
   - pandas>=0.23
@@ -44,7 +45,6 @@ dependencies:
   - numdifftools
   - tqdm
   - future
-  - xspec-modelsonly
   - colorama
   - omegaconf
   - flake8
