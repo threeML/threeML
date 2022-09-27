@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.test.test_UnresolvedExtendedXYLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.test.test_UnresolvedExtendedXYLike</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.test.test_UnresolvedExtendedXYLike</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.UnresolvedExtendedXYLike</span> <span class="kn">import</span> <span class="n">UnresolvedExtendedXYLike</span>
+<span class="kn">from</span> <span class="nn">astromodels.functions.functions_2D</span> <span class="kn">import</span> <span class="n">Gaussian_on_sphere</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="get_signal"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.get_signal">[docs]</a><span class="k">def</span> <span class="nf">get_signal</span><span class="p">():</span>
+    <span class="c1"># Generate a test signal</span>
+    <span class="n">generator</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+
+    <span class="n">generator</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">sigma_2</span> <span class="o">=</span> <span class="mf">0.32</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">70.4</span>
+    <span class="n">generator</span><span class="o">.</span><span class="n">a_1</span> <span class="o">=</span> <span class="mf">40.0</span>
+
+    <span class="n">signal</span> <span class="o">=</span> <span class="n">generator</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">signal</span></div>
+
+
+<span class="c1"># A simple x</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># These datasets have been generated adding noise to the signal</span>
+<span class="n">gauss_signal</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="mf">50.7602612346</span><span class="p">,</span>
+    <span class="mf">45.9932836018</span><span class="p">,</span>
+    <span class="mf">32.7977610209</span><span class="p">,</span>
+    <span class="mf">36.854638754</span><span class="p">,</span>
+    <span class="mf">39.5900950043</span><span class="p">,</span>
+    <span class="mf">41.9882356834</span><span class="p">,</span>
+    <span class="mf">35.5464965039</span><span class="p">,</span>
+    <span class="mf">47.7006711308</span><span class="p">,</span>
+    <span class="mf">51.350490463</span><span class="p">,</span>
+    <span class="mf">41.3574154897</span><span class="p">,</span>
+    <span class="mf">43.5213662377</span><span class="p">,</span>
+    <span class="mf">39.1763197352</span><span class="p">,</span>
+    <span class="mf">39.817699622</span><span class="p">,</span>
+    <span class="mf">30.515504494</span><span class="p">,</span>
+    <span class="mf">33.5154124187</span><span class="p">,</span>
+    <span class="mf">52.2808043531</span><span class="p">,</span>
+    <span class="mf">37.3822864933</span><span class="p">,</span>
+    <span class="mf">54.8713758496</span><span class="p">,</span>
+    <span class="mf">31.501229516</span><span class="p">,</span>
+    <span class="mf">44.3932720107</span><span class="p">,</span>
+    <span class="mf">40.9919050981</span><span class="p">,</span>
+    <span class="mf">46.6234446307</span><span class="p">,</span>
+    <span class="mf">65.0001223876</span><span class="p">,</span>
+    <span class="mf">78.9277394629</span><span class="p">,</span>
+    <span class="mf">119.888320901</span><span class="p">,</span>
+    <span class="mf">144.295807048</span><span class="p">,</span>
+    <span class="mf">94.2679915254</span><span class="p">,</span>
+    <span class="mf">68.3366002984</span><span class="p">,</span>
+    <span class="mf">48.7021725122</span><span class="p">,</span>
+    <span class="mf">43.8175069547</span><span class="p">,</span>
+    <span class="mf">48.4100953701</span><span class="p">,</span>
+    <span class="mf">53.4893430887</span><span class="p">,</span>
+    <span class="mf">44.3520922656</span><span class="p">,</span>
+    <span class="mf">37.3317011115</span><span class="p">,</span>
+    <span class="mf">48.8614340877</span><span class="p">,</span>
+    <span class="mf">45.8279746014</span><span class="p">,</span>
+    <span class="mf">41.4841202405</span><span class="p">,</span>
+    <span class="mf">54.4940719287</span><span class="p">,</span>
+    <span class="mf">34.1601281994</span><span class="p">,</span>
+    <span class="mf">38.0362535503</span><span class="p">,</span>
+    <span class="mf">50.8319092017</span><span class="p">,</span>
+    <span class="mf">45.0868214795</span><span class="p">,</span>
+    <span class="mf">50.7982173405</span><span class="p">,</span>
+    <span class="mf">59.7236796118</span><span class="p">,</span>
+    <span class="mf">42.8220846239</span><span class="p">,</span>
+    <span class="mf">47.978397568</span><span class="p">,</span>
+    <span class="mf">59.6987029918</span><span class="p">,</span>
+    <span class="mf">50.8856593966</span><span class="p">,</span>
+    <span class="mf">55.5325981236</span><span class="p">,</span>
+    <span class="mf">33.879756494</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">gauss_sigma</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="mf">6.32455532034</span><span class="p">,</span>
+    <span class="mf">6.34066886319</span><span class="p">,</span>
+    <span class="mf">6.35674156037</span><span class="p">,</span>
+    <span class="mf">6.37277372091</span><span class="p">,</span>
+    <span class="mf">6.38876565</span><span class="p">,</span>
+    <span class="mf">6.40471764899</span><span class="p">,</span>
+    <span class="mf">6.4206300155</span><span class="p">,</span>
+    <span class="mf">6.43650304347</span><span class="p">,</span>
+    <span class="mf">6.45233702322</span><span class="p">,</span>
+    <span class="mf">6.46813224153</span><span class="p">,</span>
+    <span class="mf">6.48388898166</span><span class="p">,</span>
+    <span class="mf">6.49960752347</span><span class="p">,</span>
+    <span class="mf">6.51528814342</span><span class="p">,</span>
+    <span class="mf">6.53093111468</span><span class="p">,</span>
+    <span class="mf">6.54653670831</span><span class="p">,</span>
+    <span class="mf">6.56210525885</span><span class="p">,</span>
+    <span class="mf">6.57763959273</span><span class="p">,</span>
+    <span class="mf">6.59320350524</span><span class="p">,</span>
+    <span class="mf">6.60982256293</span><span class="p">,</span>
+    <span class="mf">6.63810676386</span><span class="p">,</span>
+    <span class="mf">6.74610996782</span><span class="p">,</span>
+    <span class="mf">7.18007988042</span><span class="p">,</span>
+    <span class="mf">8.31336897994</span><span class="p">,</span>
+    <span class="mf">10.0117217614</span><span class="p">,</span>
+    <span class="mf">11.3276025229</span><span class="p">,</span>
+    <span class="mf">11.3366071004</span><span class="p">,</span>
+    <span class="mf">10.0422516164</span><span class="p">,</span>
+    <span class="mf">8.37451562539</span><span class="p">,</span>
+    <span class="mf">7.27888168044</span><span class="p">,</span>
+    <span class="mf">6.88089633636</span><span class="p">,</span>
+    <span class="mf">6.80509804246</span><span class="p">,</span>
+    <span class="mf">6.80755576825</span><span class="p">,</span>
+    <span class="mf">6.82140432398</span><span class="p">,</span>
+    <span class="mf">6.83628044824</span><span class="p">,</span>
+    <span class="mf">6.85118795893</span><span class="p">,</span>
+    <span class="mf">6.86606562443</span><span class="p">,</span>
+    <span class="mf">6.88091118789</span><span class="p">,</span>
+    <span class="mf">6.89572479208</span><span class="p">,</span>
+    <span class="mf">6.9105066414</span><span class="p">,</span>
+    <span class="mf">6.92525693917</span><span class="p">,</span>
+    <span class="mf">6.93997588657</span><span class="p">,</span>
+    <span class="mf">6.95466368265</span><span class="p">,</span>
+    <span class="mf">6.96932052437</span><span class="p">,</span>
+    <span class="mf">6.98394660662</span><span class="p">,</span>
+    <span class="mf">6.99854212224</span><span class="p">,</span>
+    <span class="mf">7.01310726208</span><span class="p">,</span>
+    <span class="mf">7.027642215</span><span class="p">,</span>
+    <span class="mf">7.04214716792</span><span class="p">,</span>
+    <span class="mf">7.05662230584</span><span class="p">,</span>
+    <span class="mf">7.07106781187</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">poiss_sig</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="mi">44</span><span class="p">,</span>
+    <span class="mi">43</span><span class="p">,</span>
+    <span class="mi">38</span><span class="p">,</span>
+    <span class="mi">25</span><span class="p">,</span>
+    <span class="mi">51</span><span class="p">,</span>
+    <span class="mi">37</span><span class="p">,</span>
+    <span class="mi">46</span><span class="p">,</span>
+    <span class="mi">47</span><span class="p">,</span>
+    <span class="mi">55</span><span class="p">,</span>
+    <span class="mi">36</span><span class="p">,</span>
+    <span class="mi">40</span><span class="p">,</span>
+    <span class="mi">32</span><span class="p">,</span>
+    <span class="mi">46</span><span class="p">,</span>
+    <span class="mi">37</span><span class="p">,</span>
+    <span class="mi">44</span><span class="p">,</span>
+    <span class="mi">42</span><span class="p">,</span>
+    <span class="mi">50</span><span class="p">,</span>
+    <span class="mi">48</span><span class="p">,</span>
+    <span class="mi">52</span><span class="p">,</span>
+    <span class="mi">47</span><span class="p">,</span>
+    <span class="mi">39</span><span class="p">,</span>
+    <span class="mi">55</span><span class="p">,</span>
+    <span class="mi">80</span><span class="p">,</span>
+    <span class="mi">93</span><span class="p">,</span>
+    <span class="mi">123</span><span class="p">,</span>
+    <span class="mi">135</span><span class="p">,</span>
+    <span class="mi">96</span><span class="p">,</span>
+    <span class="mi">74</span><span class="p">,</span>
+    <span class="mi">43</span><span class="p">,</span>
+    <span class="mi">49</span><span class="p">,</span>
+    <span class="mi">43</span><span class="p">,</span>
+    <span class="mi">51</span><span class="p">,</span>
+    <span class="mi">27</span><span class="p">,</span>
+    <span class="mi">32</span><span class="p">,</span>
+    <span class="mi">35</span><span class="p">,</span>
+    <span class="mi">42</span><span class="p">,</span>
+    <span class="mi">43</span><span class="p">,</span>
+    <span class="mi">49</span><span class="p">,</span>
+    <span class="mi">38</span><span class="p">,</span>
+    <span class="mi">43</span><span class="p">,</span>
+    <span class="mi">59</span><span class="p">,</span>
+    <span class="mi">54</span><span class="p">,</span>
+    <span class="mi">50</span><span class="p">,</span>
+    <span class="mi">40</span><span class="p">,</span>
+    <span class="mi">50</span><span class="p">,</span>
+    <span class="mi">57</span><span class="p">,</span>
+    <span class="mi">55</span><span class="p">,</span>
+    <span class="mi">47</span><span class="p">,</span>
+    <span class="mi">38</span><span class="p">,</span>
+    <span class="mi">64</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_UnresolvedExtendedXYLike_chi2"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_chi2">[docs]</a><span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_chi2</span><span class="p">():</span>
+
+    <span class="c1"># Get fake data with Gaussian noise</span>
+
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
+
+    <span class="c1"># Fit</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">)</span>
+
+    <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">4.5</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fitfun</span><span class="p">)</span>
+
+    <span class="c1"># Verify that the fit converged where it should have</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+        <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">40.20269202</span><span class="p">,</span> <span class="mf">0.82896119</span><span class="p">,</span>  <span class="mf">62.80359114</span><span class="p">,</span> <span class="mf">5.04080011</span><span class="p">,</span> <span class="mf">0.27286713</span><span class="p">],</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># test not setting yerr</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xy</span><span class="o">.</span><span class="n">yerr</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">4.5</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fitfun</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_UnresolvedExtendedXYLike_poisson"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_poisson">[docs]</a><span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_poisson</span><span class="p">():</span>
+
+    <span class="c1"># Now Poisson case</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">poiss_sig</span><span class="p">)</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">)</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">b_1</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">a_1</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fitfun</span><span class="p">)</span>
+
+    <span class="c1"># Verify that the fit converged where it should have</span>
+
+    <span class="c1"># print res[0][&#39;value&#39;]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+        <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mf">40.344599</span><span class="p">,</span> <span class="mf">0.783748</span><span class="p">,</span>  <span class="mf">71.560055</span><span class="p">,</span> <span class="mf">4.989727</span><span class="p">,</span> <span class="mf">0.330570</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_UnresolvedExtendedXYLike_assign_to_source"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_assign_to_source">[docs]</a><span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_assign_to_source</span><span class="p">():</span>
+
+    <span class="c1"># Get fake data with Gaussian noise</span>
+
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
+
+    <span class="c1"># Fit</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">)</span>
+
+    <span class="n">xy</span><span class="o">.</span><span class="n">assign_to_source</span><span class="p">(</span><span class="s2">&quot;exs1&quot;</span><span class="p">)</span>
+
+    <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">4.5</span>
+
+    <span class="n">fitfun2</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+    <span class="n">fitfun2</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+    <span class="n">fitfun2</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">4.5</span>
+
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">Gaussian_on_sphere</span><span class="p">()</span>
+    <span class="n">exs1</span> <span class="o">=</span> <span class="n">ExtendedSource</span><span class="p">(</span><span class="s2">&quot;exs1&quot;</span><span class="p">,</span> <span class="n">spatial_shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">fitfun</span><span class="p">)</span>
+    <span class="n">pts2</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;pts2&quot;</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">3.2</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">fitfun2</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">fitfun2</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">parameter</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">parameter</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">exs1</span><span class="p">,</span> <span class="n">pts2</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
+
+    <span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="n">_</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="n">predicted_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="mf">40.20269202</span><span class="p">,</span> <span class="mf">0.82896119</span><span class="p">,</span>  <span class="mf">62.80359114</span><span class="p">,</span> <span class="mf">5.04080011</span><span class="p">,</span> <span class="mf">0.27286713</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">fitfun</span><span class="o">.</span><span class="n">a_1</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">fitfun</span><span class="o">.</span><span class="n">b_1</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">fitfun</span><span class="o">.</span><span class="n">mu_2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">fitfun</span><span class="o">.</span><span class="n">sigma_2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">predicted_parameters</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Test that the likelihood does not change by changing the parameters of the other source</span>
+    <span class="n">log_like_before</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">(</span><span class="o">*</span><span class="n">predicted_parameters</span><span class="p">)</span>
+
+    <span class="n">fitfun2</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">120.0</span>
+
+    <span class="n">log_like_after</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">(</span><span class="o">*</span><span class="n">predicted_parameters</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">log_like_before</span> <span class="o">==</span> <span class="n">log_like_after</span>
+
+    <span class="c1"># Now test that if we do not assign a source, then the log likelihood value will change</span>
+    <span class="n">xy</span><span class="o">.</span><span class="n">assign_to_source</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Test that the likelihood this time changes by changing the parameters of the other source</span>
+    <span class="n">log_like_before</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">(</span><span class="o">*</span><span class="n">predicted_parameters</span><span class="p">)</span>
+
+    <span class="n">fitfun2</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+
+    <span class="n">log_like_after</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">(</span><span class="o">*</span><span class="n">predicted_parameters</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">log_like_before</span> <span class="o">!=</span> <span class="n">log_like_after</span></div>
+
+
+<div class="viewcode-block" id="test_UnresolvedExtendedXYLike_dataframe"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_dataframe">[docs]</a><span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_dataframe</span><span class="p">():</span>
+
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
+
+    <span class="c1"># chi2 version</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+
+    <span class="c1"># read back in dataframe</span>
+
+    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">xy</span><span class="o">.</span><span class="n">is_poisson</span>
+
+    <span class="c1"># poisson version</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+
+    <span class="c1"># read back in dataframe</span>
+
+    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">poisson</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">xy</span><span class="o">.</span><span class="n">is_poisson</span></div>
+
+
+<div class="viewcode-block" id="test_UnresolvedExtendedXYLike_txt"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_txt">[docs]</a><span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_txt</span><span class="p">():</span>
+
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
+
+    <span class="c1"># chi2 version</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+    <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;test_txt.txt&quot;</span>
+
+    <span class="n">xy</span><span class="o">.</span><span class="n">to_txt</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="c1"># read back in txt file</span>
+
+    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="o">.</span><span class="n">from_text_file</span><span class="p">(</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">xy</span><span class="o">.</span><span class="n">is_poisson</span>
+
+    <span class="c1"># poisson version</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">fname</span> <span class="o">=</span> <span class="s2">&quot;test_txt_poisson.txt&quot;</span>
+
+    <span class="n">xy</span><span class="o">.</span><span class="n">to_txt</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="c1"># read back in txt file</span>
+
+    <span class="n">new_xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="o">.</span><span class="n">from_text_file</span><span class="p">(</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">new_xy</span><span class="o">.</span><span class="n">is_poisson</span>
+
+    <span class="c1"># Remove files</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;test_txt.txt&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;test_txt_poisson.txt&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_UnresolvedExtendedxy_plot"><a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedxy_plot">[docs]</a><span class="k">def</span> <span class="nf">test_UnresolvedExtendedxy_plot</span><span class="p">():</span>
+    <span class="c1"># Get fake data with Gaussian noise</span>
+
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
+
+    <span class="c1"># Fit</span>
+
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+    <span class="n">xy</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+    <span class="n">fitfun</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">F_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+    <span class="n">fitfun</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="mf">4.5</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fitfun</span><span class="p">)</span>
+
+    <span class="n">xy</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

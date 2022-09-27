@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview: module code &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Overview: module code</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="threeML.html">threeML</a></li>
+<ul><li><a href="threeML/analysis_results.html">threeML.analysis_results</a></li>
+<li><a href="threeML/bayesian/autoemcee_sampler.html">threeML.bayesian.autoemcee_sampler</a></li>
+<li><a href="threeML/bayesian/bayesian_analysis.html">threeML.bayesian.bayesian_analysis</a></li>
+<li><a href="threeML/bayesian/dynesty_sampler.html">threeML.bayesian.dynesty_sampler</a></li>
+<li><a href="threeML/bayesian/emcee_sampler.html">threeML.bayesian.emcee_sampler</a></li>
+<li><a href="threeML/bayesian/multinest_sampler.html">threeML.bayesian.multinest_sampler</a></li>
+<li><a href="threeML/bayesian/sampler_base.html">threeML.bayesian.sampler_base</a></li>
+<li><a href="threeML/bayesian/tutorial_material.html">threeML.bayesian.tutorial_material</a></li>
+<li><a href="threeML/bayesian/ultranest_sampler.html">threeML.bayesian.ultranest_sampler</a></li>
+<li><a href="threeML/bayesian/zeus_sampler.html">threeML.bayesian.zeus_sampler</a></li>
+<li><a href="threeML/catalogs/Fermi.html">threeML.catalogs.Fermi</a></li>
+<li><a href="threeML/catalogs/FermiGBM.html">threeML.catalogs.FermiGBM</a></li>
+<li><a href="threeML/catalogs/FermiLAT.html">threeML.catalogs.FermiLAT</a></li>
+<li><a href="threeML/catalogs/FermiLLE.html">threeML.catalogs.FermiLLE</a></li>
+<li><a href="threeML/catalogs/Swift.html">threeML.catalogs.Swift</a></li>
+<li><a href="threeML/catalogs/VirtualObservatoryCatalog.html">threeML.catalogs.VirtualObservatoryCatalog</a></li>
+<li><a href="threeML/catalogs/catalog_utils.html">threeML.catalogs.catalog_utils</a></li>
+<li><a href="threeML/classicMLE/goodness_of_fit.html">threeML.classicMLE.goodness_of_fit</a></li>
+<li><a href="threeML/classicMLE/joint_likelihood.html">threeML.classicMLE.joint_likelihood</a></li>
+<li><a href="threeML/classicMLE/joint_likelihood_set.html">threeML.classicMLE.joint_likelihood_set</a></li>
+<li><a href="threeML/classicMLE/likelihood_ratio_test.html">threeML.classicMLE.likelihood_ratio_test</a></li>
+<li><a href="threeML/config/catalog_structure.html">threeML.config.catalog_structure</a></li>
+<li><a href="threeML/config/config_structure.html">threeML.config.config_structure</a></li>
+<li><a href="threeML/config/config_utils.html">threeML.config.config_utils</a></li>
+<li><a href="threeML/config/fitting_structure.html">threeML.config.fitting_structure</a></li>
+<li><a href="threeML/config/plotting_structure.html">threeML.config.plotting_structure</a></li>
+<li><a href="threeML/config/plugin_structure.html">threeML.config.plugin_structure</a></li>
+<li><a href="threeML/config/point_source_structure.html">threeML.config.point_source_structure</a></li>
+<li><a href="threeML/data_list.html">threeML.data_list</a></li>
+<li><a href="threeML/exceptions/custom_exceptions.html">threeML.exceptions.custom_exceptions</a></li>
+<li><a href="threeML/io/calculate_flux.html">threeML.io.calculate_flux</a></li>
+<li><a href="threeML/io/configuration.html">threeML.io.configuration</a></li>
+<li><a href="threeML/io/detect_notebook.html">threeML.io.detect_notebook</a></li>
+<li><a href="threeML/io/dict_with_pretty_print.html">threeML.io.dict_with_pretty_print</a></li>
+<li><a href="threeML/io/download_from_ftp.html">threeML.io.download_from_ftp</a></li>
+<li><a href="threeML/io/download_from_http.html">threeML.io.download_from_http</a></li>
+<li><a href="threeML/io/file_utils.html">threeML.io.file_utils</a></li>
+<li><a href="threeML/io/fits_file.html">threeML.io.fits_file</a></li>
+<li><a href="threeML/io/get_heasarc_table_as_pandas.html">threeML.io.get_heasarc_table_as_pandas</a></li>
+<li><a href="threeML/io/hdf5_utils.html">threeML.io.hdf5_utils</a></li>
+<li><a href="threeML/io/logging.html">threeML.io.logging</a></li>
+<li><a href="threeML/io/network.html">threeML.io.network</a></li>
+<li><a href="threeML/io/package_data.html">threeML.io.package_data</a></li>
+<li><a href="threeML/io/plotting/cmap_cycle.html">threeML.io.plotting.cmap_cycle</a></li>
+<li><a href="threeML/io/plotting/data_residual_plot.html">threeML.io.plotting.data_residual_plot</a></li>
+<li><a href="threeML/io/plotting/get_style.html">threeML.io.plotting.get_style</a></li>
+<li><a href="threeML/io/plotting/light_curve_plots.html">threeML.io.plotting.light_curve_plots</a></li>
+<li><a href="threeML/io/plotting/model_plot.html">threeML.io.plotting.model_plot</a></li>
+<li><a href="threeML/io/plotting/post_process_data_plots.html">threeML.io.plotting.post_process_data_plots</a></li>
+<li><a href="threeML/io/plotting/step_plot.html">threeML.io.plotting.step_plot</a></li>
+<li><a href="threeML/io/results_table.html">threeML.io.results_table</a></li>
+<li><a href="threeML/io/rich_display.html">threeML.io.rich_display</a></li>
+<li><a href="threeML/io/suppress_stdout.html">threeML.io.suppress_stdout</a></li>
+<li><a href="threeML/io/table.html">threeML.io.table</a></li>
+<li><a href="threeML/io/uncertainty_formatter.html">threeML.io.uncertainty_formatter</a></li>
+<li><a href="threeML/minimizer/grid_minimizer.html">threeML.minimizer.grid_minimizer</a></li>
+<li><a href="threeML/minimizer/minimization.html">threeML.minimizer.minimization</a></li>
+<li><a href="threeML/minimizer/minuit_minimizer.html">threeML.minimizer.minuit_minimizer</a></li>
+<li><a href="threeML/minimizer/scipy_minimizer.html">threeML.minimizer.scipy_minimizer</a></li>
+<li><a href="threeML/minimizer/tutorial_material.html">threeML.minimizer.tutorial_material</a></li>
+<li><a href="threeML/parallel/parallel_client.html">threeML.parallel.parallel_client</a></li>
+<li><a href="threeML/plugin_prototype.html">threeML.plugin_prototype</a></li>
+<li><a href="threeML/plugins/DispersionSpectrumLike.html">threeML.plugins.DispersionSpectrumLike</a></li>
+<li><a href="threeML/plugins/FermipyLike.html">threeML.plugins.FermipyLike</a></li>
+<li><a href="threeML/plugins/OGIPLike.html">threeML.plugins.OGIPLike</a></li>
+<li><a href="threeML/plugins/PhotometryLike.html">threeML.plugins.PhotometryLike</a></li>
+<li><a href="threeML/plugins/SpectrumLike.html">threeML.plugins.SpectrumLike</a></li>
+<li><a href="threeML/plugins/SwiftXRTLike.html">threeML.plugins.SwiftXRTLike</a></li>
+<li><a href="threeML/plugins/UnbinnedPoissonLike.html">threeML.plugins.UnbinnedPoissonLike</a></li>
+<li><a href="threeML/plugins/UnresolvedExtendedXYLike.html">threeML.plugins.UnresolvedExtendedXYLike</a></li>
+<li><a href="threeML/plugins/XYLike.html">threeML.plugins.XYLike</a></li>
+<li><a href="threeML/plugins/experimental/CastroLike.html">threeML.plugins.experimental.CastroLike</a></li>
+<li><a href="threeML/random_variates.html">threeML.random_variates</a></li>
+<li><a href="threeML/test/conftest.html">threeML.test.conftest</a></li>
+<li><a href="threeML/test/test_AAA_against_xspec.html">threeML.test.test_AAA_against_xspec</a></li>
+<li><a href="threeML/test/test_FermiLATLike.html">threeML.test.test_FermiLATLike</a></li>
+<li><a href="threeML/test/test_FermipyLike.html">threeML.test.test_FermipyLike</a></li>
+<li><a href="threeML/test/test_UnresolvedExtendedXYLike.html">threeML.test.test_UnresolvedExtendedXYLike</a></li>
+<li><a href="threeML/test/test_XYLike.html">threeML.test.test_XYLike</a></li>
+<li><a href="threeML/test/test_analysis_results.html">threeML.test.test_analysis_results</a></li>
+<li><a href="threeML/test/test_basic.html">threeML.test.test_basic</a></li>
+<li><a href="threeML/test/test_bayesian.html">threeML.test.test_bayesian</a></li>
+<li><a href="threeML/test/test_catalogs.html">threeML.test.test_catalogs</a></li>
+<li><a href="threeML/test/test_configuration.html">threeML.test.test_configuration</a></li>
+<li><a href="threeML/test/test_download_GBM_data.html">threeML.test.test_download_GBM_data</a></li>
+<li><a href="threeML/test/test_download_LAT_data.html">threeML.test.test_download_LAT_data</a></li>
+<li><a href="threeML/test/test_event_list.html">threeML.test.test_event_list</a></li>
+<li><a href="threeML/test/test_file_utils.html">threeML.test.test_file_utils</a></li>
+<li><a href="threeML/test/test_fits_file.html">threeML.test.test_fits_file</a></li>
+<li><a href="threeML/test/test_fitted_point_sources.html">threeML.test.test_fitted_point_sources</a></li>
+<li><a href="threeML/test/test_generic.html">threeML.test.test_generic</a></li>
+<li><a href="threeML/test/test_get_package_data.html">threeML.test.test_get_package_data</a></li>
+<li><a href="threeML/test/test_goodness_of_fit.html">threeML.test.test_goodness_of_fit</a></li>
+<li><a href="threeML/test/test_hawc.html">threeML.test.test_hawc</a></li>
+<li><a href="threeML/test/test_histogram.html">threeML.test.test_histogram</a></li>
+<li><a href="threeML/test/test_joint_likelihood_set.html">threeML.test.test_joint_likelihood_set</a></li>
+<li><a href="threeML/test/test_minimizers.html">threeML.test.test_minimizers</a></li>
+<li><a href="threeML/test/test_ogip.html">threeML.test.test_ogip</a></li>
+<li><a href="threeML/test/test_photometry_utils.html">threeML.test.test_photometry_utils</a></li>
+<li><a href="threeML/test/test_plotting.html">threeML.test.test_plotting</a></li>
+<li><a href="threeML/test/test_plugin_loading.html">threeML.test.test_plugin_loading</a></li>
+<li><a href="threeML/test/test_power_of_two_utils.html">threeML.test.test_power_of_two_utils</a></li>
+<li><a href="threeML/test/test_response.html">threeML.test.test_response</a></li>
+<li><a href="threeML/test/test_spectrum_class.html">threeML.test.test_spectrum_class</a></li>
+<li><a href="threeML/test/test_spectrumlike.html">threeML.test.test_spectrumlike</a></li>
+<li><a href="threeML/test/test_time_energy_fit.html">threeML.test.test_time_energy_fit</a></li>
+<li><a href="threeML/test/test_time_interval.html">threeML.test.test_time_interval</a></li>
+<li><a href="threeML/test/test_time_series.html">threeML.test.test_time_series</a></li>
+<li><a href="threeML/test/test_unbinned_poisson_like.html">threeML.test.test_unbinned_poisson_like</a></li>
+<li><a href="threeML/test/test_verbosity.html">threeML.test.test_verbosity</a></li>
+<li><a href="threeML/utils/OGIP/pha.html">threeML.utils.OGIP.pha</a></li>
+<li><a href="threeML/utils/OGIP/response.html">threeML.utils.OGIP.response</a></li>
+<li><a href="threeML/utils/bayesian_blocks.html">threeML.utils.bayesian_blocks</a></li>
+<li><a href="threeML/utils/binner.html">threeML.utils.binner</a></li>
+<li><a href="threeML/utils/data_builders/fermi/gbm_data.html">threeML.utils.data_builders.fermi.gbm_data</a></li>
+<li><a href="threeML/utils/data_builders/fermi/lat_data.html">threeML.utils.data_builders.fermi.lat_data</a></li>
+<li><a href="threeML/utils/data_builders/fermi/lat_transient_builder.html">threeML.utils.data_builders.fermi.lat_transient_builder</a></li>
+<li><a href="threeML/utils/data_builders/time_series_builder.html">threeML.utils.data_builders.time_series_builder</a></li>
+<li><a href="threeML/utils/data_download/Fermi_GBM/download_GBM_data.html">threeML.utils.data_download.Fermi_GBM.download_GBM_data</a></li>
+<li><a href="threeML/utils/data_download/Fermi_LAT/download_LAT_data.html">threeML.utils.data_download.Fermi_LAT.download_LAT_data</a></li>
+<li><a href="threeML/utils/data_download/Fermi_LAT/download_LLE_data.html">threeML.utils.data_download.Fermi_LAT.download_LLE_data</a></li>
+<li><a href="threeML/utils/differentiation.html">threeML.utils.differentiation</a></li>
+<li><a href="threeML/utils/fermi_relative_mission_time.html">threeML.utils.fermi_relative_mission_time</a></li>
+<li><a href="threeML/utils/fitted_objects/fitted_point_sources.html">threeML.utils.fitted_objects.fitted_point_sources</a></li>
+<li><a href="threeML/utils/fitted_objects/fitted_source_handler.html">threeML.utils.fitted_objects.fitted_source_handler</a></li>
+<li><a href="threeML/utils/histogram.html">threeML.utils.histogram</a></li>
+<li><a href="threeML/utils/interval.html">threeML.utils.interval</a></li>
+<li><a href="threeML/utils/numba_utils.html">threeML.utils.numba_utils</a></li>
+<li><a href="threeML/utils/photometry/filter_library.html">threeML.utils.photometry.filter_library</a></li>
+<li><a href="threeML/utils/photometry/filter_set.html">threeML.utils.photometry.filter_set</a></li>
+<li><a href="threeML/utils/photometry/photometric_observation.html">threeML.utils.photometry.photometric_observation</a></li>
+<li><a href="threeML/utils/polarization/binned_polarization.html">threeML.utils.polarization.binned_polarization</a></li>
+<li><a href="threeML/utils/power_of_two_utils.html">threeML.utils.power_of_two_utils</a></li>
+<li><a href="threeML/utils/progress_bar.html">threeML.utils.progress_bar</a></li>
+<li><a href="threeML/utils/spectrum/binned_spectrum.html">threeML.utils.spectrum.binned_spectrum</a></li>
+<li><a href="threeML/utils/spectrum/binned_spectrum_set.html">threeML.utils.spectrum.binned_spectrum_set</a></li>
+<li><a href="threeML/utils/spectrum/pha_spectrum.html">threeML.utils.spectrum.pha_spectrum</a></li>
+<li><a href="threeML/utils/spectrum/share_spectrum.html">threeML.utils.spectrum.share_spectrum</a></li>
+<li><a href="threeML/utils/spectrum/spectrum_likelihood.html">threeML.utils.spectrum.spectrum_likelihood</a></li>
+<li><a href="threeML/utils/statistics/likelihood_functions.html">threeML.utils.statistics.likelihood_functions</a></li>
+<li><a href="threeML/utils/statistics/stats_tools.html">threeML.utils.statistics.stats_tools</a></li>
+<li><a href="threeML/utils/step_parameter_generator.html">threeML.utils.step_parameter_generator</a></li>
+<li><a href="threeML/utils/string_utils.html">threeML.utils.string_utils</a></li>
+<li><a href="threeML/utils/time_interval.html">threeML.utils.time_interval</a></li>
+<li><a href="threeML/utils/time_series/binned_spectrum_series.html">threeML.utils.time_series.binned_spectrum_series</a></li>
+<li><a href="threeML/utils/time_series/event_list.html">threeML.utils.time_series.event_list</a></li>
+<li><a href="threeML/utils/time_series/polynomial.html">threeML.utils.time_series.polynomial</a></li>
+<li><a href="threeML/utils/time_series/time_series.html">threeML.utils.time_series.time_series</a></li>
+<li><a href="threeML/utils/unique_deterministic_tag.html">threeML.utils.unique_deterministic_tag</a></li>
+</ul></ul>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

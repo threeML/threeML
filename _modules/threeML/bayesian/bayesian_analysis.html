@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.bayesian.bayesian_analysis &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.bayesian.bayesian_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.bayesian.bayesian_analysis</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
+<span class="kn">from</span> <span class="nn">astromodels.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">threeML.analysis_results</span> <span class="kn">import</span> <span class="n">BayesianResults</span>
+<span class="kn">from</span> <span class="nn">threeML.bayesian.sampler_base</span> <span class="kn">import</span> <span class="n">SamplerBase</span>
+<span class="kn">from</span> <span class="nn">threeML.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">_possible_samplers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;emcee&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;emcee&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.emcee_sampler import EmceeSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;EmceeSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;multinest&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;pymultinest&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.multinest_sampler import MultiNestSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MultiNestSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;zeus&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;zeus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.zeus_sampler import ZeusSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ZeusSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;ultranest&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;ultranest&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.ultranest_sampler import UltraNestSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;UltraNestSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;dynesty_nested&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;dynesty&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.dynesty_sampler import DynestyNestedSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DynestyNestedSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;dynesty_dynamic&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;dynesty&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.dynesty_sampler import DynestyDynamicSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DynestyDynamicSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;autoemcee&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;autoemcee&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;AutoEmceeSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+
+<span class="n">_available_samplers</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_possible_samplers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;import </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_available_samplers[&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&#39;] = </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># we should always have at least emcee available</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_available_samplers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;There are NO samplers available!&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;emcee is installed by default, something is wrong!&quot;</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There are NO samplers available!&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BayesianAnalysis"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis">[docs]</a><span class="k">class</span> <span class="nc">BayesianAnalysis</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform Bayesian analysis by passing your model and data.</span>
+<span class="sd">        All free parameters must have priors set.</span>
+
+<span class="sd">        :param likelihood_model: the likelihood model</span>
+<span class="sd">        :param data_list: the list of datasets to use (normally an instance of DataList)</span>
+<span class="sd">        :param kwargs: use &#39;verbose=True&#39; for verbose operation</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        :example:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bayesian&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_registered</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_model_and_data</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_register_model_and_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        make sure the model and data list are set up</span>
+
+<span class="sd">        :param likelihood_model:</span>
+<span class="sd">        :param data_list:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">        :rtype:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;REGISTER MODEL&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verify that all the free parameters have priors</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">parameter_name</span><span class="p">,</span>
+            <span class="n">parameter</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">has_prior</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;You need to define priors for all free parameters before instancing a &quot;</span>
+                    <span class="s2">&quot;Bayesian analysis&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parameter_name</span><span class="si">}</span><span class="s2"> does NOT have a prior!&quot;</span>
+                <span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="c1"># Process optional keyword parameters</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span> <span class="o">=</span> <span class="n">likelihood_model</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span> <span class="o">=</span> <span class="n">data_list</span>
+
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+
+            <span class="n">dataset</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="p">)</span>
+
+            <span class="c1"># Now get the nuisance parameters from the data and add them to the model</span>
+            <span class="c1"># NOTE: it is important that this is *after* the setting of the model, as some</span>
+            <span class="c1"># plugins might need to adjust the number of nuisance parameters depending on the</span>
+            <span class="c1"># likelihood model</span>
+
+            <span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">dataset</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="c1"># Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance</span>
+                <span class="c1"># of the same plugin will overwrite each other&#39;s nuisance parameters</span>
+
+                <span class="k">assert</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s2">&quot;This is a bug of the plugin for </span><span class="si">%s</span><span class="s2">: nuisance parameters &quot;</span>
+                    <span class="s2">&quot;must contain the instance name&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">add_external_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;MODEL REGISTERED!&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_registered</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="BayesianAnalysis.set_sampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.set_sampler">[docs]</a>    <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the sampler</span>
+<span class="sd">        :param sampler_name: (str) Name of sampler</span>
+
+<span class="sd">        :param share_spectrum: (optional) Option to share the spectrum calc</span>
+<span class="sd">        between detectors with the same input energy bins</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">using_default</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">sampler_name</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
+
+            <span class="n">sampler_name</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="o">.</span><span class="n">default_sampler</span><span class="o">.</span><span class="n">value</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using default sampler [blue]</span><span class="si">{</span><span class="n">sampler_name</span><span class="si">}</span><span class="s2">[/blue]&quot;</span><span class="p">)</span>
+
+            <span class="n">using_default</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">sampler_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_available_samplers</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sampler_name</span><span class="si">}</span><span class="s2"> is not a valid/available sampler please choose from [blue]</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_available_samplers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span><span class="si">}</span><span class="s2">[/blue]&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">_available_samplers</span><span class="p">[</span><span class="n">sampler_name</span><span class="p">](</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">using_default</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sampler set to [blue]</span><span class="si">{</span><span class="n">sampler_name</span><span class="si">}</span><span class="s2">[/blue]&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># now we will setup the samnpler with the</span>
+            <span class="c1"># paramters from thre config</span>
+
+            <span class="n">default_params</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sampler_name</span><span class="si">}</span><span class="s2">_setup&quot;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="o">**</span><span class="n">default_params</span><span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;sampler is setup with default parameters&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BayesianAnalysis.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sample the posterior of the model with the selected algorithm</span>
+
+<span class="sd">        If no algorithm as been set, then the configured default algorithm</span>
+<span class="sd">        we default parameters will be run</span>
+
+<span class="sd">        :param quiet: if True, then no output is displayed</span>
+<span class="sd">        :type quiet:</span>
+<span class="sd">        :returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># assuming the default sampler</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BayesianResults</span><span class="p">]:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">results</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">analysis_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_like_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If</span>
+<span class="sd">        you need to find the values of the parameters which generated a given value of the log. likelihood, remember</span>
+<span class="sd">        that the samples accessible through the property .raw_samples are ordered in the same way as the vector</span>
+<span class="sd">        returned by this method.</span>
+
+<span class="sd">        :return: a vector of log. like values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">log_like_values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_probability_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the log_probability (posterior) found by the bayesian sampler while sampling from the posterior. If</span>
+<span class="sd">        you need to find the values of the parameters which generated a given value of the log. likelihood, remember</span>
+<span class="sd">        that the samples accessible through the property .raw_samples are ordered in the same way as the vector</span>
+<span class="sd">        returned by this method.</span>
+
+<span class="sd">        :return: a vector of log probabilty values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">log_probability_values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">log_marginal_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Return the log marginal likelihood (evidence</span>
+<span class="sd">        ) if computed</span>
+<span class="sd">                :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">marginal_likelihood</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,</span>
+<span class="sd">        in the format returned by the sampler)</span>
+
+<span class="sd">        :return: the samples as returned by the sampler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">raw_samples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access the samples from the posterior distribution generated by the selected sampler</span>
+
+<span class="sd">        :return: a dictionary with the samples from the posterior distribution for each parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">samples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerBase</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access the instance of the sampler used to sample the posterior distribution</span>
+<span class="sd">        :return: an instance of the sampler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span>
+
+<div class="viewcode-block" id="BayesianAnalysis.plot_chains"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.plot_chains">[docs]</a>    <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Produce a plot of the series of samples for each parameter</span>
+
+<span class="sd">        :parameter thin: use only one sample every &#39;thin&#39; samples</span>
+<span class="sd">        :return: a matplotlib.figure instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">plot_chains</span><span class="p">(</span><span class="n">thin</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">likelihood_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: likelihood model (a Model instance)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataList</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: data list for this analysis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span>
+
+<div class="viewcode-block" id="BayesianAnalysis.convergence_plots"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.convergence_plots">[docs]</a>    <span class="k">def</span> <span class="nf">convergence_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same</span>
+<span class="sd">        values if the MCMC has converged to the posterior distribution.</span>
+
+<span class="sd">        The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second</span>
+<span class="sd">        is to take random samples from the chain (bootstrap)</span>
+
+<span class="sd">        :param n_samples_in_each_subset: number of samples in each subset</span>
+<span class="sd">        :param n_subsets: number of subsets to take for each strategy</span>
+<span class="sd">        :return: a matplotlib.figure instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">convergence_plots</span><span class="p">(</span>
+            <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="BayesianAnalysis.restore_median_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.restore_median_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_median_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the model parameters to the mean of the marginal distributions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">restore_median_fit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BayesianAnalysis.restore_MAP_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.restore_MAP_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_MAP_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the model parameters to the MAP of the probability</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">restore_MAP_fit</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.data_download.Fermi_GBM.download_GBM_data &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.data_download.Fermi_GBM.download_GBM_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.data_download.Fermi_GBM.download_GBM_data</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">map</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DetDoesNotExist</span><span class="p">,</span>
+                                                  <span class="n">TriggerDoesNotExist</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.io.dict_with_pretty_print</span> <span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
+<span class="kn">from</span> <span class="nn">threeML.io.download_from_http</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ApacheDirectory</span><span class="p">,</span>
+                                           <span class="n">RemoteDirectoryNotFound</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">file_existing_and_readable</span><span class="p">,</span>
+                                   <span class="n">if_directory_not_existing_then_make</span><span class="p">,</span>
+                                   <span class="n">sanitize_filename</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+
+<span class="k">def</span> <span class="nf">_validate_fermi_date</span><span class="p">(</span><span class="n">year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">month</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">day</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="n">_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_all</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> is not a valid, year, month, day&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">9</span> <span class="p">):</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> is not a valid, year, month, day&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">9</span> <span class="p">):</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> is not a valid, year, month, day&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}{</span><span class="n">month</span><span class="si">}{</span><span class="n">day</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+
+<span class="k">def</span> <span class="nf">_validate_fermi_trigger_name</span><span class="p">(</span><span class="n">trigger</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^(bn|grb?)? ?(\d</span><span class="si">{9}</span><span class="s2">)$&quot;</span><span class="p">)</span>
+
+    <span class="n">_valid_trigger_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;080916009&quot;</span><span class="p">,</span> <span class="s2">&quot;bn080916009&quot;</span><span class="p">,</span> <span class="s2">&quot;GRB080916009&quot;</span><span class="p">]</span>
+
+    <span class="n">assert_string</span> <span class="o">=</span> <span class="s2">&quot;The trigger </span><span class="si">%s</span><span class="s2"> is not valid. Must be in the form </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">trigger</span><span class="p">,</span>
+        <span class="s2">&quot;, or &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_valid_trigger_args</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Triggers must be strings&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
+
+    <span class="n">trigger</span> <span class="o">=</span> <span class="n">trigger</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="n">search</span> <span class="o">=</span> <span class="n">_trigger_name_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">search</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">assert_string</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">search</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">assert_string</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">()</span>
+
+    <span class="n">trigger</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;validated </span><span class="si">{</span><span class="n">trigger</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">trigger</span>
+
+
+<span class="n">_detector_list</span> <span class="o">=</span> <span class="s2">&quot;n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,na,nb,b0,b1&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="download_GBM_trigger_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_GBM.html#threeML.utils.data_download.Fermi_GBM.download_GBM_data.download_GBM_trigger_data">[docs]</a><span class="k">def</span> <span class="nf">download_GBM_trigger_data</span><span class="p">(</span>
+        <span class="n">trigger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">detectors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">compress_tte</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cspec_only</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download the latest GBM TTE and RSP files from the HEASARC server. Will get the</span>
+<span class="sd">    latest file version and prefer RSP2s over RSPs. If the files already exist in your destination</span>
+<span class="sd">    directory, they will be skipped in the download process. The output dictionary can be used</span>
+<span class="sd">    as input to the FermiGBMTTELike class.</span>
+
+<span class="sd">    example usage: download_GBM_trigger_data(&#39;080916009&#39;, detectors=[&#39;n0&#39;,&#39;na&#39;,&#39;b0&#39;], destination_directory=&#39;.&#39;)</span>
+
+<span class="sd">    :param trigger_name: trigger number (str) e.g. &#39;080916009&#39; or &#39;bn080916009&#39; or &#39;GRB080916009&#39;</span>
+<span class="sd">    :param detectors: list of detectors, default is all detectors</span>
+<span class="sd">    :param destination_directory: download directory</span>
+<span class="sd">    :param compress_tte: compress the TTE files via gzip (default True)</span>
+<span class="sd">    :param cspec_only: do not download TTE (faster)</span>
+<span class="sd">    :return: a dictionary with information about the download</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Let&#39;s doctor up the input just in case the user tried something strange</span>
+
+    <span class="n">sanitized_trigger_name_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate_fermi_trigger_name</span><span class="p">(</span><span class="n">trigger_name</span><span class="p">)</span>
+
+    <span class="c1"># create output directory if it does not exists</span>
+    <span class="n">destination_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span>
+        <span class="n">destination_directory</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span>
+
+    <span class="c1"># Sanitize detector list (if any)</span>
+    <span class="k">if</span> <span class="n">detectors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">detectors</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">det</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_detector_list</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Detector </span><span class="si">{</span><span class="n">det</span><span class="si">}</span><span class="s2"> in the provided list is not a valid detector. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Valid choices are: </span><span class="si">{</span><span class="n">_detector_list</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DetDoesNotExist</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">detectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_detector_list</span><span class="p">)</span>
+
+    <span class="c1"># Open heasarc web page</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">GBM</span><span class="o">.</span><span class="n">public_http_location</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;20</span><span class="si">{</span><span class="n">sanitized_trigger_name_</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/triggers/</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">/bn</span><span class="si">{</span><span class="n">sanitized_trigger_name_</span><span class="si">}</span><span class="s2">/current&quot;</span>
+
+    <span class="n">heasarc_web_page_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;going to look in </span><span class="si">{</span><span class="n">heasarc_web_page_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">downloader</span> <span class="o">=</span> <span class="n">ApacheDirectory</span><span class="p">(</span><span class="n">heasarc_web_page_url</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">RemoteDirectoryNotFound</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Trigger </span><span class="si">{</span><span class="n">sanitized_trigger_name_</span><span class="si">}</span><span class="s2"> does not exist at </span><span class="si">{</span><span class="n">heasarc_web_page_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="n">TriggerDoesNotExist</span><span class="p">(</span>
+
+        <span class="p">)</span>
+
+    <span class="c1"># Now select the files we want to download, then we will download them later</span>
+    <span class="c1"># We do it in two steps because we want to be able to choose what to download once we</span>
+    <span class="c1"># have the complete picture</span>
+
+    <span class="c1"># Get the list of remote files</span>
+    <span class="n">remote_file_list</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">files</span>
+
+    <span class="c1"># This is the dictionary to keep track of the classification</span>
+    <span class="n">remote_files_info</span> <span class="o">=</span> <span class="n">DictWithPrettyPrint</span><span class="p">([(</span><span class="n">det</span><span class="p">,</span> <span class="p">{})</span> <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">detectors</span><span class="p">])</span>
+
+    <span class="c1"># Classify the files detector by detector</span>
+
+    <span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">remote_file_list</span><span class="p">:</span>
+
+        <span class="c1"># this_file is something like glg_tte_n9_bn100101988_v00.fit</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">this_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
+
+            <span class="c1"># Not a data file</span>
+
+            <span class="k">continue</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># The &quot;map&quot; is necessary to transform the tokens to normal string (instead of unicode),</span>
+            <span class="c1"># because u&quot;b0&quot; != &quot;b0&quot; as a key for a dictionary</span>
+
+            <span class="n">_</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">detname</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">version_ext</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">tokens</span><span class="p">))</span>
+
+        <span class="n">version</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">version_ext</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># We do not care here about the other files (tcat, bcat and so on),</span>
+        <span class="c1"># nor about files which pertain to other detectors</span>
+
+        <span class="k">if</span> <span class="n">cspec_only</span><span class="p">:</span>
+            
+            <span class="n">allowed_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">allowed_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">,</span> <span class="s2">&quot;tte&quot;</span><span class="p">]</span>
+            
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">file_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_files</span>
+            <span class="ow">or</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">,</span> <span class="s2">&quot;rsp2&quot;</span><span class="p">,</span> <span class="s2">&quot;pha&quot;</span><span class="p">,</span> <span class="s2">&quot;fit&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">detname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">detectors</span>
+        <span class="p">):</span>
+
+            <span class="k">continue</span>
+
+        <span class="c1"># cspec files can be rsp, rsp2 or pha files. Classify them</span>
+
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;cspec&quot;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;rsp&quot;</span><span class="p">:</span>
+
+                <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detname</span><span class="p">][</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_file</span>
+
+            <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;rsp2&quot;</span><span class="p">:</span>
+
+                <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detname</span><span class="p">][</span><span class="s2">&quot;rsp2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_file</span>
+
+            <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;pha&quot;</span><span class="p">:</span>
+
+                <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detname</span><span class="p">][</span><span class="s2">&quot;cspec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_file</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Should never get here&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detname</span><span class="p">][</span><span class="n">file_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_file</span>
+
+    <span class="c1"># Now download the files</span>
+
+    <span class="n">download_info</span> <span class="o">=</span> <span class="n">DictWithPrettyPrint</span><span class="p">(</span>
+        <span class="p">[(</span><span class="n">det</span><span class="p">,</span> <span class="n">DictWithPrettyPrint</span><span class="p">())</span> <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">detectors</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">detector</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">remote_files_info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trying to download GBM detector </span><span class="si">{</span><span class="n">detector</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">remote_detector_info</span> <span class="o">=</span> <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span>
+        <span class="n">local_detector_info</span> <span class="o">=</span> <span class="n">download_info</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span>
+
+        <span class="c1"># Get CSPEC file</span>
+        <span class="n">local_detector_info</span><span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+            <span class="n">remote_detector_info</span><span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">],</span> <span class="n">destination_directory</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get the RSP2 file if it exists, otherwise get the RSP file</span>
+        <span class="k">if</span> <span class="s2">&quot;rsp2&quot;</span> <span class="ow">in</span> <span class="n">remote_detector_info</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">detector</span><span class="si">}</span><span class="s2"> has RSP2 responses&quot;</span><span class="p">)</span>
+
+            <span class="n">local_detector_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+                <span class="n">remote_detector_info</span><span class="p">[</span><span class="s2">&quot;rsp2&quot;</span><span class="p">],</span> <span class="n">destination_directory</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">detector</span><span class="si">}</span><span class="s2"> has RSP responses&quot;</span><span class="p">)</span>
+
+            <span class="n">local_detector_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+                <span class="n">remote_detector_info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">],</span> <span class="n">destination_directory</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cspec_only</span><span class="p">:</span>
+            <span class="c1"># Get TTE file (compressing it if requested)</span>
+            <span class="n">local_detector_info</span><span class="p">[</span><span class="s2">&quot;tte&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+                <span class="n">remote_detector_info</span><span class="p">[</span><span class="s2">&quot;tte&quot;</span><span class="p">],</span>
+                <span class="n">destination_directory</span><span class="p">,</span>
+                <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">compress</span><span class="o">=</span><span class="n">compress_tte</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">download_info</span></div>
+
+
+<div class="viewcode-block" id="download_GBM_daily_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_GBM.html#threeML.utils.data_download.Fermi_GBM.download_GBM_data.download_GBM_daily_data">[docs]</a><span class="k">def</span> <span class="nf">download_GBM_daily_data</span><span class="p">(</span>
+        <span class="n">year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">month</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">day</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">detectors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">compress_tte</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cspec_only</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download the latest GBM TTE and RSP files from the HEASARC server. Will get the</span>
+<span class="sd">    latest file version and prefer RSP2s over RSPs. If the files already exist in your destination</span>
+<span class="sd">    directory, they will be skipped in the download process. The output dictionary can be used</span>
+<span class="sd">    as input to the FermiGBMTTELike class.</span>
+
+<span class="sd">    example usage: download_GBM_trigger_data(&#39;080916009&#39;, detectors=[&#39;n0&#39;,&#39;na&#39;,&#39;b0&#39;], destination_directory=&#39;.&#39;)</span>
+
+<span class="sd">    :param year: the last two digits of the year, e.g, &#39;08&#39;</span>
+<span class="sd">    :param year: the two digits of the month, e.g, &#39;09&#39;</span>
+<span class="sd">    :param year: the two digits of the day, e.g, &#39;10&#39;</span>
+<span class="sd">    :param detectors: list of detectors, default is all detectors</span>
+<span class="sd">    :param destination_directory: download directory</span>
+<span class="sd">    :param compress_tte: compress the TTE files via gzip (default True)</span>
+<span class="sd">    :param cspec_only: do not download TTE (faster)</span>
+<span class="sd">    :return: a dictionary with information about the download</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Let&#39;s doctor up the input just in case the user tried something strange</span>
+
+    <span class="n">sanitized_trigger_name_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate_fermi_date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+
+    <span class="c1"># create output directory if it does not exists</span>
+    <span class="n">destination_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span>
+        <span class="n">destination_directory</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span>
+
+    <span class="c1"># Sanitize detector list (if any)</span>
+    <span class="k">if</span> <span class="n">detectors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">detectors</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">det</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_detector_list</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Detector </span><span class="si">{</span><span class="n">det</span><span class="si">}</span><span class="s2"> in the provided list is not a valid detector. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Valid choices are: </span><span class="si">{</span><span class="n">_detector_list</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DetDoesNotExist</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">detectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_detector_list</span><span class="p">)</span>
+
+    <span class="c1"># Open heasarc web page</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">GBM</span><span class="o">.</span><span class="n">public_http_location</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;20</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/daily/</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s2">/current&quot;</span>
+
+    <span class="n">heasarc_web_page_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;going to look in </span><span class="si">{</span><span class="n">heasarc_web_page_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">downloader</span> <span class="o">=</span> <span class="n">ApacheDirectory</span><span class="p">(</span><span class="n">heasarc_web_page_url</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">RemoteDirectoryNotFound</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Trigger </span><span class="si">{</span><span class="n">sanitized_trigger_name_</span><span class="si">}</span><span class="s2"> does not exist at </span><span class="si">{</span><span class="n">heasarc_web_page_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="n">TriggerDoesNotExist</span><span class="p">(</span>
+
+        <span class="p">)</span>
+
+    <span class="c1"># Now select the files we want to download, then we will download them later</span>
+    <span class="c1"># We do it in two steps because we want to be able to choose what to download once we</span>
+    <span class="c1"># have the complete picture</span>
+
+    <span class="c1"># Get the list of remote files</span>
+    <span class="n">remote_file_list</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">files</span>
+
+    <span class="c1"># This is the dictionary to keep track of the classification</span>
+    <span class="n">remote_files_info</span> <span class="o">=</span> <span class="n">DictWithPrettyPrint</span><span class="p">([(</span><span class="n">det</span><span class="p">,</span> <span class="p">{})</span> <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">detectors</span><span class="p">])</span>
+
+    <span class="c1"># Classify the files detector by detector</span>
+
+    <span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">remote_file_list</span><span class="p">:</span>
+
+        <span class="c1"># this_file is something like glg_tte_n9_bn100101988_v00.fit</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">this_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
+
+            <span class="c1"># Not a data file</span>
+
+            <span class="k">continue</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># The &quot;map&quot; is necessary to transform the tokens to normal string (instead of unicode),</span>
+            <span class="c1"># because u&quot;b0&quot; != &quot;b0&quot; as a key for a dictionary</span>
+
+            <span class="n">_</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">detname</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">version_ext</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">tokens</span><span class="p">))</span>
+
+        <span class="n">version</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">version_ext</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># We do not care here about the other files (tcat, bcat and so on),</span>
+        <span class="c1"># nor about files which pertain to other detectors</span>
+
+        <span class="k">if</span> <span class="n">cspec_only</span><span class="p">:</span>
+            
+            <span class="n">allowed_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">allowed_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">,</span> <span class="s2">&quot;tte&quot;</span><span class="p">]</span>
+            
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">file_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_files</span>
+            <span class="ow">or</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">,</span> <span class="s2">&quot;fit&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">detname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">detectors</span>
+        <span class="p">):</span>
+
+            <span class="k">continue</span>
+
+        <span class="c1"># cspec files can be rsp, rsp2 or pha files. Classify them</span>
+
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;cspec&quot;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;pha&quot;</span><span class="p">:</span>
+
+                <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detname</span><span class="p">][</span><span class="s2">&quot;cspec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_file</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Should never get here&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detname</span><span class="p">][</span><span class="n">file_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_file</span>
+
+    <span class="c1"># Now download the files</span>
+
+    <span class="n">download_info</span> <span class="o">=</span> <span class="n">DictWithPrettyPrint</span><span class="p">(</span>
+        <span class="p">[(</span><span class="n">det</span><span class="p">,</span> <span class="n">DictWithPrettyPrint</span><span class="p">())</span> <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">detectors</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">detector</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">remote_files_info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trying to download GBM detector </span><span class="si">{</span><span class="n">detector</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">remote_detector_info</span> <span class="o">=</span> <span class="n">remote_files_info</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span>
+        <span class="n">local_detector_info</span> <span class="o">=</span> <span class="n">download_info</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span>
+
+        <span class="c1"># Get CSPEC file</span>
+        <span class="n">local_detector_info</span><span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+            <span class="n">remote_detector_info</span><span class="p">[</span><span class="s2">&quot;cspec&quot;</span><span class="p">],</span> <span class="n">destination_directory</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cspec_only</span><span class="p">:</span>
+            <span class="c1"># Get TTE file (compressing it if requested)</span>
+            <span class="n">local_detector_info</span><span class="p">[</span><span class="s2">&quot;tte&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+                <span class="n">remote_detector_info</span><span class="p">[</span><span class="s2">&quot;tte&quot;</span><span class="p">],</span>
+                <span class="n">destination_directory</span><span class="p">,</span>
+                <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">compress</span><span class="o">=</span><span class="n">compress_tte</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">download_info</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_get_latest_version</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    returns the list with only the highest version numbers selected</span>
+
+<span class="sd">    :param filenames: list of GBM data files</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># this holds the version number</span>
+    <span class="n">vn_as_num</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="c1"># this holds the extensions</span>
+    <span class="n">extentions</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="c1"># this holds the vn string</span>
+    <span class="n">vn_as_string</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+
+        <span class="c1"># get the first part of the file</span>
+        <span class="n">fn_stub</span><span class="p">,</span> <span class="n">vn_stub</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_v&quot;</span><span class="p">)</span>
+
+        <span class="c1"># split the vn string and extension</span>
+        <span class="n">vn_string</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">vn_stub</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert the vn to a number</span>
+        <span class="n">vn</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vn_string</span><span class="p">:</span>
+            <span class="n">vn</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># build the dictionaries where keys</span>
+        <span class="c1"># are the non-unique file name</span>
+        <span class="c1"># and values are extensions and vn</span>
+
+        <span class="n">vn_as_num</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">fn_stub</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vn</span><span class="p">)</span>
+        <span class="n">extentions</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">fn_stub</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+        <span class="n">vn_as_string</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">fn_stub</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vn_string</span><span class="p">)</span>
+
+    <span class="n">final_file_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Now we we go through and make selections</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">vn_as_num</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+        <span class="c1"># first we favor RSP2</span>
+
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">extentions</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;rsp2&quot;</span>
+
+        <span class="c1"># if there are no rsp2 in the files</span>
+        <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># we can select on all</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">vn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vn_as_num</span><span class="p">[</span><span class="n">key</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">vn_string</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vn_as_string</span><span class="p">[</span><span class="n">key</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="c1"># get the latest version</span>
+        <span class="n">max_vn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">vn</span><span class="p">)</span>
+
+        <span class="c1"># create the file name</span>
+        <span class="n">latest_version</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_v</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">vn_string</span><span class="p">[</span><span class="n">max_vn</span><span class="p">],</span> <span class="n">ext</span><span class="p">[</span><span class="n">max_vn</span><span class="p">])</span>
+
+        <span class="n">final_file_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latest_version</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">final_file_names</span>
+
+
+<div class="viewcode-block" id="cleanup_downloaded_GBM_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_GBM.html#threeML.utils.data_download.Fermi_GBM.download_GBM_data.cleanup_downloaded_GBM_data">[docs]</a><span class="k">def</span> <span class="nf">cleanup_downloaded_GBM_data</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    deletes data downloaded with download_GBM_trigger_data.</span>
+<span class="sd">    :param detector_information_dict: the return dictionary from download_GBM_trigger_data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># go through each detector</span>
+    <span class="k">for</span> <span class="n">detector</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+        <span class="c1"># for each detector, remove the data file</span>
+        <span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Removing: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">data_file</span><span class="p">)</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

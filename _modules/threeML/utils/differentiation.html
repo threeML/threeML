@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.differentiation &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.differentiation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.differentiation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numdifftools</span> <span class="k">as</span> <span class="nn">nd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">SettingOutOfBounds</span>
+
+
+<div class="viewcode-block" id="ParameterOnBoundary"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.differentiation.ParameterOnBoundary">[docs]</a><span class="k">class</span> <span class="nc">ParameterOnBoundary</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CannotComputeHessian"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.differentiation.CannotComputeHessian">[docs]</a><span class="k">class</span> <span class="nc">CannotComputeHessian</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_wrapper</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+    <span class="n">point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">minima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">minima</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">maxima</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">n_dim</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Find order of magnitude of each coordinate. If one of the coordinates is exactly zero we need</span>
+    <span class="c1"># to treat it differently</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">point</span> <span class="o">==</span> <span class="mf">0.0</span>
+
+    <span class="n">orders_of_magnitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+    <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]))</span>
+    <span class="p">)</span>  <span class="c1"># type: np.ndarray</span>
+
+    <span class="n">scaled_point</span> <span class="o">=</span> <span class="n">point</span> <span class="o">/</span> <span class="n">orders_of_magnitude</span>
+    <span class="n">scaled_minima</span> <span class="o">=</span> <span class="n">minima</span> <span class="o">/</span> <span class="n">orders_of_magnitude</span>
+    <span class="n">scaled_maxima</span> <span class="o">=</span> <span class="n">maxima</span> <span class="o">/</span> <span class="n">orders_of_magnitude</span>
+
+    <span class="c1"># Decide a delta for the finite differentiation</span>
+    <span class="c1"># The algorithm implemented in numdifftools is robust with respect to the choice</span>
+    <span class="c1"># of delta, as long as we are not going beyond the boundaries (which would cause</span>
+    <span class="c1"># the procedure to fail)</span>
+
+    <span class="n">scaled_deltas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">scaled_point</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
+
+        <span class="n">scaled_value</span> <span class="o">=</span> <span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">scaled_min_value</span><span class="p">,</span> <span class="n">scaled_max_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">scaled_minima</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scaled_maxima</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">scaled_value</span> <span class="o">==</span> <span class="n">scaled_min_value</span> <span class="ow">or</span> <span class="n">scaled_value</span> <span class="o">==</span> <span class="n">scaled_max_value</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="n">ParameterOnBoundary</span><span class="p">(</span>
+                <span class="s2">&quot;Value for parameter number </span><span class="si">%s</span><span class="s2"> is on the boundary&quot;</span> <span class="o">%</span> <span class="n">i</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scaled_min_value</span><span class="p">):</span>
+
+            <span class="c1"># Parameter with low bound</span>
+
+            <span class="n">distance_to_min</span> <span class="o">=</span> <span class="n">scaled_value</span> <span class="o">-</span> <span class="n">scaled_min_value</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># No defined minimum</span>
+
+            <span class="n">distance_to_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scaled_max_value</span><span class="p">):</span>
+
+            <span class="c1"># Parameter with hi bound</span>
+
+            <span class="n">distance_to_max</span> <span class="o">=</span> <span class="n">scaled_max_value</span> <span class="o">-</span> <span class="n">scaled_value</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># No defined maximum</span>
+
+            <span class="n">distance_to_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="c1"># Delta is the minimum between 0.03% of the value, and 1/2.5 times the minimum</span>
+        <span class="c1"># distance to either boundary. 1/2 of that factor is due to the fact that numdifftools uses</span>
+        <span class="c1"># twice the delta to compute the differential, and the 0.5 is due to the fact that we don&#39;t want</span>
+        <span class="c1"># to go exactly equal to the boundary</span>
+
+        <span class="k">if</span> <span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+
+            <span class="n">scaled_deltas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">distance_to_max</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">distance_to_min</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">scaled_deltas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="mf">0.003</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                    <span class="n">distance_to_max</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">,</span>
+                    <span class="n">distance_to_min</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+        <span class="n">scaled_back_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">orders_of_magnitude</span>  <span class="c1"># type: np.ndarray</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">scaled_back_x</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">SettingOutOfBounds</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="n">CannotComputeHessian</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot compute Hessian, parameters out of bounds at </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">scaled_back_x</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">scaled_point</span><span class="p">,</span> <span class="n">orders_of_magnitude</span><span class="p">,</span> <span class="n">n_dim</span>
+
+
+<div class="viewcode-block" id="get_jacobian"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.differentiation.get_jacobian">[docs]</a><span class="k">def</span> <span class="nf">get_jacobian</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+    <span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">scaled_point</span><span class="p">,</span> <span class="n">orders_of_magnitude</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">_get_wrapper</span><span class="p">(</span>
+        <span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute the Jacobian matrix at best_fit_values</span>
+    <span class="n">jacobian_vector</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;central&quot;</span><span class="p">)(</span>
+        <span class="n">scaled_point</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Transform it to numpy matrix</span>
+
+    <span class="n">jacobian_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">jacobian_vector</span><span class="p">)</span>
+
+    <span class="c1"># Now correct back the Jacobian for the scales</span>
+
+    <span class="n">jacobian_vector</span> <span class="o">/=</span> <span class="n">orders_of_magnitude</span>
+
+    <span class="k">return</span> <span class="n">jacobian_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_hessian"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.differentiation.get_hessian">[docs]</a><span class="k">def</span> <span class="nf">get_hessian</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+    <span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">scaled_point</span><span class="p">,</span> <span class="n">orders_of_magnitude</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">_get_wrapper</span><span class="p">(</span>
+        <span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Compute the Hessian matrix at best_fit_values</span>
+
+    <span class="n">hessian_matrix_</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="n">Hessian</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">)(</span><span class="n">scaled_point</span><span class="p">)</span>
+
+    <span class="c1"># Transform it to numpy matrix</span>
+
+    <span class="n">hessian_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hessian_matrix_</span><span class="p">)</span>
+
+    <span class="c1"># Now correct back the Hessian for the scales</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
+
+            <span class="n">hessian_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/=</span> <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">hessian_matrix</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

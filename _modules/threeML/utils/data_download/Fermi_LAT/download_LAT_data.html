@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.data_download.Fermi_LAT.download_LAT_data &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.data_download.Fermi_LAT.download_LAT_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.data_download.Fermi_LAT.download_LAT_data</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">html.parser</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">urllib.error</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">str</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">pyfits</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">TimeTypeNotKnown</span>
+<span class="kn">from</span> <span class="nn">threeML.io.download_from_http</span> <span class="kn">import</span> <span class="n">ApacheDirectory</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.unique_deterministic_tag</span> <span class="kn">import</span> <span class="n">get_unique_deterministic_tag</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Set default timeout for operations</span>
+<span class="n">socket</span><span class="o">.</span><span class="n">setdefaulttimeout</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DivParser"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser">[docs]</a><span class="k">class</span> <span class="nc">DivParser</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">HTMLParser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract data from a &lt;div&gt;&lt;/div&gt; tag</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desiredDivName</span><span class="p">):</span>
+
+        <span class="n">html</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">HTMLParser</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desiredDivName</span> <span class="o">=</span> <span class="n">desiredDivName</span>
+
+<div class="viewcode-block" id="DivParser.handle_starttag"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_starttag">[docs]</a>    <span class="k">def</span> <span class="nf">handle_starttag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;div&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;id&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">desiredDivName</span><span class="p">:</span>
+
+                <span class="k">break</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="DivParser.handle_endtag"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_endtag">[docs]</a>    <span class="k">def</span> <span class="nf">handle_endtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;div&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="DivParser.handle_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_data">[docs]</a>    <span class="k">def</span> <span class="nf">handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># Keyword name to store the unique ID for the download</span>
+<span class="n">_uid_fits_keyword</span> <span class="o">=</span> <span class="s2">&quot;QUERYUID&quot;</span>
+
+
+<div class="viewcode-block" id="merge_LAT_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.merge_LAT_data">[docs]</a><span class="k">def</span> <span class="nf">merge_LAT_data</span><span class="p">(</span><span class="n">ft1s</span><span class="p">,</span> <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ft1_merged.fits&#39;</span><span class="p">,</span> <span class="n">Emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">Emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+
+    <span class="n">outfile</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">outfile</span>
+
+    <span class="k">if</span> <span class="n">outfile</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Existing merged event file </span><span class="si">{</span><span class="n">outfile</span><span class="si">}</span><span class="s2"> correspond to the same selection. &quot;</span>
+            <span class="s2">&quot;We assume you did not tamper with it, so we will return it instead of merging it again. &quot;</span>
+            <span class="s2">&quot;If you want to redo the FT1 file again, remove it from the outdir&quot;</span>
+
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">outfile</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ft1s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Only one FT1 file provided. Skipping the merge...&#39;</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">shutil</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">ft1s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">outfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outfile</span>
+
+    <span class="n">_filelist</span> <span class="o">=</span> <span class="s2">&quot;_filelist.txt&quot;</span>
+
+    <span class="n">infile</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">_filelist</span>
+
+    <span class="n">infile_list</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ft1</span> <span class="ow">in</span> <span class="n">ft1s</span><span class="p">:</span>
+        <span class="n">infile_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ft1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">infile_list</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="kn">from</span> <span class="nn">GtApp</span> <span class="kn">import</span> <span class="n">GtApp</span>
+
+    <span class="n">gtselect</span> <span class="o">=</span> <span class="n">GtApp</span><span class="p">(</span><span class="s1">&#39;gtselect&#39;</span><span class="p">)</span>
+
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;infile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;outfile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;rad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;tmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;tmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;emin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Emin</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;emax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Emax</span>
+    <span class="n">gtselect</span><span class="p">[</span><span class="s1">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">180</span>
+    <span class="n">gtselect</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">outfile</span></div>
+
+
+<div class="viewcode-block" id="download_LAT_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.download_LAT_data">[docs]</a><span class="k">def</span> <span class="nf">download_LAT_data</span><span class="p">(</span>
+    <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">tstart</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">tstop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">time_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Photon&quot;</span><span class="p">,</span>
+    <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">Emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.</span><span class="p">,</span>
+    <span class="n">Emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000000.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download data from the public LAT data server (of course you need a working internet connection). Data are</span>
+<span class="sd">    selected in a circular Region of Interest (cone) centered on the provided coordinates.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    &gt; download_LAT_data(195.6, -35.4, 12.0, &#39;2008-09-16 01:00:23&#39;, &#39;2008-09-18 01:00:23&#39;,</span>
+<span class="sd">    time_type=&#39;Gregorian&#39;, destination_directory=&#39;my_new_data&#39;)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    :param ra: R.A. (J2000) of the center of the ROI</span>
+<span class="sd">    :param dec: Dec. (J2000) of the center of the ROI</span>
+<span class="sd">    :param radius: radius (in degree) of the center of the ROI (use a larger radius than what you will need in the</span>
+<span class="sd">    analysis)</span>
+<span class="sd">    :param tstart: start time for the data</span>
+<span class="sd">    :param tstop: stop time for the data</span>
+<span class="sd">    :param time_type: type of the time input (one of MET, Gregorian or MJD)</span>
+<span class="sd">    :param data_type: type of data to download. Use Photon if you use Source or cleaner classes, Extended otherwise.</span>
+<span class="sd">    Default is Photon.</span>
+<span class="sd">    :param destination_directory: directory where you want to save the data (default: current directory)</span>
+<span class="sd">    :param Emin: minimum photon energy (in MeV) to download (default: 30 MeV, must be between 30 and 1e6 MeV)</span>
+<span class="sd">    :param Emax: maximum photon energy (in MeV) to download (default: 1e6 MeV, must be betwen 30 and 1e6 MeV )</span>
+<span class="sd">    :return: the path to the downloaded FT1 and FT2 file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_known_time_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MET&quot;</span><span class="p">,</span> <span class="s2">&quot;Gregorian&quot;</span><span class="p">,</span> <span class="s2">&quot;MJD&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">time_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_known_time_types</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_known_time_types</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Time type must be one of </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TimeTypeNotKnown</span><span class="p">()</span>
+
+    <span class="n">valid_classes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Photon&quot;</span><span class="p">,</span> <span class="s2">&quot;Extended&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_classes</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">valid_classes</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Data type must be one of </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Radius of the Region of Interest must be &gt; 0&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ra</span> <span class="o">&lt;=</span> <span class="mf">360.0</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;R.A. must be 0 &lt;= ra &lt;= 360&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="o">-</span><span class="mi">90</span> <span class="o">&lt;=</span> <span class="n">dec</span> <span class="o">&lt;=</span> <span class="mi">90</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Dec. must be -90 &lt;= dec &lt;= 90&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="n">fermiEmin</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">fermiEmax</span> <span class="o">=</span> <span class="mf">1e6</span>
+    
+    <span class="k">if</span> <span class="n">Emin</span> <span class="o">&lt;</span> <span class="n">fermiEmin</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;Setting Emin from </span><span class="si">{</span><span class="n">Emin</span><span class="si">}</span><span class="s2"> to 30 MeV (minimum available energy for Fermi-LAT data)&quot;</span> <span class="p">)</span>
+        <span class="n">Emin</span> <span class="o">=</span> <span class="n">fermiEmin</span>
+        
+    <span class="k">if</span> <span class="n">Emin</span> <span class="o">&gt;</span> <span class="n">fermiEmax</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;Setting Emin from </span><span class="si">{</span><span class="n">Emin</span><span class="si">}</span><span class="s2"> to 1 TeV (maximum available energy for Fermi-LAT data)&quot;</span> <span class="p">)</span>
+        <span class="n">Emin</span> <span class="o">=</span> <span class="n">fermiEmax</span>
+    
+    <span class="k">if</span> <span class="n">Emax</span> <span class="o">&lt;</span> <span class="n">fermiEmin</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;Setting Emax from </span><span class="si">{</span><span class="n">Emax</span><span class="si">}</span><span class="s2"> to 30 MeV (minimum available energy for Fermi-LAT data)&quot;</span> <span class="p">)</span>
+        <span class="n">Emax</span> <span class="o">=</span> <span class="n">fermiEmin</span>
+        
+    <span class="k">if</span> <span class="n">Emax</span> <span class="o">&gt;</span> <span class="n">fermiEmax</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;Setting Emax from </span><span class="si">{</span><span class="n">Emax</span><span class="si">}</span><span class="s2"> to 1 TeV (maximum available energy for Fermi-LAT data)&quot;</span> <span class="p">)</span>
+        <span class="n">Emax</span> <span class="o">=</span> <span class="n">fermiEmax</span>
+
+    <span class="k">if</span> <span class="n">Emin</span> <span class="o">&gt;=</span> <span class="n">Emax</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;Minimum energy (</span><span class="si">{</span><span class="n">Emin</span><span class="si">}</span><span class="s2">) must be less than maximum energy (</span><span class="si">{</span><span class="n">Emax</span><span class="si">}</span><span class="s2">) for download.&quot;</span> <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+        
+
+    <span class="c1"># create output directory if it does not exists</span>
+    <span class="n">destination_directory</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span>
+        <span class="n">destination_directory</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">destination_directory</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+
+        <span class="n">destination_directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># This will complete automatically the form available at</span>
+    <span class="c1"># http://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi</span>
+    <span class="c1"># After submitting the form, an html page will inform about</span>
+    <span class="c1"># the identifier assigned to the query and the time which will be</span>
+    <span class="c1"># needed to process it. After retrieving the query number,</span>
+    <span class="c1"># this function will wait for the files to be completed on the server,</span>
+    <span class="c1"># then it will download them</span>
+
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">LAT</span><span class="o">.</span><span class="n">query_form</span>
+
+    <span class="c1"># Save parameters for the query in a dictionary</span>
+
+    <span class="n">query_parameters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;coordfield&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2">,</span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">)</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;coordsystem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;J2000&quot;</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;shapefield&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">radius</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;timefield&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tstart</span><span class="p">,</span> <span class="n">tstop</span><span class="p">)</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;timetype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">time_type</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;energyfield&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">,</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Emin</span><span class="p">,</span> <span class="n">Emax</span><span class="p">)</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;photonOrExtendedOrNone&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_type</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;destination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;query&quot;</span>
+    <span class="n">query_parameters</span><span class="p">[</span><span class="s2">&quot;spacecraft&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;checked&quot;</span>
+
+    <span class="c1"># Print them out</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Query parameters:&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">query_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%30s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+
+    <span class="c1"># Compute a unique ID for this query</span>
+    <span class="n">query_unique_id</span> <span class="o">=</span> <span class="n">get_unique_deterministic_tag</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">query_parameters</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s2">&quot;Query ID: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">query_unique_id</span><span class="p">)</span>
+
+    <span class="c1"># Look if there are FT1 and FT2 files in the output directory matching this unique ID</span>
+
+    <span class="n">ft1s</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">destination_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*PH??.fits&quot;</span><span class="p">)]</span>
+    <span class="n">ft2s</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">destination_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*SC??.fits&quot;</span><span class="p">)]</span>
+
+    <span class="c1"># Loop over all ft1s and see if there is any matching the uid</span>
+
+    <span class="n">prev_downloaded_ft1s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prev_downloaded_ft2</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">ft1</span> <span class="ow">in</span> <span class="n">ft1s</span><span class="p">:</span>
+
+        <span class="k">with</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ft1</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+            <span class="n">this_query_uid</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_uid_fits_keyword</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">this_query_uid</span> <span class="o">==</span> <span class="n">query_unique_id</span><span class="p">:</span>
+
+                <span class="c1"># Found one! Append to the list as there might be others</span>
+
+                <span class="n">prev_downloaded_ft1s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ft1</span><span class="p">)</span>
+                <span class="c1"># break</span>
+                <span class="k">pass</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_downloaded_ft1s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">ft2</span> <span class="ow">in</span> <span class="n">ft2s</span><span class="p">:</span>
+
+            <span class="k">with</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ft2</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+                <span class="n">this_query_uid</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_uid_fits_keyword</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">this_query_uid</span> <span class="o">==</span> <span class="n">query_unique_id</span><span class="p">:</span>
+                    <span class="c1"># Found one! (FT2 is a single file)</span>
+                    <span class="n">prev_downloaded_ft2</span> <span class="o">=</span> <span class="n">ft2</span>
+                    <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># No need to look any further, if there is no FT1 file there shouldn&#39;t be any FT2 file either</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># If we have both FT1 and FT2 matching the ID, we do not need to download anymore</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_downloaded_ft1s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prev_downloaded_ft2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Existing event file </span><span class="si">{</span><span class="n">prev_downloaded_ft1s</span><span class="si">}</span><span class="s2"> and Spacecraft file </span><span class="si">{</span><span class="n">prev_downloaded_ft2</span><span class="si">}</span><span class="s2"> correspond to the same selection. &quot;</span>
+            <span class="s2">&quot;We assume you did not tamper with them, so we will return those instead of downloading them again. &quot;</span>
+            <span class="s2">&quot;If you want to download them again, remove them from the outdir&quot;</span>
+
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">merge_LAT_data</span><span class="p">(</span>
+                <span class="n">prev_downloaded_ft1s</span><span class="p">,</span>
+                <span class="n">destination_directory</span><span class="p">,</span>
+                <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;L</span><span class="si">%s</span><span class="s2">_FT1.fits&quot;</span> <span class="o">%</span> <span class="n">query_unique_id</span><span class="p">,</span>
+                <span class="n">Emin</span> <span class="o">=</span> <span class="n">Emin</span><span class="p">,</span>
+                <span class="n">Emax</span> <span class="o">=</span> <span class="n">Emax</span>
+            <span class="p">),</span>
+            <span class="n">prev_downloaded_ft2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+    <span class="c1"># POST encoding</span>
+
+    <span class="n">postData</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">query_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">temporaryFileName</span> <span class="o">=</span> <span class="s2">&quot;__temp_query_result.html&quot;</span>
+
+    <span class="c1"># Remove temp file if present</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temporaryFileName</span><span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>
+
+        <span class="k">pass</span>
+
+    <span class="c1"># This is to avoid caching</span>
+
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlcleanup</span><span class="p">()</span>
+
+    <span class="c1"># Get the form compiled</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">temporaryFileName</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postData</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Time out when connecting to the server. Check your internet connection, or that the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;form at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> is accessible, then retry&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Problems with the download. Check your internet connection, or that the &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;form at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> is accessible, then retry&quot;</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+
+        <span class="p">)</span>
+
+    <span class="c1"># Now open the file, parse it and get the query ID</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temporaryFileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">htmlFile</span><span class="p">:</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">htmlFile</span><span class="p">:</span>
+
+            <span class="c1"># lines.append(line.encode(&#39;utf-8&#39;))</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temporaryFileName</span><span class="p">)</span>
+
+    <span class="c1"># Extract data from the response</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">DivParser</span><span class="p">(</span><span class="s2">&quot;sec-wrapper&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parser</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">[]:</span>
+
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">DivParser</span><span class="p">(</span><span class="s2">&quot;right-side&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="c1"># Get line containing the time estimation</span>
+
+        <span class="n">estimatedTimeLine</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">x</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;The estimated time for your query to complete is&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Get the time estimate</span>
+
+        <span class="n">estimated_time_for_the_query</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+            <span class="s2">&quot;The estimated time for your query to complete is ([0-9]+) seconds&quot;</span><span class="p">,</span>
+            <span class="n">estimatedTimeLine</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">except</span><span class="p">:</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Problems with the download. Empty or wrong answer from the LAT server. &quot;</span>
+            <span class="s2">&quot;Please retry later.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Estimated complete time for your query: </span><span class="si">{</span><span class="n">estimated_time_for_the_query</span><span class="si">}</span><span class="s2"> seconds&quot;</span>
+
+        <span class="p">)</span>
+
+    <span class="n">http_address</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;https://fermi.gsfc.nasa.gov&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;If this download fails, you can find your data at </span><span class="si">{</span><span class="n">http_address</span><span class="si">}</span><span class="s2"> (when ready)&quot;</span>
+
+    <span class="p">)</span>
+
+    <span class="c1"># Now periodically check if the query is complete</span>
+
+    <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="mf">1.5</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">estimated_time_for_the_query</span><span class="p">)),</span> <span class="mi">120</span><span class="p">)</span>  <span class="c1"># Seconds</span>
+    <span class="n">refreshTime</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">estimated_time_for_the_query</span><span class="p">)</span> <span class="o">/</span>
+                      <span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># Seconds</span>
+
+    <span class="c1"># precompile Url regular expression</span>
+    <span class="n">regexpr</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;wget (.*.fits)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Now download every tot seconds the status of the query, until we get status=2 (success)</span>
+
+    <span class="n">links</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fakeName</span> <span class="o">=</span> <span class="s2">&quot;__temp__query__result.html&quot;</span>
+
+    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">startTime</span> <span class="o">+</span> <span class="n">timeout</span><span class="p">:</span>
+
+        <span class="c1"># Try and fetch the html with the results</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">_</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+                <span class="n">http_address</span><span class="p">,</span>
+                <span class="n">fakeName</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlcleanup</span><span class="p">()</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                <span class="s2">&quot;Time out when connecting to the server. Check your internet connection, or that &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;you can access </span><span class="si">{</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">LAT</span><span class="o">.</span><span class="n">query_form</span><span class="si">}</span><span class="s2">, then retry&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlcleanup</span><span class="p">()</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Problems with the download. Check your connection or that you can access &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">LAT</span><span class="o">.</span><span class="n">query_form</span><span class="si">}</span><span class="s2">, then retry.&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fakeName</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+            <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;The state of your query is ([0-9]+)&quot;</span><span class="p">,</span> <span class="n">html</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+
+            <span class="c1"># Success! Get the download link</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="n">regexpr</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+            <span class="c1"># Remove temp file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fakeName</span><span class="p">)</span>
+
+            <span class="c1"># we&#39;re done</span>
+            <span class="k">break</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># Clean up and try again after a while</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fakeName</span><span class="p">)</span>
+
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlcleanup</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">refreshTime</span><span class="p">)</span>
+
+            <span class="c1"># Continue to next iteration</span>
+
+    <span class="n">remotePath</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/queries/&quot;</span> <span class="o">%</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">LAT</span><span class="o">.</span><span class="n">public_http_location</span>
+
+    <span class="k">if</span> <span class="n">links</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">links</span><span class="p">]</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Downloading FT1 and FT2 files...&quot;</span><span class="p">)</span>
+
+        <span class="n">downloader</span> <span class="o">=</span> <span class="n">ApacheDirectory</span><span class="p">(</span><span class="n">remotePath</span><span class="p">)</span>
+
+        <span class="n">downloaded_files</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">destination_directory</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span>
+        <span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Could not download LAT Standard data&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+    <span class="c1"># Now we need to sort so that the FT1 is always first (they might be out of order)</span>
+
+    <span class="c1"># Separate the FT1 and FT2 files:</span>
+
+    <span class="n">FT1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">FT2</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">fits_file</span> <span class="ow">in</span> <span class="n">downloaded_files</span><span class="p">:</span>
+        <span class="c1"># Open the FITS file and write the unique key for this query, so that the download will not be</span>
+        <span class="c1"># repeated if not necessary</span>
+        <span class="k">with</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+            <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">_uid_fits_keyword</span><span class="p">,</span> <span class="n">query_unique_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;.+SC[0-9][0-9].fits&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">fits_file</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">FT2</span> <span class="o">=</span> <span class="n">fits_file</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">FT1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span>
+
+    <span class="c1"># If FT2 is first, switch them, otherwise do nothing</span>
+    <span class="c1"># if re.match(&quot;.+SC[0-9][0-9].fits&quot;, downloaded_files[0]) is not None:</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">merge_LAT_data</span><span class="p">(</span>
+            <span class="n">FT1</span><span class="p">,</span>
+            <span class="n">destination_directory</span><span class="p">,</span>
+            <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;L</span><span class="si">%s</span><span class="s2">_FT1.fits&quot;</span> <span class="o">%</span> <span class="n">query_unique_id</span><span class="p">,</span>
+            <span class="n">Emin</span> <span class="o">=</span> <span class="n">Emin</span><span class="p">,</span>
+            <span class="n">Emax</span> <span class="o">=</span> <span class="n">Emax</span>
+        <span class="p">),</span>
+        <span class="n">FT2</span>
+    <span class="p">)</span></div>
+
+<div class="viewcode-block" id="LAT_dataset"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset">[docs]</a><span class="k">class</span> <span class="nc">LAT_dataset</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ft1</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ft2</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="LAT_dataset.make_LAT_dataset"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.make_LAT_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">make_LAT_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">trigger_time</span> <span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">tstart</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">tstop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                         <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Photon&quot;</span><span class="p">,</span>
+                         <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+                         <span class="n">Emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.</span><span class="p">,</span>
+                         <span class="n">Emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000000.</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_time</span> <span class="o">=</span> <span class="n">trigger_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ra</span>           <span class="o">=</span> <span class="n">ra</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec</span>          <span class="o">=</span> <span class="n">dec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">METstart</span>     <span class="o">=</span> <span class="n">tstart</span><span class="o">+</span><span class="n">trigger_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">METstop</span>      <span class="o">=</span> <span class="n">tstop</span><span class="o">+</span><span class="n">trigger_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Emin</span>         <span class="o">=</span> <span class="n">Emin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Emax</span>         <span class="o">=</span> <span class="n">Emax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">destination_directory</span> <span class="o">=</span> <span class="n">destination_directory</span>
+
+
+        <span class="kn">import</span> <span class="nn">datetime</span>
+        <span class="kn">from</span> <span class="nn">GtBurst.dataHandling</span> <span class="kn">import</span> <span class="n">met2date</span><span class="p">,</span><span class="n">_makeDatasetsOutOfLATdata</span>
+
+        <span class="n">metdate</span> <span class="o">=</span> <span class="mi">239241601</span>
+
+        <span class="k">if</span> <span class="n">tstart</span><span class="o">&gt;</span><span class="n">metdate</span><span class="p">:</span> <span class="k">assert</span><span class="p">(</span><span class="s2">&quot;Start time must bge relative to triggertime&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tstop</span><span class="o">&gt;</span><span class="n">metdate</span><span class="p">:</span>  <span class="k">assert</span><span class="p">(</span><span class="s2">&quot;Stop time must bge relative to triggertime&quot;</span><span class="p">)</span>
+
+        <span class="n">grb_name</span> <span class="o">=</span> <span class="n">met2date</span><span class="p">(</span><span class="n">trigger_time</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="s1">&#39;grbname&#39;</span><span class="p">)</span>
+
+        <span class="n">destination_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">,</span><span class="s1">&#39;bn</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">grb_name</span><span class="p">)</span>
+
+        <span class="n">new_ft1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">,</span> <span class="s2">&quot;gll_</span><span class="si">%s</span><span class="s2">_tr_bn</span><span class="si">%s</span><span class="s2">_v00.fit&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;ft1&#39;</span><span class="p">,</span> <span class="n">grb_name</span><span class="p">))</span>
+
+        <span class="n">new_ft2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">,</span> <span class="s2">&quot;gll_</span><span class="si">%s</span><span class="s2">_tr_bn</span><span class="si">%s</span><span class="s2">_v00.fit&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;ft2&#39;</span><span class="p">,</span> <span class="n">grb_name</span><span class="p">))</span>
+
+        <span class="n">eboundsFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">,</span> <span class="s2">&quot;gll_</span><span class="si">%s</span><span class="s2">_tr_bn</span><span class="si">%s</span><span class="s2">_v00.rsp&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;cspec&#39;</span><span class="p">,</span> <span class="n">grb_name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">new_ft1</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">new_ft2</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">eboundsFilename</span><span class="p">))</span> <span class="p">:</span>
+            <span class="n">ft1</span><span class="p">,</span><span class="n">ft2</span> <span class="o">=</span> <span class="n">download_LAT_data</span><span class="p">(</span>
+                                        <span class="n">ra</span><span class="p">,</span>
+                                        <span class="n">dec</span><span class="p">,</span>
+                                        <span class="n">radius</span><span class="p">,</span>
+                                        <span class="n">trigger_time</span> <span class="o">+</span> <span class="n">tstart</span><span class="p">,</span>
+                                        <span class="n">trigger_time</span> <span class="o">+</span> <span class="n">tstop</span><span class="p">,</span>
+                                        <span class="n">time_type</span><span class="o">=</span><span class="s1">&#39;MET&#39;</span><span class="p">,</span>
+                                        <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+                                        <span class="n">destination_directory</span><span class="o">=</span><span class="n">destination_directory</span><span class="p">,</span>
+                                        <span class="n">Emin</span><span class="o">=</span><span class="n">Emin</span><span class="p">,</span>
+                                        <span class="n">Emax</span><span class="o">=</span><span class="n">Emax</span>
+            <span class="p">)</span>
+
+
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ft1</span><span class="p">),</span> <span class="n">new_ft1</span> <span class="p">)</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ft2</span><span class="p">),</span> <span class="n">new_ft2</span> <span class="p">)</span>
+
+            <span class="n">_</span><span class="p">,</span> <span class="n">eboundsFilename</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">cspecfile</span> <span class="o">=</span> <span class="n">_makeDatasetsOutOfLATdata</span><span class="p">(</span><span class="n">new_ft1</span><span class="p">,</span> <span class="n">new_ft2</span><span class="p">,</span>
+                                                                             <span class="n">grb_name</span><span class="p">,</span>
+                                                                             <span class="n">tstart</span><span class="p">,</span> <span class="n">tstop</span><span class="p">,</span>
+                                                                             <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span>
+                                                                             <span class="n">trigger_time</span><span class="p">,</span>
+                                                                             <span class="n">destination_directory</span><span class="p">,</span>
+                                                                             <span class="n">cspecstart</span><span class="o">=</span><span class="n">tstart</span><span class="p">,</span>
+                                                                             <span class="n">cspecstop</span><span class="o">=</span><span class="n">tstop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb_name</span> <span class="o">=</span> <span class="n">grb_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ft1</span>      <span class="o">=</span> <span class="n">new_ft1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ft2</span>      <span class="o">=</span> <span class="n">new_ft2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rspfile</span>     <span class="o">=</span> <span class="n">eboundsFilename</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="LAT_dataset.extract_events"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.extract_events">[docs]</a>    <span class="k">def</span> <span class="nf">extract_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">roi</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="n">thetamax</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">GtBurst</span> <span class="kn">import</span> <span class="n">dataHandling</span>
+        <span class="k">global</span> <span class="n">lastDisplay</span>
+
+        <span class="n">LATdata</span> <span class="o">=</span> <span class="n">dataHandling</span><span class="o">.</span><span class="n">LATData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ft1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rspfile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ft2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filt_file</span><span class="p">,</span> <span class="n">nEvents</span> <span class="o">=</span> <span class="n">LATdata</span><span class="o">.</span><span class="n">performStandardCut</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span> <span class="n">roi</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">METstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">METstop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Emin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Emax</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span>
+                                                           <span class="n">thetamax</span><span class="p">,</span>
+                                                           <span class="kc">True</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Extracted </span><span class="si">%s</span><span class="s1"> events&#39;</span> <span class="o">%</span> <span class="n">nEvents</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

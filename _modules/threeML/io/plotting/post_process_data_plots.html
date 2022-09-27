@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.io.plotting.post_process_data_plots &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.io.plotting.post_process_data_plots</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.io.plotting.post_process_data_plots</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">threeML.plugins.PhotometryLike</span> <span class="k">as</span> <span class="nn">photolike</span>
+<span class="kn">import</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="k">as</span> <span class="nn">speclike</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">threeML.plugins.FermiLATLike</span> <span class="kn">import</span> <span class="n">FermiLATLike</span>
+
+    <span class="n">LATLike</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">LATLike</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.config.plotting_structure</span> <span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span> <span class="nn">threeML.io.plotting.cmap_cycle</span> <span class="kn">import</span> <span class="n">cmap_intervals</span>
+<span class="kn">from</span> <span class="nn">threeML.io.plotting.data_residual_plot</span> <span class="kn">import</span> <span class="n">ResidualPlot</span>
+<span class="kn">from</span> <span class="nn">threeML.io.plotting.step_plot</span> <span class="kn">import</span> <span class="n">step_plot</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># This file contains plots which are plotted in data space after a model has been</span>
+<span class="c1"># assigned to the plugin.</span>
+
+<span class="n">NO_REBIN</span> <span class="o">=</span> <span class="mf">1e-99</span>
+
+
+<div class="viewcode-block" id="display_spectrum_model_counts"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.post_process_data_plots.display_spectrum_model_counts">[docs]</a><span class="k">def</span> <span class="nf">display_spectrum_model_counts</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Display the fitted model count spectrum of one or more Spectrum plugins</span>
+
+<span class="sd">    NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments</span>
+<span class="sd">    to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)</span>
+
+<span class="sd">    :param args: one or more instances of Spectrum plugin</span>
+<span class="sd">    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is</span>
+<span class="sd">    provided, the same minimum rate is used for each dataset, otherwise a list can be provided with the minimum rate</span>
+<span class="sd">    for each dataset</span>
+<span class="sd">    :param data_cmap: (str) (optional) the color map used to extract automatically the colors for the data</span>
+<span class="sd">    :param model_cmap: (str) (optional) the color map used to extract automatically the colors for the models</span>
+<span class="sd">    :param data_colors: (optional) a tuple or list with the color for each dataset</span>
+<span class="sd">    :param model_colors: (optional) a tuple or list with the color for each folded model</span>
+<span class="sd">    :param data_color: (optional) color for all datasets</span>
+<span class="sd">    :param model_color: (optional) color for all folded models</span>
+<span class="sd">    :param show_legend: (optional) if True (default), shows a legend</span>
+<span class="sd">    :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted</span>
+<span class="sd">    :param model_subplot: (optional) axe(s) to plot to for overplotting</span>
+<span class="sd">    with linear interpolation between each bin</span>
+<span class="sd">    :param data_per_plot: (optional) Can specify how many detectors should be plotted in one plot. If there</span>
+<span class="sd">    are more detectors than this number it will split it up in several plots</span>
+<span class="sd">    :param show_background: (optional) Also show the background</span>
+<span class="sd">    :param source_only: (optional) Plot only source (total data - background)</span>
+<span class="sd">    :param background_cmap: (str) (optional) the color map used to extract automatically the colors for the background</span>
+<span class="sd">    :param background_colors: (optional) a tuple or list with the color for each background</span>
+<span class="sd">    :param background_color: (optional) color for all backgrounds</span>
+<span class="sd">    :return: figure instance</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If the user supplies a subset of the data, we will use that</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+
+        <span class="n">data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">data_keys</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="c1"># Now we want to make sure that we only grab OGIP plugins</span>
+
+    <span class="n">new_data_keys</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_keys</span><span class="p">:</span>
+
+        <span class="c1"># Make sure it is a valid key</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">speclike</span><span class="o">.</span><span class="n">SpectrumLike</span><span class="p">):</span>
+                <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">LATLike</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">FermiLATLike</span><span class="p">):</span>
+                <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Dataset </span><span class="si">%s</span><span class="s2"> is not of the SpectrumLike or FermiLATLike  kind. Cannot be plotted by display_spectrum_model_counts&quot;</span>
+                    <span class="o">%</span> <span class="n">key</span>
+                <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">new_data_keys</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;There were no valid SpectrumLike or FermiLATLike data requested for plotting. Please use the detector names in the data list&quot;</span>
+        <span class="p">)</span>
+
+        <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;There were no valid SpectrumLike or FermiLATLike data requested for plotting. Please use the detector names in the data list&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">data_keys</span> <span class="o">=</span> <span class="n">new_data_keys</span>
+
+    <span class="c1"># default settings</span>
+
+    <span class="n">_sub_menu</span><span class="p">:</span> <span class="n">BinnedSpectrumPlot</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">ogip</span><span class="o">.</span><span class="n">fit_plot</span>
+
+    <span class="c1"># Default is to show the model with steps</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">step</span>
+
+    <span class="n">data_cmap</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">data_cmap</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">model_cmap</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">model_cmap</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">background_cmap</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">background_cmap</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Legend is on by default</span>
+    <span class="n">show_legend</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">show_legend</span>
+
+    <span class="n">show_residuals</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">show_residuals</span>
+
+    <span class="n">show_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">show_background</span>
+
+    <span class="c1"># Default colors</span>
+
+    <span class="n">_cmap_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">n_colors</span><span class="p">)</span>
+
+    <span class="n">data_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">_cmap_len</span><span class="p">,</span> <span class="n">data_cmap</span><span class="p">)</span>
+    <span class="n">model_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">_cmap_len</span><span class="p">,</span> <span class="n">model_cmap</span><span class="p">)</span>
+    <span class="n">background_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">_cmap_len</span><span class="p">,</span> <span class="n">background_cmap</span><span class="p">)</span>
+
+    <span class="c1"># Now override defaults according to the optional keywords, if present</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_data&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">show_data</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_data&quot;</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">show_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_legend&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">show_legend</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_legend&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_residuals&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">show_residuals</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_residuals&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;min_rate&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">min_rate</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;min_rate&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If min_rate is a floating point, use the same for all datasets, otherwise use the provided ones</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">min_rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_rate</span><span class="p">)</span>
+
+            <span class="n">min_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">min_rate</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+
+            <span class="n">min_rates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">min_rate</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">min_rates</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;If you provide different minimum rates for each data set, you need&quot;</span>
+                    <span class="s2">&quot;to provide an iterable of the same length of the number of datasets&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># This is the default (no rebinning)</span>
+
+        <span class="n">min_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">NO_REBIN</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_per_plot&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">data_per_plot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_per_plot&quot;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_per_plot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">data_per_plot</span><span class="p">:</span>
+
+            <span class="n">_cmap_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">n_colors</span><span class="p">)</span>
+
+            <span class="n">data_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">_cmap_len</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_cmap&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">_cmap_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_per_plot</span><span class="p">,</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">n_colors</span><span class="p">)</span>
+
+            <span class="n">data_colors_base</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span>
+                <span class="n">_cmap_len</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_cmap&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">data_colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)):</span>
+                <span class="n">data_colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_colors_base</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">data_per_plot</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;data_colors&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">data_colors</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_colors&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You need to provide at least a number of data colors equal to the &quot;</span>
+                <span class="s2">&quot;number of datasets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">data_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">data_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">_sub_menu</span><span class="o">.</span><span class="n">data_color</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="c1"># always override</span>
+    <span class="k">if</span> <span class="s2">&quot;data_color&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">data_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_color&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">data_per_plot</span><span class="p">:</span>
+
+            <span class="n">_cmap_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">n_colors</span><span class="p">)</span>
+
+            <span class="n">model_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">_cmap_len</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_cmap&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">_cmap_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_per_plot</span><span class="p">,</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">n_colors</span><span class="p">)</span>
+
+            <span class="n">model_colors_base</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span>
+                <span class="n">_cmap_len</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_cmap&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">model_colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)):</span>
+                <span class="n">model_colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_colors_base</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">data_per_plot</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;model_colors&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">model_colors</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_colors&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You need to provide at least a number of model colors equal to the &quot;</span>
+                <span class="s2">&quot;number of datasets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">model_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">model_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">_sub_menu</span><span class="o">.</span><span class="n">model_color</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="c1"># always overide</span>
+    <span class="k">if</span> <span class="s2">&quot;model_color&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">model_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_color&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;background_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">data_per_plot</span><span class="p">:</span>
+            <span class="n">background_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;background_cmap&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">background_colors_base</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span>
+                <span class="n">data_per_plot</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;background_cmap&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">background_colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)):</span>
+                <span class="n">background_colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">background_colors_base</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">data_per_plot</span><span class="p">]</span>
+                <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;background_colors&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">background_colors</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;background_colors&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You need to provide at least a number of background colors equal to the &quot;</span>
+                <span class="s2">&quot;number of datasets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">_sub_menu</span><span class="o">.</span><span class="n">background_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">background_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">_sub_menu</span><span class="o">.</span><span class="n">background_color</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="c1"># always override</span>
+    <span class="k">if</span> <span class="s2">&quot;background_color&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">background_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;background_color&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="n">ratio_residuals</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="s2">&quot;ratio_residuals&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">ratio_residuals</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ratio_residuals&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_labels&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">model_labels</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_labels&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You must have the same number of model labels as data sets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">model_labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> Model&quot;</span> <span class="o">%</span> <span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">_name</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_keys</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;background_labels&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">background_labels</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;background_labels&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">background_labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You must have the same number of background labels as data sets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">background_labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> Background&quot;</span> <span class="o">%</span> <span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">_name</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_keys</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;source_only&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">source_only</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;source_only&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">source_only</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;source_only must be a boolean&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">source_only</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_background&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">show_background</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_background&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">show_background</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;show_background must be a boolean&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
+
+    <span class="n">data_kwargs</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_kwargs&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">data_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_kwargs&quot;</span><span class="p">)</span>
+
+    <span class="n">model_kwargs</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_kwargs&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">model_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_kwargs&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">data_per_plot</span><span class="p">:</span>
+        <span class="c1"># If less than data_per_plot detectors need to be plotted,</span>
+        <span class="c1"># just plot it in one plot</span>
+        <span class="n">residual_plot</span> <span class="o">=</span> <span class="n">ResidualPlot</span><span class="p">(</span><span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">residual_plot</span><span class="o">.</span><span class="n">axes</span>
+
+        <span class="c1"># go thru the detectors</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">key</span><span class="p">,</span>
+            <span class="n">data_color</span><span class="p">,</span>
+            <span class="n">model_color</span><span class="p">,</span>
+            <span class="n">background_color</span><span class="p">,</span>
+            <span class="n">min_rate</span><span class="p">,</span>
+            <span class="n">model_label</span><span class="p">,</span>
+            <span class="n">background_label</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">data_keys</span><span class="p">,</span>
+            <span class="n">data_colors</span><span class="p">,</span>
+            <span class="n">model_colors</span><span class="p">,</span>
+            <span class="n">background_colors</span><span class="p">,</span>
+            <span class="n">min_rates</span><span class="p">,</span>
+            <span class="n">model_labels</span><span class="p">,</span>
+            <span class="n">background_labels</span><span class="p">,</span>
+        <span class="p">):</span>
+
+            <span class="c1"># NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c1"># type: speclike</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span>
+                <span class="n">data_color</span><span class="o">=</span><span class="n">data_color</span><span class="p">,</span>
+                <span class="n">model_color</span><span class="o">=</span><span class="n">model_color</span><span class="p">,</span>
+                <span class="n">min_rate</span><span class="o">=</span><span class="n">min_rate</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                <span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span>
+                <span class="n">show_data</span><span class="o">=</span><span class="n">show_data</span><span class="p">,</span>
+                <span class="n">show_legend</span><span class="o">=</span><span class="n">show_legend</span><span class="p">,</span>
+                <span class="n">ratio_residuals</span><span class="o">=</span><span class="n">ratio_residuals</span><span class="p">,</span>
+                <span class="n">model_label</span><span class="o">=</span><span class="n">model_label</span><span class="p">,</span>
+                <span class="n">model_subplot</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span>
+                <span class="n">show_background</span><span class="o">=</span><span class="n">show_background</span><span class="p">,</span>
+                <span class="n">source_only</span><span class="o">=</span><span class="n">source_only</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="n">background_color</span><span class="p">,</span>
+                <span class="n">background_label</span><span class="o">=</span><span class="n">background_label</span><span class="p">,</span>
+                <span class="n">model_kwargs</span><span class="o">=</span><span class="n">model_kwargs</span><span class="p">,</span>
+                <span class="n">data_kwargs</span><span class="o">=</span><span class="n">data_kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">residual_plot</span><span class="o">.</span><span class="n">figure</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Too many detectors to plot everything in one plot... Make indivi.</span>
+        <span class="c1"># plots with data_per_plot dets per plot</span>
+
+        <span class="c1"># How many plots do we need?</span>
+        <span class="n">n_plots</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span> <span class="o">/</span> <span class="n">data_per_plot</span><span class="p">))</span>
+
+        <span class="n">plots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_plots</span><span class="p">):</span>
+            <span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ResidualPlot</span><span class="p">(</span><span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+        <span class="c1"># go thru the detectors</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">key</span><span class="p">,</span>
+            <span class="n">data_color</span><span class="p">,</span>
+            <span class="n">model_color</span><span class="p">,</span>
+            <span class="n">background_color</span><span class="p">,</span>
+            <span class="n">min_rate</span><span class="p">,</span>
+            <span class="n">model_label</span><span class="p">,</span>
+            <span class="n">background_label</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">data_keys</span><span class="p">,</span>
+                <span class="n">data_colors</span><span class="p">,</span>
+                <span class="n">model_colors</span><span class="p">,</span>
+                <span class="n">background_colors</span><span class="p">,</span>
+                <span class="n">min_rates</span><span class="p">,</span>
+                <span class="n">model_labels</span><span class="p">,</span>
+                <span class="n">background_labels</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">plots</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span> <span class="o">/</span> <span class="n">data_per_plot</span><span class="p">)]</span><span class="o">.</span><span class="n">data_axis</span><span class="p">,</span>
+                <span class="n">plots</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span> <span class="o">/</span> <span class="n">data_per_plot</span><span class="p">)]</span><span class="o">.</span><span class="n">residual_axis</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="c1"># NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c1"># type: speclike</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span>
+                <span class="n">data_color</span><span class="o">=</span><span class="n">data_color</span><span class="p">,</span>
+                <span class="n">model_color</span><span class="o">=</span><span class="n">model_color</span><span class="p">,</span>
+                <span class="n">min_rate</span><span class="o">=</span><span class="n">min_rate</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                <span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span>
+                <span class="n">show_data</span><span class="o">=</span><span class="n">show_data</span><span class="p">,</span>
+                <span class="n">show_legend</span><span class="o">=</span><span class="n">show_legend</span><span class="p">,</span>
+                <span class="n">ratio_residuals</span><span class="o">=</span><span class="n">ratio_residuals</span><span class="p">,</span>
+                <span class="n">model_label</span><span class="o">=</span><span class="n">model_label</span><span class="p">,</span>
+                <span class="n">model_subplot</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span>
+                <span class="n">show_background</span><span class="o">=</span><span class="n">show_background</span><span class="p">,</span>
+                <span class="n">source_only</span><span class="o">=</span><span class="n">source_only</span><span class="p">,</span>
+                <span class="n">background_color</span><span class="o">=</span><span class="n">background_color</span><span class="p">,</span>
+                <span class="n">background_label</span><span class="o">=</span><span class="n">background_label</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">figs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plots</span><span class="p">:</span>
+            <span class="n">figs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figs</span></div>
+
+
+<div class="viewcode-block" id="display_photometry_model_magnitudes"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.post_process_data_plots.display_photometry_model_magnitudes">[docs]</a><span class="k">def</span> <span class="nf">display_photometry_model_magnitudes</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Display the fitted model count spectrum of one or more Spectrum plugins</span>
+
+<span class="sd">    NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments</span>
+<span class="sd">    to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)</span>
+
+<span class="sd">    :param args: one or more instances of Spectrum plugin</span>
+<span class="sd">    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is</span>
+<span class="sd">    provided, the same minimum rate is used for each dataset, otherwise a list can be provided with the minimum rate</span>
+<span class="sd">    for each dataset</span>
+<span class="sd">    :param data_cmap: (str) (optional) the color map used to extract automatically the colors for the data</span>
+<span class="sd">    :param model_cmap: (str) (optional) the color map used to extract automatically the colors for the models</span>
+<span class="sd">    :param data_colors: (optional) a tuple or list with the color for each dataset</span>
+<span class="sd">    :param model_colors: (optional) a tuple or list with the color for each folded model</span>
+<span class="sd">    :param show_legend: (optional) if True (default), shows a legend</span>
+<span class="sd">    :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted</span>
+<span class="sd">    with linear interpolation between each bin</span>
+<span class="sd">    :return: figure instance</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If the user supplies a subset of the data, we will use that</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+
+        <span class="n">data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">data_keys</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="c1"># Now we want to make sure that we only grab OGIP plugins</span>
+
+    <span class="n">new_data_keys</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_keys</span><span class="p">:</span>
+
+        <span class="c1"># Make sure it is a valid key</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">photolike</span><span class="o">.</span><span class="n">PhotometryLike</span><span class="p">):</span>
+
+                <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">custom_warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Dataset </span><span class="si">%s</span><span class="s2"> is not of the Photometery kind. Cannot be plotted by &quot;</span>
+                    <span class="s2">&quot;display_photometry_model_magnitudes&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">new_data_keys</span><span class="p">:</span>
+        <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;There were no valid Photometry data requested for plotting. Please use the detector names in the data list&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">data_keys</span> <span class="o">=</span> <span class="n">new_data_keys</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_data&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">show_data</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_data&quot;</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">show_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">show_residuals</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_residuals&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">show_residuals</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_residuals&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Default is to show the model with steps</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">photo</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">step</span>
+
+    <span class="n">data_cmap</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">photo</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">data_cmap</span><span class="o">.</span><span class="n">value</span>
+    <span class="p">)</span>  <span class="c1"># plt.cm.rainbow</span>
+
+    <span class="n">model_cmap</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">photo</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">model_cmap</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Legend is on by default</span>
+    <span class="n">show_legend</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Default colors</span>
+
+    <span class="n">data_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">data_cmap</span><span class="p">)</span>
+    <span class="n">model_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">model_cmap</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_color&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">data_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_color&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_color&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">model_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_color&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">)</span>
+
+    <span class="c1"># Now override defaults according to the optional keywords, if present</span>
+
+    <span class="k">if</span> <span class="s2">&quot;show_legend&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">show_legend</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;show_legend&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">data_cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_cmap&quot;</span><span class="p">))</span>
+        <span class="n">data_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">data_cmap</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">model_cmap</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_cmap&quot;</span><span class="p">)</span>
+        <span class="n">model_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">model_cmap</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_colors&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">data_colors</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_colors&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You need to provide at least a number of data colors equal to the &quot;</span>
+                <span class="s2">&quot;number of datasets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_colors&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">model_colors</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_colors&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You need to provide at least a number of model colors equal to the &quot;</span>
+                <span class="s2">&quot;number of datasets&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="n">data_kwargs</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="s2">&quot;data_kwargs&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">data_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_kwargs&quot;</span><span class="p">)</span>
+
+    <span class="n">model_kwargs</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_kwargs&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">model_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_kwargs&quot;</span><span class="p">)</span>
+
+    <span class="n">residual_plot</span> <span class="o">=</span> <span class="n">ResidualPlot</span><span class="p">(</span><span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;model_subplot&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;model_subplot&quot;</span><span class="p">)</span>
+
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">residual_plot</span><span class="o">.</span><span class="n">axes</span>
+
+    <span class="c1"># go thru the detectors</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data_color</span><span class="p">,</span> <span class="n">model_color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">data_keys</span><span class="p">,</span> <span class="n">data_colors</span><span class="p">,</span> <span class="n">model_colors</span>
+    <span class="p">):</span>
+
+        <span class="n">data</span><span class="p">:</span> <span class="n">photolike</span><span class="o">.</span><span class="n">PhotometryLike</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">model_subplot</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span>
+            <span class="n">model_color</span><span class="o">=</span><span class="n">model_color</span><span class="p">,</span>
+            <span class="n">data_color</span><span class="o">=</span><span class="n">data_color</span><span class="p">,</span>
+            <span class="n">model_kwargs</span><span class="o">=</span><span class="n">model_kwargs</span><span class="p">,</span>
+            <span class="n">data_kwargs</span><span class="o">=</span><span class="n">data_kwargs</span><span class="p">,</span>
+            <span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span>
+            <span class="n">show_legend</span><span class="o">=</span><span class="n">show_legend</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">residual_plot</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

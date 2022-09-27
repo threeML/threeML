@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.plugins.OGIPLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.plugins.OGIPLike</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.plugins.OGIPLike</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.DispersionSpectrumLike</span> <span class="kn">import</span> <span class="n">DispersionSpectrumLike</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="kn">import</span> <span class="n">SpectrumLike</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.XYLike</span> <span class="kn">import</span> <span class="n">XYLike</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.OGIP.pha</span> <span class="kn">import</span> <span class="n">PHAII</span><span class="p">,</span> <span class="n">PHAWrite</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.pha_spectrum</span> <span class="kn">import</span> <span class="n">PHASpectrum</span>
+
+<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;All OGIP-compliant instruments&quot;</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_valid_obs_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">)</span>
+<span class="n">_valid_bkg_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="OGIPLike"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.OGIPLike.OGIPLike">[docs]</a><span class="k">class</span> <span class="nc">OGIPLike</span><span class="p">(</span><span class="n">DispersionSpectrumLike</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">observation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">],</span>
+        <span class="n">background</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">,</span> <span class="n">PHAII</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">arf_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spectrum_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a DisperionSpectrumLike plugin from OGIP data. This is the</span>
+<span class="sd">        main plugin to use for &#39;XSPEC&#39; style data from FITS files.</span>
+
+<span class="sd">        Basic usage:</span>
+
+<span class="sd">        plugin = OGIPLike(&#39;name&#39;,</span>
+<span class="sd">                          observation=&#39;my_observation.fits&#39;,</span>
+<span class="sd">                          background=&#39;my_background.fits&#39;,</span>
+<span class="sd">                          response=&#39;rsp.rmf&#39;,</span>
+<span class="sd">                          arf_file=&#39;arf.arf&#39;)</span>
+
+<span class="sd">        Various combinations of these arguments can be used.</span>
+<span class="sd">        For example, a background may not be required or the</span>
+<span class="sd">        RMF and ARF may be combined into one file and entered as the response.</span>
+
+<span class="sd">        If using another plugin as a background rather than a data file,</span>
+<span class="sd">        simply pass that plugin as the background argument.</span>
+
+
+
+<span class="sd">        :param name:</span>
+<span class="sd">        :type name: str</span>
+<span class="sd">        :param observation:</span>
+<span class="sd">        :type observation: Union[str, Path, PHASpectrum, PHAII]</span>
+<span class="sd">        :param background:</span>
+<span class="sd">        :type background: Optional[</span>
+<span class="sd">                    Union[str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike]</span>
+<span class="sd">                ]</span>
+<span class="sd">        :param response:</span>
+<span class="sd">        :type response: Optional[str]</span>
+<span class="sd">        :param arf_file:</span>
+<span class="sd">        :type arf_file: Optional[str]</span>
+<span class="sd">        :param spectrum_number:</span>
+<span class="sd">        :type spectrum_number: Optional[int]</span>
+<span class="sd">        :param verbose:</span>
+<span class="sd">        :type verbose: bool</span>
+<span class="sd">        :returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Read the pha file (or the PHAContainer instance)</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_valid_obs_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;observation must be a FITS file name or PHASpectrum, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_valid_bkg_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">break</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;background must be a FITS file name, PHASpectrum, a Plugin or None, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">background</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">):</span>
+
+            <span class="n">pha</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="p">(</span>
+                <span class="n">observation</span><span class="p">,</span>
+                <span class="n">spectrum_number</span><span class="o">=</span><span class="n">spectrum_number</span><span class="p">,</span>
+                <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;observed&quot;</span><span class="p">,</span>
+                <span class="n">rsp_file</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                <span class="n">arf_file</span><span class="o">=</span><span class="n">arf_file</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">pha</span> <span class="o">=</span> <span class="n">observation</span>
+
+        <span class="c1"># Get the required background file, response and (if present) arf_file either from the</span>
+        <span class="c1"># calling sequence or the file.</span>
+        <span class="c1"># NOTE: if one of the file is specified in the calling sequence, it will be used whether or not there is an</span>
+        <span class="c1"># equivalent specification in the header. This allows the user to override the content of the header of the</span>
+        <span class="c1"># PHA file, if needed</span>
+
+        <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has no bkg set&quot;</span><span class="p">)</span>
+
+            <span class="n">background</span> <span class="o">=</span> <span class="n">pha</span><span class="o">.</span><span class="n">background_file</span>
+
+            <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using background from FIT header: </span><span class="si">{</span><span class="n">background</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># assert background is not None, &quot;No background file provided, and the PHA file does not specify one.&quot;</span>
+
+        <span class="c1"># Get a PHA instance with the background, we pass the response to get the energy bounds in the</span>
+        <span class="c1"># histogram constructor. It is not saved to the background class</span>
+
+        <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># in the case there is no background file</span>
+
+            <span class="n">bak</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">background</span><span class="p">,</span> <span class="n">XYLike</span>
+        <span class="p">):</span>
+
+            <span class="c1"># this will be a background</span>
+
+            <span class="n">bak</span> <span class="o">=</span> <span class="n">background</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">):</span>
+
+            <span class="n">bak</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="p">(</span>
+                <span class="n">background</span><span class="p">,</span>
+                <span class="n">spectrum_number</span><span class="o">=</span><span class="n">spectrum_number</span><span class="p">,</span>
+                <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;background&quot;</span><span class="p">,</span>
+                <span class="n">rsp_file</span><span class="o">=</span><span class="n">pha</span><span class="o">.</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">bak</span> <span class="o">=</span> <span class="n">background</span>
+
+        <span class="c1"># we do not need to pass the response as it is contained in the observation (pha) spectrum</span>
+        <span class="c1"># already.</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">OGIPLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="n">pha</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bak</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="OGIPLike.get_simulated_dataset"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.OGIPLike.OGIPLike.get_simulated_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulated_dataset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OGIPLike&quot;</span><span class="p">:</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the</span>
+<span class="sd">        model, as well as from the background (depending on the respective noise models)</span>
+
+<span class="sd">        :param new_name: name of the simulated plugin</span>
+<span class="sd">        :param kwargs: keywords to pass back up to parents</span>
+<span class="sd">        :return: a DispersionSpectrumLike simulated instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># pass the response thru to the constructor</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OGIPLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_simulated_dataset</span><span class="p">(</span>
+            <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
+            <span class="n">spectrum_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">grouping</span>
+
+<div class="viewcode-block" id="OGIPLike.write_pha"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.OGIPLike.OGIPLike.write_pha">[docs]</a>    <span class="k">def</span> <span class="nf">write_pha</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a pha file of the current pha selections</span>
+
+
+<span class="sd">        :param file_name: output file name (excluding extension)</span>
+<span class="sd">        :param overwrite: overwrite the files</span>
+<span class="sd">        :param force_rsp_write: for an rsp to be saved</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pha_writer</span> <span class="o">=</span> <span class="n">PHAWrite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">pha_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">file_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="o">=</span><span class="n">force_rsp_write</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># type: () -&gt; pd.Series</span>
+
+        <span class="n">superout</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">OGIPLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bak_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bak_file</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">this_out</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pha file&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+            <span class="s2">&quot;bak file&quot;</span><span class="p">:</span> <span class="n">bak_file</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">this_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">this_out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">this_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">superout</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OGIPLike.from_general_dispersion_spectrum"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.OGIPLike.OGIPLike.from_general_dispersion_spectrum">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_general_dispersion_spectrum</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dispersion_like</span><span class="p">):</span>
+        <span class="c1"># type: (DispersionSpectrumLike) -&gt; OGIPLike</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build on OGIPLike from a dispersion like.</span>
+<span class="sd">        This makes it easy to write a dispersion like to a</span>
+<span class="sd">        pha file</span>
+
+<span class="sd">        :param dispersion_like:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pha_files</span> <span class="o">=</span> <span class="n">dispersion_like</span><span class="o">.</span><span class="n">get_pha_files</span><span class="p">()</span>
+        <span class="n">observed</span> <span class="o">=</span> <span class="n">pha_files</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s2">&quot;bak&quot;</span> <span class="ow">in</span> <span class="n">pha_files</span><span class="p">:</span>
+
+            <span class="n">background</span> <span class="o">=</span> <span class="n">pha_files</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">background</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">observed_pha</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="o">.</span><span class="n">from_dispersion_spectrum</span><span class="p">(</span>
+            <span class="n">observed</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;observed&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">background_pha</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># we need to pass the response from the observations</span>
+            <span class="c1"># to figure out the bounds of the background</span>
+
+            <span class="n">background_pha</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="o">.</span><span class="n">from_dispersion_spectrum</span><span class="p">(</span>
+                <span class="n">background</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;background&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">observed</span><span class="o">.</span><span class="n">response</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">dispersion_like</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">observation</span><span class="o">=</span><span class="n">observed_pha</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="n">background_pha</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

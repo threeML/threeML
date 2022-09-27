@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.fitted_objects.fitted_source_handler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.fitted_objects.fitted_source_handler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.fitted_objects.fitted_source_handler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">zip</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GenericFittedSourceHandler"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler">[docs]</a><span class="k">class</span> <span class="nc">GenericFittedSourceHandler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">analysis_result</span><span class="p">,</span>
+        <span class="n">new_function</span><span class="p">,</span>
+        <span class="n">parameter_names</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">,</span>
+        <span class="n">confidence_level</span><span class="p">,</span>
+        <span class="n">equal_tailed</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">independent_variable_range</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A generic 3ML fitted source  post-processor. This should be sub-classed in general</span>
+
+<span class="sd">        :param analysis_result: a 3ML analysis result</span>
+<span class="sd">        :param new_function: the function to use the fitted values to compute new values</span>
+<span class="sd">        :param parameter_names: a list of parameter names</span>
+<span class="sd">        :param parameters: astromodels parameter dictionary</span>
+<span class="sd">        :param confidence_level: the confidence level to compute error</span>
+<span class="sd">        :param independent_variable_range: the range(s) of independent values to compute the new function over</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># bind the class properties</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span> <span class="o">=</span> <span class="n">analysis_result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analysis</span> <span class="o">=</span> <span class="n">analysis_result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span> <span class="o">=</span> <span class="n">independent_variable_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cl</span> <span class="o">=</span> <span class="n">confidence_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_equal_tailed</span> <span class="o">=</span> <span class="n">equal_tailed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_function</span> <span class="o">=</span> <span class="n">new_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_names</span> <span class="o">=</span> <span class="n">parameter_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+        <span class="c1"># if only 1-D then we must place into its own tuple to</span>
+        <span class="c1"># keep from confusing itertools</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],)</span>
+
+        <span class="c1"># figure out the output shape of the best fit and errors</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span><span class="p">))</span>
+
+        <span class="c1"># construct the propagated function</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_propagated_function</span><span class="p">()</span>
+
+        <span class="c1"># fold the function through its independent values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The basics of adding are handled in the VariatesContainer</span>
+<span class="sd">        :param other: another fitted source handler</span>
+<span class="sd">        :return: a VariatesContainer with the summed values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># assure that the shapes will be the same</span>
+        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cannot sum together arrays with different shapes!&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="c1"># this will get the value container for the other values</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">other</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dummy transform to be overridden in a subclass</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return: transformed value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="GenericFittedSourceHandler.update_tag"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.update_tag">[docs]</a>    <span class="k">def</span> <span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="nf">_build_propagated_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        builds a propagated function using RandomVariates propagation</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">arguments</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># first test a parameters to check the number of samples</span>
+
+
+        <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+
+            <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">free</span><span class="p">:</span>
+
+                <span class="n">test_par</span> <span class="o">=</span> <span class="n">par</span>
+
+                <span class="k">break</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;There are no free parameters in the model!&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="n">test_variate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">test_par</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_variate</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">point_source</span><span class="o">.</span><span class="n">max_number_samples</span><span class="p">:</span>
+
+            <span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_variate</span><span class="p">)),</span> <span class="n">size</span><span class="o">=</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">point_source</span><span class="o">.</span><span class="n">max_number_samples</span><span class="p">)</span>
+
+        
+        <span class="c1"># because we might be using composite functions,</span>
+        <span class="c1"># we have to keep track of parameter names in a non-elegant way</span>
+        <span class="k">for</span> <span class="n">par</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_names</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">free</span><span class="p">:</span>
+
+                <span class="n">this_variate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">par</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+                <span class="c1"># Do not use more than 1000 values (would make computation too slow for nothing)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_variate</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">point_source</span><span class="o">.</span><span class="n">max_number_samples</span><span class="p">:</span>
+
+                    
+                    <span class="n">this_variate</span> <span class="o">=</span> <span class="n">this_variate</span><span class="p">[</span><span class="n">choices</span><span class="p">]</span>
+                
+                <span class="n">arguments</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_variate</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># use the fixed value rather than a variate</span>
+
+                <span class="n">arguments</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># create the propagtor</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="p">,</span> <span class="o">**</span><span class="n">arguments</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        calculate the best or mean fit of the new function or</span>
+<span class="sd">        quantity</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if there are independent variables</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span><span class="p">:</span>
+
+            <span class="n">variates</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># scroll through the independent variables</span>
+            <span class="n">n_iterations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+
+                <span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_independent_variable_range</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    
+                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Propagating errors&quot;</span><span class="p">):</span>
+                    
+                        <span class="n">variates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagated_function</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+
+                        <span class="n">variates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagated_function</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="p">))</span>
+                                                    
+        <span class="c1"># otherwise just evaluate</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">variates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_function</span><span class="p">()</span>
+
+        <span class="c1"># create a variates container</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span> <span class="o">=</span> <span class="n">VariatesContainer</span><span class="p">(</span>
+            <span class="n">variates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_equal_tailed</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: The VariatesContainer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the raw samples of the variates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">samples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the median of the variates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">median</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the average of the variates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">average</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">upper_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the upper error of the variates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">upper_error</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lower_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the lower error of the variates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_propagated_variates</span><span class="o">.</span><span class="n">lower_error</span></div>
+
+
+<div class="viewcode-block" id="transform"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.transform">[docs]</a><span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper to call the _transform method for outputs of Variates container class</span>
+<span class="sd">    :param method:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">method</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">wrapped</span></div>
+
+
+<div class="viewcode-block" id="VariatesContainer"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.fitted_objects.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer">[docs]</a><span class="k">class</span> <span class="nc">VariatesContainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">out_shape</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">equal_tailed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A container to store an *List* of RandomVariates and transform their outputs</span>
+<span class="sd">        to the appropriate shape. This cannot be done with normal numpy array operations</span>
+<span class="sd">        because an array of RandomVariates becomes a normal ndarray. Therefore, we calculate</span>
+<span class="sd">        the averages, errors, etc, and transform those.</span>
+
+<span class="sd">        Additionally, any unit association must be done post calculation as well because the</span>
+<span class="sd">        numpy array constructor sees a unit array as a regular array and again loses the RandomVariates</span>
+<span class="sd">        properties. Therefore, the transform method is used which applies a function to the output properties,</span>
+<span class="sd">        e.g., a unit association and or conversion.</span>
+
+
+
+<span class="sd">        :param values: a flat List of RandomVariates</span>
+<span class="sd">        :param out_shape: the array shape for the output variables</span>
+<span class="sd">        :param cl: the confidence level to calculate error intervals on</span>
+<span class="sd">        :param transform: a method to transform the outputs</span>
+<span class="sd">        :param equal_tailed: whether to use equal-tailed error intervals or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">values</span>  <span class="c1"># type: list</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">=</span> <span class="n">out_shape</span>  <span class="c1"># type: tuple</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cl</span> <span class="o">=</span> <span class="n">cl</span>  <span class="c1"># type: float</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_equal_tailed</span> <span class="o">=</span> <span class="n">equal_tailed</span>  <span class="c1"># type: bool</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="o">=</span> <span class="n">transform</span>  <span class="c1"># type: callable</span>
+
+        <span class="c1"># calculate mean and median and transform them into the provided</span>
+        <span class="c1"># output shape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span><span class="o">.</span><span class="n">average</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_average</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_average</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span><span class="o">.</span><span class="n">median</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_median</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_median</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">)</span>
+
+        <span class="c1"># construct the error intervals</span>
+
+        <span class="n">upper_error</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">lower_error</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># if equal tailed errors requested</span>
+        <span class="k">if</span> <span class="n">equal_tailed</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">:</span>
+
+                <span class="n">error</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">equal_tail_interval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cl</span><span class="p">)</span>
+                <span class="n">upper_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">lower_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># else use the hdp</span>
+
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">:</span>
+
+                <span class="n">error</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cl</span><span class="p">)</span>
+                <span class="n">upper_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">lower_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># reshape the errors into the output shape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_upper_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">upper_error</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lower_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lower_error</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">)</span>
+
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">:</span>
+
+            <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
+
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">samples_shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">n_samples</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_samples_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">samples_shape</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">samples_shape</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: the list of of RandomVariates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@transform</span>
+    <span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the transformed raw samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@transform</span>
+    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the transformed average</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_average</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@transform</span>
+    <span class="k">def</span> <span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the transformed median</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_median</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@transform</span>
+    <span class="k">def</span> <span class="nf">upper_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the transformed upper error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upper_error</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@transform</span>
+    <span class="k">def</span> <span class="nf">lower_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the transformed lower error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_error</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="sd">        :param other:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">_out_shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span>
+        <span class="p">),</span> <span class="s2">&quot;cannot sum together arrays with different shapes!&quot;</span>
+
+        <span class="c1"># this will get the value container for the other values</span>
+
+        <span class="n">other_values</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">summed_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">+</span> <span class="n">vo</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">vo</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">,</span> <span class="n">other_values</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">VariatesContainer</span><span class="p">(</span>
+            <span class="n">summed_values</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cl</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_equal_tailed</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">other</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">other_values</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="n">summed_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">+</span> <span class="n">vo</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span>
+                             <span class="n">vo</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">,</span> <span class="n">other_values</span><span class="p">)]</span>
+
+            <span class="k">return</span> <span class="n">VariatesContainer</span><span class="p">(</span>
+                <span class="n">summed_values</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_out_shape</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cl</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_equal_tailed</span><span class="p">,</span>
+            <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

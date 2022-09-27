@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.statistics.likelihood_functions &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.statistics.likelihood_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.statistics.likelihood_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">njit</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.statistics.gammaln</span> <span class="kn">import</span> <span class="n">logfactorial</span>
+
+<span class="n">_log_pi_2</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="regularized_log"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.regularized_log">[docs]</a><span class="k">def</span> <span class="nf">regularized_log</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function which is log(vector) where vector &gt; 0, and zero otherwise.</span>
+
+<span class="sd">    :param vector:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">vector</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">vector</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="xlogy"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">xlogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine</span>
+<span class="sd">    0 * log(inf) is nan, instead of 0.</span>
+
+<span class="sd">    :param x:</span>
+<span class="sd">    :param y:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="xlogy_one"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy_one">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">xlogy_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine</span>
+<span class="sd">    0 * log(inf) is nan, instead of 0.</span>
+
+<span class="sd">    :param x:</span>
+<span class="sd">    :param y:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="poisson_log_likelihood_ideal_bkg"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_log_likelihood_ideal_bkg">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">poisson_log_likelihood_ideal_bkg</span><span class="p">(</span>
+    <span class="n">observed_counts</span><span class="p">,</span> <span class="n">expected_bkg_counts</span><span class="p">,</span> <span class="n">expected_model_counts</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Poisson log-likelihood for the case where the background has no uncertainties:</span>
+
+<span class="sd">    L = \sum_{i=0}^{N}~o_i~\log{(m_i + b_i)} - (m_i + b_i) - \log{o_i!}</span>
+
+<span class="sd">    :param observed_counts:</span>
+<span class="sd">    :param expected_bkg_counts:</span>
+<span class="sd">    :param expected_model_counts:</span>
+<span class="sd">    :return: (log_like vector, background vector)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Model predicted counts</span>
+    <span class="c1"># In this likelihood the background becomes part of the model, which means that</span>
+    <span class="c1"># the uncertainty in the background is completely neglected</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">expected_model_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">predicted_counts</span> <span class="o">=</span> <span class="n">expected_bkg_counts</span> <span class="o">+</span> <span class="n">expected_model_counts</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+        <span class="n">log_likes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">xlogy_one</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">predicted_counts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="o">-</span> <span class="n">predicted_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">log_likes</span><span class="p">,</span> <span class="n">expected_bkg_counts</span></div>
+
+
+<div class="viewcode-block" id="poisson_observed_poisson_background_xs"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background_xs">[docs]</a><span class="k">def</span> <span class="nf">poisson_observed_poisson_background_xs</span><span class="p">(</span>
+    <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">exposure_ratio</span><span class="p">,</span> <span class="n">expected_model_counts</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profile log-likelihood for the case when the observed counts are Poisson distributed, and the background counts</span>
+<span class="sd">    are Poisson distributed as well (typical for X-ray analysis with aperture photometry). This has been derived</span>
+<span class="sd">    by Keith Arnaud (see the Xspec manual, Wstat statistic)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># We follow Arnaud et al. (Xspec manual) in the computation, which means that at the end we need to multiply by</span>
+    <span class="c1"># (-1) as he computes the -log(L), while we need log(L). Also, he multiplies -log(L) by 2 at the end to make it</span>
+    <span class="c1"># converge to chisq^2. We don&#39;t do that to keep it a proper (profile) likelihood.</span>
+
+    <span class="c1"># Compute the nuisance background parameter</span>
+
+    <span class="n">first_term</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">exposure_ratio</span> <span class="o">*</span> <span class="p">(</span><span class="n">observed_counts</span> <span class="o">+</span> <span class="n">background_counts</span><span class="p">)</span>
+        <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">exposure_ratio</span><span class="p">)</span> <span class="o">*</span> <span class="n">expected_model_counts</span>
+    <span class="p">)</span>
+    <span class="n">second_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">first_term</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="mi">4</span>
+        <span class="o">*</span> <span class="n">exposure_ratio</span>
+        <span class="o">*</span> <span class="p">(</span><span class="n">exposure_ratio</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">background_counts</span>
+        <span class="o">*</span> <span class="n">expected_model_counts</span>
+    <span class="p">)</span>
+
+    <span class="n">background_nuisance_parameter</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_term</span> <span class="o">+</span> <span class="n">second_term</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="n">exposure_ratio</span> <span class="o">*</span> <span class="p">(</span><span class="n">exposure_ratio</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">first_term</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">expected_model_counts</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">exposure_ratio</span><span class="p">)</span> <span class="o">*</span> <span class="n">background_nuisance_parameter</span>
+    <span class="p">)</span>
+
+    <span class="c1"># we regularize the log so it will not give NaN if expected_model_counts and background_nuisance_parameter are both</span>
+    <span class="c1"># zero. For any good model this should also mean observed_counts = 0, btw.</span>
+
+    <span class="n">second_term</span> <span class="o">=</span> <span class="o">-</span><span class="n">xlogy</span><span class="p">(</span>
+        <span class="n">observed_counts</span><span class="p">,</span>
+        <span class="n">expected_model_counts</span> <span class="o">+</span> <span class="n">exposure_ratio</span> <span class="o">*</span> <span class="n">background_nuisance_parameter</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">third_term</span> <span class="o">=</span> <span class="o">-</span><span class="n">xlogy</span><span class="p">(</span><span class="n">background_counts</span><span class="p">,</span> <span class="n">background_nuisance_parameter</span><span class="p">)</span>
+
+    <span class="n">ppstat</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">first_term</span> <span class="o">+</span> <span class="n">second_term</span> <span class="o">+</span> <span class="n">third_term</span><span class="p">)</span>
+
+    <span class="n">ppstat</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="o">-</span><span class="n">observed_counts</span>
+        <span class="o">+</span> <span class="n">xlogy</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">,</span> <span class="n">observed_counts</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">background_counts</span>
+        <span class="o">+</span> <span class="n">xlogy</span><span class="p">(</span><span class="n">background_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># assert np.isfinite(ppstat).all()</span>
+
+    <span class="k">return</span> <span class="n">ppstat</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="poisson_observed_poisson_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">poisson_observed_poisson_background</span><span class="p">(</span>
+    <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">exposure_ratio</span><span class="p">,</span> <span class="n">expected_model_counts</span>
+<span class="p">):</span>
+
+    <span class="c1"># TODO: check this with simulations</span>
+
+    <span class="c1"># Just a name change to make writing formulas a little easier</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">exposure_ratio</span>
+    <span class="c1"># b = background_counts</span>
+    <span class="c1"># o = observed_counts</span>
+    <span class="c1"># M = expected_model_counts</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected_model_counts</span><span class="p">)</span>
+
+    <span class="n">loglike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">B_mle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="c1"># Nuisance parameter for Poisson likelihood</span>
+    <span class="c1"># NOTE: B_mle is zero when b is zero!</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+        <span class="n">o_plus_b</span> <span class="o">=</span> <span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">sqr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="mi">4</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">+</span> <span class="p">((</span><span class="n">alpha</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">o_plus_b</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+
+        <span class="n">B_mle</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mi">1</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">o_plus_b</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">sqr</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Profile likelihood</span>
+
+        <span class="n">loglike</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">xlogy_one</span><span class="p">(</span>
+                <span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">B_mle</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="n">xlogy_one</span><span class="p">(</span><span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">B_mle</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="o">-</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">B_mle</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loglike</span><span class="p">,</span> <span class="n">B_mle</span> <span class="o">*</span> <span class="n">alpha</span></div>
+
+
+<div class="viewcode-block" id="poisson_observed_gaussian_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_observed_gaussian_background">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">poisson_observed_gaussian_background</span><span class="p">(</span>
+    <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">background_error</span><span class="p">,</span> <span class="n">expected_model_counts</span>
+<span class="p">):</span>
+
+    <span class="c1"># This loglike assume Gaussian errors on the background and Poisson uncertainties on the</span>
+
+    <span class="c1"># observed counts. It is a profile likelihood.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">background_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+        <span class="n">MB</span> <span class="o">=</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">s2</span> <span class="o">=</span> <span class="n">background_error</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">background_error</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>  <span class="c1"># type: np.ndarray</span>
+
+        <span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">sqrt</span><span class="p">(</span><span class="n">MB</span> <span class="o">*</span> <span class="n">MB</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">s2</span> <span class="o">*</span> <span class="p">(</span><span class="n">MB</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">+</span> <span class="n">s2</span> <span class="o">*</span> <span class="n">s2</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">s2</span>
+        <span class="p">)</span>  <span class="c1"># type: np.ndarray</span>
+
+        <span class="c1"># Now there are two branches: when the background is 0 we are in the normal situation of a pure</span>
+        <span class="c1"># Poisson likelihood, while when the background is not zero we use the profile likelihood</span>
+
+        <span class="c1"># NOTE: bkgErr can be 0 only when also bkgCounts = 0</span>
+        <span class="c1"># Also it is evident from the expression above that when bkgCounts = 0 and bkgErr=0 also b=0</span>
+
+        <span class="c1"># Let&#39;s do the branch with background &gt; 0 first</span>
+
+        <span class="k">if</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">log_likes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="o">-</span><span class="p">((</span><span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">background_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">s2</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">_log_pi_2</span>
+                <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">background_error</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Let&#39;s do the other branch</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># the 1e-100 in the log is to avoid zero divisions</span>
+            <span class="c1"># This is the Poisson likelihood with no background</span>
+            <span class="n">log_likes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">xlogy_one</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="o">-</span> <span class="n">expected_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="n">observed_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">log_likes</span><span class="p">,</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="half_chi2"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.half_chi2">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">half_chi2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+
+    <span class="c1"># This is half of a chi2. The reason for the factor of two is that we need this to be the Gaussian likelihood,</span>
+    <span class="c1"># so that the delta log-like for an error of say 1 sigma is 0.5 and not 1 like it would be for</span>
+    <span class="c1"># the other likelihood functions. This way we can sum it with other likelihood functions.</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+
+        <span class="n">log_likes</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">expectation</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">yerr</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_likes</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

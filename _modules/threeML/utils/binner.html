@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.binner &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.binner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.binner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.bayesian_blocks</span> <span class="kn">import</span> <span class="p">(</span><span class="n">bayesian_blocks</span><span class="p">,</span>
+                                           <span class="n">bayesian_blocks_not_unique</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.numba_utils</span> <span class="kn">import</span> <span class="n">VectorFloat64</span><span class="p">,</span> <span class="n">VectorInt64</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">Significance</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_interval</span> <span class="kn">import</span> <span class="n">TimeIntervalSet</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NotEnoughData"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.NotEnoughData">[docs]</a><span class="k">class</span> <span class="nc">NotEnoughData</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Rebinner"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner">[docs]</a><span class="k">class</span> <span class="nc">Rebinner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to rebin vectors keeping a minimum value per bin. It supports array with a mask, so that elements excluded</span>
+<span class="sd">    through the mask will not be considered for the rebinning</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_to_rebin_on</span><span class="p">,</span> <span class="n">min_value_per_bin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="c1"># Basic check that it is possible to do what we have been requested to do</span>
+
+        <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">total</span> <span class="o">&lt;</span> <span class="n">min_value_per_bin</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Vector total is </span><span class="si">%s</span><span class="s2">, cannot rebin at </span><span class="si">%s</span><span class="s2"> per bin&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">min_value_per_bin</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="n">NotEnoughData</span><span class="p">()</span>
+
+        <span class="c1"># Check if we have a mask, if not prepare a empty one</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;The provided mask must have the same number of &quot;</span>
+                <span class="s2">&quot;elements as the vector to rebin on&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">mask</span>
+
+        <span class="c1"># Rebin taking the mask into account</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">bin_open</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">n_grouped_bins</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+
+                <span class="c1"># This element is excluded by the mask</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">bin_open</span><span class="p">:</span>
+
+                    <span class="c1"># Do nothing</span>
+                    <span class="k">continue</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="c1"># We need to close the bin here</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">bin_open</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="c1"># If we have grouped more than one bin</span>
+
+                    <span class="k">if</span> <span class="n">n_grouped_bins</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+                        <span class="c1"># group all these bins</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="n">n_grouped_bins</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+                    <span class="c1"># reset the number of bins in this group</span>
+
+                    <span class="n">n_grouped_bins</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># This element is included by the mask</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">bin_open</span><span class="p">:</span>
+                    <span class="c1"># Open a new bin</span>
+                    <span class="n">bin_open</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># Add the current value to the open bin</span>
+
+                <span class="n">n</span> <span class="o">+=</span> <span class="n">b</span>
+
+                <span class="n">n_grouped_bins</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># If we are beyond the requested value, close the bin</span>
+
+                <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">min_value_per_bin</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+                    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="n">bin_open</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="c1"># If we have grouped more than one bin</span>
+
+                    <span class="k">if</span> <span class="n">n_grouped_bins</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+                        <span class="c1"># group all these bins</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="n">n_grouped_bins</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+                    <span class="c1"># reset the number of bins in this group</span>
+
+                    <span class="n">n_grouped_bins</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># At the end of the loop, see if we left a bin open, if we did, close it</span>
+
+        <span class="k">if</span> <span class="n">bin_open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">))</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="p">),</span> <span class="p">(</span>
+            <span class="s2">&quot;This is a bug: the starts and stops of the bins are not in &quot;</span> <span class="s2">&quot;equal number&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_value_per_bin</span> <span class="o">=</span> <span class="n">min_value_per_bin</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Vector was rebinned from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_to_rebin_on</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_bins</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of bins defined.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_bins</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span>
+
+<div class="viewcode-block" id="Rebinner.rebin"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner.rebin">[docs]</a>    <span class="k">def</span> <span class="nf">rebin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vectors</span><span class="p">):</span>
+
+        <span class="n">rebinned_vectors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;The vector to rebin must have the same number of elements of the&quot;</span>
+                <span class="s2">&quot;original (not-rebinned) vector&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Transform in array because we need to use the mask</span>
+
+            <span class="k">if</span> <span class="n">vector</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
+
+                <span class="n">rebinned_vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">_rebin_vector_int</span><span class="p">(</span>
+                        <span class="n">vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_bins</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">rebinned_vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">_rebin_vector_float</span><span class="p">(</span>
+                        <span class="n">vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_bins</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rebinned_vectors</span></div>
+
+<div class="viewcode-block" id="Rebinner.rebin_errors"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner.rebin_errors">[docs]</a>    <span class="k">def</span> <span class="nf">rebin_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vectors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rebin errors by summing the squares</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *vectors:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            array of rebinned errors</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rebinned_vectors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">:</span>  <span class="c1"># type: np.ndarray[np.ndarray]</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;The vector to rebin must have the same number of elements of the&quot;</span>
+                <span class="s2">&quot;original (not-rebinned) vector&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">rebinned_vector</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="p">):</span>
+
+                <span class="n">rebinned_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vector</span><span class="p">[</span><span class="n">low_bound</span><span class="p">:</span><span class="n">hi_bound</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))</span>
+
+            <span class="n">rebinned_vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rebinned_vector</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">rebinned_vectors</span></div>
+
+<div class="viewcode-block" id="Rebinner.get_new_start_and_stop"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner.get_new_start_and_stop">[docs]</a>    <span class="k">def</span> <span class="nf">get_new_start_and_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_start</span><span class="p">,</span> <span class="n">old_stop</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_start</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_stop</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
+
+        <span class="n">new_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">))</span>
+        <span class="n">new_stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stops</span><span class="p">)):</span>
+            <span class="n">new_start</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_start</span><span class="p">[</span><span class="n">low_bound</span><span class="p">]</span>
+            <span class="n">new_stop</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_stop</span><span class="p">[</span><span class="n">hi_bound</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">new_start</span><span class="p">,</span> <span class="n">new_stop</span></div></div>
+
+
+<div class="viewcode-block" id="TemporalBinner"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner">[docs]</a><span class="k">class</span> <span class="nc">TemporalBinner</span><span class="p">(</span><span class="n">TimeIntervalSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An extension of the TimeInterval set that includes binning capabilities</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TemporalBinner.bin_by_significance"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_significance">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bin_by_significance</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">arrival_times</span><span class="p">,</span>
+        <span class="n">background_getter</span><span class="p">,</span>
+        <span class="n">background_error_getter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sigma_level</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">min_counts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">tstart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tstop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Bin the data to a given significance level for a given background method and sigma</span>
+<span class="sd">        method. If a background error function is given then it is assumed that the error distribution</span>
+<span class="sd">        is gaussian. Otherwise, the error distribution is assumed to be Poisson.</span>
+
+<span class="sd">        :param background_getter: function of a start and stop time that returns background counts</span>
+<span class="sd">        :param background_error_getter: function of a start and stop time that returns background count errors</span>
+<span class="sd">        :param sigma_level: the sigma level of the intervals</span>
+<span class="sd">        :param min_counts: the minimum counts per bin</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">tstart</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">tstart</span> <span class="o">=</span> <span class="n">arrival_times</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">tstart</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tstart</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tstop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">tstop</span> <span class="o">=</span> <span class="n">arrival_times</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">tstop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tstop</span><span class="p">)</span>
+
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">stops</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Switching to a fast search</span>
+        <span class="c1"># Idea inspired by Damien Begue</span>
+
+        <span class="c1"># these factors change the time steps</span>
+        <span class="c1"># in the fast search. should experiment</span>
+        <span class="k">if</span> <span class="n">sigma_level</span> <span class="o">&gt;</span> <span class="mi">25</span><span class="p">:</span>
+
+            <span class="n">increase_factor</span> <span class="o">=</span> <span class="mf">0.5</span>
+            <span class="n">decrease_factor</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">increase_factor</span> <span class="o">=</span> <span class="mf">0.25</span>
+            <span class="n">decrease_factor</span> <span class="o">=</span> <span class="mf">0.25</span>
+
+        <span class="n">current_start</span> <span class="o">=</span> <span class="n">arrival_times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># first we need to see if the interval provided has enough counts</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="p">,</span> <span class="n">current_start</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># if it does not, the flag for the big loop never gets set</span>
+        <span class="n">end_all_search</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">_check_exceeds_sigma_interval</span><span class="p">(</span>
+            <span class="n">current_start</span><span class="p">,</span>
+            <span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">counts</span><span class="p">,</span>
+            <span class="n">sigma_level</span><span class="p">,</span>
+            <span class="n">background_getter</span><span class="p">,</span>
+            <span class="n">background_error_getter</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># We will start the search at the mid point of the whole interval</span>
+
+        <span class="n">mid_point</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">current_start</span><span class="p">)</span>
+
+        <span class="n">current_stop</span> <span class="o">=</span> <span class="n">mid_point</span>
+
+        <span class="c1"># initialize the fast search flag</span>
+
+        <span class="n">end_fast_search</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># resolve once for functions used in the loop</span>
+        <span class="n">searchsorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span>
+
+        <span class="c1"># this is the main loop</span>
+        <span class="c1"># as long as we have not reached the end of the interval</span>
+        <span class="c1"># the loop will run</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">:</span>
+
+            <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Binning by significance&quot;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">end_all_search</span><span class="p">:</span>
+
+            <span class="c1"># start of the fast search</span>
+            <span class="c1"># we reset the flag for the interval</span>
+            <span class="c1"># having been decreased in the last pass</span>
+            <span class="n">decreased_interval</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">end_fast_search</span><span class="p">:</span>
+
+                <span class="c1"># we calculate the sigma of the current region</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span>
+                    <span class="n">arrival_times</span><span class="p">,</span> <span class="n">current_start</span><span class="p">,</span> <span class="n">current_stop</span>
+                <span class="p">)</span>
+
+                <span class="n">sigma_exceeded</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">_check_exceeds_sigma_interval</span><span class="p">(</span>
+                    <span class="n">current_start</span><span class="p">,</span>
+                    <span class="n">current_stop</span><span class="p">,</span>
+                    <span class="n">counts</span><span class="p">,</span>
+                    <span class="n">sigma_level</span><span class="p">,</span>
+                    <span class="n">background_getter</span><span class="p">,</span>
+                    <span class="n">background_error_getter</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">time_step</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">current_stop</span> <span class="o">-</span> <span class="n">current_start</span><span class="p">)</span>
+
+                <span class="c1"># if we do not exceed the sigma</span>
+                <span class="c1"># we need to increase the time interval</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">sigma_exceeded</span><span class="p">:</span>
+
+                    <span class="c1"># however, if in the last pass we had to decrease</span>
+                    <span class="c1"># the interval, it means we have found where we</span>
+                    <span class="c1"># we need to start the slow search</span>
+                    <span class="k">if</span> <span class="n">decreased_interval</span><span class="p">:</span>
+
+                        <span class="c1"># mark where we are in the list</span>
+                        <span class="n">start_idx</span> <span class="o">=</span> <span class="n">searchsorted</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">,</span> <span class="n">current_stop</span><span class="p">)</span>
+
+                        <span class="c1"># end the fast search</span>
+                        <span class="n">end_fast_search</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="c1"># otherwise we increase the interval</span>
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="c1"># unless, we would increase it too far</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">current_stop</span> <span class="o">+</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">increase_factor</span>
+                        <span class="p">)</span> <span class="o">&gt;=</span> <span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+
+                            <span class="c1"># mark where we are in the interval</span>
+                            <span class="n">start_idx</span> <span class="o">=</span> <span class="n">searchsorted</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">,</span> <span class="n">current_stop</span><span class="p">)</span>
+
+                            <span class="c1"># then we also want to go ahead and get out of the fast search</span>
+                            <span class="n">end_fast_search</span> <span class="o">=</span> <span class="kc">True</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+
+                            <span class="c1"># increase the interval</span>
+                            <span class="n">current_stop</span> <span class="o">+=</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">increase_factor</span>
+
+                <span class="c1"># if we did exceede the sigma level we will need to step</span>
+                <span class="c1"># back in time to find where it was NOT exceeded</span>
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="c1"># decrease the interval</span>
+                    <span class="n">current_stop</span> <span class="o">-=</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">decrease_factor</span>
+
+                    <span class="c1"># inform the loop that we have been back stepping</span>
+                    <span class="n">decreased_interval</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Now we are ready for the slow forward search</span>
+            <span class="c1"># where we count up all the photons</span>
+
+            <span class="c1"># we have already counted up the photons to this point</span>
+            <span class="n">total_counts</span> <span class="o">=</span> <span class="n">counts</span>
+
+            <span class="c1"># start searching from where the fast search ended</span>
+            <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">:</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">arrival_times</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:]:</span>
+
+                <span class="n">total_counts</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">:</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">total_counts</span> <span class="o">&lt;</span> <span class="n">min_counts</span><span class="p">:</span>
+
+                    <span class="k">continue</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="c1"># first use the background function to know the number of background counts</span>
+                    <span class="n">bkg</span> <span class="o">=</span> <span class="n">background_getter</span><span class="p">(</span><span class="n">current_start</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+                    <span class="n">sig</span> <span class="o">=</span> <span class="n">Significance</span><span class="p">(</span><span class="n">total_counts</span><span class="p">,</span> <span class="n">bkg</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">background_error_getter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                        <span class="n">bkg_error</span> <span class="o">=</span> <span class="n">background_error_getter</span><span class="p">(</span><span class="n">current_start</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+                        <span class="n">sigma</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
+                            <span class="n">bkg_error</span>
+                        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="n">sigma</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">li_and_ma</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+                        <span class="c1"># now test if we have enough sigma</span>
+
+                    <span class="k">if</span> <span class="n">sigma</span> <span class="o">&gt;=</span> <span class="n">sigma_level</span><span class="p">:</span>
+
+                        <span class="c1"># if we succeeded we want to mark the time bins</span>
+                        <span class="n">stops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+                        <span class="n">starts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_start</span><span class="p">)</span>
+
+                        <span class="c1"># set up the next fast search</span>
+                        <span class="c1"># by looking past this interval</span>
+                        <span class="n">current_start</span> <span class="o">=</span> <span class="n">time</span>
+
+                        <span class="n">current_stop</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">time</span><span class="p">)</span>
+
+                        <span class="n">end_fast_search</span> <span class="o">=</span> <span class="kc">False</span>
+
+                        <span class="c1"># get out of the for loop</span>
+                        <span class="k">break</span>
+
+            <span class="c1"># if we never exceeded the sigma level by the</span>
+            <span class="c1"># end of the search, we never will</span>
+            <span class="k">if</span> <span class="n">end_fast_search</span><span class="p">:</span>
+
+                <span class="c1"># so lets kill the main search</span>
+                <span class="n">end_all_search</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">starts</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;The requested sigma level could not be achieved in the interval. Try decreasing it.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TemporalBinner.bin_by_constant"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_constant">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bin_by_constant</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create bins with a constant dt</span>
+
+<span class="sd">        :param dt: temporal spacing of the bins</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dt</span><span class="p">)</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="n">stops</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">+</span> <span class="n">dt</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TemporalBinner.bin_by_bayesian_blocks"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bin_by_bayesian_blocks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Divide a series of events characterized by their arrival time in blocks</span>
+<span class="sd">        of perceptibly constant count rate. If the background integral distribution</span>
+<span class="sd">        is given, divide the series in blocks where the difference with respect to</span>
+<span class="sd">        the background is perceptibly constant.</span>
+
+<span class="sd">        :param arrival_times: An iterable (list, numpy.array...) containing the arrival</span>
+<span class="sd">                         time of the events.</span>
+<span class="sd">                         NOTE: the input array MUST be time-ordered, and without</span>
+<span class="sd">                         duplicated entries. To ensure this, you may execute the</span>
+<span class="sd">                         following code:</span>
+<span class="sd">                         tt_array = numpy.asarray(self._arrival_times)</span>
+<span class="sd">                         tt_array = numpy.unique(tt_array)</span>
+<span class="sd">                         tt_array.sort()</span>
+<span class="sd">                         before running the algorithm.</span>
+<span class="sd">        :param p0: The probability of finding a variations (i.e., creating a new</span>
+<span class="sd">                      block) when there is none. In other words, the probability of</span>
+<span class="sd">                      a Type I error, i.e., rejecting the null-hypothesis when is</span>
+<span class="sd">                      true. All found variations will have a post-trial significance</span>
+<span class="sd">                      larger than p0.</span>
+<span class="sd">        :param bkg_integral_distribution : the integral distribution for the</span>
+<span class="sd">                      background counts. It must be a function of the form f(x),</span>
+<span class="sd">                      which must return the integral number of counts expected from</span>
+<span class="sd">                      the background component between time 0 and x.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">final_edges</span> <span class="o">=</span> <span class="n">bayesian_blocks</span><span class="p">(</span>
+                <span class="n">arrival_times</span><span class="p">,</span>
+                <span class="n">arrival_times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">p0</span><span class="p">,</span>
+                <span class="n">bkg_integral_distribution</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;duplicate&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;There were possible duplicate time tags in the data. We will try to run a different algorithm&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">final_edges</span> <span class="o">=</span> <span class="n">bayesian_blocks_not_unique</span><span class="p">(</span>
+                    <span class="n">arrival_times</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">arrival_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">p0</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="n">starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">final_edges</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">stops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">final_edges</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TemporalBinner.bin_by_custom"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_custom">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bin_by_custom</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simplicity function to make custom bins. This form keeps introduction of</span>
+<span class="sd">        custom bins uniform for other binning methods</span>
+
+<span class="sd">        :param start: start times of the bins</span>
+<span class="sd">        :param stop:  stop times of the bins</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_exceeds_sigma_interval</span><span class="p">(</span>
+        <span class="n">start</span><span class="p">,</span>
+        <span class="n">stop</span><span class="p">,</span>
+        <span class="n">counts</span><span class="p">,</span>
+        <span class="n">sigma_level</span><span class="p">,</span>
+        <span class="n">background_getter</span><span class="p">,</span>
+        <span class="n">background_error_getter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        see if an interval exceeds a given sigma level</span>
+
+
+<span class="sd">        :param start:</span>
+<span class="sd">        :param stop:</span>
+<span class="sd">        :param counts:</span>
+<span class="sd">        :param sigma_level:</span>
+<span class="sd">        :param background_getter:</span>
+<span class="sd">        :param background_error_getter:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">bkg</span> <span class="o">=</span> <span class="n">background_getter</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">Significance</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">bkg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">background_error_getter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">bkg_error</span> <span class="o">=</span> <span class="n">background_error_getter</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span><span class="n">bkg_error</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">li_and_ma</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># now test if we have enough sigma</span>
+
+        <span class="k">if</span> <span class="n">sigma</span> <span class="o">&gt;=</span> <span class="n">sigma_level</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_select_events</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the events and total counts over an interval</span>
+
+<span class="sd">        :param start:</span>
+<span class="sd">        :param stop:</span>
+<span class="sd">        :param events:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lt_idx</span> <span class="o">=</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="n">arrival_times</span>
+        <span class="n">gt_idx</span> <span class="o">=</span> <span class="n">arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">lt_idx</span><span class="p">,</span> <span class="n">gt_idx</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">idx</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<span class="c1">#####</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_rebin_vector_float</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    faster rebinner using numba</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rebinned_vector</span> <span class="o">=</span> <span class="n">VectorFloat64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+
+        <span class="n">rebinned_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vector</span><span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="p">:</span> <span class="n">stop</span><span class="p">[</span><span class="n">n</span><span class="p">]]))</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">rebinned_vector</span><span class="o">.</span><span class="n">arr</span>
+
+    <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-100</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vector</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">+</span> <span class="mf">1e-100</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">test</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
+
+    <span class="k">return</span> <span class="n">arr</span>
+
+
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_rebin_vector_int</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    faster rebinner using numba</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rebinned_vector</span> <span class="o">=</span> <span class="n">VectorInt64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+
+        <span class="n">rebinned_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vector</span><span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="p">:</span> <span class="n">stop</span><span class="p">[</span><span class="n">n</span><span class="p">]]))</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">rebinned_vector</span><span class="o">.</span><span class="n">arr</span>
+
+    <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-100</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vector</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">+</span> <span class="mf">1e-100</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">test</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
+
+    <span class="k">return</span> <span class="n">arr</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

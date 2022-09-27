@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.io.fits_file &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.io.fits_file</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.io.fits_file</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html</span>
+<span class="c1"># Codes for the data type of binary table columns and/or for the</span>
+<span class="c1"># data type of variables when reading or writing keywords or data:</span>
+<span class="c1">#                               DATATYPE               TFORM CODE</span>
+<span class="c1">#   #define TBIT          1  /*                            &#39;X&#39; */</span>
+<span class="c1">#   #define TBYTE        11  /* 8-bit unsigned byte,       &#39;B&#39; */</span>
+<span class="c1">#   #define TLOGICAL     14  /* logicals (int for keywords     */</span>
+<span class="c1">#                            /*  and char for table cols   &#39;L&#39; */</span>
+<span class="c1">#   #define TSTRING      16  /* ASCII string,              &#39;A&#39; */</span>
+<span class="c1">#   #define TSHORT       21  /* signed short,              &#39;I&#39; */</span>
+<span class="c1">#   #define TLONG        41  /* signed long,                   */</span>
+<span class="c1">#   #define TLONGLONG    81  /* 64-bit long signed integer &#39;K&#39; */</span>
+<span class="c1">#   #define TFLOAT       42  /* single precision float,    &#39;E&#39; */</span>
+<span class="c1">#   #define TDOUBLE      82  /* double precision float,    &#39;D&#39; */</span>
+<span class="c1">#   #define TCOMPLEX     83  /* complex (pair of floats)   &#39;C&#39; */</span>
+<span class="c1">#   #define TDBLCOMPLEX 163  /* double complex (2 doubles) &#39;M&#39; */</span>
+<span class="c1">#   The following data type codes are also supported by CFITSIO:</span>
+<span class="c1">#   #define TINT         31  /* int                            */</span>
+<span class="c1">#   #define TSBYTE       12  /* 8-bit signed byte,         &#39;S&#39; */</span>
+<span class="c1">#   #define TUINT        30  /* unsigned int               &#39;V&#39; */</span>
+<span class="c1">#   #define TUSHORT      20  /* unsigned short             &#39;U&#39;  */</span>
+<span class="c1">#   #define TULONG       40  /* unsigned long                  */</span>
+<span class="c1">#   The following data type code is only for use with fits\_get\_coltype</span>
+<span class="c1">#   #define TINT32BIT    41  /* signed 32-bit int,         &#39;J&#39; */</span>
+
+
+<span class="n">_NUMPY_TO_FITS_CODE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Integers</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">:</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span> <span class="s2">&quot;J&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span> <span class="s2">&quot;J&quot;</span><span class="p">,</span>
+    <span class="c1"># Floating point</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="FITSFile"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile">[docs]</a><span class="k">class</span> <span class="nc">FITSFile</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_hdu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fits_extensions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">hdu_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">primary_hdu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">primary_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">primary_hdu</span><span class="p">,</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">)</span>
+
+        <span class="n">hdu_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary_hdu</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fits_extensions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">fits_extensions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fits_extensions</span><span class="p">)</span>
+
+            <span class="n">hdu_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">hdu</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fits_extensions</span><span class="p">])</span>
+
+        <span class="c1"># We embed instead of subclassing because the HDUList class has some weird interaction with the</span>
+        <span class="c1"># __init__ and __new__ methods which makes difficult to do so (we couldn&#39;t figure it out)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">(</span><span class="n">hdus</span><span class="o">=</span><span class="n">hdu_list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FITSFile.writeto"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile.writeto">[docs]</a>    <span class="k">def</span> <span class="nf">writeto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="c1"># Update the docstring to be the same as the method we are wrapping</span>
+
+    <span class="n">writeto</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="o">.</span><span class="n">writeto</span><span class="o">.</span><span class="vm">__doc__</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FITSFile.info"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+    <span class="n">info</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="vm">__doc__</span>
+
+<div class="viewcode-block" id="FITSFile.index_of"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile.index_of">[docs]</a>    <span class="k">def</span> <span class="nf">index_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="n">index_of</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+    <span class="n">index_of</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="o">.</span><span class="n">index_of</span><span class="o">.</span><span class="vm">__doc__</span></div>
+
+
+<div class="viewcode-block" id="FITSExtension"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSExtension">[docs]</a><span class="k">class</span> <span class="nc">FITSExtension</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="c1"># I use __new__ instead of __init__ because I need to use the classmethod .from_columns instead of the</span>
+    <span class="c1"># constructor of fits.BinTableHDU</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">,</span> <span class="n">header_tuple</span><span class="p">):</span>
+
+        <span class="c1"># Generate the header from the dictionary</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">Header</span><span class="p">(</span><span class="n">header_tuple</span><span class="p">)</span>
+
+        <span class="c1"># Loop over the columns and generate them</span>
+        <span class="n">fits_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">column_data</span> <span class="ow">in</span> <span class="n">data_tuple</span><span class="p">:</span>
+
+            <span class="c1"># Get type of column</span>
+            <span class="c1"># NOTE: we assume the type is the same for the entire column</span>
+
+            <span class="n">test_value</span> <span class="o">=</span> <span class="n">column_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Generate FITS column</span>
+
+            <span class="c1"># By default a column does not have units, unless the content is an astropy.Quantity</span>
+
+            <span class="n">units</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+
+                <span class="c1"># Probe the format</span>
+
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="c1"># Use the one already defined, if possible</span>
+
+                    <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">column_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+
+                    <span class="c1"># Try to infer it. Note that this could unwillingly upscale a float16 to a float32, for example</span>
+
+                    <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+
+                <span class="c1"># check if this is a vector of quantities</span>
+
+                <span class="k">if</span> <span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+
+                    <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="p">)</span>
+
+                <span class="c1"># Store the unit as text</span>
+
+                <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+
+                <span class="c1"># Get maximum length, but make 1 as minimum length so if the column is completely made up of empty</span>
+                <span class="c1"># string we still can work</span>
+
+                <span class="n">max_string_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">A&quot;</span> <span class="o">%</span> <span class="n">max_string_length</span>
+
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">test_value</span><span class="p">):</span>
+
+                <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+
+                <span class="c1"># Probably a column array</span>
+                <span class="c1"># Check that we can convert it to a proper numpy type</span>
+
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="c1"># Get type of first number</span>
+
+                    <span class="n">col_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
+
+                <span class="k">except</span><span class="p">:</span>
+
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Could not understand type of column </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">column_name</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Make sure we are not dealing with objects</span>
+                <span class="k">assert</span> <span class="n">col_type</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span> <span class="ow">and</span> <span class="n">col_type</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">object_</span>
+
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">col_type</span><span class="p">)</span>
+
+                <span class="k">except</span><span class="p">:</span>
+
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Column </span><span class="si">%s</span><span class="s2"> contain data which cannot be coerced to </span><span class="si">%s</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">col_type</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="c1"># see if it is a string array</span>
+
+                    <span class="k">if</span> <span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">string_</span><span class="p">:</span>
+
+                        <span class="n">max_string_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span>
+
+                        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">A&quot;</span> <span class="o">%</span> <span class="n">max_string_length</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="c1"># All good. Check the length</span>
+                        <span class="c1"># NOTE: variable length arrays are not supported</span>
+                        <span class="n">line_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span>
+                        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">line_length</span><span class="p">,</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">col_type</span><span class="p">])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># Something we do not know</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Column </span><span class="si">%s</span><span class="s2"> in dataframe contains objects which are not strings&quot;</span>
+                    <span class="o">%</span> <span class="n">column_name</span>
+                <span class="p">)</span>
+
+            <span class="n">this_column</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">units</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">column_data</span>
+            <span class="p">)</span>
+
+            <span class="n">fits_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_column</span><span class="p">)</span>
+
+        <span class="c1"># Create the extension</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">BinTableHDU</span><span class="o">.</span><span class="n">from_columns</span><span class="p">(</span>
+            <span class="n">fits</span><span class="o">.</span><span class="n">ColDefs</span><span class="p">(</span><span class="n">fits_columns</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span>
+        <span class="p">)</span>
+
+        <span class="c1"># update the header to indicate that the file was created by 3ML</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s2">&quot;CREATOR&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;3ML v.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">),</span>
+            <span class="s2">&quot;(G.Vianello, giacomov@slac.stanford.edu)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hdu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdu</span>
+
+<div class="viewcode-block" id="FITSExtension.from_fits_file_extension"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSExtension.from_fits_file_extension">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_fits_file_extension</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fits_extension</span><span class="p">):</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">fits_extension</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">data_tuple</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+
+            <span class="n">data_tuple</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
+
+        <span class="n">header_tuple</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fits_extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data_tuple</span><span class="p">,</span> <span class="n">header_tuple</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.statistics.stats_tools &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.statistics.stats_tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.statistics.stats_tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erfinv</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="c1"># Provides some universal statistical utilities and stats comparison tools</span>
+
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="aic"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.aic">[docs]</a><span class="k">def</span> <span class="nf">aic</span><span class="p">(</span><span class="n">log_like</span><span class="p">,</span> <span class="n">n_parameters</span><span class="p">,</span> <span class="n">n_data_points</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Aikake information criterion.</span>
+<span class="sd">    A model comparison tool based of infomormation theory. It assumes that N is large i.e.,</span>
+<span class="sd">    that the model is approaching the CLT.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_like</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_parameters</span>
+        <span class="n">val</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="mi">2</span>
+            <span class="o">*</span> <span class="n">n_parameters</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">n_parameters</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_data_points</span> <span class="o">-</span> <span class="n">n_parameters</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;AIC was NAN. Recording zero, but you should examine your fit.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="bic"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.bic">[docs]</a><span class="k">def</span> <span class="nf">bic</span><span class="p">(</span><span class="n">log_like</span><span class="p">,</span> <span class="n">n_parameters</span><span class="p">,</span> <span class="n">n_data_points</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Bayesian information criterion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">n_parameters</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_data_points</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;BIC was NAN. Recording zero, but you should examine your fit.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="waic"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.waic">[docs]</a><span class="k">def</span> <span class="nf">waic</span><span class="p">(</span><span class="n">bayesian_trace</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Coming soon to a theater near you.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dic"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.dic">[docs]</a><span class="k">def</span> <span class="nf">dic</span><span class="p">(</span><span class="n">bayes_analysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    elpd_DIC = log p(y|mean(parameters)) - p_DIC</span>
+
+<span class="sd">    the first term is the deviance at the mean of the posterior</span>
+<span class="sd">    and p_DIC is the effective number of free parameters:</span>
+
+<span class="sd">    p_DIC = 2(log p(y|mean(parameters)) - 1/N sum(log p(y|parameters_s), 1,N) )</span>
+
+<span class="sd">    DIC = -2*elpd_DIC</span>
+
+<span class="sd">    the effective number of free parameters can be negative if the mean is</span>
+<span class="sd">    the mean is far from the mode</span>
+
+<span class="sd">    :param bayes_analysis: a bayesian analysis object</span>
+<span class="sd">    :return dic, effective number of free parameters:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mean_of_free_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bayes_analysis</span><span class="o">.</span><span class="n">raw_samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">deviance_at_mean</span> <span class="o">=</span> <span class="n">bayes_analysis</span><span class="o">.</span><span class="n">get_posterior</span><span class="p">(</span><span class="n">mean_of_free_parameters</span><span class="p">)</span>
+
+    <span class="n">mean_deviance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bayes_analysis</span><span class="o">.</span><span class="n">log_probability_values</span><span class="p">)</span>
+
+    <span class="n">pdic</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">deviance_at_mean</span> <span class="o">-</span> <span class="n">mean_deviance</span><span class="p">)</span>
+
+    <span class="n">elpd_dic</span> <span class="o">=</span> <span class="n">deviance_at_mean</span> <span class="o">-</span> <span class="n">pdic</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">pdic</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">elpd_dic</span><span class="p">):</span>
+
+        <span class="n">elpd_dic</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pdic</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;DIC was NAN. Recording zero, but you should examine your fit.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">elpd_dic</span><span class="p">,</span> <span class="n">pdic</span></div>
+
+
+<div class="viewcode-block" id="sqrt_sum_of_squares"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.sqrt_sum_of_squares">[docs]</a><span class="k">def</span> <span class="nf">sqrt_sum_of_squares</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param arg: and array of number to be squared and summed</span>
+<span class="sd">    :return: the sqrt of the sum of the squares</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="PoissonResiduals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.PoissonResiduals">[docs]</a><span class="k">class</span> <span class="nc">PoissonResiduals</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class implements a way to compute residuals for a Poisson distribution mapping them to residuals of a standard</span>
+<span class="sd">    normal distribution. The probability of obtaining the observed counts given the expected one is computed, and then</span>
+<span class="sd">    transformed &quot;in unit of sigma&quot;, i.e., the sigma value corresponding to that probability is computed.</span>
+
+<span class="sd">    The algorithm implemented here uses different branches so that it is fairly accurate between -36 and +36 sigma.</span>
+
+<span class="sd">    NOTE: if the expected number of counts is not very high, then the Poisson distribution is skewed and so the</span>
+<span class="sd">    probability of obtaining a downward fluctuation at a given sigma level is not the same as obtaining the same</span>
+<span class="sd">    fluctuation in the upward direction. Therefore, the distribution of residuals is *not* expected to be symmetric</span>
+<span class="sd">    in that case. The sigma level at which this effect is visible depends strongly on the expected number of counts.</span>
+<span class="sd">    Under normal circumstances residuals are expected to be a few sigma at most, in which case the effect becomes</span>
+<span class="sd">    important for expected number of counts &lt;~ 15-20.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Putting these here make them part of the *class*, not the instance, i.e., they are created</span>
+    <span class="c1"># only once when the module is imported, and then are referred to by any instance of the class</span>
+
+    <span class="c1"># These are lookup tables for the significance from a Poisson distribution when the</span>
+    <span class="c1"># probability is very low so that the normal computation is not possible due to</span>
+    <span class="c1"># the finite numerical precision of the computer</span>
+
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">36</span><span class="p">),</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">_logy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">_x</span><span class="p">))</span>
+
+    <span class="c1"># Make the interpolator here so we do it only once. Also use ext=3 so that the interpolation</span>
+    <span class="c1"># will return the maximum value instead of extrapolating</span>
+
+    <span class="n">_interpolator</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span>
+        <span class="n">_logy</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">_x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Non</span><span class="p">,</span> <span class="n">Noff</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;alpha was </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">alpha</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Non</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Non</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Noff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Noff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Noff</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Non</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span>
+
+        <span class="c1"># This is the minimum difference between 1 and the next representable floating point number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+
+<div class="viewcode-block" id="PoissonResiduals.significance_one_side"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.PoissonResiduals.significance_one_side">[docs]</a>    <span class="k">def</span> <span class="nf">significance_one_side</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># For the points where Non &gt; expected, we need to use the survival function</span>
+        <span class="c1"># sf(x) = 1 - cdf, which can go do very low numbers</span>
+        <span class="c1"># Instead, for points where Non &lt; expected, we need to use the cdf which allows</span>
+        <span class="c1"># to go to very low numbers in that directions</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Non</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Non</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_using_sf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Non</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_using_cdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Non</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="k">def</span> <span class="nf">_using_sf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">exp</span><span class="p">):</span>
+
+        <span class="n">sf</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+
+        <span class="c1"># print(sf)</span>
+
+        <span class="c1"># return erfinv(2 * sf) * sqrt(2)</span>
+
+        <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_using_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">exp</span><span class="p">):</span>
+
+        <span class="c1"># Get the value of the cumulative probability function, instead of the survival function (1 - cdf),</span>
+        <span class="c1"># because for extreme values sf(x) = 1 - cdf(x) = 1 due to numerical precision problems</span>
+
+        <span class="n">cdf</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+
+        <span class="c1"># print(cdf)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">cdf</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span>
+
+        <span class="c1"># We can do a direct computation, because the numerical precision is sufficient</span>
+        <span class="c1"># for this computation, as -sf = cdf - 1 is a representable number</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">erfinv</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">cdf</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># We use a lookup table with interpolation because the numerical precision would not</span>
+        <span class="c1"># be sufficient to make the computation</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolator</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">cdf</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="Significance"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance">[docs]</a><span class="k">class</span> <span class="nc">Significance</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements equations in Li&amp;Ma 1983</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Non</span><span class="p">,</span> <span class="n">Noff</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="c1"># assert alpha &gt; 0 and alpha &lt;= 1, &quot;alpha was %f&quot; % alpha</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Non</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Noff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">Non</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">Noff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">expected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">net</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_net</span>
+
+<div class="viewcode-block" id="Significance.known_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.known_background">[docs]</a>    <span class="k">def</span> <span class="nf">known_background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the significance under the hypothesis that there is no uncertainty in the background. In other words,</span>
+<span class="sd">        compute the probability of obtaining the observed counts given the expected counts from the background, then</span>
+<span class="sd">        transform it in sigma.</span>
+
+<span class="sd">        NOTE: this is reliable for expected counts &gt;~10-15 if the significance is not very high. The higher the</span>
+<span class="sd">        expected counts, the more reliable the significance estimation. As rule of thumb, you need at least 25 counts</span>
+<span class="sd">        to have reliable estimates up to 5 sigma.</span>
+
+<span class="sd">        NOTE 2: if you use to compute residuals in units of sigma, you should not expected them to be symmetrically</span>
+<span class="sd">        distributed around 0 unless the expected number of counts is high enough for all bins (&gt;~15). This is due to</span>
+<span class="sd">        the fact that the Poisson distribution is very skewed at low counts.</span>
+
+<span class="sd">        :return: significance vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Poisson probability of obtaining Non given Noff * alpha, in sigma units</span>
+
+        <span class="n">poisson_probability</span> <span class="o">=</span> <span class="n">PoissonResiduals</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">significance_one_side</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">poisson_probability</span></div>
+
+<div class="viewcode-block" id="Significance.li_and_ma"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.li_and_ma">[docs]</a>    <span class="k">def</span> <span class="nf">li_and_ma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assign_sign</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the significance using the formula from Li &amp; Ma 1983, which is appropriate when both background and</span>
+<span class="sd">        observed signal are counts coming from a Poisson distribution.</span>
+
+<span class="sd">        :param assign_sign: whether to assign a sign to the significance, according to the sign of the net counts</span>
+<span class="sd">        Non - alpha * Noff, so that excesses will have positive significances and defects negative significances</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="n">one</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+        <span class="p">)</span>
+
+        <span class="n">two</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">two</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Non</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Noff</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">assign_sign</span><span class="p">:</span>
+
+            <span class="n">sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_net</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">one</span> <span class="o">+</span> <span class="n">two</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Significance.li_and_ma_equivalent_for_gaussian_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.stats_tools.Significance.li_and_ma_equivalent_for_gaussian_background">[docs]</a>    <span class="k">def</span> <span class="nf">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma_b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the significance using the formula from Vianello 2018</span>
+<span class="sd">        (https://iopscience.iop.org/article/10.3847/1538-4365/aab780/meta),</span>
+<span class="sd">        which is appropriate when the observation is Poisson distributed but</span>
+<span class="sd">        the background has been modeled and thus has Gaussian distributed errors.</span>
+
+<span class="sd">        :param sigma_b: The gaussian 1 sigma errors on the background</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># This is a computation I need to publish (G. Vianello)</span>
+
+        <span class="c1"># Actually, you did (and beat J. Michael!) For details on this computation</span>
+
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Non</span>
+
+        <span class="n">b0</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma_b</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">o</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma_b</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">b</span>
+            <span class="o">-</span> <span class="n">sigma_b</span><span class="o">**</span><span class="mi">2</span>
+        <span class="p">)</span>
+
+        <span class="n">S</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="n">o</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">o</span> <span class="o">/</span> <span class="n">b0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(((</span><span class="n">b0</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma_b</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">b0</span> <span class="o">-</span> <span class="n">o</span>
+        <span class="p">)</span>
+
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">o</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">S</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

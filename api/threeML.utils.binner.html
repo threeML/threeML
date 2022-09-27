@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.binner module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="threeML.utils.cartesian module" href="threeML.utils.cartesian.html" />
+    <link rel="prev" title="threeML.utils.bayesian_blocks module" href="threeML.utils.bayesian_blocks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="API.html">API</a> &raquo;</li>
+          <li><a href="threeML.html">threeML package</a> &raquo;</li>
+          <li><a href="threeML.utils.html">threeML.utils package</a> &raquo;</li>
+      <li>threeML.utils.binner module</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-threeML.utils.binner">
+<span id="threeml-utils-binner-module"></span><h1>threeML.utils.binner module<a class="headerlink" href="#module-threeML.utils.binner" title="Permalink to this heading"></a></h1>
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.utils.binner.NotEnoughData">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">NotEnoughData</span></span><a class="reference internal" href="../_modules/threeML/utils/binner.html#NotEnoughData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.NotEnoughData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.binner.Rebinner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">Rebinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_to_rebin_on</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value_per_bin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to rebin vectors keeping a minimum value per bin. It supports array with a mask, so that elements excluded
+through the mask will not be considered for the rebinning</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.get_new_start_and_stop">
+<span class="sig-name descname"><span class="pre">get_new_start_and_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.get_new_start_and_stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.get_new_start_and_stop" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.grouping">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#threeML.utils.binner.Rebinner.grouping" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.n_bins">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_bins</span></span><a class="headerlink" href="#threeML.utils.binner.Rebinner.n_bins" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the number of bins defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.rebin">
+<span class="sig-name descname"><span class="pre">rebin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.rebin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.rebin_errors">
+<span class="sig-name descname"><span class="pre">rebin_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.rebin_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin_errors" title="Permalink to this definition"></a></dt>
+<dd><p>Rebin errors by summing the squares</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>*vectors</strong></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array of rebinned errors</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">TemporalBinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet" title="threeML.utils.time_interval.TimeIntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeIntervalSet</span></code></a></p>
+<p>An extension of the TimeInterval set that includes binning capabilities</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_bayesian_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_integral_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_bayesian_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks" title="Permalink to this definition"></a></dt>
+<dd><p>Divide a series of events characterized by their arrival time in blocks
+of perceptibly constant count rate. If the background integral distribution
+is given, divide the series in blocks where the difference with respect to
+the background is perceptibly constant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arrival_times</strong> – An iterable (list, numpy.array…) containing the arrival
+time of the events.
+NOTE: the input array MUST be time-ordered, and without
+duplicated entries. To ensure this, you may execute the
+following code:
+tt_array = numpy.asarray(self._arrival_times)
+tt_array = numpy.unique(tt_array)
+tt_array.sort()
+before running the algorithm.</p></li>
+<li><p><strong>p0</strong> – The probability of finding a variations (i.e., creating a new
+block) when there is none. In other words, the probability of
+a Type I error, i.e., rejecting the null-hypothesis when is
+true. All found variations will have a post-trial significance
+larger than p0.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param bkg_integral_distribution<span class="classifier">the integral distribution for the</span></dt><dd><p>background counts. It must be a function of the form f(x),
+which must return the integral number of counts expected from
+the background component between time 0 and x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_constant">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_constant" title="Permalink to this definition"></a></dt>
+<dd><p>Create bins with a constant dt</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dt</strong> – temporal spacing of the bins</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_custom">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_custom" title="Permalink to this definition"></a></dt>
+<dd><p>Simplicity function to make custom bins. This form keeps introduction of
+custom bins uniform for other binning methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> – start times of the bins</p></li>
+<li><p><strong>stop</strong> – stop times of the bins</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_significance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_significance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_error_getter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_significance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_significance" title="Permalink to this definition"></a></dt>
+<dd><p>Bin the data to a given significance level for a given background method and sigma
+method. If a background error function is given then it is assumed that the error distribution
+is gaussian. Otherwise, the error distribution is assumed to be Poisson.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>background_getter</strong> – function of a start and stop time that returns background counts</p></li>
+<li><p><strong>background_error_getter</strong> – function of a start and stop time that returns background count errors</p></li>
+<li><p><strong>sigma_level</strong> – the sigma level of the intervals</p></li>
+<li><p><strong>min_counts</strong> – the minimum counts per bin</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="threeML.utils.bayesian_blocks.html" class="btn btn-neutral float-left" title="threeML.utils.bayesian_blocks module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="threeML.utils.cartesian.html" class="btn btn-neutral float-right" title="threeML.utils.cartesian module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

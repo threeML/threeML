@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.bayesian.ultranest_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.bayesian.ultranest_sampler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.bayesian.ultranest_sampler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
+<span class="kn">from</span> <span class="nn">threeML.bayesian.sampler_base</span> <span class="kn">import</span> <span class="n">UnitCubeSampler</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="kn">import</span> <span class="nn">ultranest</span>
+
+<span class="k">except</span><span class="p">:</span>
+
+    <span class="n">has_ultranest</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">else</span><span class="p">:</span>
+
+    <span class="n">has_ultranest</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="c1"># see if we have mpi and/or are using parallel</span>
+
+    <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+
+    <span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># need parallel capabilities</span>
+        <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">except</span><span class="p">:</span>
+
+    <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="n">un_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;ultranest&quot;</span><span class="p">)</span>
+<span class="n">un_logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="UltraNestSampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.ultranest_sampler.UltraNestSampler">[docs]</a><span class="k">class</span> <span class="nc">UltraNestSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">has_ultranest</span><span class="p">,</span> <span class="s2">&quot;You must install UltraNest to use this sampler&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">UltraNestSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UltraNestSampler.setup"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.ultranest_sampler.UltraNestSampler.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">min_num_live_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
+        <span class="n">dlogz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">chain_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;overwrite&quot;</span><span class="p">,</span>
+        <span class="n">wrapped_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stepsampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_mlfriends</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                set up the Ultranest sampler. Consult the documentation:</span>
+
+<span class="sd">                https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</span>
+
+<span class="sd">                :param min_num_live_points: minimum number of live points throughout the run</span>
+<span class="sd">                :type min_num_live_points: int</span>
+<span class="sd">                :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.</span>
+<span class="sd">                :type dlogz: float</span>
+<span class="sd">                :param chain_name: where to store output files</span>
+<span class="sd">                :type chain_name:</span>
+<span class="sd">                :param resume:  (&#39;resume&#39;, &#39;resume-similar&#39;, &#39;overwrite&#39; or &#39;subfolder&#39;) –</span>
+<span class="sd">        if ‘overwrite’, overwrite previous data.</span>
+<span class="sd">        if ‘subfolder’, create a fresh subdirectory in log_dir.</span>
+<span class="sd">        if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.</span>
+<span class="sd">        if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.</span>
+<span class="sd">                :type resume: str</span>
+<span class="sd">                :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).</span>
+<span class="sd">                :type wrapped_params:</span>
+<span class="sd">                :param stepsampler:</span>
+<span class="sd">                :type stepsampler:</span>
+<span class="sd">                :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</span>
+<span class="sd">                :type use_mlfriends: bool</span>
+<span class="sd">                :returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Setup for UltraNest sampler: min_num_live_points:</span><span class="si">{</span><span class="n">min_num_live_points</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;chain_name:</span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">, dlogz: </span><span class="si">{</span><span class="n">dlogz</span><span class="si">}</span><span class="s2">, wrapped_params: </span><span class="si">{</span><span class="n">wrapped_params</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Other input: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;min_num_live_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_num_live_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;dlogz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dlogz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;log_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;stepsampler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stepsampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resume</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_params</span> <span class="o">=</span> <span class="n">wrapped_params</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_mlfriends</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_mlfriends</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="UltraNestSampler.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.ultranest_sampler.UltraNestSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sample using the UltraNest numerical integration method</span>
+<span class="sd">        :rtype:</span>
+
+<span class="sd">        :returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">loud</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
+
+        <span class="n">param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">loglike</span><span class="p">,</span> <span class="n">ultranest_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span><span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># We need to check if the MCMC</span>
+        <span class="c1"># chains will have a place on</span>
+        <span class="c1"># the disk to write and if not,</span>
+        <span class="c1"># create one</span>
+
+        <span class="n">chain_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_dir&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chain_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mcmc_chains_out_dir</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">chain_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">mcmc_chains_out_dir</span> <span class="o">+=</span> <span class="n">s</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+
+            <span class="k">if</span> <span class="n">using_mpi</span><span class="p">:</span>
+
+                <span class="n">comm</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+
+                <span class="c1"># if we are running in parallel and this is not the</span>
+                <span class="c1"># first engine, then we want to wait and let everything finish</span>
+
+                <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># create mcmc chains directory only on first engine</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mcmc_chains_out_dir</span><span class="p">):</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Create </span><span class="si">{</span><span class="n">mcmc_chains_out_dir</span><span class="si">}</span><span class="s2"> for ultranest output&quot;</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">mcmc_chains_out_dir</span><span class="p">)</span>
+
+
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mcmc_chains_out_dir</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Create </span><span class="si">{</span><span class="n">mcmc_chains_out_dir</span><span class="si">}</span><span class="s2"> for ultranest output&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">mcmc_chains_out_dir</span><span class="p">)</span>
+
+        <span class="c1"># Multinest must be run parallel via an external method</span>
+        <span class="c1"># see the demo in the examples folder!!</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;If you want to run ultranest in parallell you need to use an ad-hoc method&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">resume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;resume&quot;</span><span class="p">)</span>
+
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">ultranest</span><span class="o">.</span><span class="n">ReactiveNestedSampler</span><span class="p">(</span>
+                <span class="n">param_names</span><span class="p">,</span>
+                <span class="n">loglike</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">ultranest_prior</span><span class="p">,</span>
+                <span class="n">log_dir</span><span class="o">=</span><span class="n">chain_name</span><span class="p">,</span>
+                <span class="n">vectorized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">,</span>
+                <span class="n">wrapped_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_params</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;stepsampler&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">sampler</span><span class="o">.</span><span class="n">stepsampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;stepsampler&quot;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;stepsampler&quot;</span><span class="p">)</span>
+
+            <span class="c1"># use a different region class</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_mlfriends</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;region_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ultranest</span><span class="o">.</span><span class="n">mlfriends</span><span class="o">.</span><span class="n">RobustEllipsoidRegion</span>
+
+            <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start ultranest run&quot;</span><span class="p">)</span>
+                <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">show_status</span><span class="o">=</span><span class="n">loud</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ultranest run done&quot;</span><span class="p">)</span>
+
+        <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">using_mpi</span><span class="p">:</span>
+
+            <span class="c1"># if we are running in parallel and this is not the</span>
+            <span class="c1"># first engine, then we want to wait and let everything finish</span>
+
+            <span class="n">comm</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># these engines do not need to read</span>
+                <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">process_fit</span><span class="p">:</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">results</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+
+            <span class="n">ws</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;weighted_samples&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Workaround to support older versions of ultranest</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">wsamples</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">]</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">]</span>
+                <span class="n">logl</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">wsamples</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span>
+                <span class="n">logl</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;logl&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Get the log. likelihood values from the chain</span>
+
+            <span class="n">SQRTEPS</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">SQRTEPS</span><span class="p">:</span>  <span class="c1"># same tol as in np.random.choice.</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;weights do not sum to 1&quot;</span><span class="p">)</span>
+
+            <span class="n">rstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span>
+
+            <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+            <span class="c1"># make N subdivisions, and choose positions with a consistent random offset</span>
+            <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span><span class="n">rstate</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">))</span> <span class="o">/</span> <span class="n">N</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+            <span class="n">cumulative_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cumulative_sum</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">=</span> <span class="n">logl</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="n">wsamples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="c1"># now get the log probability</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;logz&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_results</span><span class="p">()</span>
+
+            <span class="c1"># Display results</span>
+            <span class="k">if</span> <span class="n">loud</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+            <span class="c1"># now get the marginal likelihood</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

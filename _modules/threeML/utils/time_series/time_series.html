@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.time_series.time_series &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.time_series.time_series</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.time_series.time_series</h1><div class="highlight"><pre>
+<span></span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config_utils</span> <span class="kn">import</span> <span class="n">get_value_kwargs</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.parallel.parallel_client</span> <span class="kn">import</span> <span class="n">ParallelClient</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">trange</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.binned_spectrum</span> <span class="kn">import</span> <span class="n">Quality</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_interval</span> <span class="kn">import</span> <span class="n">TimeIntervalSet</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_series.polynomial</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Polynomial</span><span class="p">,</span> <span class="n">polyfit</span><span class="p">,</span>
+                                                  <span class="n">unbinned_polyfit</span><span class="p">)</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ReducingNumberOfThreads"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.ReducingNumberOfThreads">[docs]</a><span class="k">class</span> <span class="nc">ReducingNumberOfThreads</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ReducingNumberOfSteps"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.ReducingNumberOfSteps">[docs]</a><span class="k">class</span> <span class="nc">ReducingNumberOfSteps</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="OverLappingIntervals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.OverLappingIntervals">[docs]</a><span class="k">class</span> <span class="nc">OverLappingIntervals</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># find out how many splits we need to make</span>
+<div class="viewcode-block" id="ceildiv"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.ceildiv">[docs]</a><span class="k">def</span> <span class="nf">ceildiv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">//</span> <span class="n">b</span><span class="p">)</span></div>
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">_OutputContainer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dummy contaier to extract information from the light curve</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">instrument</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">telescope</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tstart</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">telapse</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">counts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">rates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">edges</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">quality</span><span class="p">:</span> <span class="n">Quality</span>
+    <span class="n">backfile</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">grouping</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">exposure</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">counts_error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rate_error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="TimeSeries"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries">[docs]</a><span class="k">class</span> <span class="nc">TimeSeries</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">stop_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">n_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">native_quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The EventList is a container for event data that is tagged in time</span>
+<span class="sd">        and in PHA/energy. It handles event selection,</span>
+<span class="sd">        temporal polynomial fitting, temporal binning, and exposure</span>
+<span class="sd">        calculations (in subclasses). Once events are selected</span>
+<span class="sd">        and/or polynomials are fit, the selections can be extracted via a</span>
+<span class="sd">        PHAContainer which is can be read by an OGIPLike</span>
+<span class="sd">        instance and translated into a PHA instance.</span>
+
+
+<span class="sd">        :param  n_channels: Number of detector channels</span>
+<span class="sd">        :param  start_time: start time of the event list</span>
+<span class="sd">        :param  stop_time: stop time of the event list</span>
+<span class="sd">        :param  first_channel: where detchans begin indexing</span>
+<span class="sd">        :param  rsp_file: the response file corresponding to these events</span>
+<span class="sd">        :param  arrival_times: list of event arrival times</span>
+<span class="sd">        :param  energies: list of event energies or pha channels</span>
+<span class="sd">        :param native_quality: native pha quality flags</span>
+<span class="sd">        :param edges: The histogram boundaries if not specified by a response</span>
+<span class="sd">        :param mission:</span>
+<span class="sd">        :param instrument:</span>
+<span class="sd">        :param verbose:</span>
+<span class="sd">        :param  ra:</span>
+<span class="sd">        :param  dec:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">n_channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">first_channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_native_quality</span> <span class="o">=</span> <span class="n">native_quality</span>
+
+        <span class="c1"># we haven&#39;t made selections yet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_counts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_count_err</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># ebounds for objects w/o a response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">edges</span>
+
+        <span class="k">if</span> <span class="n">native_quality</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">native_quality</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_channels</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;the native quality has length </span><span class="si">%d</span><span class="s2"> but you specified there were </span><span class="si">%d</span><span class="s2"> channels&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">native_quality</span><span class="p">),</span> <span class="n">n_channels</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">start_time</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span> <span class="o">=</span> <span class="n">stop_time</span>
+
+        <span class="c1"># name the instrument if there is not one</span>
+
+        <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No instrument name is given. Setting to UNKNOWN&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span> <span class="o">=</span> <span class="n">instrument</span>
+
+        <span class="k">if</span> <span class="n">mission</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No mission name is given. Setting to UNKNOWN&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span> <span class="o">=</span> <span class="n">mission</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bin type&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;fit method&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+<div class="viewcode-block" id="TimeSeries.set_active_time_intervals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.set_active_time_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in subclass&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">poly_fit_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bkg_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns polynomial is they exist&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;A polynomial fit has not been made.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeries.get_poly_info"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_poly_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_poly_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a pandas panel frame with the polynomial coeffcients</span>
+<span class="sd">        and errors</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            a DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+
+            <span class="n">coeff</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">:</span>
+                <span class="n">coeff</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="n">df_coeff</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
+            <span class="n">df_err</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+            <span class="c1"># print(&#39;Coefficients&#39;)</span>
+            <span class="c1">#</span>
+            <span class="c1"># display(df_coeff)</span>
+            <span class="c1">#</span>
+            <span class="c1"># print(&#39;Coefficient Error&#39;)</span>
+            <span class="c1">#</span>
+            <span class="c1"># display(df_err)</span>
+
+            <span class="n">pan</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;coefficients&quot;</span><span class="p">:</span> <span class="n">df_coeff</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">df_err</span><span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">pan</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;A polynomial fit has not been made.&quot;</span><span class="p">)</span>
+            <span class="ne">RuntimeError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TimeSeries.get_total_poly_count"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_total_poly_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_poly_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                             <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Get the total poly counts</span>
+
+<span class="sd">        :param start:</span>
+<span class="sd">        :param stop:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="n">total_counts</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">)[</span><span class="n">mask</span><span class="p">]:</span>
+            <span class="n">total_counts</span> <span class="o">+=</span> <span class="n">p</span><span class="o">.</span><span class="n">integral</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">total_counts</span></div>
+
+<div class="viewcode-block" id="TimeSeries.get_total_poly_error"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_total_poly_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_poly_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                             <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Get the total poly error</span>
+
+<span class="sd">        :param start:</span>
+<span class="sd">        :param stop:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="n">total_counts</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">)[</span><span class="n">mask</span><span class="p">]:</span>
+            <span class="n">total_counts</span> <span class="o">+=</span> <span class="n">p</span><span class="o">.</span><span class="n">integral_error</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This EventList has no binning specified&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set poly order only in allowed range and redo fit &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;Polynomial order must be integer&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">4</span>
+        <span class="p">),</span> <span class="s2">&quot;Polynomial order must be 0-4 or -1 to have it determined&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;poly order set to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Refitting background with new polynomial order &quot;</span>
+                <span class="s2">&quot;(</span><span class="si">{value}</span><span class="s2">) and existing selections&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;recomputing time selection&quot;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_polynomial_fit_interval</span><span class="p">(</span>
+                    <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
+                    <span class="n">unbinned</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This is a bug. Should never get here&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">___set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indirect poly order setter &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_poly_order</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; get the poly order &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+
+    <span class="k">def</span> <span class="nf">___get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indirect poly order getter &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_poly_order</span><span class="p">()</span>
+
+    <span class="n">poly_order</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">___get_poly_order</span><span class="p">,</span>
+        <span class="n">___set_poly_order</span><span class="p">,</span>
+        <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Get or set the polynomial order&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the time intervals of the events</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span>
+
+<div class="viewcode-block" id="TimeSeries.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; calculate the exposure over a given interval  &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in sub class&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeries.counts_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.counts_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return the number of counts in the selected interval</span>
+<span class="sd">        :param start: start of interval</span>
+<span class="sd">        :param stop:  stop of interval</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># this will be a boolean list and the sum will be the</span>
+        <span class="c1"># number of events</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in sub class&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeries.count_per_channel_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.count_per_channel_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param start:</span>
+<span class="sd">        :param stop:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in sub class&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeries.set_background_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.set_background_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_background_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">time_intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the time interval for the background observation.</span>
+<span class="sd">        Multiple intervals can be input as separate arguments</span>
+<span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+
+<span class="sd">        set_polynomial_fit_interval(&quot;-10.0-0.0&quot;,&quot;10.-15.&quot;)</span>
+
+<span class="sd">        :param time_intervals: intervals to fit on</span>
+<span class="sd">        :param options:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fit_poly</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">get_value_kwargs</span><span class="p">(</span><span class="s2">&quot;fit_poly&quot;</span><span class="p">,</span>
+                                             <span class="nb">bool</span><span class="p">,</span>
+                                             <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_poly</span><span class="p">,</span>
+                                             <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_select_background_time_interval</span><span class="p">(</span><span class="o">*</span><span class="n">time_intervals</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fit_poly</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fit a polynominal to the background time intervals.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_polynomial</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fitting a polynominal to the background &quot;</span>
+                      <span class="s2">&quot;time intervals done.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+                <span class="c1"># if we already did a poly fit and change the bkg interval</span>
+                <span class="c1"># now, without refitting the poly, we have to delete all the</span>
+                <span class="c1"># old fitting information!</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Poly Fit exists and you want to change the &quot;</span>
+                         <span class="s2">&quot;bkg time selection now without refitting &quot;</span>
+                         <span class="s2">&quot;the poly. We will delete the old information &quot;</span>
+                         <span class="s2">&quot;from the last poly fit!&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_delete_polynominal_fit</span><span class="p">()</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Did not fit a polynominal to the background &quot;</span>
+                      <span class="s2">&quot;time intervals.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeries.fit_polynomial"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.fit_polynomial">[docs]</a>    <span class="k">def</span> <span class="nf">fit_polynomial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the polynominals to the selected time intervals</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bkg_intervals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You first have to select the background intervals with &quot;</span>
+                      <span class="s2">&quot;the set_background_interval method before you can &quot;</span>
+                      <span class="s2">&quot;fit the background polynomials.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="c1"># Find out if we want to binned or unbinned.</span>
+        <span class="n">unbinned</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">get_value_kwargs</span><span class="p">(</span><span class="s2">&quot;unbinned&quot;</span><span class="p">,</span>
+                                            <span class="nb">bool</span><span class="p">,</span>
+                                            <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">unbinned</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">bayes</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">get_value_kwargs</span><span class="p">(</span><span class="s2">&quot;bayes&quot;</span><span class="p">,</span>
+                                         <span class="nb">bool</span><span class="p">,</span>
+                                         <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">bayes</span><span class="p">,</span>
+                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">unbinned</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;At the moment this unbinned polynominal fitting &quot;</span>
+                     <span class="s2">&quot;is only correct if the dead time ratio is constant &quot;</span>
+                     <span class="s2">&quot;in the selected background time intervals!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bayes</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bayes&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mle&quot;</span>
+
+        <span class="c1"># Fit the events with the given intervals</span>
+        <span class="k">if</span> <span class="n">unbinned</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># keep track!</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned_fit_polynomials</span><span class="p">(</span><span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_polynomials</span><span class="p">(</span><span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">)</span>
+
+        <span class="c1"># we have a fit now</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s1">&#39;bin type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="si">}</span><span class="s2">-order &quot;</span>
+            <span class="s2">&quot;polynomial fit with the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s1">&#39;fit method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> method&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># recalculate the selected counts</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_intervals</span><span class="p">(</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_select_background_time_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">time_intervals</span><span class="p">):</span>
+
+        <span class="c1"># we create some time intervals</span>
+
+        <span class="n">bkg_intervals</span> <span class="o">=</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">time_intervals</span><span class="p">)</span>
+
+        <span class="c1"># adjust the selections to the data</span>
+
+        <span class="n">new_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="k">for</span> <span class="n">time_interval</span> <span class="ow">in</span> <span class="n">bkg_intervals</span><span class="p">:</span>
+
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">time_interval</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">time_interval</span><span class="o">.</span><span class="n">stop_time</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span> <span class="o">&lt;=</span> <span class="n">t1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">t2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The time interval </span><span class="si">{</span><span class="n">t1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">t2</span><span class="si">}</span><span class="s2"> is out side of the &quot;</span>
+                    <span class="s2">&quot;arrival times and will be dropped&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">t1</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The time interval </span><span class="si">{</span><span class="n">t1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">t2</span><span class="si">}</span><span class="s2"> started before the &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;first arrival time (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="si">}</span><span class="s2">), so we are&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;changing the intervals to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">t2</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>  <span class="c1"># + 1</span>
+
+                <span class="k">if</span> <span class="n">t2</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The time interval </span><span class="si">{</span><span class="n">t1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">t2</span><span class="si">}</span><span class="s2"> ended after the last &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;arrival time (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="si">}</span><span class="s2">), so we are &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;changing the intervals to </span><span class="si">{</span><span class="n">t1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span>  <span class="c1"># - 1.</span>
+
+                <span class="n">new_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">t1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">t2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">count_per_channel_over_interval</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+
+        <span class="c1"># make new intervals after checks</span>
+
+        <span class="n">bkg_intervals</span> <span class="o">=</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">new_intervals</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># set the poly intervals as an attribute</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span> <span class="o">=</span> <span class="n">bkg_intervals</span>
+
+    <span class="k">def</span> <span class="nf">_delete_polynominal_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delte all the information from previous poly fits</span>
+<span class="sd">        :returns:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You can not delete the polynominal fit information &quot;</span>
+                      <span class="s2">&quot;because no information is saved at the moment!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="TimeSeries.set_polynomial_fit_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.set_polynomial_fit_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_polynomial_fit_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">time_intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set the time interval to fit the background.</span>
+<span class="sd">        Multiple intervals can be input as separate arguments</span>
+<span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+<span class="sd">        set_polynomial_fit_interval(&quot;-10.0-0.0&quot;,&quot;10.-15.&quot;)</span>
+<span class="sd">        :param time_intervals: intervals to fit on</span>
+<span class="sd">        :param unbinned:</span>
+<span class="sd">        :param bayes:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;set_polynomial_fit_interval will be deprecated in the &quot;</span>
+                    <span class="s2">&quot;next release. Please use set_background_interval with &quot;</span>
+                    <span class="s2">&quot;the same input.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">DeprecationWarning</span><span class="p">())</span>
+        <span class="c1"># Find out if we want to binned or unbinned.</span>
+        <span class="k">if</span> <span class="s2">&quot;unbinned&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">unbinned</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;unbinned&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span>
+                <span class="n">unbinned</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">,</span> <span class="s2">&quot;unbinned option must be True or False&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># assuming unbinned</span>
+            <span class="c1"># could use config file here</span>
+            <span class="c1"># unbinned = threeML_config[&#39;ogip&#39;][&#39;use-unbinned-poly-fitting&#39;]</span>
+
+            <span class="n">unbinned</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+        <span class="c1"># check if we are doing a bayesian</span>
+        <span class="c1"># fit and record this info</span>
+
+        <span class="k">if</span> <span class="s2">&quot;bayes&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">bayes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;bayes&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">bayes</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">bayes</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bayes&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mle&quot;</span>
+
+        <span class="k">if</span> <span class="n">unbinned</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;At the moment this unbinned polynominal fitting &quot;</span>
+                     <span class="s2">&quot;is only correct if the dead time ratio is constant &quot;</span>
+                     <span class="s2">&quot;in the selected background time intervals!&quot;</span><span class="p">)</span>
+        <span class="c1"># we create some time intervals</span>
+
+        <span class="n">bkg_intervals</span> <span class="o">=</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">time_intervals</span><span class="p">)</span>
+
+        <span class="c1"># adjust the selections to the data</span>
+
+        <span class="n">new_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">for</span> <span class="n">time_interval</span> <span class="ow">in</span> <span class="n">bkg_intervals</span><span class="p">:</span>
+
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">time_interval</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">time_interval</span><span class="o">.</span><span class="n">stop_time</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span> <span class="o">&lt;=</span> <span class="n">t1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">t2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;The time interval </span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2"> is out side of the arrival times and will be dropped&quot;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">t1</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;The time interval </span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2"> started before the first arrival time (</span><span class="si">%f</span><span class="s2">), so we are changing the intervals to </span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>  <span class="c1"># + 1</span>
+
+                <span class="k">if</span> <span class="n">t2</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;The time interval </span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2"> ended after the last arrival time (</span><span class="si">%f</span><span class="s2">), so we are changing the intervals to </span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span>  <span class="c1"># - 1.</span>
+
+                <span class="n">new_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">))</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">count_per_channel_over_interval</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+
+        <span class="c1"># make new intervals after checks</span>
+
+        <span class="n">bkg_intervals</span> <span class="o">=</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">new_intervals</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># set the poly intervals as an attribute</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span> <span class="o">=</span> <span class="n">bkg_intervals</span>
+
+        <span class="c1"># Fit the events with the given intervals</span>
+        <span class="k">if</span> <span class="n">unbinned</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># keep track!</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned_fit_polynomials</span><span class="p">(</span><span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_polynomials</span><span class="p">(</span><span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">)</span>
+
+        <span class="c1"># we have a fit now</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s1">&#39;bin type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="si">}</span><span class="s2">-order &quot;</span>
+            <span class="s2">&quot;polynomial fit with the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s1">&#39;fit method&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> method&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># recalculate the selected counts</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_intervals</span><span class="p">(</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TimeSeries.get_information_dict"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_information_dict">[docs]</a>    <span class="k">def</span> <span class="nf">get_information_dict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">use_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_OutputContainer</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a PHAContainer that can be read by different builders</span>
+
+<span class="sd">        :param use_poly: (bool) choose to build from the polynomial fits</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No time selection exists! Cannot calculate rates&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">extract</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;using extract method&quot;</span><span class="p">)</span>
+
+            <span class="n">is_poisson</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">counts_err</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span>
+            <span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span>
+            <span class="n">rate_err</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">exposure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span>
+
+        <span class="k">elif</span> <span class="n">use_poly</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You can not use the polynominal fit information &quot;</span>
+                          <span class="s2">&quot;because the polynominal fit did not run yet!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;using poly method&quot;</span><span class="p">)</span>
+
+            <span class="n">is_poisson</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">counts_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_count_err</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_counts</span>
+            <span class="n">rate_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_count_err</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
+            <span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
+            <span class="n">exposure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
+
+            <span class="c1"># removing negative counts</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">counts</span> <span class="o">&lt;</span> <span class="mf">0.0</span>
+
+            <span class="n">counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">counts_err</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="n">rates</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">rate_err</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">is_poisson</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">counts_err</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span>
+            <span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
+            <span class="n">rate_err</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">exposure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_native_quality</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">quality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_native_quality</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quality</span><span class="p">,</span> <span class="n">Quality</span><span class="p">):</span>
+
+            <span class="n">quality</span> <span class="o">=</span> <span class="n">Quality</span><span class="o">.</span><span class="n">from_ogip</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span>
+
+            
+        <span class="n">container_dict</span><span class="p">:</span> <span class="n">_OutputContainer</span> <span class="o">=</span> <span class="n">_OutputContainer</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="p">,</span>
+                                                            <span class="n">telescope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mission</span><span class="p">,</span>
+                                                            <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">absolute_start_time</span><span class="p">,</span>
+                                                            <span class="n">telapse</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">absolute_stop_time</span>
+                                                                     <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">absolute_start_time</span><span class="p">),</span>
+                                                            <span class="n">channel</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span>
+                                                            <span class="n">counts</span><span class="o">=</span><span class="n">counts</span><span class="p">,</span>
+                                                            <span class="n">counts_error</span><span class="o">=</span><span class="n">counts_err</span><span class="p">,</span>
+                                                            <span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span>
+                                                            <span class="n">rate_error</span><span class="o">=</span><span class="n">rate_err</span><span class="p">,</span>
+                                                            <span class="n">edges</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">,</span>
+                                                            <span class="n">backfile</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span>
+                                                            <span class="n">grouping</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">),</span>
+                                                            <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span>
+                                                            <span class="n">quality</span><span class="o">=</span><span class="n">quality</span><span class="p">)</span>
+        
+        <span class="c1"># check to see if we already have a quality object</span>
+
+
+        <span class="c1"># container_dict[&#39;response&#39;] = self._response</span>
+
+        <span class="k">return</span> <span class="n">container_dict</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Examine the currently selected info as well other things.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_intervals</span><span class="p">):</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;active selection (</span><span class="si">%d</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+        <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;active deadtime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_dead_time</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bkg_intervals</span><span class="p">):</span>
+                <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;polynomial selection (</span><span class="si">%d</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+            <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;polynomial order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+
+            <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;polynomial fit type&quot;</span><span class="p">]</span> <span class="o">=</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;bin type&quot;</span><span class="p">]</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;polynomial fit method&quot;</span><span class="p">]</span> <span class="o">=</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">info_dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">info_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">_fit_global_and_determine_optimum_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                <span class="n">cnts</span><span class="p">,</span>
+                                                <span class="n">bins</span><span class="p">,</span>
+                                                <span class="n">exposure</span><span class="p">,</span>
+                                                <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides the ability to find the optimum polynomial grade for</span>
+<span class="sd">        *binned* counts by fitting the total (all channels) to 0-4 order</span>
+<span class="sd">        polynomials and then comparing them via a likelihood ratio test.</span>
+
+
+<span class="sd">        :param cnts: counts per bin</span>
+<span class="sd">        :param bins: the bins used</span>
+<span class="sd">        :param exposure: exposure per bin</span>
+<span class="sd">        :param bayes:</span>
+<span class="sd">        :return: polynomial grade</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">min_grade</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_grade</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">log_likelihoods</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;attempting to find best poly with binned data&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">grade</span><span class="p">):</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">log_like</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
+                    <span class="n">bins</span><span class="p">,</span> <span class="n">cnts</span><span class="p">,</span> <span class="n">grade</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">log_like</span>
+
+            <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
+
+            <span class="n">log_likelihoods</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
+                <span class="n">worker</span><span class="p">,</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">min_grade</span><span class="p">,</span> <span class="n">max_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Finding best polynomial Order&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">grade</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">min_grade</span><span class="p">,</span>
+                                <span class="n">max_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Finding best polynomial Order&quot;</span>
+                                <span class="p">):</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">log_like</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
+                    <span class="n">bins</span><span class="p">,</span> <span class="n">cnts</span><span class="p">,</span> <span class="n">grade</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">)</span>
+
+                <span class="n">log_likelihoods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_like</span><span class="p">)</span>
+
+        <span class="c1"># Found the best one</span>
+        <span class="n">delta_loglike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">log_likelihoods</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">log_likelihoods</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;log likes </span><span class="si">{</span><span class="n">log_likelihoods</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; delta loglikes </span><span class="si">{</span><span class="n">delta_loglike</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">delta_threshold</span> <span class="o">=</span> <span class="mf">9.0</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">delta_loglike</span> <span class="o">&gt;=</span> <span class="n">delta_threshold</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># best grade is zero!</span>
+            <span class="n">best_grade</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">best_grade</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">best_grade</span>
+
+    <span class="k">def</span> <span class="nf">_unbinned_fit_global_and_determine_optimum_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                         <span class="n">events</span><span class="p">,</span>
+                                                         <span class="n">exposure</span><span class="p">,</span>
+                                                         <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides the ability to find the optimum polynomial grade for</span>
+<span class="sd">        *unbinned* events by fitting the total (all channels) to 0-2</span>
+<span class="sd">        order polynomials and then comparing them via a likelihood ratio test.</span>
+
+
+<span class="sd">        :param events: an event list</span>
+<span class="sd">        :param exposure: the exposure per event</span>
+<span class="sd">        :return: polynomial grade</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Fit the sum of all the channels to determine the optimal polynomial</span>
+        <span class="c1"># grade</span>
+
+        <span class="n">min_grade</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_grade</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">log_likelihoods</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">t_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">start_times</span>
+        <span class="n">t_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">stop_times</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;attempting to find best fit poly with unbinned&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">grade</span><span class="p">):</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">log_like</span> <span class="o">=</span> <span class="n">unbinned_polyfit</span><span class="p">(</span>
+                    <span class="n">events</span><span class="p">,</span> <span class="n">grade</span><span class="p">,</span> <span class="n">t_start</span><span class="p">,</span> <span class="n">t_stop</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">log_like</span>
+
+            <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
+
+            <span class="n">log_likelihoods</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
+                <span class="n">worker</span><span class="p">,</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">min_grade</span><span class="p">,</span> <span class="n">max_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Finding best polynomial Order&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">grade</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">min_grade</span><span class="p">,</span>
+                                <span class="n">max_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Finding best polynomial Order&quot;</span><span class="p">):</span>
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">log_like</span> <span class="o">=</span> <span class="n">unbinned_polyfit</span><span class="p">(</span>
+                    <span class="n">events</span><span class="p">,</span> <span class="n">grade</span><span class="p">,</span> <span class="n">t_start</span><span class="p">,</span> <span class="n">t_stop</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+
+                <span class="n">log_likelihoods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_like</span><span class="p">)</span>
+
+        <span class="c1"># Found the best one</span>
+        <span class="n">delta_loglike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">log_likelihoods</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">log_likelihoods</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;log likes </span><span class="si">{</span><span class="n">log_likelihoods</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; delta loglikes </span><span class="si">{</span><span class="n">delta_loglike</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">delta_threshold</span> <span class="o">=</span> <span class="mf">9.0</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">delta_loglike</span> <span class="o">&gt;=</span> <span class="n">delta_threshold</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># best grade is zero!</span>
+            <span class="n">best_grade</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">best_grade</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">best_grade</span>
+
+    <span class="k">def</span> <span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;this must be implemented in a subclass&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_unbinned_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;this must be implemented in a subclass&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeries.save_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.save_background">[docs]</a>    <span class="k">def</span> <span class="nf">save_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save the background to an HD5F</span>
+
+<span class="sd">        :param filename:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make the file name proper</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.h5&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">filename_sanitized</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># Check that it does not exists</span>
+        <span class="k">if</span> <span class="n">filename_sanitized</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="n">filename_sanitized</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
+                <span class="k">except</span><span class="p">:</span>
+
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The file </span><span class="si">{</span><span class="n">filename_sanitized</span><span class="si">}</span><span class="s2"> already exists &quot;</span>
+                        <span class="s2">&quot;and cannot be removed (maybe you do not have &quot;</span>
+                        <span class="s2">&quot;permissions to do so?). &quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">()</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The file </span><span class="si">{</span><span class="n">filename_sanitized</span><span class="si">}</span><span class="s2"> already exists!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">filename_sanitized</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+
+            <span class="c1"># extract the polynomial information and save it</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+
+                <span class="n">coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">):</span>
+
+                    <span class="n">coeff</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">coefficients</span>
+
+                    <span class="n">err</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">covariance_matrix</span>
+
+                <span class="c1"># df_coeff = pd.Series(coeff)</span>
+                <span class="c1"># df_err = pd.Series(err)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;the polynomials have not been fit yet&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="n">store</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;coefficients&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coeff</span><span class="p">))</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;covariance&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+            <span class="n">store</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;poly_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;poly_selections&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">start_times</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">stop_times</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;unbinned&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;fit_method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved fitted background to </span><span class="si">{</span><span class="n">filename_sanitized</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeries.restore_fit"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.restore_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+        <span class="n">filename_sanitized</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">filename_sanitized</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+
+            <span class="n">coefficients</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">][()]</span>
+
+            <span class="n">covariance</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;covariance&quot;</span><span class="p">][()]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># create new polynomials</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)):</span>
+                <span class="n">coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefficients</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="c1"># make sure we get the right order</span>
+                <span class="c1"># pandas stores the non-needed coeff</span>
+                <span class="c1"># as nans.</span>
+
+                <span class="n">coeff</span> <span class="o">=</span> <span class="n">coeff</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">coeff</span><span class="p">)]</span>
+
+                <span class="n">cov</span> <span class="o">=</span> <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">Polynomial</span><span class="o">.</span><span class="n">from_previous_fit</span><span class="p">(</span><span class="n">coeff</span><span class="p">,</span> <span class="n">cov</span><span class="p">))</span>
+
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">attrs</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;poly_order&quot;</span><span class="p">]</span>
+            <span class="n">poly_selections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;poly_selections&quot;</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span> <span class="o">=</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span>
+                <span class="n">poly_selections</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">poly_selections</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;unbinned&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;bin type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unbinned&quot;</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;bin type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;binned&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_method_info</span><span class="p">[</span><span class="s2">&quot;fit method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;fit_method&quot;</span><span class="p">]</span>
+
+        <span class="c1"># go thru and count the counts!</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;resest the poly form the file&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># we must go thru and collect the polynomial exposure and counts</span>
+        <span class="c1"># so that they be extracted if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">time_interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="p">):</span>
+
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">time_interval</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">time_interval</span><span class="o">.</span><span class="n">stop_time</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">count_per_channel_over_interval</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_exposure</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bkg_selected_counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_intervals</span><span class="p">(</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TimeSeries.view_lightcurve"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.view_lightcurve">[docs]</a>    <span class="k">def</span> <span class="nf">view_lightcurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">use_binner</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">use_echans_start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">use_echans_stop</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;must be implemented in subclass&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

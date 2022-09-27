@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.minimizer.minimization module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="threeML.minimizer.minuit_minimizer module" href="threeML.minimizer.minuit_minimizer.html" />
+    <link rel="prev" title="threeML.minimizer.grid_minimizer module" href="threeML.minimizer.grid_minimizer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="API.html">API</a> &raquo;</li>
+          <li><a href="threeML.html">threeML package</a> &raquo;</li>
+          <li><a href="threeML.minimizer.html">threeML.minimizer package</a> &raquo;</li>
+      <li>threeML.minimizer.minimization module</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-threeML.minimizer.minimization">
+<span id="threeml-minimizer-minimization-module"></span><h1>threeML.minimizer.minimization module<a class="headerlink" href="#module-threeML.minimizer.minimization" title="Permalink to this heading"></a></h1>
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.BetterMinimumDuringProfiling">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">BetterMinimumDuringProfiling</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#BetterMinimumDuringProfiling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.BetterMinimumDuringProfiling" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeWarning</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.CannotComputeCovariance">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">CannotComputeCovariance</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#CannotComputeCovariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.CannotComputeCovariance" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeWarning</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.CannotComputeErrors">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">CannotComputeErrors</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#CannotComputeErrors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.CannotComputeErrors" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeWarning</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.FitFailed">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">FitFailed</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#FitFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.FitFailed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.FunctionWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">FunctionWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#FunctionWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.FunctionWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.FunctionWrapper.set_fixed_values">
+<span class="sig-name descname"><span class="pre">set_fixed_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_fixed_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#FunctionWrapper.set_fixed_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.FunctionWrapper.set_fixed_values" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.GlobalMinimization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">GlobalMinimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#GlobalMinimization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.GlobalMinimization" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Minimization</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.GlobalMinimization.get_instance">
+<span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#GlobalMinimization.get_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.GlobalMinimization.get_instance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.GlobalMinimization.get_second_minimization_instance">
+<span class="sig-name descname"><span class="pre">get_second_minimization_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#GlobalMinimization.get_second_minimization_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.GlobalMinimization.get_second_minimization_instance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.GlobalMinimization.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">setup_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#GlobalMinimization.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.GlobalMinimization.setup" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.GlobalMinimizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">GlobalMinimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#GlobalMinimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.GlobalMinimizer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer" title="threeML.minimizer.minimization.Minimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Minimizer</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.LocalMinimization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">LocalMinimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#LocalMinimization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.LocalMinimization" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Minimization</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.LocalMinimization.get_instance">
+<span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#LocalMinimization.get_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.LocalMinimization.get_instance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.LocalMinimizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">LocalMinimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#LocalMinimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.LocalMinimizer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer" title="threeML.minimizer.minimization.Minimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Minimizer</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">Minimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.Npar">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Npar</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.Npar" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.algorithm_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">algorithm_name</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.algorithm_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.contours">
+<span class="sig-name descname"><span class="pre">contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_minimum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_maximum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.contours" title="Permalink to this definition"></a></dt>
+<dd><p>Generate confidence contours for the given parameters by stepping for the given number of steps between
+the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
+generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
+contour of param_1 vs param_2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_1</strong> – name of the first parameter</p></li>
+<li><p><strong>param_1_minimum</strong> – lower bound for the range for the first parameter</p></li>
+<li><p><strong>param_1_maximum</strong> – upper bound for the range for the first parameter</p></li>
+<li><p><strong>param_1_n_steps</strong> – number of steps for the first parameter</p></li>
+<li><p><strong>param_2</strong> – name of the second parameter</p></li>
+<li><p><strong>param_2_minimum</strong> – lower bound for the range for the second parameter</p></li>
+<li><p><strong>param_2_maximum</strong> – upper bound for the range for the second parameter</p></li>
+<li><p><strong>param_2_n_steps</strong> – number of steps for the second parameter</p></li>
+<li><p><strong>progress</strong> – (True or False) whether to display progress or not</p></li>
+<li><p><strong>log</strong> – by default the steps are taken linearly. With this optional parameter you can provide a tuple of</p></li>
+</ul>
+</dd>
+</dl>
+<p>booleans which specify whether the steps are to be taken logarithmically. For example,
+‘log=(True,False)’ specify that the steps for the first parameter are to be taken logarithmically, while they
+are linear for the second parameter. If you are generating the profile for only one parameter, you can specify</p>
+<blockquote>
+<div><p>‘log=(True,)’ or ‘log=(False,)’ (optional)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>parallel: whether to use or not parallel computation (default:False)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a : an array corresponding to the steps for the first parameter
+b : an array corresponding to the steps for the second parameter (or None if stepping only in one
+direction)
+contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
+corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
+an array of size param_1_steps.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.correlation_matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlation_matrix</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.correlation_matrix" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.covariance_matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance_matrix</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.covariance_matrix" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.fit_results">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit_results</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.fit_results" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.function">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.function" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.get_errors">
+<span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.get_errors" title="Permalink to this definition"></a></dt>
+<dd><p>Compute asymmetric errors using the profile likelihood method (slow, but accurate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a dictionary with asymmetric errors for each parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_covar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.minimize" title="Permalink to this definition"></a></dt>
+<dd><p>Minimize objective function. This call _minimize, which is implemented by each subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>compute_covar</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>best fit values (in external reference) and minimum of the objective function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.parameters" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.restore_best_fit">
+<span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.restore_best_fit" title="Permalink to this definition"></a></dt>
+<dd><p>Reset all the parameters to their best fit value (from the last run fit)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>none</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.set_algorithm">
+<span class="sig-name descname"><span class="pre">set_algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.set_algorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.set_algorithm" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.Minimizer.verbosity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.verbosity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.MinimizerNotAvailable">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">MinimizerNotAvailable</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#MinimizerNotAvailable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.MinimizerNotAvailable" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.ParameterIsNotFree">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">ParameterIsNotFree</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#ParameterIsNotFree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.ParameterIsNotFree" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.ProfileLikelihood">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">ProfileLikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#ProfileLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.ProfileLikelihood" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.ProfileLikelihood.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#ProfileLikelihood.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.ProfileLikelihood.step" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.minimizer.minimization.get_minimizer">
+<span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">get_minimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#get_minimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.get_minimizer" title="Permalink to this definition"></a></dt>
+<dd><p>Return the requested minimizer <em>class</em> (not instance)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>minimizer_type</strong> – MINUIT, ROOT, PYOPT…</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the class (i.e., the type) for the requested minimizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="threeML.minimizer.grid_minimizer.html" class="btn btn-neutral float-left" title="threeML.minimizer.grid_minimizer module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="threeML.minimizer.minuit_minimizer.html" class="btn btn-neutral float-right" title="threeML.minimizer.minuit_minimizer module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

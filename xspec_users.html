@@ -1,82 +1,44 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Notes for XSPEC Users &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="_static/dark_mode_js/default_dark.js"></script>
+        <script src="_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bayesian Posterior Sampling" href="notebooks/Bayesian_tutorial.html" />
-    <link rel="prev" title="Logging and Verbosity" href="notebooks/logging.html" />
-  <link rel="stylesheet" href="_static/pygments/default.css" type="text/css" id="pygments-style">
-  <link rel="stylesheet" href="_static/custom.css" type="text/css">
-   
-
+    <link rel="next" title="Minimization" href="notebooks/Minimization_tutorial.html" />
+    <link rel="prev" title="Logging and Verbosity" href="notebooks/logging.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-          
-
-          
-            
             <img src="_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +46,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Intro</a></li>
@@ -111,7 +62,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-plot-unfolded-data-points-along-with-my-fit">How do I plot <em>unfolded data points</em> along with my fit?</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -126,94 +79,39 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">The Multi-Mission Maximum Likelihood framework</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-  <!--
-  <div class="admonition note">
-    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
-    </p>
-  </div>
-  -->
-  <li id="lightdark-li">
-    <label for="lightdark-checkbox" id="lightdark-label">
-      <input type="checkbox" id="lightdark-checkbox"/>
-      <div class="btn-neutral"></div>
-    </label>
-  </li>
-  
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Notes for XSPEC Users</li>
-    
-
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-  <script type="text/javascript" src=_static/custom.js></script>
-  
            <div itemprop="articleBody">
-            
+             
   
 <style>
 /* CSS overrides for sphinx_rtd_theme */
@@ -238,11 +136,11 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="notes-for-xspec-users">
-<h1>Notes for XSPEC Users<a class="headerlink" href="#notes-for-xspec-users" title="Permalink to this headline">¶</a></h1>
+<section id="notes-for-xspec-users">
+<h1>Notes for XSPEC Users<a class="headerlink" href="#notes-for-xspec-users" title="Permalink to this heading"></a></h1>
 <p>Users coming from XSPEC typically have a few questions about getting started with 3ML</p>
-<div class="section" id="why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data">
-<h2>Why use 3ML over XSPEC if I am just fitting X-ray data?<a class="headerlink" href="#why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data" title="Permalink to this headline">¶</a></h2>
+<section id="why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data">
+<h2>Why use 3ML over XSPEC if I am just fitting X-ray data?<a class="headerlink" href="#why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data" title="Permalink to this heading"></a></h2>
 <p>XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your favorite tool and you are only fitting x-ray data, then there are some marginal benefits:</p>
 <ul class="simple">
 <li><p>3ML is a lighter install and natively in Python rather than a Python wrapper around XSPEC</p></li>
@@ -266,100 +164,82 @@
 <li><p>No parsing of text files to save results! 3ML has a serializable fit results format (FITS or HDF5) that is portable and machine readable.</p></li>
 <li><p>The modularity of 3ML means that the types of data it can fit will grow quickly</p></li>
 </ul>
-</div>
-<div class="section" id="do-i-need-a-new-plugin-for-my-instrument">
-<h2>Do I need a new plugin for my instrument?<a class="headerlink" href="#do-i-need-a-new-plugin-for-my-instrument" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="do-i-need-a-new-plugin-for-my-instrument">
+<h2>Do I need a new plugin for my instrument?<a class="headerlink" href="#do-i-need-a-new-plugin-for-my-instrument" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>If it is an X-ray instrument that has PHA1 data, BAK files, RSPs and ARFs, nope! This is handled by the OGIPLike plugin.</p></li>
 <li><p>Think of OGIPLike as an XSPEC-like object. Feed your data in and pass it to to the JointLikelihood or BayesianAnalysis objects. You need one plugin per observation.</p></li>
 <li><p>OGIPLike is simply provides a wrapper around DispersionSpectrumLike that reads standard OGIP files. We are strict about following the OGIP standard.</p></li>
 </ul>
-</div>
-<div class="section" id="can-i-use-xspec-models">
-<h2>Can I use XSPEC models?<a class="headerlink" href="#can-i-use-xspec-models" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="can-i-use-xspec-models">
+<h2>Can I use XSPEC models?<a class="headerlink" href="#can-i-use-xspec-models" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Yes!</p></li>
 <li><p>astromodels provides and interface to XSPEC models. See details in the modeling section.</p></li>
 <li><p>We are currently building our own set of standard models in XSPEC. We already have <strong>APEC</strong>, <strong>PhAbs</strong>, <strong>Wabs</strong>, <strong>Tbabs</strong> etc. So you can try those out first.</p></li>
 </ul>
-</div>
-<div class="section" id="can-i-trust-the-results-of-the-fits">
-<h2>Can I trust the results of the fits?<a class="headerlink" href="#can-i-trust-the-results-of-the-fits" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="can-i-trust-the-results-of-the-fits">
+<h2>Can I trust the results of the fits?<a class="headerlink" href="#can-i-trust-the-results-of-the-fits" title="Permalink to this heading"></a></h2>
 <img alt="https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg" src="https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg" /><ul class="simple">
 <li><p>With each build of 3ML, we always test the code automatically against XSPEC to ensure fitting (up to factor) and RSP convolution give the same results.</p></li>
 <li><p>You can always try yourself as the file types are the same. Expect differences in fit results that could be due to the underlying fitting engines.</p></li>
 </ul>
-</div>
-<div class="section" id="how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model">
-<h2>How do I fake a dummy response to fit optical data or a background model?<a class="headerlink" href="#how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model">
+<h2>How do I fake a dummy response to fit optical data or a background model?<a class="headerlink" href="#how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>DON’T DO THAT!</p></li>
 <li><p>Since 3ML is not limited to a rigid data format, we have custom plugins for photometric data. You simply need to provide the filter name and magnitude. See the docs for more details.</p></li>
 <li><p>We have the ability to model background spectra along with source spectrum. Check out the background modeling n the docs.</p></li>
 </ul>
-</div>
-<div class="section" id="how-do-i-choose-the-likelihood-statistic-for-my-fit">
-<h2>How do I choose the likelihood statistic for my fit?<a class="headerlink" href="#how-do-i-choose-the-likelihood-statistic-for-my-fit" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="how-do-i-choose-the-likelihood-statistic-for-my-fit">
+<h2>How do I choose the likelihood statistic for my fit?<a class="headerlink" href="#how-do-i-choose-the-likelihood-statistic-for-my-fit" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>It is possible, but if your PHA files are formatted correctly, we probe them and choose the <strong>correct</strong> likelihood for your data.</p></li>
 <li><p>We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called $chi^2$ regime. This is an incorrect and bad practice.</p></li>
 </ul>
-</div>
-<div class="section" id="how-do-i-plot-unfolded-data-points-along-with-my-fit">
-<h2>How do I plot <em>unfolded data points</em> along with my fit?<a class="headerlink" href="#how-do-i-plot-unfolded-data-points-along-with-my-fit" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="how-do-i-plot-unfolded-data-points-along-with-my-fit">
+<h2>How do I plot <em>unfolded data points</em> along with my fit?<a class="headerlink" href="#how-do-i-plot-unfolded-data-points-along-with-my-fit" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>You can’t and you shouldn’t</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="notebooks/Bayesian_tutorial.html" class="btn btn-neutral float-right" title="Bayesian Posterior Sampling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="notebooks/logging.html" class="btn btn-neutral float-left" title="Logging and Verbosity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="notebooks/Minimization_tutorial.html" class="btn btn-neutral float-right" title="Minimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
-
-    </p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

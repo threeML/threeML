@@ -1,84 +1,46 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Background Modeling &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="HAL (HAWC Accelerated Likelihood) plugin" href="hal_example.html" />
-    <link rel="prev" title="Constructing plugins from TimeSeries" href="Building_Plugins_from_TimeSeries.html" />
-  <link rel="stylesheet" href="../_static/pygments/default.css" type="text/css" id="pygments-style">
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css">
-   
-
+    <link rel="next" title="Photometric Plugin" href="Photometry_demo.html" />
+    <link rel="prev" title="Constructing plugins from TimeSeries" href="Building_Plugins_from_TimeSeries.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -86,25 +48,16 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampler_docs.html">Bayesian Sampler Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../plugins.html">Plugins</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="custom_plugins.html">Building Custom Plugins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum_tutorial.html">Spectrum Plugins</a></li>
@@ -114,6 +67,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#Modeling-the-background">Modeling the background</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="Photometry_demo.html">Photometric Plugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hal_example.html">HAL (HAWC Accelerated Likelihood) plugin</a></li>
 </ul>
 </li>
@@ -130,96 +84,40 @@
 <li class="toctree-l1"><a class="reference internal" href="Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-  <!--
-  <div class="admonition note">
-    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
-    </p>
-  </div>
-  -->
-  <li id="lightdark-li">
-    <label for="lightdark-checkbox" id="lightdark-label">
-      <input type="checkbox" id="lightdark-checkbox"/>
-      <div class="btn-neutral"></div>
-    </label>
-  </li>
-  
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../plugins.html">Plugins</a> &raquo;</li>
-        
       <li>Background Modeling</li>
-    
-
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-  <script type="text/javascript" src=../_static/custom.js></script>
-  
            <div itemprop="articleBody">
-            
+             
   
 <style>
 /* CSS for nbsphinx extension */
@@ -430,11 +328,12 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -443,10 +342,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -458,12 +361,15 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
@@ -490,8 +396,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Background-Modeling">
-<h1>Background Modeling<a class="headerlink" href="#Background-Modeling" title="Permalink to this headline">¶</a></h1>
+<section id="Background-Modeling">
+<h1>Background Modeling<a class="headerlink" href="#Background-Modeling" title="Permalink to this heading"></a></h1>
 <p>When fitting a spectrum with a background, it is invalid to simply subtract off the background if the background is part of the data’s generative model <a class="reference external" href="http://iopscience.iop.org/article/10.1086/318656/meta">van Dyk et al. (2001)</a>. Therefore, we are often left with the task of modeling the statistical process of the background along with our source.</p>
 <p>In typical spectral modeling, we find a few common cases when background is involved. If we have total counts (<span class="math notranslate nohighlight">\(S_i\)</span>) in <span class="math notranslate nohighlight">\(i^{\rm th}\)</span> on <span class="math notranslate nohighlight">\(N\)</span> bins observed for an exposure of <span class="math notranslate nohighlight">\(t_{\rm s}\)</span> and also a measurement of <span class="math notranslate nohighlight">\(B_i\)</span> background counts from looking off source for <span class="math notranslate nohighlight">\(t_{\rm b}\)</span> seconds, we can then suppose a model for the source rate (<span class="math notranslate nohighlight">\(m_i\)</span>) and background rate (<span class="math notranslate nohighlight">\(b_i\)</span>).</p>
 <p><strong>Poisson source with Poisson background</strong></p>
@@ -514,8 +420,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -537,8 +442,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%capture</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
 <span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
@@ -547,8 +451,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -563,9 +466,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-
-<span></span><span class="c1"># create the simulated observation</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="c1"># create the simulated observation</span>
 
 <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">151</span><span class="p">)</span>
 
@@ -596,13 +497,136 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:26 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#470" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">470</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:28 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#470" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">470</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#470" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">470</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: poisson                                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#470" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">470</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: poisson                                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-findfont: Font family [&#39;sans-serif&#39;] not found. Falling back to DejaVu Sans.
 findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
 findfont: Font family [&#39;sans-serif&#39;] not found. Falling back to DejaVu Sans.
 findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
 findfont: Font family [&#39;sans-serif&#39;] not found. Falling back to DejaVu Sans.
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
 findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
 </pre></div></div>
 </div>
@@ -611,25 +635,85 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_5_1.png" src="../_images/notebooks_Background_modeling_5_1.png" />
+<img alt="../_images/notebooks_Background_modeling_5_13.png" src="../_images/notebooks_Background_modeling_5_13.png" />
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_5_2.png" src="../_images/notebooks_Background_modeling_5_2.png" />
+<img alt="../_images/notebooks_Background_modeling_5_15.png" src="../_images/notebooks_Background_modeling_5_15.png" />
 </div>
 </div>
-<div class="section" id="Using-a-profile-likelihood">
-<h2>Using a profile likelihood<a class="headerlink" href="#Using-a-profile-likelihood" title="Permalink to this headline">¶</a></h2>
+<section id="Using-a-profile-likelihood">
+<h2>Using a profile likelihood<a class="headerlink" href="#Using-a-profile-likelihood" title="Permalink to this heading"></a></h2>
 <p>We have very few counts counts in some channels (in fact sometimes zero), but let’s assume we do not know the model for the background. In this case, we will use the profile Poisson likelihood.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># instance our source spectrum</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instance our source spectrum</span>
 <span class="n">bpl</span> <span class="o">=</span> <span class="n">Broken_powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">xb</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 
 <span class="c1"># instance a point source</span>
@@ -654,11 +738,17 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Best fit values:
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:30 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -694,22 +784,22 @@ Best fit values:
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>1.89 +/- 0.13</td>
+      <td>1.70 -0.09 +0.10</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.01 +/- 0.12) x 10^2</td>
+      <td>(3.236 -0.026 +0.027) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-7 +/- 7) x 10^-2</td>
+      <td>(-2.0 +/- 0.6) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.12 +/- 0.18</td>
+      <td>-3.14 +/- 0.14</td>
       <td></td>
     </tr>
   </tbody>
@@ -719,33 +809,31 @@ Best fit values:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-Correlation matrix:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table139695562098384">
-<tr><td>1.00</td><td>-0.60</td><td>0.77</td><td>0.02</td></tr>
-<tr><td>-0.60</td><td>1.00</td><td>-0.46</td><td>-0.57</td></tr>
-<tr><td>0.77</td><td>-0.46</td><td>1.00</td><td>0.01</td></tr>
-<tr><td>0.02</td><td>-0.57</td><td>0.01</td><td>1.00</td></tr>
+<div><table id="table139620197598592">
+<tr><td>1.00</td><td>-0.14</td><td>0.67</td><td>-0.45</td></tr>
+<tr><td>-0.14</td><td>1.00</td><td>-0.10</td><td>-0.13</td></tr>
+<tr><td>0.67</td><td>-0.10</td><td>1.00</td><td>-0.32</td></tr>
+<tr><td>-0.45</td><td>-0.13</td><td>-0.32</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-Values of -log(likelihood) at the minimum:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -775,11 +863,11 @@ Values of -log(likelihood) at the minimum:
   <tbody>
     <tr>
       <th>fake</th>
-      <td>396.642184</td>
+      <td>411.628748</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>396.642184</td>
+      <td>411.628748</td>
     </tr>
   </tbody>
 </table>
@@ -788,12 +876,11 @@ Values of -log(likelihood) at the minimum:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-Values of statistical measures:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -823,11 +910,11 @@ Values of statistical measures:
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>801.560231</td>
+      <td>831.533358</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>813.326910</td>
+      <td>843.300037</td>
     </tr>
   </tbody>
 </table>
@@ -838,7 +925,93 @@ Values of statistical measures:
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-findfont: Font family [&#39;sans-serif&#39;] not found. Falling back to DejaVu Sans.
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
 findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
 </pre></div></div>
 </div>
@@ -846,7 +1019,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_7_9.png" src="../_images/notebooks_Background_modeling_7_9.png" />
+<img alt="../_images/notebooks_Background_modeling_7_10.png" src="../_images/notebooks_Background_modeling_7_10.png" />
 </div>
 </div>
 <p>Our fit recovers the simulated parameters. However, we should have binned the spectrum up such that there is at least one background count per spectral bin for the profile to be valid.</p>
@@ -854,8 +1027,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 
@@ -868,11 +1040,17 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Best fit values:
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:35 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">80</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1673" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1673</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -908,22 +1086,22 @@ Best fit values:
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>1.87 +/- 0.15</td>
+      <td>1.71 -0.11 +0.12</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.01 +/- 0.15) x 10^2</td>
+      <td>(3.23 -0.13 +0.14) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-7 +/- 8) x 10^-2</td>
+      <td>(-1.9 +/- 0.7) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.04 +/- 0.17</td>
+      <td>-3.12 +/- 0.16</td>
       <td></td>
     </tr>
   </tbody>
@@ -933,33 +1111,31 @@ Best fit values:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-Correlation matrix:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table139695554167824">
-<tr><td>1.00</td><td>-0.70</td><td>0.79</td><td>0.14</td></tr>
-<tr><td>-0.70</td><td>1.00</td><td>-0.55</td><td>-0.62</td></tr>
-<tr><td>0.79</td><td>-0.55</td><td>1.00</td><td>0.11</td></tr>
-<tr><td>0.14</td><td>-0.62</td><td>0.11</td><td>1.00</td></tr>
+<div><table id="table139620237151488">
+<tr><td>1.00</td><td>-0.60</td><td>0.75</td><td>0.02</td></tr>
+<tr><td>-0.60</td><td>1.00</td><td>-0.47</td><td>-0.58</td></tr>
+<tr><td>0.75</td><td>-0.47</td><td>1.00</td><td>0.01</td></tr>
+<tr><td>0.02</td><td>-0.58</td><td>0.01</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-Values of -log(likelihood) at the minimum:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -989,11 +1165,11 @@ Values of -log(likelihood) at the minimum:
   <tbody>
     <tr>
       <th>fake</th>
-      <td>275.802546</td>
+      <td>285.891287</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>275.802546</td>
+      <td>285.891287</td>
     </tr>
   </tbody>
 </table>
@@ -1002,12 +1178,11 @@ Values of -log(likelihood) at the minimum:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-Values of statistical measures:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1037,11 +1212,11 @@ Values of statistical measures:
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>559.880955</td>
+      <td>580.058436</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>571.647634</td>
+      <td>591.825115</td>
     </tr>
   </tbody>
 </table>
@@ -1050,56 +1225,298 @@ Values of statistical measures:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_9_8.png" src="../_images/notebooks_Background_modeling_9_8.png" />
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Background_modeling_9_10.png" src="../_images/notebooks_Background_modeling_9_10.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_9_9.png" src="../_images/notebooks_Background_modeling_9_9.png" />
+<img alt="../_images/notebooks_Background_modeling_9_12.png" src="../_images/notebooks_Background_modeling_9_12.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Modeling-the-background">
-<h2>Modeling the background<a class="headerlink" href="#Modeling-the-background" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="Modeling-the-background">
+<h2>Modeling the background<a class="headerlink" href="#Modeling-the-background" title="Permalink to this heading"></a></h2>
 <p>Now let’s try to model the background assuming we know that the background is a power law with a Gaussian line. We can extract a background plugin from the data by passing the original plugin to a classmethod of spectrum like.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># extract the background from the spectrum plugin.</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># extract the background from the spectrum plugin.</span>
 <span class="c1"># This works for OGIPLike plugins as well, though we could easily also just read</span>
 <span class="c1"># in a bakcground PHA</span>
 <span class="n">background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="o">.</span><span class="n">from_background</span><span class="p">(</span><span class="s2">&quot;bkg&quot;</span><span class="p">,</span> <span class="n">spectrum_generator</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:37 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#470" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">470</span></a>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
 <p>This constructs a new plugin with only the observed background so that we can first model it.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_13_0.png" src="../_images/notebooks_Background_modeling_13_0.png" />
+<img alt="../_images/notebooks_Background_modeling_13_1.png" src="../_images/notebooks_Background_modeling_13_1.png" />
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_13_1.png" src="../_images/notebooks_Background_modeling_13_1.png" />
+<img alt="../_images/notebooks_Background_modeling_13_3.png" src="../_images/notebooks_Background_modeling_13_3.png" />
 </div>
 </div>
 <p>We now construct our background model and fit it to the data. Let’s assume we know that the line occurs at 511 keV, but we are unsure of its strength an width. We do not need to bin the data up because we are using a simple Poisson likelihood which is valid even when we have zero counts <a class="reference external" href="http://adsabs.harvard.edu/abs/1979ApJ...228..939C">Cash (1979)</a>.</p>
@@ -1107,8 +1524,7 @@ Values of statistical measures:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># instance the spectrum setting the line&#39;s location to 511</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instance the spectrum setting the line&#39;s location to 511</span>
 <span class="n">bkg_spectrum</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">F</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">511</span><span class="p">)</span>
 
 <span class="c1"># setup model parameters</span>
@@ -1139,11 +1555,17 @@ Values of statistical measures:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Best fit values:
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:38 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1179,22 +1601,22 @@ Best fit values:
   <tbody>
     <tr>
       <th>bkg.spectrum.main.composite.K_1</th>
-      <td>(2.59 -0.21 +0.22) x 10^-1</td>
+      <td>(2.75 -0.21 +0.23) x 10^-1</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.index_1</th>
-      <td>-1.37 +/- 0.05</td>
+      <td>-1.40 +/- 0.05</td>
       <td></td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.F_2</th>
-      <td>(2.9 +/- 0.6) x 10</td>
+      <td>(3.0 +/- 0.6) x 10</td>
       <td>1 / (cm2 s)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.sigma_2</th>
-      <td>(2.3 +/- 0.4) x 10</td>
+      <td>(2.7 +/- 0.4) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -1204,33 +1626,31 @@ Best fit values:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-Correlation matrix:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table139695565403472">
-<tr><td>1.00</td><td>0.13</td><td>-0.05</td><td>-0.04</td></tr>
-<tr><td>0.13</td><td>1.00</td><td>-0.05</td><td>-0.04</td></tr>
-<tr><td>-0.05</td><td>-0.05</td><td>1.00</td><td>0.07</td></tr>
-<tr><td>-0.04</td><td>-0.04</td><td>0.07</td><td>1.00</td></tr>
+<div><table id="table139620143102224">
+<tr><td>1.00</td><td>0.18</td><td>-0.07</td><td>-0.06</td></tr>
+<tr><td>0.18</td><td>1.00</td><td>-0.07</td><td>-0.05</td></tr>
+<tr><td>-0.07</td><td>-0.07</td><td>1.00</td><td>0.11</td></tr>
+<tr><td>-0.06</td><td>-0.05</td><td>0.11</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-Values of -log(likelihood) at the minimum:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1260,11 +1680,11 @@ Values of -log(likelihood) at the minimum:
   <tbody>
     <tr>
       <th>bkg</th>
-      <td>195.474032</td>
+      <td>202.342781</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>195.474032</td>
+      <td>202.342781</td>
     </tr>
   </tbody>
 </table>
@@ -1273,12 +1693,11 @@ Values of -log(likelihood) at the minimum:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-Values of statistical measures:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1308,30 +1727,120 @@ Values of statistical measures:
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>399.223927</td>
+      <td>412.961425</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>410.990606</td>
+      <td>424.728104</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_15_8.png" src="../_images/notebooks_Background_modeling_15_8.png" />
+<img alt="../_images/notebooks_Background_modeling_15_10.png" src="../_images/notebooks_Background_modeling_15_10.png" />
 </div>
 </div>
 <p>We now have a model and estimate for the background which we can use when fitting with the source spectrum. We now create a new plugin with just the total observation and pass our background plugin as the background argument.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">modeled_background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="p">(</span>
     <span class="s2">&quot;full&quot;</span><span class="p">,</span>
     <span class="c1"># here we use the original observation</span>
     <span class="n">observation</span><span class="o">=</span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">observed_spectrum</span><span class="p">,</span>
@@ -1341,29 +1850,165 @@ Values of statistical measures:
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:40 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#459" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">459</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#470" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">470</span></a>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: poisson                                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
 <p>When we look at out count spectrum now, we will see the <em>predicted</em> background, rather than the measured one:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_19_0.png" src="../_images/notebooks_Background_modeling_19_0.png" />
+<img alt="../_images/notebooks_Background_modeling_19_1.png" src="../_images/notebooks_Background_modeling_19_1.png" />
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_19_1.png" src="../_images/notebooks_Background_modeling_19_1.png" />
+<img alt="../_images/notebooks_Background_modeling_19_3.png" src="../_images/notebooks_Background_modeling_19_3.png" />
 </div>
 </div>
 <p>Now we simply fit the spectrum as we did in the profiled case. The background plugin’s parameters are stored in our new plugin as nuissance parameters:</p>
@@ -1371,8 +2016,7 @@ Values of statistical measures:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">nuisance_parameters</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">nuisance_parameters</span>
 </pre></div>
 </div>
 </div>
@@ -1392,22 +2036,22 @@ OrderedDict([(&#39;cons_full&#39;,
               Parameter dec = 0.0 [deg]
               (min_value = -90.0, max_value = 90.0, delta = 0.1, free = False)),
              (&#39;bkg_bkg_spectrum_main_composite_K_1_full&#39;,
-              Parameter K_1 = 0.2590925666339796 [1 / (cm2 keV s)]
+              Parameter K_1 = 0.27498928236506615 [1 / (cm2 keV s)]
               (min_value = 0.0001, max_value = 10.0, delta = 0.1, free = True)),
              (&#39;bkg_bkg_spectrum_main_composite_piv_1_full&#39;,
               Parameter piv_1 = 100.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
              (&#39;bkg_bkg_spectrum_main_composite_index_1_full&#39;,
-              Parameter index_1 = -1.369227260104516 []
+              Parameter index_1 = -1.3951095106851756 []
               (min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)),
              (&#39;bkg_bkg_spectrum_main_composite_F_2_full&#39;,
-              Parameter F_2 = 28.575785877017793 [1 / (cm2 s)]
+              Parameter F_2 = 30.409800680506947 [1 / (cm2 s)]
               (min_value = 0.0, max_value = 1000.0, delta = 0.1, free = True)),
              (&#39;bkg_bkg_spectrum_main_composite_mu_2_full&#39;,
               Parameter mu_2 = 511.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
              (&#39;bkg_bkg_spectrum_main_composite_sigma_2_full&#39;,
-              Parameter sigma_2 = 22.876214320909337 [keV]
+              Parameter sigma_2 = 26.69233808298834 [keV]
               (min_value = 2.0, max_value = 30.0, delta = 0.1, free = True)),
              (&#39;bkg_cons_bkg_full&#39;,
               Parameter cons_bkg = 1.0 []
@@ -1419,8 +2063,7 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># instance the source model... the background plugin has it&#39;s model already specified</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instance the source model... the background plugin has it&#39;s model already specified</span>
 <span class="n">bpl</span> <span class="o">=</span> <span class="n">Broken_powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">xb</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 
 <span class="n">bpl</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">)</span>
@@ -1440,11 +2083,17 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Best fit values:
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">11:14:41 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1480,42 +2129,42 @@ Best fit values:
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>1.81 +/- 0.13</td>
+      <td>1.66 -0.11 +0.12</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.03 +/- 0.13) x 10^2</td>
+      <td>(3.23 +/- 0.14) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-1.2 +/- 0.7) x 10^-1</td>
+      <td>(-2.1 +/- 0.7) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.08 +/- 0.18</td>
+      <td>-3.11 +/- 0.19</td>
       <td></td>
     </tr>
     <tr>
       <th>K_1</th>
-      <td>(2.69 +/- 0.34) x 10^-1</td>
+      <td>(2.89 +/- 0.34) x 10^-1</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>index_1</th>
-      <td>-1.37 +/- 0.04</td>
+      <td>-1.38 +/- 0.04</td>
       <td></td>
     </tr>
     <tr>
       <th>F_2</th>
-      <td>(3.8 +/- 0.5) x 10</td>
+      <td>(3.2 +/- 0.5) x 10</td>
       <td>1 / (cm2 s)</td>
     </tr>
     <tr>
       <th>sigma_2</th>
-      <td>(2.03 +/- 0.26) x 10</td>
+      <td>(2.48 +/- 0.35) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -1525,37 +2174,35 @@ Best fit values:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-Correlation matrix:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table139695538981584">
-<tr><td>1.00</td><td>-0.60</td><td>0.76</td><td>0.05</td><td>0.09</td><td>-0.18</td><td>0.00</td><td>0.00</td></tr>
-<tr><td>-0.60</td><td>1.00</td><td>-0.46</td><td>-0.60</td><td>-0.01</td><td>0.20</td><td>-0.09</td><td>-0.04</td></tr>
-<tr><td>0.76</td><td>-0.46</td><td>1.00</td><td>0.04</td><td>0.32</td><td>-0.28</td><td>-0.00</td><td>-0.00</td></tr>
-<tr><td>0.05</td><td>-0.60</td><td>0.04</td><td>1.00</td><td>-0.18</td><td>-0.29</td><td>-0.03</td><td>0.01</td></tr>
-<tr><td>0.09</td><td>-0.01</td><td>0.32</td><td>-0.18</td><td>1.00</td><td>0.08</td><td>-0.02</td><td>-0.04</td></tr>
-<tr><td>-0.18</td><td>0.20</td><td>-0.28</td><td>-0.29</td><td>0.08</td><td>1.00</td><td>-0.01</td><td>-0.03</td></tr>
-<tr><td>0.00</td><td>-0.09</td><td>-0.00</td><td>-0.03</td><td>-0.02</td><td>-0.01</td><td>1.00</td><td>0.15</td></tr>
-<tr><td>0.00</td><td>-0.04</td><td>-0.00</td><td>0.01</td><td>-0.04</td><td>-0.03</td><td>0.15</td><td>1.00</td></tr>
+<div><table id="table139620239422128">
+<tr><td>1.00</td><td>-0.60</td><td>0.74</td><td>0.06</td><td>0.07</td><td>-0.18</td><td>0.01</td><td>0.01</td></tr>
+<tr><td>-0.60</td><td>1.00</td><td>-0.47</td><td>-0.61</td><td>0.01</td><td>0.23</td><td>-0.11</td><td>-0.05</td></tr>
+<tr><td>0.74</td><td>-0.47</td><td>1.00</td><td>0.05</td><td>0.32</td><td>-0.28</td><td>-0.00</td><td>-0.00</td></tr>
+<tr><td>0.06</td><td>-0.61</td><td>0.05</td><td>1.00</td><td>-0.21</td><td>-0.33</td><td>-0.00</td><td>0.02</td></tr>
+<tr><td>0.07</td><td>0.01</td><td>0.32</td><td>-0.21</td><td>1.00</td><td>0.12</td><td>-0.04</td><td>-0.06</td></tr>
+<tr><td>-0.18</td><td>0.23</td><td>-0.28</td><td>-0.33</td><td>0.12</td><td>1.00</td><td>-0.03</td><td>-0.05</td></tr>
+<tr><td>0.01</td><td>-0.11</td><td>-0.00</td><td>-0.00</td><td>-0.04</td><td>-0.03</td><td>1.00</td><td>0.18</td></tr>
+<tr><td>0.01</td><td>-0.05</td><td>-0.00</td><td>0.02</td><td>-0.06</td><td>-0.05</td><td>0.18</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-Values of -log(likelihood) at the minimum:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1585,11 +2232,11 @@ Values of -log(likelihood) at the minimum:
   <tbody>
     <tr>
       <th>full</th>
-      <td>508.756092</td>
+      <td>527.692537</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>508.756092</td>
+      <td>527.692537</td>
     </tr>
   </tbody>
 </table>
@@ -1598,12 +2245,11 @@ Values of -log(likelihood) at the minimum:
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+<span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-Values of statistical measures:
-
-</pre></div></div>
+</pre></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -1633,11 +2279,11 @@ Values of statistical measures:
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>1034.533460</td>
+      <td>1072.406352</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>1057.597266</td>
+      <td>1095.470157</td>
     </tr>
   </tbody>
 </table>
@@ -1647,9 +2293,7 @@ Values of statistical measures:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-
-<span></span><span class="c1"># over plot the joint background and source fits</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="c1"># over plot the joint background and source fits</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">_</span> <span class="o">=</span> <span class="n">background_plugin</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span>
@@ -1658,72 +2302,192 @@ Values of statistical measures:
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_24_0.png" src="../_images/notebooks_Background_modeling_24_0.png" />
+<img alt="../_images/notebooks_Background_modeling_24_1.png" src="../_images/notebooks_Background_modeling_24_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="hal_example.html" class="btn btn-neutral float-right" title="HAL (HAWC Accelerated Likelihood) plugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Building_Plugins_from_TimeSeries.html" class="btn btn-neutral float-left" title="Constructing plugins from TimeSeries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Photometry_demo.html" class="btn btn-neutral float-right" title="Photometric Plugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
-
-    </p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

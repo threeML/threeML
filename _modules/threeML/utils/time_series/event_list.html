@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.time_series.event_list &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.time_series.event_list</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.time_series.event_list</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
+
+<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;grburgess&quot;</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">HDFStore</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span><span class="p">,</span> <span class="n">trange</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span> <span class="nn">threeML.io.plotting.light_curve_plots</span> <span class="kn">import</span> <span class="n">binned_light_curve_plot</span>
+<span class="kn">from</span> <span class="nn">threeML.io.rich_display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span> <span class="nn">threeML.parallel.parallel_client</span> <span class="kn">import</span> <span class="n">ParallelClient</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.binner</span> <span class="kn">import</span> <span class="n">TemporalBinner</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_interval</span> <span class="kn">import</span> <span class="n">TimeIntervalSet</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_series.polynomial</span> <span class="kn">import</span> <span class="n">polyfit</span><span class="p">,</span> <span class="n">unbinned_polyfit</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_series.time_series</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ReducingNumberOfThreads"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.ReducingNumberOfThreads">[docs]</a><span class="k">class</span> <span class="nc">ReducingNumberOfThreads</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ReducingNumberOfSteps"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.ReducingNumberOfSteps">[docs]</a><span class="k">class</span> <span class="nc">ReducingNumberOfSteps</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="OverLappingIntervals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.OverLappingIntervals">[docs]</a><span class="k">class</span> <span class="nc">OverLappingIntervals</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># find out how many splits we need to make</span>
+<div class="viewcode-block" id="ceildiv"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.ceildiv">[docs]</a><span class="k">def</span> <span class="nf">ceildiv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">//</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EventList"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList">[docs]</a><span class="k">class</span> <span class="nc">EventList</span><span class="p">(</span><span class="n">TimeSeries</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">arrival_times</span><span class="p">,</span>
+        <span class="n">measurement</span><span class="p">,</span>
+        <span class="n">n_channels</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">native_quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mission</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,</span>
+<span class="sd">        temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected</span>
+<span class="sd">        and/or polynomials are fit, the selections can be extracted via a PHAContainer which is can be read by an OGIPLike</span>
+<span class="sd">        instance and translated into a PHA instance.</span>
+
+
+<span class="sd">        :param  n_channels: Number of detector channels</span>
+<span class="sd">        :param  start_time: start time of the event list</span>
+<span class="sd">        :param  stop_time: stop time of the event list</span>
+<span class="sd">        :param  first_channel: where detchans begin indexing</span>
+<span class="sd">        :param  rsp_file: the response file corresponding to these events</span>
+<span class="sd">        :param  arrival_times: list of event arrival times</span>
+<span class="sd">        :param  measurement: list of event energies or pha channels</span>
+<span class="sd">        :param native_quality: native pha quality flags</span>
+<span class="sd">        :param edges: The histogram boundaries if not specified by a response</span>
+<span class="sd">        :param mission:</span>
+<span class="sd">        :param instrument:</span>
+<span class="sd">        :param verbose:</span>
+<span class="sd">        :param  ra:</span>
+<span class="sd">        :param  dec:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># pass up to TimeSeries</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventList</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">stop_time</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">native_quality</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">,</span>
+            <span class="n">mission</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;Arrival time (</span><span class="si">%d</span><span class="s2">) and energies (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">arrival_times</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This EventList has no binning specified&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EventList.bin_by_significance"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_significance">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_significance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Interface to the temporal binner&#39;s significance binning model</span>
+
+<span class="sd">         :param start: start of the interval to bin on</span>
+<span class="sd">         :param stop:  stop of the interval ot bin on</span>
+<span class="sd">         :param sigma: sigma-level of the bins</span>
+<span class="sd">         :param mask: (bool) use the energy mask to decide on ,significance</span>
+<span class="sd">         :param min_counts:  minimum number of counts per bin</span>
+<span class="sd">         :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># create phas to check</span>
+            <span class="n">phas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">)[</span><span class="n">mask</span><span class="p">]</span>
+
+            <span class="n">this_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">phas</span><span class="p">:</span>
+                <span class="n">this_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span>
+                    <span class="n">this_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span> <span class="o">==</span> <span class="n">channel</span><span class="p">)</span>
+
+            <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span><span class="n">this_mask</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">events</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">)</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">events</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">,</span> <span class="n">events</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)]</span>
+
+        <span class="k">def</span> <span class="nf">tmp_bkg_getter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_poly_count</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">tmp_err_getter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_poly_error</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+        <span class="c1"># self._temporal_binner.bin_by_significance(tmp_bkg_getter,</span>
+        <span class="c1">#                                           background_error_getter=tmp_err_getter,</span>
+        <span class="c1">#                                           sigma_level=sigma,</span>
+        <span class="c1">#                                           min_counts=min_counts)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_significance</span><span class="p">(</span>
+            <span class="n">events</span><span class="p">,</span>
+            <span class="n">tmp_bkg_getter</span><span class="p">,</span>
+            <span class="n">background_error_getter</span><span class="o">=</span><span class="n">tmp_err_getter</span><span class="p">,</span>
+            <span class="n">sigma_level</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+            <span class="n">min_counts</span><span class="o">=</span><span class="n">min_counts</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="EventList.bin_by_constant"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_constant">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interface to the temporal binner&#39;s constant binning mode</span>
+
+<span class="sd">        :param start: start time of the bins</span>
+<span class="sd">        :param stop: stop time of the bins</span>
+<span class="sd">        :param dt: temporal spacing of the bins</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_constant</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EventList.bin_by_custom"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_custom">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_custom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interface to temporal binner&#39;s custom bin mode</span>
+
+
+<span class="sd">        :param start: start times of the bins</span>
+<span class="sd">        :param stop:  stop times of the bins</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_custom</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span></div>
+        <span class="c1"># self._temporal_binner.bin_by_custom(start, stop)</span>
+
+<div class="viewcode-block" id="EventList.bin_by_bayesian_blocks"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_bayesian_blocks">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_bayesian_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">use_background</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># self._temporal_binner = TemporalBinner(events)</span>
+
+        <span class="k">if</span> <span class="n">use_background</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">integral_background</span><span class="p">(</span>
+                <span class="n">t</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_poly_count</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_bayesian_blocks</span><span class="p">(</span>
+                <span class="n">events</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="n">integral_background</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_bayesian_blocks</span><span class="p">(</span>
+                <span class="n">events</span><span class="p">,</span> <span class="n">p0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EventList.view_lightcurve"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.view_lightcurve">[docs]</a>    <span class="k">def</span> <span class="nf">view_lightcurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span>
+                        <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+                        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">use_binner</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="n">use_echans_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="n">use_echans_stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+        <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param start:</span>
+<span class="sd">        :param stop:</span>
+<span class="sd">        :param dt:</span>
+<span class="sd">        :param use_binner:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># validate echan mask input</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_echans_start</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The use_echans_start variable must be a integer.&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">use_echans_start</span> <span class="o">&gt;</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="ow">and</span>
+                <span class="n">use_echans_start</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The use_echans_start variable must be&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_echans_stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be a integer.&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">use_echans_stop</span> <span class="o">&gt;</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="ow">and</span>
+                <span class="n">use_echans_stop</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;between </span><span class="si">{</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; Input is </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">use_echans_start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">use_echans_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="o">+</span><span class="n">use_echans_start</span>
+
+        <span class="k">if</span> <span class="n">use_echans_stop</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">use_echans_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span><span class="o">+</span><span class="n">use_echans_stop</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">use_echans_stop</span> <span class="o">&gt;=</span> <span class="n">use_echans_start</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The use_echans_stop variable must be larger&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; or equal than the use_echans_start variable&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; Input is use_echans_start: </span><span class="si">{</span><span class="n">use_echans_start</span><span class="si">}</span><span class="s2">&quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot; &gt; use_echans_stop: </span><span class="si">{</span><span class="n">use_echans_stop</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+
+        <span class="c1"># get echan bins</span>
+        <span class="n">echan_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">use_echans_start</span><span class="p">,</span> <span class="n">use_echans_stop</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span>
+
+
+        <span class="k">if</span> <span class="n">use_binner</span><span class="p">:</span>
+
+            <span class="c1"># we will use the binner object to bin the</span>
+            <span class="c1"># light curve and ignore the normal linear binning</span>
+
+            <span class="n">bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">time_edges</span>
+
+            <span class="c1"># perhaps we want to look a little before or after the binner</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">pre_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">pre_bins</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+
+                <span class="n">bins</span> <span class="o">=</span> <span class="n">pre_bins</span>
+
+            <span class="k">if</span> <span class="n">stop</span> <span class="o">&gt;</span> <span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">post_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">stop</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+                <span class="n">bins</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">post_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># otherwise, just use regular linear binning</span>
+
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">+</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+        <span class="n">cnts</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arrival_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement</span><span class="p">,</span>
+                                       <span class="n">bins</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">echan_bins</span><span class="p">))</span>
+        <span class="n">cnts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cnts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">time_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                              <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)])</span>
+
+        <span class="c1"># now we want to get the estimated background from the polynomial fit</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly_fit_exists</span><span class="p">:</span>
+
+            <span class="c1"># we will store the bkg rate for each time bin</span>
+
+            <span class="n">bkg</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">tb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">time_bins</span><span class="p">):</span>
+
+                <span class="c1"># zero out the bkg</span>
+                <span class="n">tmpbkg</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+                <span class="c1"># sum up the counts over this interval</span>
+
+                <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">polynomials</span><span class="p">[</span><span class="n">use_echans_start</span><span class="p">:</span><span class="n">use_echans_stop</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+
+                    <span class="n">tmpbkg</span> <span class="o">+=</span> <span class="n">poly</span><span class="o">.</span><span class="n">integral</span><span class="p">(</span><span class="n">tb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tb</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                <span class="c1"># capture the bkg *rate*</span>
+
+                <span class="c1"># Divide the background counts by the time intervall</span>
+                <span class="c1"># We do not use the dead time corrected exposure here</span>
+                <span class="c1"># because the integration is done over the full time bin</span>
+                <span class="c1"># and not the dead time corrected exposure</span>
+                <span class="n">bkg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">old_div</span><span class="p">(</span><span class="n">tmpbkg</span><span class="p">,</span> <span class="n">tb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">tb</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">bkg</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">tb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">time_bins</span><span class="p">):</span>
+            <span class="c1"># capture the exposure</span>
+            <span class="n">this_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">tb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tb</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="n">width</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_width</span><span class="p">)</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+
+        <span class="c1"># pass all this to the light curve plotter</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_intervals</span><span class="o">.</span><span class="n">bin_stack</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">selection</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bkg_intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">bkg_selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bkg_intervals</span><span class="o">.</span><span class="n">bin_stack</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">bkg_selection</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">binned_light_curve_plot</span><span class="p">(</span>
+            <span class="n">time_bins</span><span class="o">=</span><span class="n">time_bins</span><span class="p">,</span>
+            <span class="n">cnts</span><span class="o">=</span><span class="n">cnts</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">bkg</span><span class="o">=</span><span class="n">bkg</span><span class="p">,</span>
+            <span class="n">selection</span><span class="o">=</span><span class="n">selection</span><span class="p">,</span>
+            <span class="n">bkg_selections</span><span class="o">=</span><span class="n">bkg_selection</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="EventList.counts_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.counts_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return the number of counts in the selected interval</span>
+<span class="sd">        :param start: start of interval</span>
+<span class="sd">        :param stop:  stop of interval</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># this will be a boolean list and the sum will be the</span>
+        <span class="c1"># number of events</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="EventList.count_per_channel_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.count_per_channel_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+
+        <span class="n">channels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">counts_per_channel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">channels</span><span class="p">))</span>
+
+        <span class="n">selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">channel</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">channels</span><span class="p">):</span>
+            <span class="n">channel_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="p">[</span><span class="n">selection</span><span class="p">]</span> <span class="o">==</span> <span class="n">channel</span>
+
+            <span class="n">counts_per_channel</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">channel_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">counts_per_channel</span></div>
+
+    <span class="k">def</span> <span class="nf">_select_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return an index of the selected events</span>
+<span class="sd">        :param start: start time</span>
+<span class="sd">        :param stop: stop time</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Binned fit to each channel. Sets the polynomial array that will be used to compute</span>
+<span class="sd">        counts over an interval</span>
+
+
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Select all the events that are in the background regions</span>
+        <span class="c1"># and make a mask</span>
+
+        <span class="n">all_bkg_masks</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="p">:</span>
+            <span class="n">all_bkg_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&gt;=</span> <span class="n">selection</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">selection</span><span class="o">.</span><span class="n">stop_time</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">poly_mask</span> <span class="o">=</span> <span class="n">all_bkg_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># If there are multiple masks:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_bkg_masks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">all_bkg_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">poly_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">poly_mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+        <span class="c1"># Select the all the events in the poly selections</span>
+        <span class="c1"># We only need to do this once</span>
+
+        <span class="n">total_poly_events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span><span class="n">poly_mask</span><span class="p">]</span>
+
+        <span class="c1"># For the channel energies we will need to down select again.</span>
+        <span class="c1"># We can go ahead and do this to avoid repeated computations</span>
+
+        <span class="n">total_poly_energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="p">[</span><span class="n">poly_mask</span><span class="p">]</span>
+
+        <span class="c1"># This calculation removes the unselected portion of the light curve</span>
+        <span class="c1"># so that we are not fitting zero counts. It will be used in the channel calculations</span>
+        <span class="c1"># as well</span>
+
+        <span class="n">bin_width</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># seconds</span>
+        <span class="n">these_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">,</span> <span class="n">bin_width</span><span class="p">)</span>
+
+        <span class="n">cnts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">total_poly_events</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">these_bins</span><span class="p">)</span>
+
+        <span class="c1"># Find the mean time of the bins and calculate the exposure in each bin</span>
+        <span class="n">mean_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">exposure_per_bin</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+            <span class="n">mean_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+            <span class="n">exposure_per_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+
+        <span class="n">mean_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mean_time</span><span class="p">)</span>
+
+        <span class="n">exposure_per_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">exposure_per_bin</span><span class="p">)</span>
+
+        <span class="c1"># Remove bins with zero counts</span>
+        <span class="n">all_non_zero_mask</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="p">:</span>
+            <span class="n">all_non_zero_mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                    <span class="n">mean_time</span> <span class="o">&gt;=</span> <span class="n">selection</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">mean_time</span> <span class="o">&lt;=</span> <span class="n">selection</span><span class="o">.</span><span class="n">stop_time</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">non_zero_mask</span> <span class="o">=</span> <span class="n">all_non_zero_mask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_non_zero_mask</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">all_non_zero_mask</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">non_zero_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">non_zero_mask</span><span class="p">)</span>
+
+        <span class="c1"># Now we will find the the best poly order unless the use specified one</span>
+        <span class="c1"># The total cnts (over channels) is binned to .1 sec intervals</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+
+            
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_global_and_determine_optimum_grade</span><span class="p">(</span>
+                    <span class="n">cnts</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">mean_time</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">exposure_per_bin</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Auto-determined polynomial order: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span>
+
+        <span class="n">channels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">channel</span><span class="p">):</span>
+
+                <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
+
+                <span class="c1"># Mask background events and current channel</span>
+                <span class="c1"># poly_chan_mask = np.logical_and(poly_mask, channel_mask)</span>
+                <span class="c1"># Select the masked events</span>
+
+                <span class="n">current_events</span> <span class="o">=</span> <span class="n">total_poly_events</span><span class="p">[</span><span class="n">channel_mask</span><span class="p">]</span>
+
+                <span class="n">cnts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">current_events</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">these_bins</span><span class="p">)</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
+                    <span class="n">mean_time</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">cnts</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="p">,</span>
+                    <span class="n">exposure_per_bin</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">polynomial</span>
+
+            <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
+
+
+
+            <span class="n">polynomials</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
+                    <span class="n">worker</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">polynomials</span> <span class="o">=</span> <span class="p">[]</span>
+
+            
+
+            <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span><span class="p">):</span>
+
+                <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
+
+                <span class="c1"># Mask background events and current channel</span>
+                <span class="c1"># poly_chan_mask = np.logical_and(poly_mask, channel_mask)</span>
+                <span class="c1"># Select the masked events</span>
+
+                <span class="n">current_events</span> <span class="o">=</span> <span class="n">total_poly_events</span><span class="p">[</span><span class="n">channel_mask</span><span class="p">]</span>
+
+                <span class="c1"># now bin the selected channel counts</span>
+
+                <span class="n">cnts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">current_events</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">these_bins</span><span class="p">)</span>
+
+                <span class="c1"># Put data to fit in an x vector and y vector</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
+                    <span class="n">mean_time</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">cnts</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="p">,</span>
+                    <span class="n">exposure_per_bin</span><span class="p">[</span><span class="n">non_zero_mask</span><span class="p">],</span>
+                    <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+
+                <span class="n">polynomials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">polynomial</span><span class="p">)</span>
+
+        <span class="c1"># We are now ready to return the polynomials</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span> <span class="o">=</span> <span class="n">polynomials</span>
+
+    <span class="k">def</span> <span class="nf">_unbinned_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Select all the events that are in the background regions</span>
+        <span class="c1"># and make a mask</span>
+
+        <span class="n">all_bkg_masks</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">total_duration</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">poly_exposure</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="p">:</span>
+            <span class="n">total_duration</span> <span class="o">+=</span> <span class="n">selection</span><span class="o">.</span><span class="n">duration</span>
+
+            <span class="n">poly_exposure</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span>
+                <span class="n">selection</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">selection</span><span class="o">.</span><span class="n">stop_time</span>
+            <span class="p">)</span>
+
+            <span class="n">all_bkg_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&gt;=</span> <span class="n">selection</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">selection</span><span class="o">.</span><span class="n">stop_time</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">poly_mask</span> <span class="o">=</span> <span class="n">all_bkg_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># If there are multiple masks:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_bkg_masks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">all_bkg_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">poly_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">poly_mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+        <span class="c1"># Select the all the events in the poly selections</span>
+        <span class="c1"># We only need to do this once</span>
+
+        <span class="n">total_poly_events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span><span class="n">poly_mask</span><span class="p">]</span>
+
+        <span class="c1"># For the channel energies we will need to down select again.</span>
+        <span class="c1"># We can go ahead and do this to avoid repeated computations</span>
+
+        <span class="n">total_poly_energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span><span class="p">[</span><span class="n">poly_mask</span><span class="p">]</span>
+
+        <span class="c1"># Now we will find the the best poly order unless the use specified one</span>
+        <span class="c1"># The total cnts (over channels) is binned to .1 sec intervals</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_unbinned_fit_global_and_determine_optimum_grade</span><span class="p">(</span>
+                    <span class="n">total_poly_events</span><span class="p">,</span> <span class="n">poly_exposure</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Auto-determined polynomial order: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_poly_order</span>
+
+        <span class="n">channels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check whether we are parallelizing or not</span>
+
+        <span class="n">t_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">start_times</span>
+        <span class="n">t_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span><span class="o">.</span><span class="n">stop_times</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">channel</span><span class="p">):</span>
+                <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
+
+                <span class="c1"># Mask background events and current channel</span>
+                <span class="c1"># poly_chan_mask = np.logical_and(poly_mask, channel_mask)</span>
+                <span class="c1"># Select the masked events</span>
+
+                <span class="n">current_events</span> <span class="o">=</span> <span class="n">total_poly_events</span><span class="p">[</span><span class="n">channel_mask</span><span class="p">]</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">unbinned_polyfit</span><span class="p">(</span>
+                    <span class="n">current_events</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="p">,</span>
+                    <span class="n">t_start</span><span class="p">,</span>
+                    <span class="n">t_stop</span><span class="p">,</span>
+                    <span class="n">poly_exposure</span><span class="p">,</span>
+                    <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">polynomial</span>
+
+            <span class="n">client</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
+
+
+            <span class="n">polynomials</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_with_progress_bar</span><span class="p">(</span>
+                    <span class="n">worker</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">polynomials</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fitting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span><span class="si">}</span><span class="s2"> background&quot;</span><span class="p">):</span>
+                <span class="n">channel_mask</span> <span class="o">=</span> <span class="n">total_poly_energies</span> <span class="o">==</span> <span class="n">channel</span>
+
+                <span class="c1"># Mask background events and current channel</span>
+                <span class="c1"># poly_chan_mask = np.logical_and(poly_mask, channel_mask)</span>
+                <span class="c1"># Select the masked events</span>
+
+                <span class="n">current_events</span> <span class="o">=</span> <span class="n">total_poly_events</span><span class="p">[</span><span class="n">channel_mask</span><span class="p">]</span>
+
+                <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">unbinned_polyfit</span><span class="p">(</span>
+                    <span class="n">current_events</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span><span class="p">,</span>
+                    <span class="n">t_start</span><span class="p">,</span>
+                    <span class="n">t_stop</span><span class="p">,</span>
+                    <span class="n">poly_exposure</span><span class="p">,</span>
+                    <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span>
+                <span class="p">)</span>
+
+                <span class="n">polynomials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">polynomial</span><span class="p">)</span>
+
+        <span class="c1"># We are now ready to return the polynomials</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span> <span class="o">=</span> <span class="n">polynomials</span>
+
+<div class="viewcode-block" id="EventList.set_active_time_intervals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.set_active_time_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the time interval(s) to be used during the analysis.</span>
+
+<span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+
+<span class="sd">        set_active_time_intervals(&quot;0.0-10.0&quot;)</span>
+
+<span class="sd">        which will set the energy range 0-10. seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_selection_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">interval_masks</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">time_intervals</span> <span class="o">=</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="n">time_intervals</span><span class="o">.</span><span class="n">merge_intersecting_intervals</span><span class="p">(</span><span class="n">in_place</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">time_intervals</span><span class="p">:</span>
+            <span class="n">tmin</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">tmax</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop_time</span>
+
+            <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+
+            <span class="n">interval_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span> <span class="o">=</span> <span class="n">time_intervals</span>
+
+        <span class="n">time_mask</span> <span class="o">=</span> <span class="n">interval_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interval_masks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">interval_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">time_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">time_mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+        <span class="c1"># calulate exposure and deadtime</span>
+        <span class="n">exposure</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dead_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">time_intervals</span><span class="p">:</span>
+            <span class="n">tmin</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">tmax</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop_time</span>
+            <span class="n">this_exposure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+            <span class="c1"># check that the exposure is not larger than the total time</span>
+            <span class="k">if</span> <span class="n">this_exposure</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">tmax</span><span class="o">-</span><span class="n">tmin</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The exposure in the active time bin is larger &quot;</span>
+                          <span class="s2">&quot;than the total active time. &quot;</span>
+                          <span class="s2">&quot;Something must be wrong!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+            <span class="n">exposure</span> <span class="o">+=</span> <span class="n">this_exposure</span>
+            <span class="n">dead_time</span> <span class="o">+=</span> <span class="p">(</span><span class="n">tmax</span><span class="o">-</span><span class="n">tmin</span><span class="p">)</span><span class="o">-</span><span class="n">this_exposure</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span> <span class="o">=</span> <span class="n">exposure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_dead_time</span> <span class="o">=</span> <span class="n">dead_time</span>
+
+        <span class="n">tmp_counts</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Temporary list to hold the total counts per chan</span>
+
+        <span class="k">for</span> <span class="n">chan</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_channel</span><span class="p">):</span>
+
+            <span class="n">channel_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurement</span> <span class="o">==</span> <span class="n">chan</span>
+            <span class="n">counts_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">channel_mask</span><span class="p">,</span> <span class="n">time_mask</span><span class="p">)</span>
+            <span class="n">total_counts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">[</span><span class="n">counts_mask</span><span class="p">])</span>
+
+            <span class="n">tmp_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_counts</span><span class="p">)</span>
+
+        <span class="n">tmp_counts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tmp_err</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Temporary list to hold the err counts per chan</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;A polynomial fit to the channels does not exist!&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">chan</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_channels</span><span class="p">):</span>
+
+                <span class="n">total_counts</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">counts_err</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">for</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">start_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span><span class="o">.</span><span class="n">stop_times</span>
+                <span class="p">):</span>
+                    <span class="c1"># Now integrate the appropriate background polynomial</span>
+                    <span class="n">total_counts</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">[</span><span class="n">chan</span><span class="p">]</span><span class="o">.</span><span class="n">integral</span><span class="p">(</span>
+                        <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+                    <span class="n">counts_err</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span><span class="p">[</span><span class="n">chan</span><span class="p">]</span><span class="o">.</span><span class="n">integral_error</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+                    <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+                <span class="n">tmp_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
+
+                <span class="n">tmp_err</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">counts_err</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poly_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_counts</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poly_count_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_err</span><span class="p">)</span>
+
+            <span class="c1"># apply the dead time correction to the background counts</span>
+            <span class="c1"># and errors</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_dead_time</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poly_counts</span> <span class="o">*=</span> <span class="n">corr</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poly_count_err</span> <span class="o">*=</span> <span class="n">corr</span></div></div>
+
+
+<div class="viewcode-block" id="EventListWithDeadTime"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTime">[docs]</a><span class="k">class</span> <span class="nc">EventListWithDeadTime</span><span class="p">(</span><span class="n">EventList</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">arrival_times</span><span class="p">,</span>
+        <span class="n">measurement</span><span class="p">,</span>
+        <span class="n">n_channels</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dead_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mission</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an</span>
+<span class="sd">        interval =&gt; live time = interval - dead time</span>
+
+
+
+<span class="sd">        :param  n_channels: Number of detector channels</span>
+<span class="sd">        :param  start_time: start time of the event list</span>
+<span class="sd">        :param  stop_time: stop time of the event list</span>
+<span class="sd">        :param  dead_time: an array of deadtime per event</span>
+<span class="sd">        :param  first_channel: where detchans begin indexing</span>
+<span class="sd">        :param  quality: native pha quality flags</span>
+<span class="sd">        :param  rsp_file: the response file corresponding to these events</span>
+<span class="sd">        :param  arrival_times: list of event arrival times</span>
+<span class="sd">        :param  measurement: list of event energies or pha channels</span>
+<span class="sd">        :param edges: The histogram boundaries if not specified by a response</span>
+<span class="sd">        :param  mission: mission name</span>
+<span class="sd">        :param  instrument: instrument name</span>
+<span class="sd">        :param  verbose: verbose level</span>
+<span class="sd">        :param  ra:</span>
+<span class="sd">        :param  dec:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventListWithDeadTime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">stop_time</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">,</span>
+            <span class="n">mission</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dead_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dead_time</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">),</span> <span class="s2">&quot;Arrival time (</span><span class="si">%d</span><span class="s2">) and Dead Time (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EventListWithDeadTime.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTime.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the exposure over the given interval</span>
+
+<span class="sd">        :param start: start time</span>
+<span class="sd">        :param stop:  stop time</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">interval_deadtime</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">interval_deadtime</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">-</span> <span class="n">interval_deadtime</span></div></div>
+
+
+<div class="viewcode-block" id="EventListWithDeadTimeFraction"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTimeFraction">[docs]</a><span class="k">class</span> <span class="nc">EventListWithDeadTimeFraction</span><span class="p">(</span><span class="n">EventList</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">arrival_times</span><span class="p">,</span>
+        <span class="n">measurement</span><span class="p">,</span>
+        <span class="n">n_channels</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dead_time_fraction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mission</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An EventList where the exposure is calculated via and array dead time fractions per event .</span>
+<span class="sd">        Summing these dead times over an</span>
+<span class="sd">        interval =&gt; live time = interval - dead time</span>
+
+
+
+<span class="sd">        :param  n_channels: Number of detector channels</span>
+<span class="sd">        :param  start_time: start time of the event list</span>
+<span class="sd">        :param  stop_time: stop time of the event list</span>
+<span class="sd">        :param  dead_time: an array of deadtime fraction</span>
+<span class="sd">        :param  first_channel: where detchans begin indexing</span>
+<span class="sd">        :param  quality: native pha quality flags</span>
+<span class="sd">        :param  rsp_file: the response file corresponding to these events</span>
+<span class="sd">        :param  arrival_times: list of event arrival times</span>
+<span class="sd">        :param  measurement: list of event energies or pha channels</span>
+<span class="sd">        :param edges: The histogram boundaries if not specified by a response</span>
+<span class="sd">        :param  mission: mission name</span>
+<span class="sd">        :param  instrument: instrument name</span>
+<span class="sd">        :param  verbose: verbose level</span>
+<span class="sd">        :param  ra:</span>
+<span class="sd">        :param  dec:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventListWithDeadTimeFraction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">stop_time</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">,</span>
+            <span class="n">mission</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dead_time_fraction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dead_time_fraction</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">),</span> <span class="s2">&quot;Arrival time (</span><span class="si">%d</span><span class="s2">) and Dead Time (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EventListWithDeadTimeFraction.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTimeFraction.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the exposure over the given interval</span>
+
+<span class="sd">        :param start: start time</span>
+<span class="sd">        :param stop:  stop time</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="n">interval</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">interval_deadtime</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">interval</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">interval_deadtime</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">interval</span> <span class="o">-</span> <span class="n">interval_deadtime</span></div></div>
+
+
+<div class="viewcode-block" id="EventListWithLiveTime"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithLiveTime">[docs]</a><span class="k">class</span> <span class="nc">EventListWithLiveTime</span><span class="p">(</span><span class="n">EventList</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">arrival_times</span><span class="p">,</span>
+        <span class="n">measurement</span><span class="p">,</span>
+        <span class="n">n_channels</span><span class="p">,</span>
+        <span class="n">live_time</span><span class="p">,</span>
+        <span class="n">live_time_starts</span><span class="p">,</span>
+        <span class="n">live_time_stops</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">rsp_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mission</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An EventList where the exposure is calculated via and array of livetimes per interval.</span>
+
+
+
+<span class="sd">        :param  arrival_times: list of event arrival times</span>
+<span class="sd">        :param  measurement: list of event energies or pha channels</span>
+<span class="sd">        :param live_time: array of livetime fractions</span>
+<span class="sd">        :param live_time_starts: start of livetime fraction bins</span>
+<span class="sd">        :param live_time_stops:  stop of livetime fraction bins</span>
+<span class="sd">        :param mission: mission name</span>
+<span class="sd">        :param instrument: instrument name</span>
+<span class="sd">        :param  n_channels: Number of detector channels</span>
+<span class="sd">        :param  start_time: start time of the event list</span>
+<span class="sd">        :param  stop_time: stop time of the event list</span>
+<span class="sd">        :param quality: native pha quality flags</span>
+<span class="sd">        :param  first_channel: where detchans begin indexing</span>
+<span class="sd">        :param edges: The histogram boundaries if not specified by a response</span>
+<span class="sd">        :param  rsp_file: the response file corresponding to these events</span>
+<span class="sd">        :param verbose:</span>
+<span class="sd">        :param  ra:</span>
+<span class="sd">        :param  dec:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">live_time_starts</span>
+        <span class="p">),</span> <span class="s2">&quot;Live time fraction (</span><span class="si">%d</span><span class="s2">) and live time start (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">live_time_starts</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">live_time_stops</span>
+        <span class="p">),</span> <span class="s2">&quot;Live time fraction (</span><span class="si">%d</span><span class="s2">) and live time stop (</span><span class="si">%d</span><span class="s2">) have different shapes&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">live_time</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">live_time_stops</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventListWithLiveTime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">stop_time</span><span class="p">,</span>
+            <span class="n">quality</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">,</span>
+            <span class="n">mission</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_live_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">live_time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">live_time_starts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">live_time_stops</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EventListWithLiveTime.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithLiveTime.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param start: start time of interval</span>
+<span class="sd">        :param stop: stop time of interval</span>
+<span class="sd">        :return: exposure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># First see if the interval is completely contained inside a</span>
+        <span class="c1"># livetime interval. In this case we only compute that.</span>
+
+        <span class="c1"># Note that this is explicitly on the open boundary of the</span>
+        <span class="c1"># intervals because the closed boundary is covered in the</span>
+        <span class="c1"># next step</span>
+
+        <span class="n">inside_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span>
+        <span class="p">)</span>
+
+        <span class="c1"># see if it contains elements</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time</span><span class="p">[</span><span class="n">inside_idx</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># we want to take a fraction of the live time covered</span>
+
+            <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span><span class="p">[</span><span class="n">inside_idx</span><span class="p">]</span> <span class="o">-</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span><span class="p">[</span><span class="n">inside_idx</span><span class="p">]</span>
+
+            <span class="n">fraction</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">((</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">),</span> <span class="n">dt</span><span class="p">)</span>
+
+            <span class="n">total_livetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time</span><span class="p">[</span><span class="n">inside_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">fraction</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># First we get the live time of bins that are fully contained in the given interval</span>
+            <span class="c1"># We now go for the closed interval because it is possible to have overlap with other intervals</span>
+            <span class="c1"># when a closed interval exists... but not when there is only an open interval</span>
+
+            <span class="n">full_inclusion_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="n">start</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span><span class="p">,</span> <span class="n">stop</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span>
+            <span class="p">)</span>
+
+            <span class="n">full_inclusion_livetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time</span><span class="p">[</span><span class="n">full_inclusion_idx</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+            <span class="c1"># Now we get the fractional parts on the left and right</span>
+
+            <span class="c1"># Get the fractional part of the left bin</span>
+
+            <span class="n">left_remainder_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="n">start</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span> <span class="o">&lt;=</span> <span class="n">start</span>
+            <span class="p">)</span>
+
+            <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span><span class="p">[</span><span class="n">left_remainder_idx</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span><span class="p">[</span><span class="n">left_remainder_idx</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># we want the distance to the stop of this bin</span>
+
+            <span class="n">distance_from_next_bin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span><span class="p">[</span><span class="n">left_remainder_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span>
+
+            <span class="n">fraction</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">distance_from_next_bin</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+            <span class="n">left_fractional_livetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time</span><span class="p">[</span><span class="n">left_remainder_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">fraction</span>
+
+            <span class="c1"># Get the fractional part of the right bin</span>
+
+            <span class="n">right_remainder_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">,</span> <span class="n">stop</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span>
+            <span class="p">)</span>
+
+            <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span><span class="p">[</span><span class="n">right_remainder_idx</span><span class="p">]</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span><span class="p">[</span><span class="n">right_remainder_idx</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># we want the distance from the last full bin</span>
+
+            <span class="n">distance_from_next_bin</span> <span class="o">=</span> <span class="n">stop</span> <span class="o">-</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_starts</span><span class="p">[</span><span class="n">right_remainder_idx</span><span class="p">]</span>
+
+            <span class="n">fraction</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">distance_from_next_bin</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+            <span class="n">right_fractional_livetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_live_time</span><span class="p">[</span><span class="n">right_remainder_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">fraction</span>
+
+            <span class="c1"># sum up all the live time</span>
+
+            <span class="n">total_livetime</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">full_inclusion_livetime</span>
+                <span class="o">+</span> <span class="n">left_fractional_livetime</span>
+                <span class="o">+</span> <span class="n">right_fractional_livetime</span>
+            <span class="p">)</span>
+
+        <span class="c1"># the sum at the end converts all the arrays to floats</span>
+
+        <span class="k">return</span> <span class="n">total_livetime</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

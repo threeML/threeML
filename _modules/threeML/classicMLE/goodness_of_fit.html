@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.classicMLE.goodness_of_fit &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.classicMLE.goodness_of_fit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.classicMLE.goodness_of_fit</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">threeML.classicMLE.joint_likelihood_set</span> <span class="kn">import</span> <span class="n">JointLikelihoodSet</span>
+<span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">clone_model</span>
+
+
+<div class="viewcode-block" id="GoodnessOfFit"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit">[docs]</a><span class="k">class</span> <span class="nc">GoodnessOfFit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">joint_likelihood_instance</span><span class="p">,</span> <span class="n">like_data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span> <span class="o">=</span> <span class="n">joint_likelihood_instance</span>
+
+        <span class="c1"># Make sure we have a fit</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;You have to perform a fit before using GoodnessOfFit&quot;</span>
+
+        <span class="k">if</span> <span class="n">like_data_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">like_data_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_statistic_frame</span><span class="p">()</span>
+
+        <span class="c1"># Restore best fit and store the reference value for the likelihood</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span> <span class="o">=</span> <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Store best model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_fit_model</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">likelihood_model</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GoodnessOfFit.get_simulated_data"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_simulated_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulated_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+
+        <span class="c1"># Make sure we start from the best fit model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
+
+        <span class="c1"># Generate a new data set for each plugin contained in the data list</span>
+
+        <span class="n">new_datas</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_simulated_dataset</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_sim&quot;</span> <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">new_datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+
+        <span class="n">new_data_list</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="o">*</span><span class="n">new_datas</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_data_list</span></div>
+
+<div class="viewcode-block" id="GoodnessOfFit.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+
+        <span class="c1"># Make a copy of the best fit model, so that we don&#39;t touch the original model during the fit, and we</span>
+        <span class="c1"># also always restart from the best fit (instead of the last iteration)</span>
+
+        <span class="n">new_model</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_best_fit_model</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_model</span></div>
+
+<div class="viewcode-block" id="GoodnessOfFit.by_mc"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.by_mc">[docs]</a>    <span class="k">def</span> <span class="nf">by_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute goodness of fit by generating Monte Carlo datasets and fitting the current model on them. The fraction</span>
+<span class="sd">        of synthetic datasets which have a value for the likelihood larger or equal to the observed one is a measure</span>
+<span class="sd">        of the goodness of fit</span>
+
+<span class="sd">        :param n_iterations: number of MC iterations to perform (default: 1000)</span>
+<span class="sd">        :param continue_of_failure: whether to continue in the case a fit fails (False by default)</span>
+<span class="sd">        :return: tuple (goodness of fit, frame with all results, frame with all likelihood values)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Create the joint likelihood set</span>
+        <span class="n">jl_set</span> <span class="o">=</span> <span class="n">JointLikelihoodSet</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_simulated_data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">,</span>
+            <span class="n">n_iterations</span><span class="p">,</span>
+            <span class="n">iteration_name</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Use the same minimizer as in the joint likelihood object</span>
+        <span class="c1"># NOTE: we use a clone so that the original best fit will not be touched</span>
+
+        <span class="n">jl_set</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">minimizer_in_use</span><span class="p">)</span>
+
+        <span class="c1"># Run the set</span>
+        <span class="n">data_frame</span><span class="p">,</span> <span class="n">like_data_frame</span> <span class="o">=</span> <span class="n">jl_set</span><span class="o">.</span><span class="n">go</span><span class="p">(</span><span class="n">continue_on_failure</span><span class="o">=</span><span class="n">continue_on_failure</span><span class="p">)</span>
+
+        <span class="c1"># Compute goodness of fit</span>
+
+        <span class="n">gof</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># Total</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">][:,</span> <span class="s2">&quot;total&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># type: np.ndarray</span>
+
+        <span class="n">gof</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+
+            <span class="n">sim_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_sim&quot;</span> <span class="o">%</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">like_data_frame</span><span class="p">[</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">][:,</span> <span class="n">sim_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_like</span><span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">gof</span><span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gof</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">like_data_frame</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

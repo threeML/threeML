@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.exceptions.custom_exceptions &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.exceptions.custom_exceptions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.exceptions.custom_exceptions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span> <span class="k">as</span> <span class="nn">custom_warnings</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="c1"># Monkeypatch the print of warning so we can customize them</span>
+
+
+<div class="viewcode-block" id="my_format_warning"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.my_format_warning">[docs]</a><span class="k">def</span> <span class="nf">my_format_warning</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineo</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Override the default showwarning to customize the appearance of warnings</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if message.message.find(&quot;may indicate binary incompatibility&quot;) &gt;= 0:</span>
+    <span class="c1">#     return &#39;&#39;</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+
+<span class="n">custom_warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">my_format_warning</span>
+
+
+<div class="viewcode-block" id="NegativeBackground"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.NegativeBackground">[docs]</a><span class="k">class</span> <span class="nc">NegativeBackground</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TriggerDoesNotExist"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.TriggerDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">TriggerDoesNotExist</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ForbiddenRegionOfParameterSpace"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.ForbiddenRegionOfParameterSpace">[docs]</a><span class="k">class</span> <span class="nc">ForbiddenRegionOfParameterSpace</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CppInterfaceNotAvailable"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.CppInterfaceNotAvailable">[docs]</a><span class="k">class</span> <span class="nc">CppInterfaceNotAvailable</span><span class="p">(</span><span class="ne">ImportWarning</span><span class="p">):</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CannotImportPlugin"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.CannotImportPlugin">[docs]</a><span class="k">class</span> <span class="nc">CannotImportPlugin</span><span class="p">(</span><span class="ne">ImportWarning</span><span class="p">):</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="LikelihoodIsInfinite"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.LikelihoodIsInfinite">[docs]</a><span class="k">class</span> <span class="nc">LikelihoodIsInfinite</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="FitFailed"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.FitFailed">[docs]</a><span class="k">class</span> <span class="nc">FitFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationFileCorrupt"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.ConfigurationFileCorrupt">[docs]</a><span class="k">class</span> <span class="nc">ConfigurationFileCorrupt</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BadCovariance"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.BadCovariance">[docs]</a><span class="k">class</span> <span class="nc">BadCovariance</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="MinLargerMax"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.MinLargerMax">[docs]</a><span class="k">class</span> <span class="nc">MinLargerMax</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="NoFitYet"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.NoFitYet">[docs]</a><span class="k">class</span> <span class="nc">NoFitYet</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DetDoesNotExist"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.DetDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">DetDoesNotExist</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="MinimizerNotAvailable"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.MinimizerNotAvailable">[docs]</a><span class="k">class</span> <span class="nc">MinimizerNotAvailable</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TimeTypeNotKnown"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.TimeTypeNotKnown">[docs]</a><span class="k">class</span> <span class="nc">TimeTypeNotKnown</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="deprecated"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.deprecated">[docs]</a><span class="k">class</span> <span class="nc">deprecated</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">reason</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Reason for deprecation must be supplied&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">reason</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls_or_func</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">,</span> <span class="s2">&quot;func_code&quot;</span><span class="p">):</span>
+                <span class="n">_code</span> <span class="o">=</span> <span class="n">cls_or_func</span><span class="o">.</span><span class="n">func_code</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_code</span> <span class="o">=</span> <span class="n">cls_or_func</span><span class="o">.</span><span class="vm">__code__</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;Call to deprecated function or method </span><span class="si">{name}</span><span class="s2"> (</span><span class="si">{reason}</span><span class="s2">).&quot;</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">_code</span><span class="o">.</span><span class="n">co_filename</span>
+            <span class="n">lineno</span> <span class="o">=</span> <span class="n">_code</span><span class="o">.</span><span class="n">co_firstlineno</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">):</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;Call to deprecated class </span><span class="si">{name}</span><span class="s2"> (</span><span class="si">{reason}</span><span class="s2">).&quot;</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">cls_or_func</span><span class="o">.</span><span class="vm">__module__</span>
+            <span class="n">lineno</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">))</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">cls_or_func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">new_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span>
+                <span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+            <span class="p">)</span>  <span class="c1"># turn off filter</span>
+            <span class="n">custom_warnings</span><span class="o">.</span><span class="n">warn_explicit</span><span class="p">(</span>
+                <span class="n">msg</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span>
+            <span class="p">)</span>
+            <span class="n">custom_warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>  <span class="c1"># reset filter</span>
+            <span class="k">return</span> <span class="n">cls_or_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_func</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

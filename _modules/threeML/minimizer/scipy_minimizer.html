@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.minimizer.scipy_minimizer &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.minimizer.scipy_minimizer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.minimizer.scipy_minimizer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">zip</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
+
+<span class="kn">import</span> <span class="nn">scipy.optimize</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.minimizer.minimization</span> <span class="kn">import</span> <span class="n">FitFailed</span><span class="p">,</span> <span class="n">LocalMinimizer</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.differentiation</span> <span class="kn">import</span> <span class="n">get_jacobian</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">_SUPPORTED_ALGORITHMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span> <span class="s2">&quot;TNC&quot;</span><span class="p">,</span> <span class="s2">&quot;SLSQP&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ScipyMinimizer"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.scipy_minimizer.ScipyMinimizer">[docs]</a><span class="k">class</span> <span class="nc">ScipyMinimizer</span><span class="p">(</span><span class="n">LocalMinimizer</span><span class="p">):</span>
+
+    <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;tol&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ScipyMinimizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">,</span> <span class="n">setup_dict</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_setup_dict</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">user_setup_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">default_setup</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span> <span class="s2">&quot;tol&quot;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">}</span>
+
+            
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span> <span class="o">=</span> <span class="n">default_setup</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;algorithm&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
+
+                
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">:</span>
+
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Supported algorithms are </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">)))</span>
+
+                    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;scipy minimizer algorithm set to:</span><span class="si">{</span><span class="n">user_setup_dict</span><span class="p">[</span><span class="s1">&#39;algorithm&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                
+            <span class="c1"># We can assume that the setup has been already checked against the setup_keys</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
+
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    
+
+<div class="viewcode-block" id="ScipyMinimizer.set_algorithm"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.scipy_minimizer.ScipyMinimizer.set_algorithm">[docs]</a>    <span class="k">def</span> <span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set the algorithm for the scipy minimizer.</span>
+<span class="sd">        Valid entries are &quot;L-BFGS-B&quot;, &quot;TNC&quot;, &quot;SLSQP&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        :param algorithm: </span>
+<span class="sd">        :type algorithm: str</span>
+<span class="sd">        :returns: </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Supported algorithms are </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_SUPPORTED_ALGORITHMS</span><span class="p">)))</span>
+
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">()</span>
+        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">algorithm</span></div>
+
+        
+        
+    <span class="c1"># This cannot be part of a class, unfortunately, because of how PyGMO serialize objects</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_bounds</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+<span class="c1">#        return _check_bounds(x, minima, maxima)</span>
+
+        <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">min_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+
+                    <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">max_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+
+                    <span class="k">return</span> <span class="kc">False</span>
+            
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Build initial point</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">minima</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">maxima</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">par_name</span><span class="p">,</span> <span class="p">(</span><span class="n">cur_value</span><span class="p">,</span> <span class="n">cur_delta</span><span class="p">,</span> <span class="n">cur_min</span><span class="p">,</span> <span class="n">cur_max</span><span class="p">))</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_internal_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">):</span>
+
+            <span class="n">x0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_value</span><span class="p">)</span>
+
+            <span class="c1"># scipy&#39;s algorithms will always try to evaluate the function exactly at the boundaries, which will</span>
+            <span class="c1"># fail because the Jacobian is not defined there... let&#39;s fix this by using a slightly larger or smaller</span>
+            <span class="c1"># minimum and maximum within the scipy algorithm than the real boundaries (saved in minima and maxima)</span>
+
+            <span class="n">minima</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_min</span><span class="p">)</span>
+            <span class="n">maxima</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_max</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cur_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">cur_min</span> <span class="o">=</span> <span class="n">cur_min</span> <span class="o">+</span> <span class="mf">0.00005</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cur_min</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cur_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">cur_max</span> <span class="o">=</span> <span class="n">cur_max</span> <span class="o">-</span> <span class="mf">0.00005</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cur_max</span><span class="p">)</span>
+
+            <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cur_min</span><span class="p">,</span> <span class="n">cur_max</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_bounds</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">wrapper_2</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">):</span>
+
+            <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_bounds</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+            <span class="n">jacv</span> <span class="o">=</span> <span class="n">get_jacobian</span><span class="p">(</span><span class="n">wrapper_2</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">jacv</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+            <span class="n">wrapper</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span>
+            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">],</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+            <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">,</span>
+            <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span><span class="p">[</span><span class="s2">&quot;tol&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Make sure the optimization worked</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">(</span>
+                <span class="s2">&quot;Could not converge. Message from solver: </span><span class="si">%s</span><span class="s2"> (status: </span><span class="si">%i</span><span class="s2">)&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Transform the result to numpy.array</span>
+
+        <span class="n">best_fit_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_fit_values</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">fun</span><span class="p">)</span></div>
+
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_check_bounds</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">val</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">min_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">max_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+
+                <span class="k">return</span> <span class="kc">False</span>
+
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

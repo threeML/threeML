@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.photometry.filter_set &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.photometry.filter_set</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.photometry.filter_set</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">zip</span>
+
+<span class="kn">import</span> <span class="nn">astropy.constants</span> <span class="k">as</span> <span class="nn">constants</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">astro_units</span>
+<span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">speclite.filters</span> <span class="k">as</span> <span class="nn">spec_filters</span>
+<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+
+<span class="kn">from</span> <span class="nn">threeML.utils.interval</span> <span class="kn">import</span> <span class="n">IntervalSet</span>
+
+<span class="n">_final_convert</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">keV</span> <span class="o">/</span> <span class="p">(</span><span class="n">astro_units</span><span class="o">.</span><span class="n">erg</span> <span class="o">*</span>
+                                                              <span class="n">astro_units</span><span class="o">.</span><span class="n">angstrom</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;1/(cm2 s)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+<span class="n">_hc_constant</span> <span class="o">=</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+    <span class="n">astro_units</span><span class="o">.</span><span class="n">erg</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">angstrom</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+
+<div class="viewcode-block" id="NotASpeclikeFilter"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.NotASpeclikeFilter">[docs]</a><span class="k">class</span> <span class="nc">NotASpeclikeFilter</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="FilterSet"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet">[docs]</a><span class="k">class</span> <span class="nc">FilterSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class handles the optical filter functionality. It is build around speclite:</span>
+<span class="sd">        http://speclite.readthedocs.io/en/latest/</span>
+
+<span class="sd">        It accepts speclite fitlerresponse or sequences, allowing for full customization</span>
+<span class="sd">        of the fitlers.</span>
+
+
+
+<span class="sd">        :param filter: a speclite FitlerResponse or FilterSequence</span>
+<span class="sd">        :param mask: an initial mask on the filters (bool array) that remains fixed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we explicitly violate duck typing here in order to have one routine</span>
+        <span class="c1"># to return values from the filters (speclite appends &#39;s&#39; to the end of sequence calls)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">spec_filters</span><span class="o">.</span><span class="n">FilterResponse</span><span class="p">):</span>
+
+            <span class="c1"># we will make a sequence</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="n">spec_filters</span><span class="o">.</span><span class="n">FilterSequence</span><span class="p">([</span><span class="nb">filter</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">spec_filters</span><span class="o">.</span><span class="n">FilterSequence</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="nb">filter</span>  <span class="c1"># type: spec_filters.FilterSequence</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="n">NotASpeclikeFilter</span><span class="p">(</span>
+                <span class="s2">&quot;filter must be a speclite FilterResponse or FilterSequence&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">response</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="n">condition</span><span class="p">:</span>
+
+                    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span> <span class="o">=</span> <span class="n">spec_filters</span><span class="o">.</span><span class="n">FilterSequence</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                                    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">names</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_long_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">names</span>
+
+        <span class="c1"># haven&#39;t set a likelihood model yet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_set</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_filters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span>
+
+        <span class="c1"># calculate the FWHM</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_fwhm</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wavelength_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        IntervalSet of FWHM bounds of the filters</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavebounds</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_fwhm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        calculate the FWHM of the filters</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">wmin</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">wmax</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># go through each filter</span>
+        <span class="c1"># and find the non-gaussian FWHM bounds</span>
+
+        <span class="k">for</span> <span class="nb">filter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">:</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">response</span>
+            <span class="n">max_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">idx_max</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">half_max</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">max_response</span>
+
+            <span class="n">idx1</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">response</span><span class="p">[:</span><span class="n">idx_max</span><span class="p">]</span> <span class="o">-</span> <span class="n">half_max</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+
+            <span class="n">idx2</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">idx_max</span><span class="p">:]</span> <span class="o">-</span> <span class="n">half_max</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span> <span class="o">+</span> <span class="n">idx_max</span>
+
+            <span class="c1"># have to grab the private member here</span>
+            <span class="c1"># bc the library does not expose it!</span>
+
+            <span class="n">w1</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">[</span><span class="n">idx1</span><span class="p">]</span>
+            <span class="n">w2</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">_wavelength</span><span class="p">[</span><span class="n">idx2</span><span class="p">]</span>
+
+            <span class="n">wmin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+            <span class="n">wmax</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wavebounds</span> <span class="o">=</span> <span class="n">IntervalSet</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">wmin</span><span class="p">,</span> <span class="n">wmax</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FilterSet.set_model"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">differential_flux</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set the model of that will be used during the convolution. Not that speclite</span>
+<span class="sd">        considers a differential flux to be in units of erg/s/cm2/lambda so we must convert</span>
+<span class="sd">        astromodels into the proper units (using astropy units!)</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">conversion_factor</span> <span class="o">=</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">c</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span>
+                             <span class="n">constants</span><span class="o">.</span><span class="n">h</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;keV2 * cm2&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zero_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wavelengths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_energies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_terms</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">filter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">):</span>
+
+            <span class="c1"># precompute the zeropoints</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_zero_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">ab_zeropoint</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;1/(cm2 s)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+            <span class="c1"># save the wavelenghts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wavelengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">filter</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span>
+
+            <span class="c1"># we are going to input things in to the astromodels</span>
+            <span class="c1"># funtion as keV and convert back later</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_energies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">filter</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">angstrom</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;keV&quot;</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">astro_units</span><span class="o">.</span><span class="n">spectral</span><span class="p">())</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">conversion_factor</span> <span class="o">/</span> <span class="p">((</span><span class="nb">filter</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">*</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">angstrom</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">filter</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">filter</span><span class="o">.</span><span class="n">wavelength</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_differential_flux</span> <span class="o">=</span> <span class="n">differential_flux</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_set</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="FilterSet.ab_magnitudes"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet.ab_magnitudes">[docs]</a>    <span class="k">def</span> <span class="nf">ab_magnitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return the effective stimulus of the model and filter for the given</span>
+<span class="sd">        magnitude system</span>
+<span class="sd">        :return: np.ndarray of ab magnitudes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_set</span><span class="p">,</span> <span class="s2">&quot;no likelihood model has been set&quot;</span>
+
+        <span class="c1"># speclite has issues with unit conversion</span>
+        <span class="c1"># so we will do the calculation manually here</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_filters</span><span class="p">):</span>
+
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_conolve_and_convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_differential_flux</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_energies</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">_wavelengths</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">_zero_points</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">_n_terms</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                       <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FilterSet.plot_filters"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet.plot_filters">[docs]</a>    <span class="k">def</span> <span class="nf">plot_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        plot the filter/ transmission curves</span>
+<span class="sd">        :return: fig</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">spec_filters</span><span class="o">.</span><span class="n">plot_filters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_bands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the number of bands</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the filter names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">native_filter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the native filter names</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">names</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">speclite_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        exposes the speclite fitlers for simulations</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">effective_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the average wave length of the filters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filters</span><span class="o">.</span><span class="n">effective_wavelengths</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">waveunits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return: the pysynphot wave units</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">astro_units</span><span class="o">.</span><span class="n">Angstrom</span></div>
+
+
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_conolve_and_convert</span><span class="p">(</span><span class="n">diff_flux</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">zero_point</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+
+        <span class="n">diff_flux</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*=</span> <span class="n">factor</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">response</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">wavelength</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">/</span> <span class="n">_hc_constant</span>
+
+    <span class="c1"># this will be in some funky units so we convert to 1/ cm2 s</span>
+    <span class="n">synthetic_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">diff_flux</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span> <span class="o">*</span> <span class="n">_final_convert</span>
+
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">synthetic_flux</span> <span class="o">/</span> <span class="n">zero_point</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

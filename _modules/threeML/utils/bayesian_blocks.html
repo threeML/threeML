@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.bayesian_blocks &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.bayesian_blocks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.bayesian_blocks</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Author: Giacomo Vianello (giacomov@stanford.edu)</span>
+
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numexpr</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bayesian_blocks&quot;</span><span class="p">,</span> <span class="s2">&quot;bayesian_blocks_not_unique&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="bayesian_blocks_not_unique"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.bayesian_blocks.bayesian_blocks_not_unique">[docs]</a><span class="k">def</span> <span class="nf">bayesian_blocks_not_unique</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">):</span>
+    <span class="c1"># Verify that the input array is one-dimensional</span>
+    <span class="n">tt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">tt</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="c1"># Now create the array of unique times</span>
+
+    <span class="n">unique_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">tt</span>
+    <span class="n">tstart</span> <span class="o">=</span> <span class="n">ttstart</span>
+    <span class="n">tstop</span> <span class="o">=</span> <span class="n">ttstop</span>
+
+    <span class="c1"># Create initial cell edges (Voronoi tessellation) using the unique time stamps</span>
+
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">tstart</span><span class="p">],</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">unique_t</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">unique_t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="n">tstop</span><span class="p">]])</span>
+
+    <span class="c1"># The last block length is 0 by definition</span>
+    <span class="n">block_length</span> <span class="o">=</span> <span class="n">tstop</span> <span class="o">-</span> <span class="n">edges</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">block_length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Events appears to be out of order! Check for order, or duplicated events.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">unique_t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># arrays to store the best configuration</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># Pre-computed priors (for speed)</span>
+    <span class="c1"># eq. 21 from Scargle 2012</span>
+
+    <span class="n">priors</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">73.53</span> <span class="o">*</span> <span class="n">p0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="mf">0.478</span><span class="p">))</span>
+
+    <span class="c1"># Count how many events are in each Voronoi cell</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span>
+
+    <span class="c1"># Speed tricks: resolve once for all the functions which will be used</span>
+    <span class="c1"># in the loop</span>
+    <span class="n">cumsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span>
+    <span class="n">argmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span>
+    <span class="n">numexpr_evaluate</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">evaluate</span>
+    <span class="n">arange</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span>
+
+    <span class="c1"># Decide the step for reporting progress</span>
+    <span class="n">incr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="mi">10</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Finding blocks...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># This is where the computation happens. Following Scargle et al. 2012.</span>
+    <span class="c1"># This loop has been optimized for speed:</span>
+    <span class="c1"># * the expression for the fitness function has been rewritten to</span>
+    <span class="c1">#  avoid multiple log computations, and to avoid power computations</span>
+    <span class="c1"># * the use of scipy.weave and numexpr has been evaluated. The latter</span>
+    <span class="c1">#  gives a big gain (~40%) if used for the fitness function. No other</span>
+    <span class="c1">#  gain is obtained by using it anywhere else</span>
+
+    <span class="c1"># Set numexpr precision to low (more than enough for us), which is</span>
+    <span class="c1"># faster than high</span>
+    <span class="n">oldaccuracy</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="s2">&quot;low&quot;</span><span class="p">)</span>
+    <span class="n">numexpr</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    
+
+    <span class="k">for</span> <span class="n">R</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)):</span>
+        <span class="n">br</span> <span class="o">=</span> <span class="n">block_length</span><span class="p">[</span><span class="n">R</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">T_k</span> <span class="o">=</span> <span class="n">block_length</span><span class="p">[:</span> <span class="n">R</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">br</span>
+
+        <span class="c1"># N_k: number of elements in each block</span>
+        <span class="c1"># This expression has been simplified for the case of</span>
+        <span class="c1"># unbinned events (i.e., one element in each block)</span>
+        <span class="c1"># It was:</span>
+        <span class="n">N_k</span> <span class="o">=</span> <span class="n">cumsum</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span> <span class="n">R</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Now it is:</span>
+        <span class="c1"># N_k = arange(R + 1, 0, -1)</span>
+
+        <span class="c1"># Evaluate fitness function</span>
+        <span class="c1"># This is the slowest part, which I&#39;m speeding up by using</span>
+        <span class="c1"># numexpr. It provides a ~40% gain in execution speed.</span>
+
+        <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_evaluate</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;N_k * log(N_k/ T_k) &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="n">optimization</span><span class="o">=</span><span class="s2">&quot;aggressive&quot;</span><span class="p">,</span>
+            <span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;N_k&quot;</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">&quot;T_k&quot;</span><span class="p">:</span> <span class="n">T_k</span><span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">priors</span><span class="p">[</span><span class="n">R</span><span class="p">]</span>
+
+        <span class="n">A_R</span> <span class="o">=</span> <span class="n">fit_vec</span> <span class="o">-</span> <span class="n">p</span>
+
+        <span class="n">A_R</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+=</span> <span class="n">best</span><span class="p">[:</span><span class="n">R</span><span class="p">]</span>
+
+        <span class="n">i_max</span> <span class="o">=</span> <span class="n">argmax</span><span class="p">(</span><span class="n">A_R</span><span class="p">)</span>
+
+        <span class="n">last</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_max</span>
+        <span class="n">best</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_R</span><span class="p">[</span><span class="n">i_max</span><span class="p">]</span>
+
+        
+
+    <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="n">oldaccuracy</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Now find blocks</span>
+    <span class="n">change_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">i_cp</span> <span class="o">=</span> <span class="n">N</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">N</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">i_cp</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">change_points</span><span class="p">[</span><span class="n">i_cp</span><span class="p">]</span> <span class="o">=</span> <span class="n">ind</span>
+
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">last</span><span class="p">[</span><span class="n">ind</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">change_points</span> <span class="o">=</span> <span class="n">change_points</span><span class="p">[</span><span class="n">i_cp</span><span class="p">:]</span>
+
+    <span class="n">finalEdges</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="n">change_points</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">finalEdges</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bayesian_blocks"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.bayesian_blocks.bayesian_blocks">[docs]</a><span class="k">def</span> <span class="nf">bayesian_blocks</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Divide a series of events characterized by their arrival time in blocks</span>
+<span class="sd">    of perceptibly constant count rate. If the background integral distribution</span>
+<span class="sd">    is given, divide the series in blocks where the difference with respect to</span>
+<span class="sd">    the background is perceptibly constant.</span>
+
+<span class="sd">    :param tt: arrival times of the events</span>
+<span class="sd">    :param ttstart: the start of the interval</span>
+<span class="sd">    :param ttstop: the stop of the interval</span>
+<span class="sd">    :param p0: the false positive probability. This is used to decide the penalization on the likelihood, so this</span>
+<span class="sd">    parameter affects the number of blocks</span>
+<span class="sd">    :param bkg_integral_distribution: (default: None) If given, the algorithm account for the presence of the background and</span>
+<span class="sd">    finds changes in rate with respect to the background</span>
+<span class="sd">    :return: the np.array containing the edges of the blocks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Verify that the input array is one-dimensional</span>
+    <span class="n">tt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">tt</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">bkg_integral_distribution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># Transforming the inhomogeneous Poisson process into an homogeneous one with rate 1,</span>
+        <span class="c1"># by changing the time axis according to the background rate</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Transforming the inhomogeneous Poisson process to a homogeneous one with rate 1...&quot;</span>
+        <span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bkg_integral_distribution</span><span class="p">(</span><span class="n">tt</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Now compute the start and stop time in the new system</span>
+        <span class="n">tstart</span> <span class="o">=</span> <span class="n">bkg_integral_distribution</span><span class="p">(</span><span class="n">ttstart</span><span class="p">)</span>
+        <span class="n">tstop</span> <span class="o">=</span> <span class="n">bkg_integral_distribution</span><span class="p">(</span><span class="n">ttstop</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="n">tt</span>
+        <span class="n">tstart</span> <span class="o">=</span> <span class="n">ttstart</span>
+        <span class="n">tstop</span> <span class="o">=</span> <span class="n">ttstop</span>
+
+    <span class="c1"># Create initial cell edges (Voronoi tessellation)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]])</span>
+
+    <span class="c1"># Create the edges also in the original time system</span>
+    <span class="n">edges_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">tt</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">tt</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="n">tt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]])</span>
+
+    <span class="c1"># Create a lookup table to be able to transform back from the transformed system</span>
+    <span class="c1"># to the original one</span>
+    <span class="n">lookup_table</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">edges_</span><span class="p">)}</span>
+
+    <span class="c1"># The last block length is 0 by definition</span>
+    <span class="n">block_length</span> <span class="o">=</span> <span class="n">tstop</span> <span class="o">-</span> <span class="n">edges</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">block_length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Events appears to be out of order! Check for order, or duplicated events.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># arrays to store the best configuration</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># eq. 21 from Scargle 2012</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">73.53</span> <span class="o">*</span> <span class="n">p0</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.478</span><span class="p">))</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Finding blocks...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># This is where the computation happens. Following Scargle et al. 2012.</span>
+    <span class="c1"># This loop has been optimized for speed:</span>
+    <span class="c1"># * the expression for the fitness function has been rewritten to</span>
+    <span class="c1">#  avoid multiple log computations, and to avoid power computations</span>
+    <span class="c1"># * the use of scipy.weave and numexpr has been evaluated. The latter</span>
+    <span class="c1">#  gives a big gain (~40%) if used for the fitness function. No other</span>
+    <span class="c1">#  gain is obtained by using it anywhere else</span>
+
+    <span class="c1"># Set numexpr precision to low (more than enough for us), which is</span>
+    <span class="c1"># faster than high</span>
+    <span class="n">oldaccuracy</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="s2">&quot;low&quot;</span><span class="p">)</span>
+    <span class="n">numexpr</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Speed tricks: resolve once for all the functions which will be used</span>
+    <span class="c1"># in the loop</span>
+    <span class="n">numexpr_evaluate</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">evaluate</span>
+    <span class="n">numexpr_re_evaluate</span> <span class="o">=</span> <span class="n">numexpr</span><span class="o">.</span><span class="n">re_evaluate</span>
+
+    <span class="c1"># Pre-compute this</span>
+
+    <span class="n">aranges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">R</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">br</span> <span class="o">=</span> <span class="n">block_length</span><span class="p">[</span><span class="n">R</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">T_k</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">block_length</span><span class="p">[:</span> <span class="n">R</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">br</span>
+        <span class="p">)</span>  <span class="c1"># this looks like it is not used, but it actually is,</span>
+        <span class="c1"># inside the numexpr expression</span>
+
+        <span class="c1"># N_k: number of elements in each block</span>
+        <span class="c1"># This expression has been simplified for the case of</span>
+        <span class="c1"># unbinned events (i.e., one element in each block)</span>
+        <span class="c1"># It was:</span>
+        <span class="c1"># N_k = cumsum(x[:R + 1][::-1])[::-1]</span>
+        <span class="c1"># Now it is:</span>
+        <span class="n">N_k</span> <span class="o">=</span> <span class="n">aranges</span><span class="p">[</span><span class="n">N</span> <span class="o">-</span> <span class="n">R</span> <span class="p">:]</span>
+        <span class="c1"># where aranges has been pre-computed</span>
+
+        <span class="c1"># Evaluate fitness function</span>
+        <span class="c1"># This is the slowest part, which I&#39;m speeding up by using</span>
+        <span class="c1"># numexpr. It provides a ~40% gain in execution speed.</span>
+
+        <span class="c1"># The first time we need to &quot;compile&quot; the expression in numexpr,</span>
+        <span class="c1"># all the other times we can reuse it</span>
+
+        <span class="k">if</span> <span class="n">R</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_evaluate</span><span class="p">(</span>
+                <span class="sd">&quot;&quot;&quot;N_k * log(N_k/ T_k) &quot;&quot;&quot;</span><span class="p">,</span>
+                <span class="n">optimization</span><span class="o">=</span><span class="s2">&quot;aggressive&quot;</span><span class="p">,</span>
+                <span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;N_k&quot;</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">&quot;T_k&quot;</span><span class="p">:</span> <span class="n">T_k</span><span class="p">},</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">fit_vec</span> <span class="o">=</span> <span class="n">numexpr_re_evaluate</span><span class="p">(</span><span class="n">local_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;N_k&quot;</span><span class="p">:</span> <span class="n">N_k</span><span class="p">,</span> <span class="s2">&quot;T_k&quot;</span><span class="p">:</span> <span class="n">T_k</span><span class="p">})</span>
+
+        <span class="n">A_R</span> <span class="o">=</span> <span class="n">fit_vec</span> <span class="o">-</span> <span class="n">prior</span>  <span class="c1"># type: np.ndarray</span>
+
+        <span class="n">A_R</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+=</span> <span class="n">best</span><span class="p">[:</span><span class="n">R</span><span class="p">]</span>
+
+        <span class="n">i_max</span> <span class="o">=</span> <span class="n">A_R</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+
+        <span class="n">last</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_max</span>
+        <span class="n">best</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_R</span><span class="p">[</span><span class="n">i_max</span><span class="p">]</span>
+
+    <span class="n">numexpr</span><span class="o">.</span><span class="n">set_vml_accuracy_mode</span><span class="p">(</span><span class="n">oldaccuracy</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Now peel off and find the blocks (see the algorithm in Scargle et al.)</span>
+    <span class="n">change_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">i_cp</span> <span class="o">=</span> <span class="n">N</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">N</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+        <span class="n">i_cp</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="n">change_points</span><span class="p">[</span><span class="n">i_cp</span><span class="p">]</span> <span class="o">=</span> <span class="n">ind</span>
+
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="k">break</span>
+
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">last</span><span class="p">[</span><span class="n">ind</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">change_points</span> <span class="o">=</span> <span class="n">change_points</span><span class="p">[</span><span class="n">i_cp</span><span class="p">:]</span>
+
+    <span class="n">edg</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="n">change_points</span><span class="p">]</span>
+
+    <span class="c1"># Transform the found edges back into the original time system</span>
+
+    <span class="k">if</span> <span class="n">bkg_integral_distribution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">final_edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">lookup_table</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">edg</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">final_edges</span> <span class="o">=</span> <span class="n">edg</span>
+
+    <span class="c1"># Now fix the first and last edge so that they are tstart and tstop</span>
+    <span class="n">final_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttstart</span>
+    <span class="n">final_edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttstop</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">final_edges</span><span class="p">)</span></div>
+
+
+<span class="c1"># To be run with a profiler</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">tt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">tt</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;sim.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tt</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">))</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">bayesian_blocks</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

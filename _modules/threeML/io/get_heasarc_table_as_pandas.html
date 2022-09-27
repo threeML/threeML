@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.io.get_heasarc_table_as_pandas &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.io.get_heasarc_table_as_pandas</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.io.get_heasarc_table_as_pandas</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">urllib.error</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">map</span>
+
+<span class="kn">import</span> <span class="nn">astropy.io.votable</span> <span class="k">as</span> <span class="nn">votable</span>
+<span class="kn">import</span> <span class="nn">astropy.time</span> <span class="k">as</span> <span class="nn">astro_time</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">file_existing_and_readable</span><span class="p">,</span>
+                                   <span class="n">if_directory_not_existing_then_make</span><span class="p">,</span>
+                                   <span class="n">sanitize_filename</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_heasarc_table_as_pandas"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas">[docs]</a><span class="k">def</span> <span class="nf">get_heasarc_table_as_pandas</span><span class="p">(</span><span class="n">heasarc_table_name</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Obtain a a VO table from the HEASARC archives and return it as a pandas table indexed</span>
+<span class="sd">    by object/trigger names. The heasarc_table_name values are the ones referenced at:</span>
+
+<span class="sd">    https://heasarc.gsfc.nasa.gov/docs/archive/vo/</span>
+
+<span class="sd">    In order to speed up the processing of the tables, 3ML can cache the XML table in a cache</span>
+<span class="sd">    that is updated every cache_time_days. The cache can be forced to update, i.e, reload from</span>
+<span class="sd">    the web, by setting update to True.</span>
+
+
+<span class="sd">    :param heasarc_table_name: the name of a HEASARC browse table</span>
+<span class="sd">    :param update: force web read of the table and update cache</span>
+<span class="sd">    :param cache_time_days: number of days to hold the current cache</span>
+<span class="sd">    :return: pandas DataFrame with results and astropy table</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># make sure the table is a string</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">heasarc_table_name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span>
+
+    <span class="c1"># point to the cache directory and create it if it is not existing</span>
+
+    <span class="n">cache_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;~/.threeML/.cache&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+    
+    <span class="n">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">cache_directory</span><span class="p">)</span>
+
+    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">cache_directory</span> <span class="o">/</span>  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">_cache.yml&quot;</span>
+
+    <span class="n">cache_file_sanatized</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span>
+
+    <span class="c1"># build and sanitize the votable XML file that will be saved</span>
+
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">cache_directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">_votable.xml&quot;</span>
+
+    <span class="n">file_name_sanatized</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">cache_file_sanatized</span><span class="p">):</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;The cache for </span><span class="si">%s</span><span class="s2"> does not yet exist. We will try to build it</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="n">heasarc_table_name</span>
+        <span class="p">)</span>
+
+        <span class="n">write_cache</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">cache_exists</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">with</span> <span class="n">cache_file_sanatized</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+
+            <span class="c1"># the cache file is two lines. The first is a datetime string that</span>
+            <span class="c1"># specifies the last time the XML file was obtained</span>
+
+            <span class="n">yaml_cache</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">)</span>
+
+            <span class="n">cached_time</span> <span class="o">=</span> <span class="n">astro_time</span><span class="o">.</span><span class="n">Time</span><span class="p">(</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span>
+                    <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">yaml_cache</span><span class="p">[</span><span class="s2">&quot;last save&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">))))</span>
+            <span class="p">)</span>
+
+            <span class="c1"># the second line how many seconds to keep the file around</span>
+
+            <span class="n">cache_valid_for</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml_cache</span><span class="p">[</span><span class="s2">&quot;cache time&quot;</span><span class="p">])</span>
+
+            <span class="c1"># now we will compare it to the current time in UTC</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">astro_time</span><span class="o">.</span><span class="n">Time</span><span class="p">(</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;utc&quot;</span><span class="p">)</span>
+
+            <span class="n">delta_time</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">cached_time</span>
+
+            <span class="k">if</span> <span class="n">delta_time</span><span class="o">.</span><span class="n">sec</span> <span class="o">&gt;=</span> <span class="n">cache_valid_for</span><span class="p">:</span>
+
+                <span class="c1"># ok, this is an old file, we will update it</span>
+
+                <span class="n">write_cache</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">cache_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># we</span>
+
+                <span class="n">write_cache</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">cache_exists</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">write_cache</span> <span class="ow">or</span> <span class="n">update</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Building cache for </span><span class="si">{</span><span class="n">heasarc_table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># go to HEASARC and get the requested table</span>
+        <span class="n">heasarc_url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;http://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=</span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="n">heasarc_table_name</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+                <span class="n">heasarc_url</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">file_name_sanatized</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The cache is outdated but the internet cannot be reached. Please check your connection&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)</span>
+            <span class="k">with</span> <span class="n">file_name_sanatized</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">table_file</span><span class="p">:</span>
+
+                <span class="c1"># might have to add this in for back compt J MICHAEL</span>
+
+                <span class="c1"># new_lines = [x. for x in table_file.readlines()]</span>
+
+                <span class="n">new_lines</span> <span class="o">=</span> <span class="n">table_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+            <span class="c1"># now write the decoded lines back to the file</span>
+            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name_sanatized</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">table_file</span><span class="p">:</span>
+
+                <span class="n">table_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_lines</span><span class="p">))</span>
+
+            <span class="c1">#        save the time that we go this table</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file_sanatized</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+
+                <span class="n">yaml_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="n">current_time</span> <span class="o">=</span> <span class="n">astro_time</span><span class="o">.</span><span class="n">Time</span><span class="p">(</span>
+                    <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;utc&quot;</span><span class="p">)</span>
+
+                <span class="n">yaml_dict</span><span class="p">[</span><span class="s2">&quot;last save&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">seconds_in_day</span> <span class="o">=</span> <span class="mf">86400.0</span>
+
+                <span class="n">yaml_dict</span><span class="p">[</span><span class="s2">&quot;cache time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">seconds_in_day</span> <span class="o">*</span> <span class="n">cache_time_days</span>
+
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">yaml_dict</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># use astropy routines to read the votable</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">vo_table</span> <span class="o">=</span> <span class="n">votable</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">file_name_sanatized</span><span class="p">))</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">vo_table</span><span class="o">.</span><span class="n">get_first_table</span><span class="p">()</span><span class="o">.</span><span class="n">to_table</span><span class="p">(</span><span class="n">use_names_over_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># make sure we do not use this as byte code</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">convert_bytestring_to_unicode</span><span class="p">()</span>
+
+        <span class="c1"># create a pandas table indexed by name</span>
+
+        <span class="n">pandas_df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">vo_table</span>
+
+        <span class="k">return</span> <span class="n">pandas_df</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Your search did not return any results&quot;</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">vo_table</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

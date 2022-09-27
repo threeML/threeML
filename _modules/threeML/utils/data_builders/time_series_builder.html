@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.data_builders.time_series_builder &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.data_builders.time_series_builder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.data_builders.time_series_builder</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">fits</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">file_existing_and_readable</span><span class="p">,</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.DispersionSpectrumLike</span> <span class="kn">import</span> <span class="n">DispersionSpectrumLike</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.OGIPLike</span> <span class="kn">import</span> <span class="n">OGIPLike</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="kn">import</span> <span class="n">NegativeBackground</span><span class="p">,</span> <span class="n">SpectrumLike</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.data_builders.fermi.gbm_data</span> <span class="kn">import</span> <span class="n">GBMCdata</span><span class="p">,</span> <span class="n">GBMTTEFile</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.data_builders.fermi.lat_data</span> <span class="kn">import</span> <span class="n">LLEFile</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.histogram</span> <span class="kn">import</span> <span class="n">Histogram</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.OGIP.pha</span> <span class="kn">import</span> <span class="n">PHAWrite</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.OGIP.response</span> <span class="kn">import</span> <span class="p">(</span><span class="n">InstrumentResponse</span><span class="p">,</span>
+                                         <span class="n">InstrumentResponseSet</span><span class="p">,</span> <span class="n">OGIPResponse</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.polarization.binned_polarization</span> <span class="kn">import</span> \
+    <span class="n">BinnedModulationCurve</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.binned_spectrum</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BinnedSpectrum</span><span class="p">,</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.pha_spectrum</span> <span class="kn">import</span> <span class="n">PHASpectrumSet</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">Significance</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_interval</span> <span class="kn">import</span> <span class="n">TimeIntervalSet</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_series.binned_spectrum_series</span> <span class="kn">import</span> \
+    <span class="n">BinnedSpectrumSeries</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_series.event_list</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EventList</span><span class="p">,</span> <span class="n">EventListWithDeadTime</span><span class="p">,</span> <span class="n">EventListWithDeadTimeFraction</span><span class="p">,</span>
+    <span class="n">EventListWithLiveTime</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.time_series.time_series</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config_utils</span> <span class="kn">import</span> <span class="n">get_value_kwargs</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">polarpy.polar_data</span> <span class="kn">import</span> <span class="n">POLARData</span>
+    <span class="kn">from</span> <span class="nn">polarpy.polar_response</span> <span class="kn">import</span> <span class="n">PolarResponse</span>
+    <span class="kn">from</span> <span class="nn">polarpy.polarlike</span> <span class="kn">import</span> <span class="n">PolarLike</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;POLAR plugins are available&quot;</span><span class="p">)</span>
+
+    <span class="n">has_polarpy</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;POLAR plugins are unavailable&quot;</span><span class="p">)</span>
+
+    <span class="n">has_polarpy</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="kn">import</span> <span class="nn">gbm_drm_gen</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GBM RSP generator is available&quot;</span><span class="p">)</span>
+
+    <span class="n">has_balrog</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GBM RSP generator is unavailable&quot;</span><span class="p">)</span>
+
+    <span class="n">has_balrog</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="BinningMethodError"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.BinningMethodError">[docs]</a><span class="k">class</span> <span class="nc">BinningMethodError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TimeSeriesBuilder"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="n">TimeSeries</span><span class="p">,</span>
+        <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">unbinned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">restore_poly_fit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class for handling generic time series data including binned and event list</span>
+<span class="sd">        series. Depending on the data, this class builds either a  SpectrumLike or</span>
+<span class="sd">        DisperisonSpectrumLike plugin</span>
+
+<span class="sd">        For specific instruments, use the TimeSeries.from() classmethods</span>
+
+
+<span class="sd">        :param name: name for the plugin</span>
+<span class="sd">        :param time_series: a TimeSeries instance</span>
+<span class="sd">        :param response: options InstrumentResponse instance</span>
+<span class="sd">        :param poly_order: the polynomial order to use for background fitting</span>
+<span class="sd">        :param unbinned: if the background should be fit unbinned</span>
+<span class="sd">        :param verbose: the verbosity switch</span>
+<span class="sd">        :param restore_poly_fit: file from which to read a prefitted background</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">time_series</span><span class="p">,</span> <span class="n">TimeSeries</span><span class="p">),</span> <span class="s2">&quot;must be a TimeSeries instance&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
+            <span class="n">container_type</span><span class="p">,</span> <span class="n">Histogram</span><span class="p">),</span> <span class="s2">&quot;must be a subclass of Histogram&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span> <span class="o">=</span> <span class="n">container_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">:</span> <span class="n">TimeSeries</span> <span class="o">=</span> <span class="n">time_series</span>
+
+        <span class="c1"># make sure we have a proper response</span>
+
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">InstrumentResponse</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">InstrumentResponseSet</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="p">),</span> <span class="s2">&quot;Response must be an instance of InstrumentResponse&quot;</span>
+
+        <span class="c1"># deal with RSP weighting if need be</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">InstrumentResponseSet</span><span class="p">):</span>
+
+            <span class="c1"># we have a weighted response</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rsp_is_weighted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weighted_rsp</span><span class="p">:</span> <span class="n">InstrumentResponseSet</span> <span class="o">=</span> <span class="n">response</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The response is weighted&quot;</span><span class="p">)</span>
+
+            <span class="c1"># just get a dummy response for the moment</span>
+            <span class="c1"># it will be corrected when we set the interval</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">InstrumentResponse</span><span class="o">.</span><span class="n">create_dummy_response</span><span class="p">(</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">ebounds</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">monte_carlo_energies</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rsp_is_weighted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weighted_rsp</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">response</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The response is not weighted&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_order</span> <span class="o">=</span> <span class="n">poly_order</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_unbinned</span> <span class="o">=</span> <span class="n">unbinned</span>
+
+        <span class="c1"># try and restore the poly fit if requested</span>
+
+        <span class="k">if</span> <span class="n">restore_poly_fit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting to read a previously fit background&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">restore_poly_fit</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">restore_fit</span><span class="p">(</span><span class="n">restore_poly_fit</span><span class="p">)</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully restored fit from </span><span class="si">{</span><span class="n">restore_poly_fit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Could not find saved background </span><span class="si">{</span><span class="n">restore_poly_fit</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;use_balrog&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This time series will use BALROG&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_use_balrog</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;use_balrog&quot;</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_use_balrog</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">pass</span>
+        <span class="c1"># super_out = super(EventListLike, self)._output()</span>
+        <span class="c1"># return super_out.append(self._time_series._output())</span>
+
+    <span class="k">def</span> <span class="nf">__set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Background poly order setter &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_order</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">___set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indirect poly order setter &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_poly_order</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get poly order &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_order</span>
+
+    <span class="k">def</span> <span class="nf">___get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indirect poly order getter &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_poly_order</span><span class="p">()</span>
+
+    <span class="n">background_poly_order</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">___get_poly_order</span><span class="p">,</span>
+        <span class="n">___set_poly_order</span><span class="p">,</span>
+        <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Get or set the background polynomial order&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.set_active_time_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.set_active_time_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_time_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the time interval to be used during the analysis.</span>
+<span class="sd">        For now, only one interval can be selected. This may be</span>
+<span class="sd">        updated in the future to allow for self consistent time</span>
+<span class="sd">        resolved analysis.</span>
+<span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+
+<span class="sd">        set_active_time_interval(&quot;0.0-10.0&quot;)</span>
+
+<span class="sd">        which will set the energy range 0-10. seconds.</span>
+<span class="sd">        :param options:</span>
+<span class="sd">        :param intervals:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;setting active time interval to </span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">intervals</span><span class="p">)</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">set_active_time_intervals</span><span class="p">(</span><span class="o">*</span><span class="n">intervals</span><span class="p">)</span>
+
+        <span class="c1"># extract a spectrum</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no response is set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rsp_is_weighted</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;weighted response is set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weighted_rsp</span><span class="o">.</span><span class="n">weight_by_counts</span><span class="p">(</span>
+                    <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">time_intervals</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;response is now set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">intervals</span>
+
+        <span class="c1"># re-get the background if there was a time selection</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_fit_exists</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;re-applying the background for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bkg_intervals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span>
+                <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
+                <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">extract</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">time_intervals</span><span class="o">.</span><span class="n">absolute_start_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">time_intervals</span><span class="o">.</span><span class="n">absolute_stop_time</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Interval set to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.fit_polynomial"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.fit_polynomial">[docs]</a>    <span class="k">def</span> <span class="nf">fit_polynomial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the polynominals to the selected time intervals. Must be called after</span>
+<span class="sd">        set_background_interval.</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">fit_polynomial</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.set_background_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.set_background_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_background_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the time interval to fit the background.</span>
+<span class="sd">        Multiple intervals can be input as separate arguments</span>
+<span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
+
+<span class="sd">        set_background_interval(&quot;-10.0-0.0&quot;,&quot;10.-15.&quot;)</span>
+
+
+<span class="sd">        :param *intervals:</span>
+<span class="sd">        :param **kwargs:</span>
+
+<span class="sd">        :return: none</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fit_poly</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">get_value_kwargs</span><span class="p">(</span><span class="s2">&quot;fit_poly&quot;</span><span class="p">,</span>
+                                            <span class="nb">bool</span><span class="p">,</span>
+                                            <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_poly</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">unbinned</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">get_value_kwargs</span><span class="p">(</span><span class="s2">&quot;unbinned&quot;</span><span class="p">,</span>
+                                            <span class="nb">bool</span><span class="p">,</span>
+                                            <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">unbinned</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">bayes</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">get_value_kwargs</span><span class="p">(</span><span class="s2">&quot;bayes&quot;</span><span class="p">,</span>
+                                         <span class="nb">bool</span><span class="p">,</span>
+                                         <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">bayes</span><span class="p">,</span>
+                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using unbinned is </span><span class="si">{</span><span class="n">unbinned</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting bkg selection for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">set_background_interval</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="n">bayes</span><span class="p">,</span> <span class="n">fit_poly</span><span class="o">=</span><span class="n">fit_poly</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Finished setting bkg selection for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># In theory this will automatically get the poly counts if a</span>
+        <span class="c1"># time interval already exists</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;the active interval was already set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_fit_exists</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span>
+                            <span class="n">use_poly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bkg w/o rsp set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_fit_exists</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
+                            <span class="n">use_poly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="o">.</span><span class="n">from_time_series</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
+                        <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">extract</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bkg w/ rsp set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.write_pha_from_binner"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.write_pha_from_binner">[docs]</a>    <span class="k">def</span> <span class="nf">write_pha_from_binner</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_rsp_write</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">extract_measured_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write PHA fits files from the selected bins. If writing from an event list, the</span>
+<span class="sd">        bins are from create_time_bins. If using a pre-time binned time series, the bins are those</span>
+<span class="sd">        native to the data. Start and stop times can be used to  control which bins are written to files</span>
+
+<span class="sd">        :param file_name: the file name of the output files</span>
+<span class="sd">        :param start: optional start time of the bins</span>
+<span class="sd">        :param stop: optional stop time of the bins</span>
+<span class="sd">        :param overwrite: if the fits files should be overwritten</span>
+<span class="sd">        :param force_rsp_write: force the writing of RSPs</span>
+<span class="sd">        :param extract_measured_background: Use the selected background rather than a polynomial fit to the background</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we simply create a bunch of dispersion plugins and convert them to OGIP</span>
+
+        <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">ogip_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">OGIPLike</span><span class="o">.</span><span class="n">from_general_dispersion_spectrum</span><span class="p">(</span><span class="n">sl</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">sl</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">(</span>
+                    <span class="n">from_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+                    <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span>
+                    <span class="n">extract_measured_background</span><span class="o">=</span><span class="n">extract_measured_background</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+
+        <span class="c1"># write out the PHAII file</span>
+
+        <span class="n">pha_writer</span> <span class="o">=</span> <span class="n">PHAWrite</span><span class="p">(</span><span class="o">*</span><span class="n">ogip_list</span><span class="p">)</span>
+
+        <span class="n">pha_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="n">file_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="o">=</span><span class="n">force_rsp_write</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selections saved to </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.get_background_parameters"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.get_background_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_background_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a pandas DataFrame containing the background polynomial</span>
+<span class="sd">        coefficients for each channel.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">get_poly_info</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.save_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.save_background">[docs]</a>    <span class="k">def</span> <span class="nf">save_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        save the background to and HDF5 file. The filename does not need an extension.</span>
+<span class="sd">        The filename will be saved as &lt;filename&gt;_bkg.h5</span>
+
+
+
+<span class="sd">        :param file_name: name of file to save</span>
+<span class="sd">        :param overwrite: to overwrite or not</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">save_background</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved background to </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.view_lightcurve"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.view_lightcurve">[docs]</a>    <span class="k">def</span> <span class="nf">view_lightcurve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">use_binner</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_echans_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">use_echans_stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+        <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        view the binned light curve</span>
+
+<span class="sd">        :param start: start time of viewing</span>
+<span class="sd">        :param stop: stop time of viewing</span>
+<span class="sd">        :param dt: cadance of binning</span>
+<span class="sd">        :param use_binner: use the binning created by a binning method</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span>
+                                                 <span class="n">use_binner</span><span class="p">,</span>
+                                                 <span class="n">use_echans_start</span><span class="p">,</span>
+                                                 <span class="n">use_echans_stop</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tstart</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: start time of the active interval</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tstop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: stop time of the active interval</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_series</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimeSeries</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">significance_per_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">sig_per_interval</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># go thru each interval and extract the significance</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">bin_stack</span><span class="p">:</span>
+
+                <span class="n">total_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">counts_over_interval</span><span class="p">(</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+                <span class="n">bkg_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">get_total_poly_count</span><span class="p">(</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+                <span class="n">bkg_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">get_total_poly_error</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+                <span class="n">sig_calc</span> <span class="o">=</span> <span class="n">Significance</span><span class="p">(</span><span class="n">total_counts</span><span class="p">,</span> <span class="n">bkg_counts</span><span class="p">)</span>
+
+                <span class="n">sig_per_interval</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">sig_calc</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span><span class="n">bkg_error</span><span class="p">)[</span>
+                        <span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sig_per_interval</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_counts_per_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">total_counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">bin_stack</span><span class="p">:</span>
+
+                <span class="n">total_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">counts_over_interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">background_counts_per_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">total_counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">bin_stack</span><span class="p">:</span>
+                <span class="n">total_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">get_total_poly_count</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.read_bins"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.read_bins">[docs]</a>    <span class="k">def</span> <span class="nf">read_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_series_builder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Read the temporal bins from another *binned* TimeSeriesBuilder instance</span>
+<span class="sd">        and apply those bins to this instance</span>
+
+<span class="sd">        :param time_series_builder: *binned* time series builder to copy</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;setting bins of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> to those of </span><span class="si">{</span><span class="n">time_series_builder</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">other_bins</span> <span class="o">=</span> <span class="n">time_series_builder</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">bin_stack</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span>
+            <span class="n">other_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">other_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;custom&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.create_time_bins"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.create_time_bins">[docs]</a>    <span class="k">def</span> <span class="nf">create_time_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).</span>
+<span class="sd">        Each method has required keywords specified in the parameters. Once created, this can be used as</span>
+<span class="sd">        a JointlikelihoodSet generator, or as input for viewing the light curve.</span>
+
+<span class="sd">        :param start: start of the bins or array of start times for custom mode</span>
+<span class="sd">        :param stop: stop of the bins or array of stop times for custom mode</span>
+<span class="sd">        :param method: constant, significance, bayesblocks, custom</span>
+
+<span class="sd">        :param dt: &lt;constant method&gt; delta time of the</span>
+<span class="sd">        :param sigma: &lt;significance&gt; sigma level of bins</span>
+<span class="sd">        :param min_counts: (optional) &lt;significance&gt; minimum number of counts per bin</span>
+<span class="sd">        :param p0: &lt;bayesblocks&gt; the chance probability of having the correct bin configuration.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="p">,</span> <span class="n">EventList</span>
+        <span class="p">),</span> <span class="s2">&quot;can only bin event lists currently&quot;</span>
+
+        <span class="c1"># if &#39;use_energy_mask&#39; in kwargs:</span>
+        <span class="c1">#</span>
+        <span class="c1">#     use_energy_mask = kwargs.pop(&#39;use_energy_mask&#39;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#</span>
+        <span class="c1">#     use_energy_mask = False</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;dt&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;constant bins requires the dt option set!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bin_by_constant</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;significance&quot;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;sigma&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;significance bins require a sigma argument&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="s2">&quot;min_counts&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+                <span class="n">min_counts</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;min_counts&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">min_counts</span> <span class="o">=</span> <span class="mi">10</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bin_by_significance</span><span class="p">(</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="n">min_counts</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bayesblocks&quot;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;p0&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;p0&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">p0</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+            <span class="k">if</span> <span class="s2">&quot;use_background&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+
+                <span class="n">use_background</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;use_background&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">use_background</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bin_by_bayesian_blocks</span><span class="p">(</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">use_background</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;custom&quot;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;start must be and array in custom mode&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;stop must be and array in custom mode&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">stop</span>
+            <span class="p">),</span> <span class="s2">&quot;must have equal number of start and stop times&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bin_by_custom</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Only constant, significance, bayesblock, or custom method argument accepted.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BinningMethodError</span><span class="p">()</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2"> bins via </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.to_spectrumlike"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.to_spectrumlike">[docs]</a>    <span class="k">def</span> <span class="nf">to_spectrumlike</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">from_bins</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">interval_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_interval&quot;</span><span class="p">,</span>
+        <span class="n">extract_measured_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create plugin(s) from either the current active selection or the time bins.</span>
+<span class="sd">        If creating from an event list, the</span>
+<span class="sd">        bins are from create_time_bins. If using a pre-time binned time series, the bins are those</span>
+<span class="sd">        native to the data. Start and stop times can be used to  control which bins are used.</span>
+
+<span class="sd">        :param from_bins: choose to create plugins from the time bins</span>
+<span class="sd">        :param start: optional start time of the bins</span>
+<span class="sd">        :param stop: optional stop time of the bins</span>
+<span class="sd">        :param extract_measured_background: Use the selected background rather than a polynomial fit to the background</span>
+<span class="sd">        :param interval_name: the name of the interval</span>
+<span class="sd">        :return: SpectrumLike plugin(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we can use either the modeled or the measured background. In theory, all the information</span>
+        <span class="c1"># in the background spectrum should propagate to the likelihood</span>
+
+        <span class="k">if</span> <span class="n">extract_measured_background</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;trying extract background as measurement in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trying extract background as model in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span>
+
+        <span class="c1"># this is for a single interval</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">from_bins</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;will extract a single spectrum&quot;</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;Must have selected an active time interval&quot;</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span> <span class="n">BinnedSpectrum</span>
+            <span class="p">),</span> <span class="s2">&quot;You are attempting to create a SpectrumLike plugin from the wrong data type&quot;</span>
+
+            <span class="k">if</span> <span class="n">this_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;No background selection has been made. This plugin will contain no background!&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;creating a SpectrumLike plugin named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">SpectrumLike</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+                    <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                    <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                    <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
+                    <span class="n">tstop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_balrog</span><span class="p">:</span>
+
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;creating a DispersionSpectrumLike plugin named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="k">return</span> <span class="n">DispersionSpectrumLike</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+                        <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                        <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                        <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
+                        <span class="n">tstop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;creating a BALROGLike plugin named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="k">return</span> <span class="n">gbm_drm_gen</span><span class="o">.</span><span class="n">BALROGLike</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+                        <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                        <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                        <span class="n">time</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">),</span>
+                        <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
+                        <span class="n">tstop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># this is for a set of intervals.</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;extracting a series of spectra&quot;</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;This time series does not have any bins!&quot;</span>
+
+            <span class="c1"># save the original interval if there is one</span>
+            <span class="n">old_interval</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span><span class="p">)</span>
+            <span class="n">old_verbose</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+
+            <span class="c1"># we will keep it quiet to keep from being annoying</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">list_of_speclikes</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># get the bins from the time series</span>
+            <span class="c1"># for event lists, these are from created bins</span>
+            <span class="c1"># for binned spectra sets, these are the native bines</span>
+
+            <span class="n">these_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span>  <span class="c1"># type: TimeIntervalSet</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must specify a start AND a stop time&quot;</span>
+
+            <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must specify a start AND a stop time&quot;</span>
+
+                <span class="n">these_bins</span> <span class="o">=</span> <span class="n">these_bins</span><span class="o">.</span><span class="n">containing_interval</span><span class="p">(</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># loop through the intervals and create spec likes</span>
+
+            <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">(</span><span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">these_bins</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Creating plugins&quot;</span><span class="p">)):</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span> <span class="n">BinnedSpectrum</span>
+                    <span class="p">),</span> <span class="s2">&quot;You are attempting to create a SpectrumLike plugin from the wrong data type&quot;</span>
+
+                    <span class="k">if</span> <span class="n">extract_measured_background</span><span class="p">:</span>
+
+                        <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span>
+
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;trying extract background as measurement in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span>
+
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;trying extract background as model in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">this_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;No bakckground selection has been made. This plugin will contain no background!&quot;</span>
+                        <span class="p">)</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+
+                        <span class="n">plugin_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}{</span><span class="n">interval_name</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;creating a SpectrumLike plugin named </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                            <span class="n">sl</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="p">(</span>
+                                <span class="n">name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span>
+                                <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                                <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                                <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
+                                <span class="n">tstop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
+                            <span class="p">)</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+
+                            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_balrog</span><span class="p">:</span>
+
+                                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;creating a DispersionSpectrumLike plugin named </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
+
+                                <span class="n">sl</span> <span class="o">=</span> <span class="n">DispersionSpectrumLike</span><span class="p">(</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span>
+                                    <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                                    <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                                    <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                                    <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
+                                    <span class="n">tstop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
+                                <span class="p">)</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+
+                                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;creating a BALROGLike plugin named </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
+
+                                <span class="n">sl</span> <span class="o">=</span> <span class="n">gbm_drm_gen</span><span class="o">.</span><span class="n">BALROGLike</span><span class="p">(</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span>
+                                    <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                                    <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                                    <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                                    <span class="n">time</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">),</span>
+                                    <span class="n">tstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span>
+                                    <span class="n">tstop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">,</span>
+                                <span class="p">)</span>
+
+                        <span class="n">list_of_speclikes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sl</span><span class="p">)</span>
+
+                    <span class="k">except</span> <span class="p">(</span><span class="n">NegativeBackground</span><span class="p">):</span>
+
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Something is wrong with interval </span><span class="si">{</span><span class="n">interval</span><span class="si">}</span><span class="s2"> skipping.&quot;</span>
+                        <span class="p">)</span>
+
+                <span class="c1"># restore the old interval</span>
+
+            <span class="k">if</span> <span class="n">old_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;restoring the old interval&quot;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="o">*</span><span class="n">old_interval</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">old_verbose</span>
+
+            <span class="k">return</span> <span class="n">list_of_speclikes</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_gbm_tte"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_gbm_tte">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_gbm_tte</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tte_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">rsp_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">trigger_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">unbinned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">use_balrog</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">trigdat_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">poshist_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cspec_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A plugin to natively bin, view, and handle Fermi GBM TTE data.</span>
+<span class="sd">        A TTE event file are required as well as the associated response</span>
+
+<span class="sd">        Background selections are specified as</span>
+<span class="sd">        a comma separated string e.g. &quot;-10-0,10-20&quot;</span>
+
+<span class="sd">        Initial source selection is input as a string e.g. &quot;0-5&quot;</span>
+
+<span class="sd">        One can choose a background polynomial order by hand (up to 4th order)</span>
+<span class="sd">        or leave it as the default polyorder=-1 to decide by LRT test</span>
+
+<span class="sd">        :param name: name for your choosing</span>
+<span class="sd">        :param tte_file: GBM tte event file</span>
+<span class="sd">        :param rsp_file: Associated TTE CSPEC response file</span>
+<span class="sd">        :param trigger_time: trigger time if needed</span>
+<span class="sd">        :param poly_order: 0-4 or -1 for auto</span>
+<span class="sd">        :param unbinned: unbinned likelihood fit (bool)</span>
+<span class="sd">        :param verbose: verbose (bool)</span>
+<span class="sd">        :param use_balrog:  (bool) if you have gbm_drm_gen installed, will build BALROGlike</span>
+<span class="sd">        :param trigdat_file: the trigdat file to use for location</span>
+<span class="sd">        :param poshist_file: the poshist file to use for location</span>
+<span class="sd">        :param cspec_file: the cspec file to use for location</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># self._default_unbinned = unbinned</span>
+
+        <span class="c1"># Load the relevant information from the TTE file</span>
+
+        <span class="n">gbm_tte_file</span> <span class="o">=</span> <span class="n">GBMTTEFile</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">tte_file</span><span class="p">))</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;loaded the TTE file </span><span class="si">{</span><span class="n">tte_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set a trigger time if one has not been set</span>
+
+        <span class="k">if</span> <span class="n">trigger_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;set custom trigger time&quot;</span><span class="p">)</span>
+
+            <span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">trigger_time</span> <span class="o">=</span> <span class="n">trigger_time</span>
+
+        <span class="c1"># Create the the event list</span>
+
+        <span class="n">event_list</span> <span class="o">=</span> <span class="n">EventListWithDeadTime</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">arrival_times</span> <span class="o">-</span> <span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">tstart</span> <span class="o">-</span> <span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">stop_time</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">tstop</span> <span class="o">-</span> <span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">dead_time</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">deadtime</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">det_name</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">use_balrog</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;using BALROG to build time series&quot;</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="n">has_balrog</span><span class="p">,</span> <span class="s2">&quot;you must install the gbm_drm_gen package to use balrog&quot;</span>
+
+            <span class="k">assert</span> <span class="n">cspec_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must include a cspecfile&quot;</span>
+
+            <span class="k">if</span> <span class="n">poshist_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;using a poshist file&quot;</span><span class="p">)</span>
+
+                <span class="n">drm_gen</span> <span class="o">=</span> <span class="n">gbm_drm_gen</span><span class="o">.</span><span class="n">DRMGenTTE</span><span class="p">(</span>
+                    <span class="n">tte_file</span><span class="p">,</span>
+                    <span class="n">poshist</span><span class="o">=</span><span class="n">poshist_file</span><span class="p">,</span>
+                    <span class="n">cspecfile</span><span class="o">=</span><span class="n">cspec_file</span><span class="p">,</span>
+                    <span class="n">T0</span><span class="o">=</span><span class="n">trigger_time</span><span class="p">,</span>
+                    <span class="n">mat_type</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">occult</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">trigdat_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;using a trigdat file&quot;</span><span class="p">)</span>
+
+                <span class="n">drm_gen</span> <span class="o">=</span> <span class="n">gbm_drm_gen</span><span class="o">.</span><span class="n">DRMGenTTE</span><span class="p">(</span>
+                    <span class="n">tte_file</span><span class="p">,</span>
+                    <span class="n">trigdat</span><span class="o">=</span><span class="n">trigdat_file</span><span class="p">,</span>
+                    <span class="n">cspecfile</span><span class="o">=</span><span class="n">cspec_file</span><span class="p">,</span>
+                    <span class="n">mat_type</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">occult</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No poshist or trigdat file supplied&quot;</span><span class="p">)</span>
+                <span class="ne">RuntimeError</span><span class="p">()</span>
+
+            <span class="n">rsp</span> <span class="o">=</span> <span class="n">gbm_drm_gen</span><span class="o">.</span><span class="n">BALROG_DRM</span><span class="p">(</span><span class="n">drm_gen</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+
+            <span class="c1"># we need to see if this is an RSP2</span>
+
+            <span class="n">test</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;^.*\.rsp2$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">))</span>
+
+            <span class="c1"># some GBM RSPs that are not marked RSP2 are in fact RSP2s</span>
+            <span class="c1"># we need to check</span>
+
+            <span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;detected single RSP&quot;</span><span class="p">)</span>
+
+                <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+                    <span class="c1"># there should only be a header, ebounds and one spec rsp extension</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+
+                        <span class="c1"># make test a dummy value to trigger the nest loop</span>
+
+                        <span class="n">test</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2&quot;</span>
+                        <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;detected and RSP2 file&quot;</span><span class="p">)</span>
+
+
+                <span class="c1"># the FSSC responses half shift the time</span>
+                <span class="c1"># but gbm_drm_gen does it properly</span>
+
+                <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">&quot;RESPONSUM&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;CREATOR&quot;</span><span class="p">]:</span>
+
+                            <span class="n">half_shifted</span> <span class="o">=</span> <span class="kc">False</span>
+
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;found a RESPONSUM response&quot;</span><span class="p">)</span>
+                                                        
+
+                        <span class="k">else</span><span class="p">:</span>
+
+                            <span class="n">half_shifted</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="k">except</span><span class="p">:</span>
+
+                        <span class="n">half_shifted</span> <span class="o">=</span> <span class="kc">True</span>
+                            
+
+                <span class="n">rsp</span> <span class="o">=</span> <span class="n">InstrumentResponseSet</span><span class="o">.</span><span class="n">from_rsp2_file</span><span class="p">(</span>
+                    <span class="n">rsp2_file</span><span class="o">=</span><span class="n">rsp_file</span><span class="p">,</span>
+                    <span class="n">counts_getter</span><span class="o">=</span><span class="n">event_list</span><span class="o">.</span><span class="n">counts_over_interval</span><span class="p">,</span>
+                    <span class="n">exposure_getter</span><span class="o">=</span><span class="n">event_list</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">,</span>
+                    <span class="n">reference_time</span><span class="o">=</span><span class="n">gbm_tte_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+                    <span class="n">half_shifted</span><span class="o">=</span><span class="n">half_shifted</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;loading RSP&quot;</span><span class="p">)</span>
+
+                <span class="n">rsp</span> <span class="o">=</span> <span class="n">OGIPResponse</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">rsp_file</span><span class="p">,</span> <span class="n">InstrumentResponse</span>
+            <span class="p">),</span> <span class="s2">&quot;The provided response is not a 3ML InstrumentResponse&quot;</span>
+            <span class="n">rsp</span> <span class="o">=</span> <span class="n">rsp_file</span>
+
+        <span class="c1"># pass to the super class</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">event_list</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">rsp</span><span class="p">,</span>
+            <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
+            <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">restore_poly_fit</span><span class="o">=</span><span class="n">restore_background</span><span class="p">,</span>
+            <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+            <span class="n">use_balrog</span><span class="o">=</span><span class="n">use_balrog</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_gbm_cspec_or_ctime"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_gbm_cspec_or_ctime">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_gbm_cspec_or_ctime</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">cspec_or_ctime_file</span><span class="p">,</span>
+        <span class="n">rsp_file</span><span class="p">,</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">trigger_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A plugin to natively bin, view, and handle Fermi GBM TTE data.</span>
+<span class="sd">        A TTE event file are required as well as the associated response</span>
+
+
+
+<span class="sd">        Background selections are specified as</span>
+<span class="sd">        a comma separated string e.g. &quot;-10-0,10-20&quot;</span>
+
+<span class="sd">        Initial source selection is input as a string e.g. &quot;0-5&quot;</span>
+
+<span class="sd">        One can choose a background polynomial order by hand (up to 4th order)</span>
+<span class="sd">        or leave it as the default polyorder=-1 to decide by LRT test</span>
+
+<span class="sd">        :param name: name for your choosing</span>
+<span class="sd">        :param tte_file: GBM tte event file</span>
+<span class="sd">        :param rsp_file: Associated TTE CSPEC response file</span>
+<span class="sd">        :param trigger_time: trigger time if needed</span>
+<span class="sd">        :param poly_order: 0-4 or -1 for auto</span>
+<span class="sd">        :param unbinned: unbinned likelihood fit (bool)</span>
+<span class="sd">        :param verbose: verbose (bool)</span>
+
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># self._default_unbinned = unbinned</span>
+
+        <span class="c1"># Load the relevant information from the TTE file</span>
+
+        <span class="n">cdata</span> <span class="o">=</span> <span class="n">GBMCdata</span><span class="p">(</span>
+            <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">cspec_or_ctime_file</span><span class="p">),</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;loaded the CDATA file </span><span class="si">{</span><span class="n">cspec_or_ctime_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set a trigger time if one has not been set</span>
+
+        <span class="k">if</span> <span class="n">trigger_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;set custom trigger time&quot;</span><span class="p">)</span>
+
+            <span class="n">cdata</span><span class="o">.</span><span class="n">trigger_time</span> <span class="o">=</span> <span class="n">trigger_time</span>
+
+        <span class="c1"># Create the the event list</span>
+
+        <span class="n">event_list</span> <span class="o">=</span> <span class="n">BinnedSpectrumSeries</span><span class="p">(</span>
+            <span class="n">cdata</span><span class="o">.</span><span class="n">spectrum_set</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;Fermi&quot;</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">cdata</span><span class="o">.</span><span class="n">det_name</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># we need to see if this is an RSP2</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+
+            <span class="n">test</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;^.*\.rsp2$&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">))</span>
+
+            <span class="c1"># some GBM RSPs that are not marked RSP2 are in fact RSP2s</span>
+            <span class="c1"># we need to check</span>
+
+            <span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;detected single RSP&quot;</span><span class="p">)</span>
+
+                <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+                    <span class="c1"># there should only be a header, ebounds and one spec rsp extension</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="c1"># make test a dummy value to trigger the nest loop</span>
+
+                        <span class="n">test</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2&quot;</span>
+                        <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;detected and RSP2 file&quot;</span><span class="p">)</span>
+
+                <span class="c1"># the FSSC responses half shift the time</span>
+                <span class="c1"># but gbm_drm_gen does it properly</span>
+
+                <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">&quot;RESPONSUM&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;CREATOR&quot;</span><span class="p">]:</span>
+
+                            <span class="n">half_shifted</span> <span class="o">=</span> <span class="kc">False</span>
+
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;found a RESPONSUM response&quot;</span><span class="p">)</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+
+                            <span class="n">half_shifted</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="k">except</span><span class="p">:</span>
+
+                        <span class="n">half_shifted</span> <span class="o">=</span> <span class="kc">True</span>
+                            
+
+                <span class="n">rsp</span> <span class="o">=</span> <span class="n">InstrumentResponseSet</span><span class="o">.</span><span class="n">from_rsp2_file</span><span class="p">(</span>
+                    <span class="n">rsp2_file</span><span class="o">=</span><span class="n">rsp_file</span><span class="p">,</span>
+                    <span class="n">counts_getter</span><span class="o">=</span><span class="n">event_list</span><span class="o">.</span><span class="n">counts_over_interval</span><span class="p">,</span>
+                    <span class="n">exposure_getter</span><span class="o">=</span><span class="n">event_list</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">,</span>
+                    <span class="n">reference_time</span><span class="o">=</span><span class="n">cdata</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+                    <span class="n">half_shifted</span><span class="o">=</span><span class="n">half_shifted</span>
+                <span class="p">)</span>
+
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;loading RSP&quot;</span><span class="p">)</span>
+
+                <span class="n">rsp</span> <span class="o">=</span> <span class="n">OGIPResponse</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">rsp_file</span><span class="p">,</span> <span class="n">InstrumentResponse</span>
+            <span class="p">),</span> <span class="s2">&quot;The provided response is not a 3ML InstrumentResponse&quot;</span>
+            <span class="n">rsp</span> <span class="o">=</span> <span class="n">rsp_file</span>
+
+        <span class="c1"># pass to the super class</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">event_list</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">rsp</span><span class="p">,</span>
+            <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
+            <span class="n">unbinned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">restore_poly_fit</span><span class="o">=</span><span class="n">restore_background</span><span class="p">,</span>
+            <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_lat_lle"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_lat_lle">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_lat_lle</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">lle_file</span><span class="p">,</span>
+        <span class="n">ft2_file</span><span class="p">,</span>
+        <span class="n">rsp_file</span><span class="p">,</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">trigger_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">unbinned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A plugin to natively bin, view, and handle Fermi LAT LLE data.</span>
+<span class="sd">        An LLE event file and FT2 (1 sec) are required as well as the associated response</span>
+
+
+
+<span class="sd">        Background selections are specified as</span>
+<span class="sd">        a comma separated string e.g. &quot;-10-0,10-20&quot;</span>
+
+<span class="sd">        Initial source selection is input as a string e.g. &quot;0-5&quot;</span>
+
+<span class="sd">        One can choose a background polynomial order by hand (up to 4th order)</span>
+<span class="sd">        or leave it as the default polyorder=-1 to decide by LRT test</span>
+
+<span class="sd">        :param name: name of the plugin</span>
+<span class="sd">        :param lle_file: lle event file</span>
+<span class="sd">        :param ft2_file: fermi FT2 file</span>
+<span class="sd">        :param rsp_file: lle response file</span>
+<span class="sd">        :param trigger_time: trigger time if needed</span>
+<span class="sd">        :param poly_order: 0-4 or -1 for auto</span>
+<span class="sd">        :param unbinned: unbinned likelihood fit (bool)</span>
+<span class="sd">        :param verbose: verbose (bool)</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lat_lle_file</span> <span class="o">=</span> <span class="n">LLEFile</span><span class="p">(</span><span class="n">lle_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="p">,</span> <span class="n">rsp_file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">trigger_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span> <span class="o">=</span> <span class="n">trigger_time</span>
+
+        <span class="c1"># Mark channels less than 50 MeV as bad</span>
+
+        <span class="n">channel_30MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span>
+            <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">energy_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">30000.0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">native_quality</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">n_channels</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">channel_30MeV</span>
+
+        <span class="n">native_quality</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+
+        <span class="n">event_list</span> <span class="o">=</span> <span class="n">EventListWithLiveTime</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">arrival_times</span> <span class="o">-</span> <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">live_time</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">livetime</span><span class="p">,</span>
+            <span class="n">live_time_starts</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">livetime_start</span> <span class="o">-</span> <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">live_time_stops</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">livetime_stop</span> <span class="o">-</span> <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">tstart</span> <span class="o">-</span> <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">stop_time</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">tstop</span> <span class="o">-</span> <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span>
+            <span class="n">quality</span><span class="o">=</span><span class="n">native_quality</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="c1"># rsp_file=rsp_file,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">instrument</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="n">lat_lle_file</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># pass to the super class</span>
+
+        <span class="n">rsp</span> <span class="o">=</span> <span class="n">OGIPResponse</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">event_list</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">rsp</span><span class="p">,</span>
+            <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
+            <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">restore_poly_fit</span><span class="o">=</span><span class="n">restore_background</span><span class="p">,</span>
+            <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_phaII"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_phaII">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_phaII</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Reading from a generic PHAII file is not yet supportedgb&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_konus_pha"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_konus_pha">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_konus_pha</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">pha_file</span><span class="p">,</span>
+        <span class="n">rsp_file</span><span class="p">,</span>
+        <span class="n">arf_file</span><span class="p">,</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">trigger_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A plugin to natively bin, view, and handle Konus-Wind PHA data. </span>
+<span class="sd">        One can choose a background polynomial order by hand (up to 4th order) or leave it as the default polyorder=-1 to decide by LRT test</span>
+<span class="sd">        :param name: name for your choosing</span>
+<span class="sd">        :param pha_file: Konus-Wind PHAII file</span>
+<span class="sd">        :param rsp_file: Associated response file</span>
+<span class="sd">        :param arf_file: Associated auxiliary response file</span>
+<span class="sd">        :param trigger_time: trigger time if needed</span>
+<span class="sd">        :param poly_order: 0-4 or -1 for auto</span>
+<span class="sd">        :param verbose: verbose (bool)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Load the relevant information from the PHA file</span>
+
+        <span class="n">spectrum_set</span> <span class="o">=</span> <span class="n">PHASpectrumSet</span><span class="p">(</span><span class="n">pha_file</span><span class="p">,</span> <span class="n">rsp_file</span><span class="o">=</span><span class="n">rsp_file</span><span class="p">,</span> <span class="n">arf_file</span><span class="o">=</span><span class="n">arf_file</span><span class="p">)</span>
+
+        <span class="n">event_list</span> <span class="o">=</span> <span class="n">BinnedSpectrumSeries</span><span class="p">(</span><span class="n">spectrum_set</span><span class="p">,</span> <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="n">rsp</span> <span class="o">=</span> <span class="n">OGIPResponse</span><span class="p">(</span><span class="n">rsp_file</span><span class="p">,</span> <span class="n">arf_file</span><span class="o">=</span><span class="n">arf_file</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+               <span class="n">event_list</span><span class="p">,</span>
+               <span class="n">response</span><span class="o">=</span><span class="n">rsp</span><span class="p">,</span>
+               <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
+               <span class="n">unbinned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+               <span class="n">restore_poly_fit</span><span class="o">=</span><span class="n">restore_background</span><span class="p">,</span>
+               <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span>
+               <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_polar_spectrum"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_polar_spectrum">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_polar_spectrum</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">polar_hdf5_file</span><span class="p">,</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">trigger_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">unbinned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_polarpy</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The polarpy module is not installed&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="c1"># self._default_unbinned = unbinned</span>
+
+        <span class="c1"># extract the polar varaibles</span>
+
+        <span class="n">polar_data</span> <span class="o">=</span> <span class="n">POLARData</span><span class="p">(</span>
+            <span class="n">polar_hdf5_file</span><span class="p">,</span> <span class="n">polar_hdf5_response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reference_time</span><span class="o">=</span><span class="n">trigger_time</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create the the event list</span>
+
+        <span class="n">event_list</span> <span class="o">=</span> <span class="n">EventListWithDeadTimeFraction</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">pha</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+            <span class="n">stop_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+            <span class="n">dead_time_fraction</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">dead_time_fraction</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;Tiangong-2&quot;</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;POLAR&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">event_list</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">rsp</span><span class="p">,</span>
+            <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
+            <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">restore_poly_fit</span><span class="o">=</span><span class="n">restore_background</span><span class="p">,</span>
+            <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.from_polar_polarization"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_polar_polarization">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_polar_polarization</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">polar_hdf5_file</span><span class="p">,</span>
+        <span class="n">polar_hdf5_response</span><span class="p">,</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">trigger_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">unbinned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_polarpy</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The polarpy module is not installed&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="c1"># self._default_unbinned = unbinned</span>
+
+        <span class="c1"># extract the polar varaibles</span>
+
+        <span class="n">polar_data</span> <span class="o">=</span> <span class="n">POLARData</span><span class="p">(</span>
+            <span class="n">polar_hdf5_file</span><span class="p">,</span> <span class="n">polar_hdf5_response</span><span class="p">,</span> <span class="n">trigger_time</span><span class="p">)</span>
+
+        <span class="c1"># Create the the event list</span>
+
+        <span class="n">event_list</span> <span class="o">=</span> <span class="n">EventListWithDeadTimeFraction</span><span class="p">(</span>
+            <span class="n">arrival_times</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="p">,</span>
+            <span class="n">measurement</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angles</span><span class="p">,</span>
+            <span class="n">n_channels</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">n_scattering_bins</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+            <span class="n">stop_time</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_time</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+            <span class="n">dead_time_fraction</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_angle_dead_time_fraction</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;Tiangong-2&quot;</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;POLAR&quot;</span><span class="p">,</span>
+            <span class="n">edges</span><span class="o">=</span><span class="n">polar_data</span><span class="o">.</span><span class="n">scattering_edges</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">event_list</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">polar_hdf5_response</span><span class="p">,</span>
+            <span class="n">poly_order</span><span class="o">=</span><span class="n">poly_order</span><span class="p">,</span>
+            <span class="n">unbinned</span><span class="o">=</span><span class="n">unbinned</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">restore_poly_fit</span><span class="o">=</span><span class="n">restore_background</span><span class="p">,</span>
+            <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedModulationCurve</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeSeriesBuilder.to_polarlike"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.to_polarlike">[docs]</a>    <span class="k">def</span> <span class="nf">to_polarlike</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">from_bins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">interval_name</span><span class="o">=</span><span class="s2">&quot;_interval&quot;</span><span class="p">,</span>
+        <span class="n">extract_measured_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">has_polarpy</span><span class="p">,</span> <span class="s2">&quot;you must have the polarpy module installed&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_container_type</span><span class="p">,</span> <span class="n">BinnedModulationCurve</span>
+        <span class="p">),</span> <span class="s2">&quot;You are attempting to create a POLARLike plugin from the wrong data type&quot;</span>
+
+        <span class="k">if</span> <span class="n">extract_measured_background</span><span class="p">:</span>
+
+            <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span> <span class="o">=</span> <span class="n">PolarResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">from_bins</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;Must have selected an active time interval&quot;</span>
+
+            <span class="k">if</span> <span class="n">this_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;No background selection has been made. This plugin will contain no background!&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">PolarLike</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+                <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                <span class="c1">#                 tstart=self._tstart,</span>
+                <span class="c1">#                 tstop=self._tstop</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># this is for a set of intervals.</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;This time series does not have any bins!&quot;</span>
+
+            <span class="c1"># save the original interval if there is one</span>
+            <span class="n">old_interval</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span><span class="p">)</span>
+            <span class="n">old_verbose</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+
+            <span class="c1"># we will keep it quiet to keep from being annoying</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">list_of_polarlikes</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># now we make one response to save time</span>
+
+            <span class="c1"># get the bins from the time series</span>
+            <span class="c1"># for event lists, these are from created bins</span>
+            <span class="c1"># for binned spectra sets, these are the native bines</span>
+
+            <span class="n">these_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span>  <span class="c1"># type: TimeIntervalSet</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must specify a start AND a stop time&quot;</span>
+
+            <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must specify a start AND a stop time&quot;</span>
+
+                <span class="n">these_bins</span> <span class="o">=</span> <span class="n">these_bins</span><span class="o">.</span><span class="n">containing_interval</span><span class="p">(</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># loop through the intervals and create spec likes</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">these_bins</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Creating plugins&quot;</span><span class="p">)):</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+
+                <span class="k">if</span> <span class="n">extract_measured_background</span><span class="p">:</span>
+
+                    <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span>
+
+                    <span class="k">if</span> <span class="n">this_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;No bakckground selection has been made. This plugin will contain no background!&quot;</span>
+                        <span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="n">pl</span> <span class="o">=</span> <span class="n">PolarLike</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s%s%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">interval_name</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+                        <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                        <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                        <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                        <span class="c1">#               tstart=self._tstart,</span>
+                        <span class="c1">#               tstop=self._tstop</span>
+                    <span class="p">)</span>
+
+                    <span class="n">list_of_polarlikes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="p">(</span><span class="n">NegativeBackground</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">&quot;Something is wrong with interval </span><span class="si">%s</span><span class="s2">. skipping.&quot;</span> <span class="o">%</span> <span class="n">interval</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># restore the old interval</span>
+
+            <span class="k">if</span> <span class="n">old_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="o">*</span><span class="n">old_interval</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">old_verbose</span>
+
+            <span class="k">return</span> <span class="n">list_of_polarlikes</span>
+            <span class="c1"># get the bins from the time series</span>
+            <span class="c1"># for event lists, these are from created bins</span>
+            <span class="c1"># for binned spectra sets, these are the native bines</span>
+
+            <span class="n">these_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">bins</span>  <span class="c1"># type: TimeIntervalSet</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must specify a start AND a stop time&quot;</span>
+
+            <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;must specify a start AND a stop time&quot;</span>
+
+                <span class="n">these_bins</span> <span class="o">=</span> <span class="n">these_bins</span><span class="o">.</span><span class="n">containing_interval</span><span class="p">(</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># loop through the intervals and create spec likes</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">these_bins</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Creating plugins&quot;</span><span class="p">)):</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+
+                <span class="k">if</span> <span class="n">extract_measured_background</span><span class="p">:</span>
+
+                    <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_background_spectrum</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">this_background_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span>
+
+                    <span class="k">if</span> <span class="n">this_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;No bakckground selection has been made. This plugin will contain no background!&quot;</span>
+                        <span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="n">pl</span> <span class="o">=</span> <span class="n">PolarLike</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s%s%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">interval_name</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+                        <span class="n">observation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">,</span>
+                        <span class="n">background</span><span class="o">=</span><span class="n">this_background_spectrum</span><span class="p">,</span>
+                        <span class="n">response</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+                        <span class="c1">#               tstart=self._tstart,</span>
+                        <span class="c1">#               tstop=self._tstop</span>
+                    <span class="p">)</span>
+
+                    <span class="n">list_of_polarlikes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="p">(</span><span class="n">NegativeBackground</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">&quot;Something is wrong with interval </span><span class="si">%s</span><span class="s2">. skipping.&quot;</span> <span class="o">%</span> <span class="n">interval</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># restore the old interval</span>
+
+            <span class="k">if</span> <span class="n">old_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="o">*</span><span class="n">old_interval</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_active_interval</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">old_verbose</span>
+
+            <span class="k">return</span> <span class="n">list_of_polarlikes</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.catalogs.Fermi &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.catalogs.Fermi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.catalogs.Fermi</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">str</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">astromodels.utils.angular_distance</span> <span class="kn">import</span> <span class="n">angular_distance</span>
+<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span> <span class="nn">threeML.io.dict_with_pretty_print</span> <span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
+<span class="kn">from</span> <span class="nn">threeML.io.get_heasarc_table_as_pandas</span> <span class="kn">import</span> <span class="n">get_heasarc_table_as_pandas</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="kn">from</span> <span class="nn">.VirtualObservatoryCatalog</span> <span class="kn">import</span> <span class="n">VirtualObservatoryCatalog</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^GRB\d</span><span class="si">{9}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">_3FGL_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^3FGL J\d</span><span class="si">{4}</span><span class="s2">.\d(\+|-)\d</span><span class="si">{4}</span><span class="s2">\D?$&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    checks if source name is valid for both GBM and LLE data</span>
+
+<span class="sd">    :param source: source name</span>
+<span class="sd">    :return: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">warn_string</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;The trigger </span><span class="si">%s</span><span class="s2"> is not valid. Must be in the form GRB080916009&quot;</span> <span class="o">%</span> <span class="n">source</span>
+    <span class="p">)</span>
+
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_trigger_name_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_string</span><span class="p">)</span>
+
+        <span class="n">answer</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">answer</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">answer</span>
+
+
+<div class="viewcode-block" id="FermiGBMBurstCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiGBMBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Fermi-LAT GBM GRB catalog. Search for GRBs  by trigger</span>
+<span class="sd">        number, location, spectral parameters, T90, and date range.</span>
+
+<span class="sd">        :param update: force update the XML VO table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FermiGBMBurstCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s2">&quot;fermigbrst&quot;</span><span class="p">,</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;Fermi&quot;</span><span class="p">][</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;GBM burst catalog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="s2">&quot;Fermi-LAT/GBM burst catalog&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gbm_detector_lookup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;n0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n3&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n5&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n6&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n7&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n8&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;n9&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;na&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;nb&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;b0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;b1&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_available_models</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="s2">&quot;comp&quot;</span><span class="p">,</span> <span class="s2">&quot;plaw&quot;</span><span class="p">,</span> <span class="s2">&quot;sbpl&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
+            <span class="s2">&quot;fermigbrst&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">1.0</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FermiGBMBurstCatalog.apply_format"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.apply_format">[docs]</a>    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;trigger_time&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;t90&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+
+        <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FermiGBMBurstCatalog.get_detector_information"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.get_detector_information">[docs]</a>    <span class="k">def</span> <span class="nf">get_detector_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the detectors used for spectral analysis as well as their background</span>
+<span class="sd">        intervals. Peak flux and fluence intervals are also returned as well as best fit models</span>
+
+<span class="sd">        :return: detector information dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;You have to run a query before getting detector information&quot;</span>
+
+        <span class="c1"># Loop over the table and build a source for each entry</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># First we want to get the the detectors used in the SCAT file</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;scat_detector_mask&quot;</span><span class="p">])),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">detector_selection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gbm_detector_lookup</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="c1"># get the location</span>
+
+            <span class="n">ra</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span>
+            <span class="n">dec</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Now we want to know the background intervals</span>
+
+            <span class="n">lo_start</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;back_interval_low_start&quot;</span><span class="p">]</span>
+            <span class="n">lo_stop</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;back_interval_low_stop&quot;</span><span class="p">]</span>
+            <span class="n">hi_start</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;back_interval_high_start&quot;</span><span class="p">]</span>
+            <span class="n">hi_stop</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;back_interval_high_stop&quot;</span><span class="p">]</span>
+
+            <span class="c1"># the GBM plugin accepts these as strings</span>
+
+            <span class="n">pre_bkg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">lo_start</span><span class="p">,</span> <span class="n">lo_stop</span><span class="p">)</span>
+            <span class="n">post_bkg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hi_start</span><span class="p">,</span> <span class="n">hi_stop</span><span class="p">)</span>
+            <span class="n">full_bkg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pre_bkg</span><span class="p">,</span> <span class="n">post_bkg</span><span class="p">)</span>
+
+            <span class="n">background_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="n">pre_bkg</span><span class="p">,</span> <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">post_bkg</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="n">full_bkg</span><span class="p">}</span>
+
+            <span class="c1"># now we want the fluence interval and peak flux intervals</span>
+
+            <span class="c1"># first the fluence</span>
+
+            <span class="n">start_flu</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;t90_start&quot;</span><span class="p">]</span>
+            <span class="n">stop_flu</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;t90_start&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;t90&quot;</span><span class="p">]</span>
+
+            <span class="n">interval_fluence</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start_flu</span><span class="p">,</span> <span class="n">stop_flu</span><span class="p">)</span>
+
+            <span class="c1"># peak flux</span>
+
+            <span class="n">start_pk</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pflx_spectrum_start&quot;</span><span class="p">]</span>
+            <span class="n">stop_pk</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pflx_spectrum_stop&quot;</span><span class="p">]</span>
+
+            <span class="n">interval_pk</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start_pk</span><span class="p">,</span> <span class="n">stop_pk</span><span class="p">)</span>
+
+            <span class="c1"># build the dictionary</span>
+            <span class="n">spectrum_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fluence&quot;</span><span class="p">:</span> <span class="n">interval_fluence</span><span class="p">,</span> <span class="s2">&quot;peak&quot;</span><span class="p">:</span> <span class="n">interval_pk</span><span class="p">}</span>
+
+            <span class="n">trigger</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;trigger_name&quot;</span><span class="p">]</span>
+
+            <span class="c1"># get the best fit model in the fluence and peak intervals</span>
+
+            <span class="n">best_fit_peak</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;pflx_best_fitting_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">best_fit_fluence</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;flnc_best_fitting_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">best_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fluence&quot;</span><span class="p">:</span> <span class="n">best_fit_fluence</span><span class="p">,</span> <span class="s2">&quot;peak&quot;</span><span class="p">:</span> <span class="n">best_fit_peak</span><span class="p">}</span>
+
+            <span class="n">sources</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">spectrum_dict</span><span class="p">,</span>
+                <span class="s2">&quot;background&quot;</span><span class="p">:</span> <span class="n">background_dict</span><span class="p">,</span>
+                <span class="s2">&quot;trigger&quot;</span><span class="p">:</span> <span class="n">trigger</span><span class="p">,</span>
+                <span class="s2">&quot;detectors&quot;</span><span class="p">:</span> <span class="n">detector_selection</span><span class="p">,</span>
+                <span class="s2">&quot;best fit model&quot;</span><span class="p">:</span> <span class="n">best_dict</span><span class="p">,</span>
+                <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span>
+                <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">DictWithPrettyPrint</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FermiGBMBurstCatalog.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;fluence&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model form.</span>
+<span class="sd">        You can choose band, comp, plaw, or sbpl models corresponding to the models</span>
+<span class="sd">        fitted in the GBM catalog. The interval for the fit can be the &#39;fluence&#39; or</span>
+<span class="sd">        &#39;peak&#39; interval</span>
+
+<span class="sd">        :param model: one of &#39;band&#39; (default), &#39;comp&#39;, &#39;plaw&#39;, &#39;sbpl&#39;</span>
+<span class="sd">        :param interval: &#39;peak&#39; or &#39;fluence&#39; (default)</span>
+<span class="sd">        :return: a dictionary of 3ML likelihood models that can be fitted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check the model name and the interval selection</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_available_models</span>
+        <span class="p">),</span> <span class="s2">&quot;model is not in catalog. available choices are </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_available_models</span>
+        <span class="p">)</span>
+
+        <span class="n">available_intervals</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fluence&quot;</span><span class="p">:</span> <span class="s2">&quot;flnc&quot;</span><span class="p">,</span> <span class="s2">&quot;peak&quot;</span><span class="p">:</span> <span class="s2">&quot;pflx&quot;</span><span class="p">}</span>
+
+        <span class="k">assert</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">available_intervals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;interval not recognized. choices are </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="s2">&quot; ,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">available_intervals</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="p">)</span>
+
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">lh_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">ra</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span>
+            <span class="n">dec</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span>
+
+            <span class="c1"># name = str(name, &#39;utf-8&#39;)</span>
+
+            <span class="c1"># get the proper 3ML model</span>
+
+            <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;band&quot;</span><span class="p">:</span>
+                <span class="n">lh_model</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_band</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">available_intervals</span><span class="p">[</span><span class="n">interval</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;comp&quot;</span><span class="p">:</span>
+                <span class="n">lh_model</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_cpl</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">available_intervals</span><span class="p">[</span><span class="n">interval</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;plaw&quot;</span><span class="p">:</span>
+                <span class="n">lh_model</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_powerlaw</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">available_intervals</span><span class="p">[</span><span class="n">interval</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;sbpl&quot;</span><span class="p">:</span>
+                <span class="n">lh_model</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_sbpl</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">available_intervals</span><span class="p">[</span><span class="n">interval</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="c1"># the assertion above should never let us get here</span>
+            <span class="k">if</span> <span class="n">lh_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;We should never get here. This is a bug&quot;</span><span class="p">)</span>
+
+            <span class="c1"># return the model</span>
+
+            <span class="n">sources</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">lh_model</span>
+
+        <span class="k">return</span> <span class="n">sources</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_band</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        builds a band function from the Fermi-LAT GBM catalog</span>
+
+<span class="sd">        :param name: GRB name</span>
+<span class="sd">        :param ra: GRB ra</span>
+<span class="sd">        :param dec: GRB de</span>
+<span class="sd">        :param row: VO table row</span>
+<span class="sd">        :param interval: interval type for parameters</span>
+<span class="sd">        :return: 3ML likelihood model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># construct the primary string</span>
+
+        <span class="n">primary_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_band_&quot;</span> <span class="o">%</span> <span class="n">interval</span>
+
+        <span class="c1"># get the parameters</span>
+        <span class="n">epeak</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;epeak&quot;</span><span class="p">]</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;alpha&quot;</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;beta&quot;</span><span class="p">]</span>
+        <span class="n">amp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;ampl&quot;</span><span class="p">]</span>
+
+        <span class="n">band</span> <span class="o">=</span> <span class="n">Band</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">amp</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">amp</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">band</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">amp</span>
+
+        <span class="k">if</span> <span class="n">epeak</span> <span class="o">&lt;</span> <span class="n">band</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+            <span class="n">band</span><span class="o">.</span><span class="n">xp</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">epeak</span>
+
+        <span class="n">band</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="n">epeak</span>
+
+        <span class="c1"># The GBM catalog has some extreme alpha values</span>
+
+        <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="n">band</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+
+            <span class="n">band</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="k">elif</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="n">band</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">max_value</span><span class="p">:</span>
+
+            <span class="n">band</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="n">band</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="c1"># The GBM catalog has some extreme beta values</span>
+
+        <span class="k">if</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="n">band</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+
+            <span class="n">band</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="k">elif</span> <span class="n">beta</span> <span class="o">&gt;</span> <span class="n">band</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">max_value</span><span class="p">:</span>
+
+            <span class="n">band</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="n">band</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="c1"># build the model</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">band</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_cpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        builds a cpl function from the Fermi-LAT GBM catalog</span>
+
+<span class="sd">        :param name: GRB name</span>
+<span class="sd">        :param ra: GRB ra</span>
+<span class="sd">        :param dec: GRB de</span>
+<span class="sd">        :param row: VO table row</span>
+<span class="sd">        :param interval: interval type for parameters</span>
+<span class="sd">        :return: 3ML likelihood model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">primary_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_comp_&quot;</span> <span class="o">%</span> <span class="n">interval</span>
+
+        <span class="n">epeak</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;epeak&quot;</span><span class="p">]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;index&quot;</span><span class="p">]</span>
+        <span class="n">pivot</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;pivot&quot;</span><span class="p">]</span>
+        <span class="n">amp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;ampl&quot;</span><span class="p">]</span>
+
+        <span class="c1"># need to correct epeak to e cut</span>
+        <span class="n">ecut</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">epeak</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">index</span><span class="p">))</span>
+
+        <span class="n">cpl</span> <span class="o">=</span> <span class="n">Cutoff_powerlaw</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">amp</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">amp</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">cpl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">amp</span>
+
+        <span class="k">if</span> <span class="n">ecut</span> <span class="o">&lt;</span> <span class="n">cpl</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+            <span class="n">cpl</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">ecut</span>
+
+        <span class="n">cpl</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">ecut</span>
+
+        <span class="n">cpl</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="n">pivot</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">cpl</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+
+            <span class="n">cpl</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">cpl</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max_value</span><span class="p">:</span>
+
+            <span class="n">cpl</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="n">cpl</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">cpl</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">cpl</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_powerlaw</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        builds a pl function from the Fermi-LAT GBM catalog</span>
+
+<span class="sd">        :param name: GRB name</span>
+<span class="sd">        :param ra: GRB ra</span>
+<span class="sd">        :param dec: GRB de</span>
+<span class="sd">        :param row: VO table row</span>
+<span class="sd">        :param interval: interval type for parameters</span>
+<span class="sd">        :return: 3ML likelihood model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">primary_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_plaw_&quot;</span> <span class="o">%</span> <span class="n">interval</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;index&quot;</span><span class="p">]</span>
+        <span class="n">pivot</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;pivot&quot;</span><span class="p">]</span>
+        <span class="n">amp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;ampl&quot;</span><span class="p">]</span>
+
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">amp</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">amp</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">pl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">amp</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="n">pivot</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">pl</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">pl</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_sbpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        builds a sbpl function from the Fermi-LAT GBM catalog</span>
+
+<span class="sd">        :param name: GRB name</span>
+<span class="sd">        :param ra: GRB ra</span>
+<span class="sd">        :param dec: GRB de</span>
+<span class="sd">        :param row: VO table row</span>
+<span class="sd">        :param interval: interval type for parameters</span>
+<span class="sd">        :return: 3ML likelihood model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">primary_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_sbpl_&quot;</span> <span class="o">%</span> <span class="n">interval</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;indx1&quot;</span><span class="p">]</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;indx2&quot;</span><span class="p">]</span>
+        <span class="n">amp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;ampl&quot;</span><span class="p">]</span>
+        <span class="n">break_scale</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;brksc&quot;</span><span class="p">]</span>
+        <span class="n">break_energy</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;brken&quot;</span><span class="p">]</span>
+        <span class="n">pivot</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">primary_string</span> <span class="o">+</span> <span class="s2">&quot;pivot&quot;</span><span class="p">]</span>
+
+        <span class="n">sbpl</span> <span class="o">=</span> <span class="n">SmoothlyBrokenPowerLaw</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">amp</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">amp</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">amp</span>
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">pivot</span> <span class="o">=</span> <span class="n">pivot</span>
+
+        <span class="c1"># The GBM catalog has some extreme alpha values</span>
+
+        <span class="k">if</span> <span class="n">break_energy</span> <span class="o">&lt;</span> <span class="n">sbpl</span><span class="o">.</span><span class="n">break_energy</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+            <span class="n">sbpl</span><span class="o">.</span><span class="n">break_energy</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">break_energy</span>
+
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">break_energy</span> <span class="o">=</span> <span class="n">break_energy</span>
+
+        <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="n">sbpl</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+
+            <span class="n">sbpl</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="k">elif</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="n">sbpl</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">max_value</span><span class="p">:</span>
+
+            <span class="n">sbpl</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="c1"># The GBM catalog has some extreme beta values</span>
+
+        <span class="k">if</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="n">sbpl</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">min_value</span><span class="p">:</span>
+
+            <span class="n">sbpl</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="k">elif</span> <span class="n">beta</span> <span class="o">&gt;</span> <span class="n">sbpl</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">max_value</span><span class="p">:</span>
+
+            <span class="n">sbpl</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">break_scale</span> <span class="o">=</span> <span class="n">break_scale</span>
+
+        <span class="n">sbpl</span><span class="o">.</span><span class="n">break_scale</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">sbpl</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">sbpl</span></div>
+
+
+<span class="c1">######</span>
+<div class="viewcode-block" id="FermiGBMTriggerCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMTriggerCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiGBMTriggerCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Fermi-GBM trigger catalog. </span>
+
+<span class="sd">        :param update: force update the XML VO table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FermiGBMTriggerCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s2">&quot;fermigtrig&quot;</span><span class="p">,</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;Fermi&quot;</span><span class="p">][</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;GBM trigger catalog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="s2">&quot;Fermi-GBM trigger catalog&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
+            <span class="s2">&quot;fermigtrig&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">1.0</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FermiGBMTriggerCatalog.apply_format"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMTriggerCatalog.apply_format">[docs]</a>    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;trigger_type&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;trigger_time&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;localization_source&quot;</span>
+            
+        <span class="p">]</span>
+
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+
+        <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div>
+
+
+
+    
+<span class="c1">#########</span>
+
+<span class="n">threefgl_types</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;agn&quot;</span><span class="p">:</span> <span class="s2">&quot;other non-blazar active galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bcu&quot;</span><span class="p">:</span> <span class="s2">&quot;active galaxy of uncertain type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bll&quot;</span><span class="p">:</span> <span class="s2">&quot;BL Lac type of blazar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;css&quot;</span><span class="p">:</span> <span class="s2">&quot;compact steep spectrum quasar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fsrq&quot;</span><span class="p">:</span> <span class="s2">&quot;FSRQ type of blazar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gal&quot;</span><span class="p">:</span> <span class="s2">&quot;normal galaxy (or part)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;glc&quot;</span><span class="p">:</span> <span class="s2">&quot;globular cluster&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hmb&quot;</span><span class="p">:</span> <span class="s2">&quot;high-mass binary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nlsy1&quot;</span><span class="p">:</span> <span class="s2">&quot;narrow line Seyfert 1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nov&quot;</span><span class="p">:</span> <span class="s2">&quot;nova&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PSR&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar, identified by pulsations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;psr&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar, no pulsations seen in LAT yet&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pwn&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar wind nebula&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rdg&quot;</span><span class="p">:</span> <span class="s2">&quot;radio galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sbg&quot;</span><span class="p">:</span> <span class="s2">&quot;starburst galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sey&quot;</span><span class="p">:</span> <span class="s2">&quot;Seyfert galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sfr&quot;</span><span class="p">:</span> <span class="s2">&quot;star-forming region&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;snr&quot;</span><span class="p">:</span> <span class="s2">&quot;supernova remnant&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;spp&quot;</span><span class="p">:</span> <span class="s2">&quot;special case - potential association with SNR or PWN&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ssrq&quot;</span><span class="p">:</span> <span class="s2">&quot;soft spectrum radio quasar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;unk&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_sanitize_3fgl_name</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">):</span>
+    <span class="n">swap</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">fgl_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">swap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">,</span> <span class="s2">&quot;9&quot;</span><span class="p">]:</span>
+        <span class="n">swap</span> <span class="o">=</span> <span class="s2">&quot;_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">swap</span>
+
+    <span class="k">return</span> <span class="n">swap</span>
+
+
+<span class="k">def</span> <span class="nf">_get_point_source_from_3fgl</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">,</span> <span class="n">catalog_entry</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate a spectrum from the 3FGL into an astromodels spectrum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">_sanitize_3fgl_name</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">)</span>
+
+    <span class="n">spectrum_type</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spectrum_type&quot;</span><span class="p">]</span>
+    <span class="n">ra</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">])</span>
+    <span class="n">dec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">spectrum_type</span> <span class="o">==</span> <span class="s2">&quot;PowerLaw&quot;</span><span class="p">:</span>
+
+        <span class="n">this_spectrum</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">()</span>
+
+        <span class="n">this_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">this_spectrum</span><span class="p">)</span>
+
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pl_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pl_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+
+    <span class="k">elif</span> <span class="n">spectrum_type</span> <span class="o">==</span> <span class="s2">&quot;LogParabola&quot;</span><span class="p">:</span>
+
+        <span class="n">this_spectrum</span> <span class="o">=</span> <span class="n">Log_parabola</span><span class="p">()</span>
+
+        <span class="n">this_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">this_spectrum</span><span class="p">)</span>
+
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_beta&quot;</span><span class="p">])</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">spectrum_type</span> <span class="o">==</span> <span class="s2">&quot;PLExpCutoff&quot;</span><span class="p">:</span>
+
+        <span class="n">this_spectrum</span> <span class="o">=</span> <span class="n">Cutoff_powerlaw</span><span class="p">()</span>
+
+        <span class="n">this_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">this_spectrum</span><span class="p">)</span>
+
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;plec_index_s&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;plec_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;cutoff&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+
+    <span class="k">elif</span> <span class="n">spectrum_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PLSuperExpCutoff&quot;</span><span class="p">,</span> <span class="s2">&quot;PLSuperExpCutoff2&quot;</span><span class="p">]:</span>
+        <span class="c1"># This is the new definition, from the 4FGL catalog.</span>
+        <span class="c1"># Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff</span>
+        <span class="c1"># rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.</span>
+        <span class="n">this_spectrum</span> <span class="o">=</span> <span class="n">Super_cutoff_powerlaw</span><span class="p">()</span>
+
+        <span class="n">this_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">this_spectrum</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;plec_exp_factor_s&quot;</span><span class="p">])</span>
+        <span class="n">E0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;plec_exp_index&quot;</span><span class="p">])</span>
+        <span class="n">conv</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">E0</span> <span class="o">**</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;plec_index_s&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">b</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">gamma</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="n">E0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">conv</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;plec_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">**</span> <span class="p">(</span><span class="n">old_div</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Spectrum type </span><span class="si">%s</span><span class="s2"> is not a valid 4FGL type&quot;</span> <span class="o">%</span> <span class="n">spectrum_type</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">this_source</span>
+
+
+<div class="viewcode-block" id="ModelFrom3FGL"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.ModelFrom3FGL">[docs]</a><span class="k">class</span> <span class="nc">ModelFrom3FGL</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra_center</span><span class="p">,</span> <span class="n">dec_center</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ra_center</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ra_center</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dec_center</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dec_center</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ModelFrom3FGL</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">sources</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ModelFrom3FGL.free_point_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.ModelFrom3FGL.free_point_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">free_point_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Free the parameters for the point sources within the given radius of the center of the search cone</span>
+
+<span class="sd">        :param radius: radius in degree</span>
+<span class="sd">        :param normalization_only: if True, frees only the normalization of the source (default: True)</span>
+<span class="sd">        :return: none</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_free_or_fix</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelFrom3FGL.fix_point_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.ModelFrom3FGL.fix_point_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">fix_point_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fixes the parameters for the point sources within the given radius of the center of the search cone</span>
+
+<span class="sd">        :param radius: radius in degree</span>
+<span class="sd">        :param normalization_only: if True, fixes only the normalization of the source (default: True)</span>
+<span class="sd">        :return: none</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_free_or_fix</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_free_or_fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">free</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">src_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_sources</span><span class="p">:</span>
+
+            <span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_sources</span><span class="p">[</span><span class="n">src_name</span><span class="p">]</span>
+
+            <span class="n">this_d</span> <span class="o">=</span> <span class="n">angular_distance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ra_center</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dec_center</span><span class="p">,</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">this_d</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">normalization_only</span><span class="p">:</span>
+
+                    <span class="n">src</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="n">free</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                        <span class="n">src</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">par</span><span class="p">]</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="n">free</span></div>
+
+
+<div class="viewcode-block" id="FermiLATSourceCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiLATSourceCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiLATSourceCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FermiLATSourceCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s2">&quot;fermilpsc&quot;</span><span class="p">,</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;Fermi&quot;</span><span class="p">][</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;LAT FGL&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="s2">&quot;Fermi-LAT/LAT source catalog&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
+            <span class="s2">&quot;fermilpsc&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">10.0</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        checks if source name is valid for the 3FGL catalog</span>
+
+<span class="sd">        :param source: source name</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">warn_string</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;The trigger </span><span class="si">%s</span><span class="s2"> is not valid. Must be in the form &#39;3FGL J0000.0+0000&#39;&quot;</span>
+            <span class="o">%</span> <span class="n">source</span>
+        <span class="p">)</span>
+
+        <span class="n">match</span> <span class="o">=</span> <span class="n">_3FGL_name_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_string</span><span class="p">)</span>
+
+            <span class="n">answer</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">answer</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">answer</span>
+
+<div class="viewcode-block" id="FermiLATSourceCatalog.apply_format"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiLATSourceCatalog.apply_format">[docs]</a>    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;psr&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">threefgl_types</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">threefgl_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">return</span> <span class="n">threefgl_types</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="n">key</span>
+
+        <span class="c1"># Translate the 3 letter code to a more informative category, according</span>
+        <span class="c1"># to the dictionary above</span>
+
+        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;short_source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span>
+        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">translate</span><span class="p">,</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;short_source_type&quot;</span><span class="p">])))</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Search_Offset&quot;</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+
+            <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;short_source_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;assoc_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Search_Offset&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">)</span>
+
+        <span class="c1"># we may have not done a cone search!</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;short_source_type&quot;</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;assoc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;tevcat_assoc&quot;</span>
+            <span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FermiLATSourceCatalog.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiLATSourceCatalog.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_association_name</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;You have to run a query before getting a model&quot;</span>
+
+        <span class="c1"># Loop over the table and build a source for each entry</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">source_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;e&quot;</span><span class="p">:</span>
+                <span class="c1"># Extended source</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is extended, support for extended source is not here yet. I will ignore&quot;</span>
+                    <span class="s2">&quot;it&quot;</span> <span class="o">%</span> <span class="n">name</span>
+                <span class="p">)</span>
+
+            <span class="c1"># If there is an association and use_association is True, use that name, otherwise the 3FGL name</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">use_association_name</span><span class="p">:</span>
+
+                <span class="n">this_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span>
+
+                <span class="c1"># The crab is the only source which is present more than once in the 3FGL</span>
+
+                <span class="k">if</span> <span class="n">this_name</span> <span class="o">==</span> <span class="s2">&quot;Crab Nebula&quot;</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
+
+                        <span class="n">this_name</span> <span class="o">=</span> <span class="s2">&quot;Crab_IC&quot;</span>
+
+                    <span class="k">elif</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;s&quot;</span><span class="p">:</span>
+
+                        <span class="n">this_name</span> <span class="o">=</span> <span class="s2">&quot;Crab_synch&quot;</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="n">this_name</span> <span class="o">=</span> <span class="s2">&quot;Crab_pulsar&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">this_name</span> <span class="o">=</span> <span class="n">name</span>
+
+            <span class="c1"># in the 4FGL name there are more sources with the same name: this nwill avod any duplicates:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">this_name</span> <span class="ow">in</span> <span class="n">source_names</span><span class="p">:</span>
+                <span class="n">this_name</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">pass</span>
+            <span class="c1"># By default all sources are fixed. The user will free the one he/she will need</span>
+
+            <span class="n">source_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_name</span><span class="p">)</span>
+
+            <span class="n">this_source</span> <span class="o">=</span> <span class="n">_get_point_source_from_3fgl</span><span class="p">(</span><span class="n">this_name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_source</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ModelFrom3FGL</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ra_center</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_center</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="FermiLLEBurstCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiLLEBurstCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiLLEBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger</span>
+<span class="sd">        number, location, trigger type and date range.</span>
+
+<span class="sd">        :param update: force update the XML VO table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FermiLLEBurstCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s2">&quot;fermille&quot;</span><span class="p">,</span>
+            <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;Fermi&quot;</span><span class="p">][</span><span class="s2">&quot;catalogs&quot;</span><span class="p">][</span><span class="s2">&quot;LLE catalog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="s2">&quot;Fermi-LAT/LLE catalog&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FermiLLEBurstCatalog.apply_format"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiLLEBurstCatalog.apply_format">[docs]</a>    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;trigger_time&quot;</span><span class="p">,</span> <span class="s2">&quot;trigger_type&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Remove rows with masked elements in trigger_time column</span>
+        <span class="k">if</span> <span class="n">new_table</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
+            <span class="n">new_table</span> <span class="o">=</span> <span class="n">new_table</span><span class="p">[</span><span class="o">~</span><span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+        <span class="n">new_table</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;5.3f&quot;</span>
+
+        <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
+            <span class="s2">&quot;fermille&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">5.0</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

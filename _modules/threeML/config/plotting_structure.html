@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.config.plotting_structure &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.config.plotting_structure</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.config.plotting_structure</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Flag</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">II</span><span class="p">,</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">SI</span><span class="p">,</span> <span class="n">OmegaConf</span>
+
+<span class="c1"># type checking matplotlib colormaps</span>
+<span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s2">&quot;MPLCmap&quot;</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">(),</span> <span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">()))</span>
+
+
+<div class="viewcode-block" id="BinnedSpectrumPlot"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.BinnedSpectrumPlot">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BinnedSpectrumPlot</span><span class="p">:</span>
+    <span class="n">data_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
+    <span class="n">model_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
+    <span class="n">background_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
+    <span class="n">n_colors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">step</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">show_residuals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">data_color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model_color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">background_color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">show_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">data_mpl_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model_mpl_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">background_mpl_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DataHistPlot"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.DataHistPlot">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DataHistPlot</span><span class="p">:</span>
+    <span class="n">counts_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#500472&quot;</span>
+    <span class="n">background_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#79cbb8&quot;</span>
+    <span class="n">warn_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#C79BFE&quot;</span>
+    <span class="n">bad_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#FE3131&quot;</span>
+    <span class="n">masked_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#566573&quot;</span></div>
+
+
+<div class="viewcode-block" id="PlotStyle"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.PlotStyle">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PlotStyle</span><span class="p">:</span>
+    <span class="n">linestyle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+    <span class="n">linewidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.7</span></div>
+
+
+<div class="viewcode-block" id="ContourStyle"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.ContourStyle">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ContourStyle</span><span class="p">:</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span></div>
+
+
+<div class="viewcode-block" id="CornerStyle"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.CornerStyle">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">CornerStyle</span><span class="p">:</span>
+    <span class="n">show_titles</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">smooth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span>
+    <span class="n">title_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.2g&quot;</span>
+    <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">quantiles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span>  <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span> <span class="k">lambda</span><span class="p">:[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">])</span>
+    <span class="n">fill_contours</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">viridis</span>
+    <span class="n">extremes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
+    <span class="n">contourf_kwargs</span><span class="p">:</span>  <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;extend&quot;</span><span class="p">:</span> <span class="s2">&quot;both&quot;</span><span class="p">})</span>
+    <span class="n">levels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span> <span class="k">lambda</span><span class="p">:[</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.865</span><span class="p">,</span><span class="mf">0.393</span><span class="p">])</span></div>
+
+    
+<span class="c1"># class LegendLoc(Enum):</span>
+<span class="c1">#     best = &#39;best&#39;</span>
+<span class="c1">#     lower_left = &#39;lower left&#39;</span>
+<span class="c1">#     lower_right = &#39;lower right&#39;</span>
+<span class="c1">#     upper_left = &#39;upper left&#39;</span>
+<span class="c1">#     upper_right = &#39;upper right&#39;</span>
+
+
+<div class="viewcode-block" id="LegendStyle"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.LegendStyle">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LegendStyle</span><span class="p">:</span>
+    <span class="n">loc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
+    <span class="n">fancybox</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">shadow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="PointSourcePlot"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.PointSourcePlot">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PointSourcePlot</span><span class="p">:</span>
+
+    <span class="n">fit_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
+    <span class="n">contour_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
+    <span class="n">bayes_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
+    <span class="n">plot_style</span><span class="p">:</span> <span class="n">PlotStyle</span> <span class="o">=</span> <span class="n">PlotStyle</span><span class="p">()</span>
+    <span class="n">contour_style</span><span class="p">:</span> <span class="n">ContourStyle</span> <span class="o">=</span> <span class="n">ContourStyle</span><span class="p">()</span>
+    <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">legend_style</span><span class="p">:</span> <span class="n">LegendStyle</span> <span class="o">=</span> <span class="n">LegendStyle</span><span class="p">()</span>
+    <span class="n">flux_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;1/(keV s cm2)&quot;</span>
+    <span class="n">emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.</span>
+    <span class="n">emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e4</span>
+    <span class="n">num_ene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">ene_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;keV&quot;</span></div>
+
+
+<div class="viewcode-block" id="ResidualPlot"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.ResidualPlot">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ResidualPlot</span><span class="p">:</span>
+    <span class="n">linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">legend_font_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.94</span></div>
+
+<div class="viewcode-block" id="GenericPlotting"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.GenericPlotting">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GenericPlotting</span><span class="p">:</span>
+
+    <span class="n">mplstyle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;threeml.mplstyle&quot;</span>
+    <span class="n">residual_plot</span><span class="p">:</span> <span class="n">ResidualPlot</span> <span class="o">=</span> <span class="n">ResidualPlot</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ModelPlotting"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.ModelPlotting">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ModelPlotting</span><span class="p">:</span>
+
+    <span class="n">point_source_plot</span><span class="p">:</span> <span class="n">PointSourcePlot</span> <span class="o">=</span> <span class="n">PointSourcePlot</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

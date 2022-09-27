@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.parallel.parallel_client &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.parallel.parallel_client</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.parallel.parallel_client</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Custom warning</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">distutils.spawn</span> <span class="kn">import</span> <span class="n">find_executable</span>
+
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">DEVNULL</span>  <span class="c1"># py3k</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="n">DEVNULL</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check whether we have a parallel system or not</span>
+
+<span class="n">has_parallel</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">ipyparallel</span> <span class="kn">import</span> <span class="n">Client</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+
+    <span class="n">has_parallel</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">else</span><span class="p">:</span>
+
+    <span class="n">has_parallel</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="NoParallelEnvironment"><a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.NoParallelEnvironment">[docs]</a><span class="k">class</span> <span class="nc">NoParallelEnvironment</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># Set up the warnings module to always display our custom warning (otherwise it would only be displayed once)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="n">NoParallelEnvironment</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="parallel_computation"><a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.parallel_computation">[docs]</a><span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">parallel_computation</span><span class="p">(</span><span class="n">profile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_cluster</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A context manager which turns on parallel execution temporarily</span>
+
+<span class="sd">    :param profile: the profile to use, if different from the default</span>
+<span class="sd">    :param start_cluster: True or False. Whether to start a new cluster. If False, try to use an existing one for the</span>
+<span class="sd">    same profile</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Memorize the state of the use-parallel config</span>
+
+    <span class="n">old_state</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span><span class="p">)</span>
+
+    <span class="n">old_profile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">profile_name</span><span class="p">)</span>
+
+    <span class="c1"># Set the use_parallel feature on, if available</span>
+
+    <span class="k">if</span> <span class="n">has_parallel</span><span class="p">:</span>
+
+        <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># No parallel environment available. Issue a warning and continue with serial computation</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;You requested parallel computation, but no parallel environment is available. You need &quot;</span>
+            <span class="s2">&quot;to install the ipyparallel package. Continuing with serial computation...&quot;</span><span class="p">,</span>
+
+        <span class="p">)</span>
+
+        <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Now use the specified profile (if any), otherwise the default one</span>
+
+    <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">profile_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+
+    <span class="c1"># Here is where the content of the with parallel_computation statement gets</span>
+    <span class="c1"># executed</span>
+
+    <span class="c1"># See if we need to start the ipyparallel cluster first</span>
+
+    <span class="k">if</span> <span class="n">start_cluster</span><span class="p">:</span>
+
+        <span class="c1"># Get the command line together</span>
+
+        <span class="c1"># First find out path of ipcluster</span>
+        <span class="n">ipcluster_path</span> <span class="o">=</span> <span class="n">find_executable</span><span class="p">(</span><span class="s2">&quot;ipcluster&quot;</span><span class="p">)</span>
+
+        <span class="n">cmd_line</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipcluster_path</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">cmd_line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; --profile=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">profile</span><span class="p">)</span>
+
+        <span class="c1"># Start process asynchronously with Popen, suppressing all output</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting ipyparallel cluster with this command line:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd_line</span><span class="p">))</span>
+
+        <span class="n">ipycluster_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd_line</span><span class="p">)</span>
+
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+
+        <span class="c1"># Wait for the engines to become available</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="n">view</span> <span class="o">=</span> <span class="n">rc</span><span class="p">[:]</span>
+
+            <span class="k">except</span><span class="p">:</span>
+
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+                <span class="k">continue</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2"> engines are active&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="p">)))</span>
+
+                <span class="k">break</span>
+
+        <span class="c1"># Do whatever we need to do</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="k">yield</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+
+            <span class="c1"># This gets executed in any case, even if there is an exception</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Shutting down ipcluster...&quot;</span><span class="p">)</span>
+
+            <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">)</span>
+
+            <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Using an already started cluster</span>
+
+        <span class="k">yield</span>
+
+    <span class="c1"># Revert back</span>
+    <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span> <span class="o">=</span> <span class="n">old_state</span>
+
+    <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">profile_name</span> <span class="o">=</span> <span class="n">old_profile</span></div>
+
+
+<div class="viewcode-block" id="is_parallel_computation_active"><a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.is_parallel_computation_active">[docs]</a><span class="k">def</span> <span class="nf">is_parallel_computation_active</span><span class="p">():</span>
+
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">has_parallel</span><span class="p">:</span>
+
+    <span class="k">class</span> <span class="nc">ParallelClient</span><span class="p">(</span><span class="n">Client</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Wrapper around the IPython Client class, which forces the use of dill for object serialization</span>
+
+<span class="sd">            :param args: same as IPython Client</span>
+<span class="sd">            :param kwargs: same as IPython Client</span>
+<span class="sd">            :return:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="c1"># Just a wrapper around the IPython Client class</span>
+            <span class="c1"># forcing the use of dill for object serialization</span>
+            <span class="c1"># (more robust, and allows for serialization of class</span>
+            <span class="c1"># methods)</span>
+
+            <span class="k">if</span> <span class="s2">&quot;profile&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;profile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">profile_name</span>
+
+            <span class="nb">super</span><span class="p">(</span><span class="n">ParallelClient</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># This will propagate the use_dill to all running</span>
+            <span class="c1"># engines</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">direct_view</span><span class="p">()</span><span class="o">.</span><span class="n">use_dill</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ParallelClient.get_number_of_engines"><a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.get_number_of_engines">[docs]</a>        <span class="k">def</span> <span class="nf">get_number_of_engines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direct_view</span><span class="p">())</span></div>
+
+        <span class="k">def</span> <span class="nf">_interactive_map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">items_to_process</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Subdivide the work among the active engines, taking care of dividing it among them</span>
+
+<span class="sd">            :param worker: the function to be applied</span>
+<span class="sd">            :param items_to_process: the items to apply the function to</span>
+<span class="sd">            :param ordered: whether to keep the order of output (default: True). Using False can be much faster, but</span>
+<span class="sd">            you need to have a way to re-estabilish the order if you care about it, after the fact.</span>
+<span class="sd">            :param chunk_size: determine how many items should an engine process before reporting back. Use None for</span>
+<span class="sd">            an automatic choice.</span>
+<span class="sd">            :return: a AsyncResult object</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="c1"># Split the work evenly between the engines</span>
+            <span class="n">n_total_engines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_number_of_engines</span><span class="p">()</span>
+
+            <span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items_to_process</span><span class="p">)</span>
+
+            <span class="c1"># Get a load-balanced view with the appropriate number of engines</span>
+
+            <span class="k">if</span> <span class="n">n_items</span> <span class="o">&lt;</span> <span class="n">n_total_engines</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;More engines than items to process&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Limit the view to the needed engines</span>
+
+                <span class="n">lview</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_balanced_view</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_items</span><span class="p">))</span>
+
+                <span class="n">n_active_engines</span> <span class="o">=</span> <span class="n">n_items</span>
+
+                <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># Use all engines</span>
+
+                <span class="n">lview</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_balanced_view</span><span class="p">()</span>
+
+                <span class="n">n_active_engines</span> <span class="o">=</span> <span class="n">n_total_engines</span>
+
+                <span class="k">if</span> <span class="n">chunk_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="n">chunk_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                        <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_items</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_active_engines</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span><span class="p">))</span>
+
+            <span class="c1"># We need this to keep the instance alive</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_amr</span> <span class="o">=</span> <span class="n">lview</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span>
+                <span class="n">worker</span><span class="p">,</span> <span class="n">items_to_process</span><span class="p">,</span>
+                <span class="c1">#chunksize=chunk_size,</span>
+                <span class="n">ordered</span><span class="o">=</span><span class="n">ordered</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_amr</span>
+
+<div class="viewcode-block" id="ParallelClient.execute_with_progress_bar"><a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.execute_with_progress_bar">[docs]</a>        <span class="k">def</span> <span class="nf">execute_with_progress_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;progress&quot;</span><span class="p">):</span>
+
+            <span class="c1"># Let&#39;s make a wrapper which will allow us to recover the order</span>
+            <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+                <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span>
+
+                <span class="k">return</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">worker</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+            <span class="n">items_wrapped</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
+
+            <span class="n">amr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_map</span><span class="p">(</span>
+                <span class="n">wrapper</span><span class="p">,</span> <span class="n">items_wrapped</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span>
+            <span class="p">)</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">amr</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">name</span><span class="p">)):</span>
+
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+            <span class="c1"># Reorder the list according to the id</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span></div>
+
+
+<span class="k">else</span><span class="p">:</span>
+
+    <span class="c1"># NO parallel environment available. Make a dumb object to avoid import problems, but this object will never</span>
+    <span class="c1"># be really used because the context manager will not activate the parallel mode (see above)</span>
+<div class="viewcode-block" id="ParallelClient"><a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient">[docs]</a>    <span class="k">class</span> <span class="nc">ParallelClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;No parallel environment and attempted to use the ParallelClient class, which should &quot;</span>
+                <span class="s2">&quot;never happen. Please open an issue at https://github.com/giacomov/3ML/issues&quot;</span>
+            <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

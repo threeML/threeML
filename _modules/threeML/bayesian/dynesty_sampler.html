@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.bayesian.dynesty_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.bayesian.dynesty_sampler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.bayesian.dynesty_sampler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
+
+<span class="kn">from</span> <span class="nn">threeML.bayesian.sampler_base</span> <span class="kn">import</span> <span class="n">UnitCubeSampler</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.parallel.parallel_client</span> <span class="kn">import</span> <span class="n">ParallelClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">dynesty</span> <span class="kn">import</span> <span class="n">DynamicNestedSampler</span><span class="p">,</span> <span class="n">NestedSampler</span>
+
+<span class="k">except</span><span class="p">:</span>
+
+    <span class="n">has_dynesty</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">else</span><span class="p">:</span>
+
+    <span class="n">has_dynesty</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynestyPool"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool">[docs]</a><span class="k">class</span> <span class="nc">DynestyPool</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A simple wrapper for `dview`.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dview</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dview</span> <span class="o">=</span> <span class="n">dview</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dview</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynestyPool.map"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool.map">[docs]</a>    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dview</span><span class="o">.</span><span class="n">map_sync</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">tasks</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DynestyNestedSampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler">[docs]</a><span class="k">class</span> <span class="nc">DynestyNestedSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">has_dynesty</span><span class="p">,</span> <span class="s2">&quot;You must install Dynesty to use this sampler&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">DynestyNestedSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DynestyNestedSampler.setup"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+        <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxcall</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dlogz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logl_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">n_effective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_live</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">print_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+        <span class="n">sample</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">periodic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reflective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">update_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_update</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">npdim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rstate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">live_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logl_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logl_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ptform_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ptform_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">gradient</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grad_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grad_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">compute_jac</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">enlarge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bootstrap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">walks</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">facc</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">slices</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">fmove</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">max_move</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">update_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;TODO describe function</span>
+
+<span class="sd">        :param n_live_points: </span>
+<span class="sd">        :type n_live_points: </span>
+<span class="sd">        :param maxiter: </span>
+<span class="sd">        :type maxiter: </span>
+<span class="sd">        :param maxcall: </span>
+<span class="sd">        :type maxcall: </span>
+<span class="sd">        :param dlogz: </span>
+<span class="sd">        :type dlogz: </span>
+<span class="sd">        :param logl_max: </span>
+<span class="sd">        :type logl_max: </span>
+<span class="sd">        :param n_effective: </span>
+<span class="sd">        :type n_effective: </span>
+<span class="sd">        :param add_live: </span>
+<span class="sd">        :type add_live: </span>
+<span class="sd">        :param print_func: </span>
+<span class="sd">        :type print_func: </span>
+<span class="sd">        :param save_bounds: </span>
+<span class="sd">        :type save_bounds: </span>
+<span class="sd">        :param bound: </span>
+<span class="sd">        :type bound: </span>
+<span class="sd">        :param sample:</span>
+<span class="sd">        :type sample: </span>
+<span class="sd">        :param periodic: </span>
+<span class="sd">        :type periodic: </span>
+<span class="sd">        :param reflective: </span>
+<span class="sd">        :type reflective: </span>
+<span class="sd">        :param update_interval: </span>
+<span class="sd">        :type update_interval: </span>
+<span class="sd">        :param first_update: </span>
+<span class="sd">        :type first_update: </span>
+<span class="sd">        :param npdim: </span>
+<span class="sd">        :type npdim: </span>
+<span class="sd">        :param rstate: </span>
+<span class="sd">        :type rstate: </span>
+<span class="sd">        :param use_pool: </span>
+<span class="sd">        :type use_pool: </span>
+<span class="sd">        :param live_points: </span>
+<span class="sd">        :type live_points: </span>
+<span class="sd">        :param logl_args: </span>
+<span class="sd">        :type logl_args: </span>
+<span class="sd">        :param logl_kwargs: </span>
+<span class="sd">        :type logl_kwargs: </span>
+<span class="sd">        :param ptform_args: </span>
+<span class="sd">        :type ptform_args: </span>
+<span class="sd">        :param ptform_kwargs: </span>
+<span class="sd">        :type ptform_kwargs: </span>
+<span class="sd">        :param gradient: </span>
+<span class="sd">        :type gradient: </span>
+<span class="sd">        :param grad_args: </span>
+<span class="sd">        :type grad_args: </span>
+<span class="sd">        :param grad_kwargs: </span>
+<span class="sd">        :type grad_kwargs: </span>
+<span class="sd">        :param compute_jac: </span>
+<span class="sd">        :type compute_jac: </span>
+<span class="sd">        :param enlarge: </span>
+<span class="sd">        :type enlarge: </span>
+<span class="sd">        :param bootstrap: </span>
+<span class="sd">        :type bootstrap: </span>
+<span class="sd">        :param vol_dec: </span>
+<span class="sd">        :type vol_dec: </span>
+<span class="sd">        :param vol_check: </span>
+<span class="sd">        :type vol_check: </span>
+<span class="sd">        :param walks: </span>
+<span class="sd">        :type walks: </span>
+<span class="sd">        :param facc: </span>
+<span class="sd">        :type facc: </span>
+<span class="sd">        :param slices: </span>
+<span class="sd">        :type slices: </span>
+<span class="sd">        :param fmove: </span>
+<span class="sd">        :type fmove: </span>
+<span class="sd">        :param max_move: </span>
+<span class="sd">        :type max_move: </span>
+<span class="sd">        :param update_func: </span>
+<span class="sd">        :type update_func: </span>
+<span class="sd">        :returns: </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setup dynesty sampler&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxiter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxcall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxcall</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;dlogz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dlogz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;logl_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logl_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;n_effective&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_effective</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;add_live&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_live</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;print_func&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">print_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;save_bounds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_bounds</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;nlive&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_live_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;bound&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bound</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;periodic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;reflective&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reflective</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;update_interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;first_update&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;npdim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">npdim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;rstate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rstate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;pool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># TODO: have to figure out why</span>
+        <span class="c1"># this is not working properly</span>
+        <span class="k">if</span> <span class="n">use_pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">use_pool</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">prior_transform</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">loglikelihood</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">propose_point</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">update_bound</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;use_pool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_pool</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;live_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">live_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;logl_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logl_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;logl_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logl_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;ptform_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptform_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;ptform_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptform_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;gradient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gradient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;grad_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;grad_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;compute_jac&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_jac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;enlarge&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">enlarge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bootstrap</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;walks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">walks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;facc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">facc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;slices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;fmove&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fmove</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;max_move&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_move</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;update_func&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_func</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DynestyNestedSampler.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sample using the UltraNest numerical integration method</span>
+<span class="sd">        :rtype: </span>
+
+<span class="sd">        :returns: </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">loud</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
+
+        <span class="n">param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_names</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;ndim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndim</span>
+
+        <span class="n">loglike</span><span class="p">,</span> <span class="n">dynesty_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span><span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># check if we are doing to do things in parallel</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="n">c</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;pool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">view</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;queue_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">NestedSampler</span><span class="p">(</span><span class="n">loglike</span><span class="p">,</span> <span class="n">dynesty_prior</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;print_progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loud</span>
+
+        <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start dynesty run&quot;</span><span class="p">)</span>
+
+            <span class="n">sampler</span><span class="o">.</span><span class="n">run_nested</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dynesty run done&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="c1"># draw posterior samples</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;logwt&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;logz&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">SQRTEPS</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span>
+
+        <span class="n">rstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">SQRTEPS</span><span class="p">:</span>  <span class="c1"># same tol as in np.random.choice.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Weights do not sum to 1.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Make N subdivisions and choose positions with a consistent random offset.</span>
+        <span class="n">nsamples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span><span class="n">rstate</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsamples</span><span class="p">))</span> <span class="o">/</span> <span class="n">nsamples</span>
+
+        <span class="c1"># Resample the data.</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+        <span class="n">cumulative_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nsamples</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cumulative_sum</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">samples_dynesty</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="n">samples_dynesty</span>
+
+        <span class="c1"># now do the same for the log likes</span>
+
+        <span class="n">logl_dynesty</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;logl&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">=</span> <span class="n">logl_dynesty</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;logz&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_results</span><span class="p">()</span>
+
+        <span class="c1"># Display results</span>
+        <span class="k">if</span> <span class="n">loud</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+        <span class="c1"># now get the marginal likelihood</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span></div></div>
+
+
+<div class="viewcode-block" id="DynestyDynamicSampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler">[docs]</a><span class="k">class</span> <span class="nc">DynestyDynamicSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">has_dynesty</span><span class="p">,</span> <span class="s2">&quot;You must install Dynesty to use this sampler&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">DynestyDynamicSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DynestyDynamicSampler.setup"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nlive_init</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">maxiter_init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxcall_init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dlogz_init</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">logl_max_init</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">n_effective_init</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">nlive_batch</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">wt_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wt_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxiter_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxcall_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxcall</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">maxbatch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_effective</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">stop_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stop_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">save_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">print_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">live_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+        <span class="n">sample</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">periodic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reflective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">update_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_update</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">npdim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rstate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_pool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logl_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logl_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ptform_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ptform_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">gradient</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grad_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grad_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">compute_jac</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">enlarge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bootstrap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">walks</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">facc</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">slices</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">fmove</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">max_move</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">update_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;TODO describe function</span>
+
+<span class="sd">        :param nlive_init: </span>
+<span class="sd">        :type nlive_init: </span>
+<span class="sd">        :param maxiter_init: </span>
+<span class="sd">        :type maxiter_init: </span>
+<span class="sd">        :param maxcall_init: </span>
+<span class="sd">        :type maxcall_init: </span>
+<span class="sd">        :param dlogz_init: </span>
+<span class="sd">        :type dlogz_init: </span>
+<span class="sd">        :param logl_max_init: </span>
+<span class="sd">        :type logl_max_init: </span>
+<span class="sd">        :param n_effective_init: </span>
+<span class="sd">        :type n_effective_init: </span>
+<span class="sd">        :param nlive_batch: </span>
+<span class="sd">        :type nlive_batch: </span>
+<span class="sd">        :param wt_function: </span>
+<span class="sd">        :type wt_function: </span>
+<span class="sd">        :param wt_kwargs: </span>
+<span class="sd">        :type wt_kwargs: </span>
+<span class="sd">        :param maxiter_batch: </span>
+<span class="sd">        :type maxiter_batch: </span>
+<span class="sd">        :param maxcall_batch: </span>
+<span class="sd">        :type maxcall_batch: </span>
+<span class="sd">        :param maxiter: </span>
+<span class="sd">        :type maxiter: </span>
+<span class="sd">        :param maxcall: </span>
+<span class="sd">        :type maxcall: </span>
+<span class="sd">        :param maxbatch: </span>
+<span class="sd">        :type maxbatch: </span>
+<span class="sd">        :param n_effective: </span>
+<span class="sd">        :type n_effective: </span>
+<span class="sd">        :param stop_function: </span>
+<span class="sd">        :type stop_function: </span>
+<span class="sd">        :param stop_kwargs: </span>
+<span class="sd">        :type stop_kwargs: </span>
+<span class="sd">        :param use_stop: </span>
+<span class="sd">        :type use_stop: </span>
+<span class="sd">        :param save_bounds: </span>
+<span class="sd">        :type save_bounds: </span>
+<span class="sd">        :param print_func: </span>
+<span class="sd">        :type print_func: </span>
+<span class="sd">        :param live_points: </span>
+<span class="sd">        :type live_points: </span>
+<span class="sd">        :param bound: </span>
+<span class="sd">        :type bound: </span>
+<span class="sd">        :param sample:</span>
+<span class="sd">        :type sample: </span>
+<span class="sd">        :param periodic: </span>
+<span class="sd">        :type periodic: </span>
+<span class="sd">        :param reflective: </span>
+<span class="sd">        :type reflective: </span>
+<span class="sd">        :param update_interval: </span>
+<span class="sd">        :type update_interval: </span>
+<span class="sd">        :param first_update: </span>
+<span class="sd">        :type first_update: </span>
+<span class="sd">        :param npdim: </span>
+<span class="sd">        :type npdim: </span>
+<span class="sd">        :param rstate: </span>
+<span class="sd">        :type rstate: </span>
+<span class="sd">        :param use_pool: </span>
+<span class="sd">        :type use_pool: </span>
+<span class="sd">        :param logl_args: </span>
+<span class="sd">        :type logl_args: </span>
+<span class="sd">        :param logl_kwargs: </span>
+<span class="sd">        :type logl_kwargs: </span>
+<span class="sd">        :param ptform_args: </span>
+<span class="sd">        :type ptform_args: </span>
+<span class="sd">        :param ptform_kwargs: </span>
+<span class="sd">        :type ptform_kwargs: </span>
+<span class="sd">        :param gradient: </span>
+<span class="sd">        :type gradient: </span>
+<span class="sd">        :param grad_args: </span>
+<span class="sd">        :type grad_args: </span>
+<span class="sd">        :param grad_kwargs: </span>
+<span class="sd">        :type grad_kwargs: </span>
+<span class="sd">        :param compute_jac: </span>
+<span class="sd">        :type compute_jac: </span>
+<span class="sd">        :param enlarge: </span>
+<span class="sd">        :type enlarge: </span>
+<span class="sd">        :param bootstrap: </span>
+<span class="sd">        :type bootstrap: </span>
+<span class="sd">        :param vol_dec: </span>
+<span class="sd">        :type vol_dec: </span>
+<span class="sd">        :param vol_check: </span>
+<span class="sd">        :type vol_check: </span>
+<span class="sd">        :param walks: </span>
+<span class="sd">        :type walks: </span>
+<span class="sd">        :param facc: </span>
+<span class="sd">        :type facc: </span>
+<span class="sd">        :param slices: </span>
+<span class="sd">        :type slices: </span>
+<span class="sd">        :param fmove: </span>
+<span class="sd">        :type fmove: </span>
+<span class="sd">        :param max_move: </span>
+<span class="sd">        :type max_move: </span>
+<span class="sd">        :param update_func: </span>
+<span class="sd">        :type update_func: </span>
+<span class="sd">        :returns: </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setup dynesty dynamic sampler&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;nlive_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nlive_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxiter_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxiter_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxcall_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxcall_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;dlogz_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dlogz_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;logl_max_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logl_max_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;n_effective_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_effective_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;nlive_batch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nlive_batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;wt_function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wt_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;wt_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wt_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxiter_batch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxiter_batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxcall_batch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxcall_batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxiter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxcall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxcall</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;maxbatch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxbatch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;n_effective&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_effective</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;stop_function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;stop_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;use_stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_stop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;save_bounds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_bounds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;print_func&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">print_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;live_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">live_points</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;bound&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bound</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;periodic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;reflective&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reflective</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;update_interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;first_update&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;npdim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">npdim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;rstate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rstate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;pool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># TODO: have to figure out why</span>
+        <span class="c1"># this is not working properly</span>
+        <span class="k">if</span> <span class="n">use_pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">use_pool</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">prior_transform</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">loglikelihood</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">propose_point</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">update_bound</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;use_pool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_pool</span>
+
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;logl_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logl_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;logl_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logl_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;ptform_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptform_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;ptform_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptform_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;gradient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gradient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;grad_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;grad_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grad_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;compute_jac&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_jac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;enlarge&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">enlarge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bootstrap</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;walks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">walks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;facc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">facc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;slices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;fmove&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fmove</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;max_move&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_move</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;update_func&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_func</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DynestyDynamicSampler.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sample using the UltraNest numerical integration method</span>
+<span class="sd">        :rtype: </span>
+
+<span class="sd">        :returns: </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">loud</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
+
+        <span class="n">param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_names</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;ndim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndim</span>
+
+        <span class="n">loglike</span><span class="p">,</span> <span class="n">dynesty_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span><span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># check if we are doing to do things in parallel</span>
+
+        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
+
+            <span class="n">c</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;pool&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">view</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;queue_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">DynamicNestedSampler</span><span class="p">(</span><span class="n">loglike</span><span class="p">,</span> <span class="n">dynesty_prior</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">[</span><span class="s2">&quot;print_progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loud</span>
+
+        <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start dynestsy run&quot;</span><span class="p">)</span>
+            <span class="n">sampler</span><span class="o">.</span><span class="n">run_nested</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_kwargs</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dynesty run done&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="c1"># draw posterior samples</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;logwt&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;logz&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">SQRTEPS</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">))</span>
+
+        <span class="n">rstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">SQRTEPS</span><span class="p">:</span>  <span class="c1"># same tol as in np.random.choice.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Weights do not sum to 1.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Make N subdivisions and choose positions with a consistent random offset.</span>
+        <span class="n">nsamples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span><span class="n">rstate</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsamples</span><span class="p">))</span> <span class="o">/</span> <span class="n">nsamples</span>
+
+        <span class="c1"># Resample the data.</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+        <span class="n">cumulative_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nsamples</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cumulative_sum</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">samples_dynesty</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="n">samples_dynesty</span>
+
+        <span class="c1"># now do the same for the log likes</span>
+
+        <span class="n">logl_dynesty</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;logl&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">=</span> <span class="n">logl_dynesty</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;logz&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_results</span><span class="p">()</span>
+
+        <span class="c1"># Display results</span>
+        <span class="k">if</span> <span class="n">loud</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+        <span class="c1"># now get the marginal likelihood</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

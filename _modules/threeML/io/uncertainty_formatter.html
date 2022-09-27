@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.io.uncertainty_formatter &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.io.uncertainty_formatter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.io.uncertainty_formatter</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">uncertainties</span>
+<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="interval_to_errors"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.uncertainty_formatter.interval_to_errors">[docs]</a><span class="k">def</span> <span class="nf">interval_to_errors</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert error intervals to errors</span>
+
+<span class="sd">    :param value: central value </span>
+<span class="sd">    :param low_bound: interval low bound</span>
+<span class="sd">    :param hi_bound: interval high bound</span>
+<span class="sd">    :return: (error minus, error plus)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">error_plus</span> <span class="o">=</span> <span class="n">hi_bound</span> <span class="o">-</span> <span class="n">value</span>
+    <span class="n">error_minus</span> <span class="o">=</span> <span class="n">value</span> <span class="o">-</span> <span class="n">low_bound</span>
+
+    <span class="k">return</span> <span class="n">error_minus</span><span class="p">,</span> <span class="n">error_plus</span></div>
+
+
+<div class="viewcode-block" id="get_uncertainty_tokens"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.uncertainty_formatter.get_uncertainty_tokens">[docs]</a><span class="k">def</span> <span class="nf">get_uncertainty_tokens</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split the given uncertainty in number, error and exponent.</span>
+
+<span class="sd">    :param x: an uncertainty instance</span>
+<span class="sd">    :return: number, error and exponent</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">this_str</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="n">is_inf</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    <span class="k">if</span> <span class="s2">&quot;inf&quot;</span> <span class="ow">in</span> <span class="n">this_str</span><span class="p">:</span>
+        <span class="n">is_inf</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+        <span class="n">this_str</span> <span class="o">=</span> <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">,</span> <span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        
+    
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">number</span><span class="p">,</span> <span class="n">uncertainty</span><span class="p">,</span> <span class="n">exponent</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+            <span class="s2">&quot;\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?&quot;</span><span class="p">,</span>
+            <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+/-&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+    <span class="k">except</span><span class="p">:</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Could not extract number, uncertainty and exponent from  </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2">. This is likely a bug.&quot;</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">is_inf</span><span class="p">:</span>
+
+        <span class="n">uncertainty</span> <span class="o">=</span> <span class="s2">&quot;inf&quot;</span>
+
+    
+    <span class="k">return</span> <span class="n">number</span><span class="p">,</span> <span class="n">uncertainty</span><span class="p">,</span> <span class="n">exponent</span></div>
+
+
+<span class="k">def</span> <span class="nf">_order_of_magnitude</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+
+<div class="viewcode-block" id="uncertainty_formatter"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.uncertainty_formatter.uncertainty_formatter">[docs]</a><span class="k">def</span> <span class="nf">uncertainty_formatter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets a value and its error in input, and returns the value, the uncertainty and the common exponent with the proper</span>
+<span class="sd">    number of significant digits in a string like (4.2 -0.023 +5.23) x 10^5</span>
+
+<span class="sd">    :param value:</span>
+<span class="sd">    :param error: a *positive* value</span>
+<span class="sd">    :return: string representation of interval</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get the errors (instead of the boundaries)</span>
+
+    <span class="n">error_m</span><span class="p">,</span> <span class="n">error_p</span> <span class="o">=</span> <span class="n">interval_to_errors</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span><span class="p">)</span>
+
+    <span class="n">error_p_is_nan</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">error_m_is_nan</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">error_p</span><span class="p">):</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;the positive uncertainty is not finite &quot;</span><span class="p">)</span>
+
+        <span class="n">error_p_is_nan</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">error_m</span><span class="p">):</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;the negative uncertainty is not finite &quot;</span><span class="p">)</span>
+
+        <span class="n">error_m_is_nan</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Compute the sign of the errors</span>
+    <span class="c1"># NOTE: sometimes value is not within low_bound - hi_bound, so these sign might not always</span>
+    <span class="c1"># be -1 and +1 respectively</span>
+
+    <span class="n">sign_m</span> <span class="o">=</span> <span class="n">_sign</span><span class="p">(</span><span class="n">low_bound</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">sign_p</span> <span class="o">=</span> <span class="n">_sign</span><span class="p">(</span><span class="n">hi_bound</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="c1"># Scale the values to the order of magnitude of the value</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">_order_of_magnitude</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">error_m_is_nan</span><span class="p">:</span>
+
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_order_of_magnitude</span><span class="p">(</span><span class="n">error_m</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">error_p_is_nan</span><span class="p">:</span>
+
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_order_of_magnitude</span><span class="p">(</span><span class="n">error_p</span><span class="p">))</span>
+
+    <span class="n">order_of_magnitude</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+    <span class="n">scaled_value</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">order_of_magnitude</span><span class="p">)</span>
+    <span class="n">scaled_error_m</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">error_m</span><span class="p">,</span> <span class="n">order_of_magnitude</span><span class="p">)</span>
+    <span class="n">scaled_error_p</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">error_p</span><span class="p">,</span> <span class="n">order_of_magnitude</span><span class="p">)</span>
+
+    <span class="c1"># Get the uncertainties instance of the scaled values/errors</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">uncertainties</span><span class="o">.</span><span class="n">ufloat</span><span class="p">(</span><span class="n">scaled_value</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">scaled_error_m</span><span class="p">))</span>
+
+    <span class="c1"># Split the uncertainty in number, negative error, and exponent (if any)</span>
+
+    <span class="n">num1</span><span class="p">,</span> <span class="n">unc1</span><span class="p">,</span> <span class="n">exponent1</span> <span class="o">=</span> <span class="n">get_uncertainty_tokens</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># Repeat the same for the other error</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">uncertainties</span><span class="o">.</span><span class="n">ufloat</span><span class="p">(</span><span class="n">scaled_value</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">scaled_error_p</span><span class="p">))</span>
+
+    <span class="n">num2</span><span class="p">,</span> <span class="n">unc2</span><span class="p">,</span> <span class="n">exponent2</span> <span class="o">=</span> <span class="n">get_uncertainty_tokens</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Choose the representation of the number with more digits</span>
+    <span class="c1"># This is necessary for asymmetric intervals where one of the two errors is much larger in magnitude</span>
+    <span class="c1"># then the others. For example, 1 -0.01 +90. This will choose 1.00 instead of 1,so that the final</span>
+    <span class="c1"># representation will be 1.00 -0.01 +90</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">num2</span><span class="p">):</span>
+
+        <span class="n">num</span> <span class="o">=</span> <span class="n">num1</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">num</span> <span class="o">=</span> <span class="n">num2</span>
+
+    <span class="c1"># Get the exponent of 10 to use for the representation</span>
+
+    <span class="n">expon</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">order_of_magnitude</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">unc1</span> <span class="o">!=</span> <span class="n">unc2</span><span class="p">:</span>
+
+        <span class="c1"># Asymmetric error</span>
+
+        <span class="n">repr1</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_m</span><span class="p">,</span> <span class="n">unc1</span><span class="p">)</span>
+        <span class="n">repr2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_p</span><span class="p">,</span> <span class="n">unc2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># No need to show any power of 10</span>
+
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="c1"># Display 10 instead of 10^1</span>
+
+            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># Display 10^expon</span>
+
+            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10^</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">repr2</span><span class="p">,</span> <span class="n">expon</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Symmetric error</span>
+        <span class="n">repr1</span> <span class="o">=</span> <span class="s2">&quot;+/- </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">unc1</span>
+
+        <span class="k">if</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">expon</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">) x 10^</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">repr1</span><span class="p">,</span> <span class="n">expon</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_sign</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="s2">&quot;-&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="s2">&quot;+&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

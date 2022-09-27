@@ -1,80 +1,42 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>threeML.utils.data_download package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
-   
-
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -82,25 +44,16 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
@@ -115,94 +68,39 @@
 <li class="toctree-l1"><a class="reference internal" href="../Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-  <!--
-  <div class="admonition note">
-    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
-    </p>
-  </div>
-  -->
-  <li id="lightdark-li">
-    <label for="lightdark-checkbox" id="lightdark-label">
-      <input type="checkbox" id="lightdark-checkbox"/>
-      <div class="btn-neutral"></div>
-    </label>
-  </li>
-  
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>threeML.utils.data_download package</li>
-    
-
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-  <script type="text/javascript" src=../../_static/custom.js></script>
-  
            <div itemprop="articleBody">
-            
+             
   
 <style>
 /* CSS overrides for sphinx_rtd_theme */
@@ -227,76 +125,59 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="threeml-utils-data-download-package">
-<h1>threeML.utils.data_download package<a class="headerlink" href="#threeml-utils-data-download-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<section id="threeml-utils-data-download-package">
+<h1>threeML.utils.data_download package<a class="headerlink" href="#threeml-utils-data-download-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="threeML.utils.data_download.Fermi_GBM.html">threeML.utils.data_download.Fermi_GBM package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_GBM.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_GBM.html#threeml-utils-data-download-fermi-gbm-download-gbm-data-module">threeML.utils.data_download.Fermi_GBM.download_GBM_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_GBM.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_GBM.html#module-threeML.utils.data_download.Fermi_GBM.download_GBM_data">threeML.utils.data_download.Fermi_GBM.download_GBM_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_GBM.html#module-threeML.utils.data_download.Fermi_GBM">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html">threeML.utils.data_download.Fermi_LAT package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#threeml-utils-data-download-fermi-lat-download-lat-data-module">threeML.utils.data_download.Fermi_LAT.download_LAT_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#threeml-utils-data-download-fermi-lat-download-lle-data-module">threeML.utils.data_download.Fermi_LAT.download_LLE_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#module-threeML.utils.data_download.Fermi_LAT.download_LAT_data">threeML.utils.data_download.Fermi_LAT.download_LAT_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#module-threeML.utils.data_download.Fermi_LAT.download_LLE_data">threeML.utils.data_download.Fermi_LAT.download_LLE_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.data_download.Fermi_LAT.html#module-threeML.utils.data_download.Fermi_LAT">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+<section id="module-threeML.utils.data_download">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.utils.data_download" title="Permalink to this heading"></a></h2>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
-
-    </p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

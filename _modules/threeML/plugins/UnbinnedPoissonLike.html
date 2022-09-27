@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.plugins.UnbinnedPoissonLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.plugins.UnbinnedPoissonLike</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.plugins.UnbinnedPoissonLike</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">astromodels</span>
+<span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.plugin_prototype</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
+
+<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;n.a.&quot;</span>
+
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_tiny</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span><span class="o">.</span><span class="n">tiny</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EventObservation"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.EventObservation">[docs]</a><span class="k">class</span> <span class="nc">EventObservation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">events</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">exposure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">stop</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">for_timeseries</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">exposure</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
+
+                <span class="k">assert</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">stop</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">start</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">stop</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_multi_interval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">stop</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_multi_interval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_events</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_events</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;created event observation with&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_for_timeseries</span> <span class="o">=</span> <span class="n">for_timeseries</span>
+        <span class="k">if</span> <span class="n">for_timeseries</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This EventObservation is for a time series fit!&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_events</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_multi_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_multi_interval</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">for_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_for_timeseries</span></div>
+
+
+<div class="viewcode-block" id="UnbinnedPoissonLike"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike">[docs]</a><span class="k">class</span> <span class="nc">UnbinnedPoissonLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">observation</span><span class="p">:</span> <span class="n">EventObservation</span><span class="p">,</span>
+        <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a generic likelihood for unbinned Poisson data.</span>
+<span class="sd">        It is very slow for many events. </span>
+
+<span class="sd">        :param name: the plugin name</span>
+<span class="sd">        :param observation: and EventObservation container</span>
+<span class="sd">        :param source_name: option source name to apply to the source</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">EventObservation</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="p">:</span> <span class="n">EventObservation</span> <span class="o">=</span> <span class="n">observation</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">source_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_events</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">n_events</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">for_timeseries</span><span class="p">:</span>
+
+            <span class="n">total_dt</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">is_multi_interval</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">stop</span><span class="p">):</span>
+                    <span class="n">total_dt</span> <span class="o">+=</span> <span class="n">stop</span><span class="o">-</span><span class="n">start</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">stop</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">start</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dead_corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">exposure</span><span class="o">/</span><span class="n">total_dt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dead_corr</span> <span class="o">=</span> <span class="mf">1.</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">UnbinnedPoissonLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">nuisance_parameters</span><span class="o">=</span><span class="p">{})</span>
+
+<div class="viewcode-block" id="UnbinnedPoissonLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">:</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">Model</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="c1"># We assume there are no extended sources, since we cannot handle them here</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">get_number_of_extended_sources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;SpectrumLike plugins do not support &quot;</span> <span class="s2">&quot;extended sources&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># check if we set a source name that the source is in the model</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is not contained in &quot;</span>
+                <span class="s2">&quot;the likelihood model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+            <span class="p">)</span>
+
+        <span class="n">differential</span><span class="p">,</span> <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_diff_and_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral_model</span> <span class="o">=</span> <span class="n">integral</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">differential</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_diff_and_integral</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">Model</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">n_point_sources</span> <span class="o">=</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">get_number_of_point_sources</span><span class="p">()</span>
+
+            <span class="c1"># Make a function which will stack all point sources (OGIP do not support spatial dimension)</span>
+
+            <span class="k">def</span> <span class="nf">differential</span><span class="p">(</span><span class="n">energies</span><span class="p">):</span>
+                <span class="n">fluxes</span> <span class="o">=</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">get_point_source_fluxes</span><span class="p">(</span>
+                    <span class="mi">0</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
+                <span class="p">)</span>
+
+                <span class="c1"># If we have only one point source, this will never be executed</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_point_sources</span><span class="p">):</span>
+                    <span class="n">fluxes</span> <span class="o">+=</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">get_point_source_fluxes</span><span class="p">(</span>
+                        <span class="n">i</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
+                    <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">fluxes</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># This SpectrumLike dataset refers to a specific source</span>
+
+            <span class="c1"># Note that we checked that self._source_name is in the model when the model was set</span>
+
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="k">def</span> <span class="nf">differential_flux</span><span class="p">(</span><span class="n">energies</span><span class="p">):</span>
+
+                    <span class="k">return</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="p">](</span>
+                        <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
+                    <span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                    <span class="s2">&quot;This plugin has been assigned to source </span><span class="si">%s</span><span class="s2">, &quot;</span>
+                    <span class="s2">&quot;which does not exist in the current model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+                <span class="p">)</span>
+
+        <span class="c1"># New way with simpson rule.</span>
+        <span class="c1"># Make sure to not calculate the model twice for the same energies</span>
+        <span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
+            <span class="c1"># Simpson&#39;s rule</span>
+            <span class="c1"># single energy values given</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span><span class="p">)</span>
+                <span class="o">/</span> <span class="mf">6.0</span>
+                <span class="o">*</span> <span class="p">(</span>
+                    <span class="n">differential</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">differential</span><span class="p">((</span><span class="n">e2</span> <span class="o">+</span> <span class="n">e1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">differential</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">differential</span><span class="p">,</span> <span class="n">integral</span>
+
+<div class="viewcode-block" id="UnbinnedPoissonLike.get_log_like"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_log_like">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the value of the log-likelihood with the current values for the</span>
+<span class="sd">        parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">n_expected_counts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">is_multi_interval</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">stop</span><span class="p">):</span>
+
+                <span class="n">n_expected_counts</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_model</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">n_expected_counts</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_model</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">stop</span>
+            <span class="p">)</span>
+
+        <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observation</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
+        <span class="n">negative_mask</span> <span class="o">=</span> <span class="n">M</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">negative_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">M</span><span class="p">[</span><span class="n">negative_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># use numba to sum the events</span>
+        <span class="n">sum_logM</span> <span class="o">=</span> <span class="n">_evaluate_logM_sum</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_events</span><span class="p">)</span>
+
+        <span class="n">minus_log_like</span> <span class="o">=</span> <span class="o">-</span><span class="n">n_expected_counts</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dead_corr</span> <span class="o">+</span> <span class="n">sum_logM</span>
+
+        <span class="k">return</span> <span class="n">minus_log_like</span></div>
+
+<div class="viewcode-block" id="UnbinnedPoissonLike.inner_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.inner_fit">[docs]</a>    <span class="k">def</span> <span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is used for the profile likelihood. Keeping fixed all parameters in the</span>
+<span class="sd">        LikelihoodModel, this method minimize the logLike over the remaining nuisance</span>
+<span class="sd">        parameters, i.e., the parameters belonging only to the model for this</span>
+<span class="sd">        particular detector. If there are no nuisance parameters, simply return the</span>
+<span class="sd">        logLike value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="UnbinnedPoissonLike.get_number_of_data_points"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_number_of_data_points">[docs]</a>    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_events</span></div></div>
+
+
+<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_evaluate_logM_sum</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="c1"># Evaluate the logarithm with protection for negative or small</span>
+    <span class="c1"># numbers, using a smooth linear extrapolation (better than just a sharp</span>
+    <span class="c1"># cutoff)</span>
+
+    <span class="n">non_tiny_mask</span> <span class="o">=</span> <span class="n">M</span> <span class="o">&gt;</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">_tiny</span>
+
+    <span class="n">tink_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">non_tiny_mask</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tink_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">logM</span><span class="p">[</span><span class="n">tink_mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">tink_mask</span><span class="p">])</span><span class="o">/</span><span class="n">_tiny</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_tiny</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">logM</span><span class="p">[</span><span class="n">non_tiny_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">non_tiny_mask</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">logM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logM</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

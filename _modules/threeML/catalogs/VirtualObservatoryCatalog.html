@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.catalogs.VirtualObservatoryCatalog &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.catalogs.VirtualObservatoryCatalog</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.catalogs.VirtualObservatoryCatalog</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">astropy</span>
+
+<span class="c1"># from astropy.vo.client.vos_catalog import VOSCatalog</span>
+<span class="kn">from</span> <span class="nn">astroquery.vo_conesearch.vos_catalog</span> <span class="kn">import</span> <span class="n">VOSCatalog</span>
+<span class="kn">from</span> <span class="nn">astroquery.vo_conesearch</span> <span class="kn">import</span> <span class="n">conesearch</span>
+<span class="kn">from</span> <span class="nn">astroquery.vo_conesearch.exceptions</span> <span class="kn">import</span> <span class="n">VOSError</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">astropy.coordinates.name_resolve</span> <span class="kn">import</span> <span class="n">get_icrs_coordinates</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+
+<span class="kn">import</span> <span class="nn">astropy.table</span> <span class="k">as</span> <span class="nn">astro_table</span>
+
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.network</span> <span class="kn">import</span> <span class="n">internet_connection_is_active</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Workaround to support astropy 4.1+</span>
+<span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">astropy_version</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span>
+<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">astropy_version</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">astropy_version</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">astropy_version</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span><span class="mi">5</span><span class="p">:</span>
+    <span class="n">astropy_old</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="ConeSearchFailed"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.ConeSearchFailed">[docs]</a><span class="k">class</span> <span class="nc">ConeSearchFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog">[docs]</a><span class="k">class</span> <span class="nc">VirtualObservatoryCatalog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">VOSCatalog</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_vo_table_from_source</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog.search_around_source"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.search_around_source">[docs]</a>    <span class="k">def</span> <span class="nf">search_around_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search for sources around the named source. The coordinates of the provided source are resolved using the</span>
+<span class="sd">        astropy.coordinates.name_resolve facility.</span>
+
+<span class="sd">        :param source_name: name of the source, like &quot;Crab&quot;</span>
+<span class="sd">        :param radius: radius of the search, in degrees</span>
+<span class="sd">        :return: (ra, dec, table), where ra,dec are the coordinates of the source as resolved by astropy, and table is</span>
+<span class="sd">        a table with the list of sources</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sky_coord</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">source_name</span><span class="p">)</span>
+
+        <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="p">(</span><span class="n">sky_coord</span><span class="o">.</span><span class="n">fk5</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">sky_coord</span><span class="o">.</span><span class="n">fk5</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cone_search</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog.cone_search"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search">[docs]</a>    <span class="k">def</span> <span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Searches for sources in a cone of given radius and center</span>
+
+<span class="sd">        :param ra: decimal degrees, R.A. of the center of the cone</span>
+<span class="sd">        :param dec: decimal degrees, Dec. of the center of the cone</span>
+<span class="sd">        :param radius: radius in degrees</span>
+<span class="sd">        :return: a table with the list of sources</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">skycoord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">)</span>
+
+        <span class="c1"># First check that we have an active internet connection</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">internet_connection_is_active</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
+
+            <span class="k">raise</span> <span class="n">ConeSearchFailed</span><span class="p">(</span>
+                <span class="s2">&quot;It looks like you don&#39;t have an active internet connection. Cannot continue.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+
+            <span class="c1"># Ignore all warnings, which are many from the conesearch module</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="n">votable</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span>
+                    <span class="n">skycoord</span><span class="p">,</span>
+                    <span class="n">radius</span><span class="p">,</span>
+                    <span class="n">catalog_db</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="p">,</span>
+                    <span class="n">verb</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">VOSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># Pragma: no cover</span>
+
+                <span class="c1"># Download failed</span>
+
+                <span class="k">raise</span> <span class="n">ConeSearchFailed</span><span class="p">(</span><span class="s2">&quot;Cone search failed. Reason: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># Download successful</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">votable</span>
+                <span class="c1"># Workaround to comply with newer versions of astroquery</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">votable</span><span class="p">,</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">votable</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">votable</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Your search returned nothing&quot;</span><span class="p">)</span>
+                    
+                    <span class="k">return</span> <span class="kc">None</span>
+                    
+                <span class="n">table</span><span class="o">.</span><span class="n">convert_bytestring_to_unicode</span><span class="p">()</span>
+
+                <span class="n">pandas_df</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">str_df</span> <span class="o">=</span> <span class="n">pandas_df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">([</span><span class="nb">object</span><span class="p">])</span>
+                
+                <span class="k">if</span> <span class="n">astropy_old</span><span class="p">:</span>
+                    <span class="n">str_df</span> <span class="o">=</span> <span class="n">str_df</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+                
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">str_df</span><span class="p">:</span>
+                    <span class="n">pandas_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">str_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">astropy_old</span><span class="p">:</span>
+                    <span class="n">new_index</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pandas_df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+                    <span class="n">pandas_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_index</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="o">=</span> <span class="n">pandas_df</span>
+                
+                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+                <span class="c1"># This is needed to avoid strange errors</span>
+                <span class="k">del</span> <span class="n">votable</span>
+                <span class="k">del</span> <span class="n">table</span>
+
+                <span class="c1"># Save coordinates of center of cone search</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ra</span> <span class="o">=</span> <span class="n">ra</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dec</span> <span class="o">=</span> <span class="n">dec</span>
+
+                <span class="c1"># Make a DataFrame with the name of the source as index</span>
+
+                <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ra_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ra</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dec_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dec</span>
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog.apply_format"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.apply_format">[docs]</a>    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog.query"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        query the entire VO table for the given logical argument. Queries are in the form of pandas</span>
+<span class="sd">        queries: http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.query.html</span>
+
+<span class="sd">        To obtain a preview of the availble columns, try catalog.variables</span>
+
+
+<span class="sd">        :param query: pandas style query string</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;query must be a string&quot;</span>
+
+        <span class="n">query_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">query_results</span><span class="p">)</span>
+        <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="o">=</span> <span class="n">query_results</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="VirtualObservatoryCatalog.query_sources"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources">[docs]</a>    <span class="k">def</span> <span class="nf">query_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        query for the specific source names.</span>
+
+<span class="sd">        :param sources: source(s) to search for</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">valid_sources</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_is_valid</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+
+                <span class="n">valid_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid_sources</span><span class="p">:</span>
+
+            <span class="n">query_string</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;(index == &quot;</span><span class="si">%s</span><span class="s1">&quot;)&#39;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">valid_sources</span><span class="p">])</span>
+
+            <span class="n">query_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_string</span><span class="p">)</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">query_results</span><span class="p">)</span>
+
+            <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="o">=</span> <span class="n">query_results</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There were not valid sources in your search&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a searchable pandas dataframe of results from the last query.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

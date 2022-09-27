@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.plugins.DispersionSpectrumLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.plugins.DispersionSpectrumLike</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.plugins.DispersionSpectrumLike</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="kn">import</span> <span class="n">SpectrumLike</span>
+<span class="kn">from</span> <span class="nn">threeML.plugins.XYLike</span> <span class="kn">import</span> <span class="n">XYLike</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.OGIP.response</span> <span class="kn">import</span> <span class="n">InstrumentResponse</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.binned_spectrum</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BinnedSpectrum</span><span class="p">,</span>
+    <span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+    <span class="n">ChannelSet</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;General binned spectral data with energy dispersion&quot;</span>
+
+
+<div class="viewcode-block" id="DispersionSpectrumLike"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike">[docs]</a><span class="k">class</span> <span class="nc">DispersionSpectrumLike</span><span class="p">(</span><span class="n">SpectrumLike</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">observation</span><span class="p">:</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
+        <span class="n">background</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">BinnedSpectrum</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_exposure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,</span>
+<span class="sd">        and a background binned spectrum or plugin with the background data.</span>
+
+<span class="sd">        In the case of a binned background spectrum, the background model is profiled</span>
+<span class="sd">        out and the appropriate profile-likelihood is used to fit the total spectrum. In this</span>
+<span class="sd">        case, caution must be used when there are zero background counts in bins as the</span>
+<span class="sd">        profiled background parameters (one per channel) will then have zero information from which to</span>
+<span class="sd">        constrain the background. It is recommended to bin the spectrum such that there is one background count</span>
+<span class="sd">        per channel.</span>
+
+<span class="sd">        If either an SpectrumLike or XYLike instance is provided as background, it is assumed that this is the</span>
+<span class="sd">        background data and the likelihood model from this plugin is used to simultaneously fit the background</span>
+<span class="sd">        and source.</span>
+
+<span class="sd">        :param name: the plugin name</span>
+<span class="sd">        :param observation: the observed spectrum</span>
+<span class="sd">        :param background: the background spectrum or a plugin from which the background will be modeled</span>
+<span class="sd">        :param background_exposure: (optional) adjust the background exposure of the modeled background data comes from and</span>
+<span class="sd">        XYLike plugin</span>
+<span class="sd">        :param verbose: turn on/off verbose logging</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">):</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;observed spectrum is not an instance of BinnedSpectrumWithDispersion&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">observation</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;the observed spectrum does not have a response&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="c1"># assign the response to the plugins</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">:</span> <span class="n">InstrumentResponse</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">response</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">DispersionSpectrumLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">observation</span><span class="o">=</span><span class="n">observation</span><span class="p">,</span>
+            <span class="n">background</span><span class="o">=</span><span class="n">background</span><span class="p">,</span>
+            <span class="n">background_exposure</span><span class="o">=</span><span class="n">background_exposure</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">tstart</span><span class="o">=</span><span class="n">tstart</span><span class="p">,</span>
+            <span class="n">tstop</span><span class="o">=</span><span class="n">tstop</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predefined_energies</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">monte_carlo_energies</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihoodModel</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model to be used in the joint minimization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model set for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Store likelihood model</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">likelihoodModel</span>
+
+        <span class="c1"># We assume there are no extended sources, since we cannot handle them here</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="o">.</span><span class="n">get_number_of_extended_sources</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SpectrumLike plugins do not support extended sources&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get the differential flux function, and the integral function, with no dispersion,</span>
+        <span class="c1"># we simply integrate the model over the bins</span>
+
+        <span class="n">differential_flux</span><span class="p">,</span> <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_diff_flux_and_integral</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">,</span> <span class="n">integrate_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_integrate_method</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> passing intfral flux function to RSP&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span> <span class="o">=</span> <span class="n">integral</span>
+
+        <span class="c1"># pass to the response matrix</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">set_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_evaluate_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        evaluates the full model over all channels</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.set_model_integrate_method"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model_integrate_method">[docs]</a>    <span class="k">def</span> <span class="nf">set_model_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the integrate method for the model integration</span>
+<span class="sd">        :param method: (str) which method should be used (simpson or trapz)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;simpson&quot;</span><span class="p">,</span> <span class="s2">&quot;trapz&quot;</span><span class="p">,</span> <span class="s2">&quot;riemann&quot;</span><span class="p">]:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Only simpson and trapz are valid intergate methods.&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_integrate_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> changing model integration method to </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># if like_model already set, upadte the integral function</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">differential_flux</span><span class="p">,</span> <span class="n">integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_diff_flux_and_integral</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">,</span> <span class="n">integrate_method</span><span class="o">=</span><span class="n">method</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span> <span class="o">=</span> <span class="n">integral</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">set_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.get_simulated_dataset"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.get_simulated_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns another DispersionSpectrumLike instance where data have been obtained by randomizing the current expectation from the</span>
+<span class="sd">        model, as well as from the background (depending on the respective noise models)</span>
+
+<span class="sd">        :return: a DispersionSpectrumLike simulated instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># pass the response thru to the constructor</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DispersionSpectrumLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_simulated_dataset</span><span class="p">(</span>
+            <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.get_pha_files"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.get_pha_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_pha_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># we want to pass copies so that</span>
+        <span class="c1"># the user doesn&#39;t grab the instance</span>
+        <span class="c1"># and try to modify things. protection</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="p">)</span>
+
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.display_rsp"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.display_rsp">[docs]</a>    <span class="k">def</span> <span class="nf">display_rsp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display the currently loaded full response matrix, i.e., RMF and ARF convolved</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InstrumentResponse</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span>
+
+    <span class="k">def</span> <span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># type: () -&gt; pd.Series</span>
+
+        <span class="n">super_out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span>
+            <span class="n">DispersionSpectrumLike</span><span class="p">,</span> <span class="bp">self</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span>  <span class="c1"># type: pd.Series</span>
+
+        <span class="n">the_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">rsp_filename</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">super_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_df</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.write_pha"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.write_pha">[docs]</a>    <span class="k">def</span> <span class="nf">write_pha</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the observation, background and (optional) rsp to PHAII fits files</span>
+
+<span class="sd">        :param filename: base file name to write out</span>
+<span class="sd">        :param overwrite: if you would like to force overwriting of the files</span>
+<span class="sd">        :param force_rsp_write: force the writing of an rsp even if not required</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we need to pass up the variables to an OGIPLike</span>
+        <span class="c1"># so that we have the proper variable name</span>
+
+        <span class="c1"># a local import here because OGIPLike is dependent on this</span>
+
+        <span class="kn">from</span> <span class="nn">threeML.plugins.OGIPLike</span> <span class="kn">import</span> <span class="n">OGIPLike</span>
+
+        <span class="n">ogiplike</span> <span class="o">=</span> <span class="n">OGIPLike</span><span class="o">.</span><span class="n">from_general_dispersion_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ogiplike</span><span class="o">.</span><span class="n">write_pha</span><span class="p">(</span>
+            <span class="n">file_name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">force_rsp_write</span><span class="o">=</span><span class="n">force_rsp_write</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_fake_observation</span><span class="p">(</span>
+        <span class="n">fake_data</span><span class="p">,</span>
+        <span class="n">channel_set</span><span class="p">,</span>
+        <span class="n">source_errors</span><span class="p">,</span>
+        <span class="n">source_sys_errors</span><span class="p">,</span>
+        <span class="n">is_poisson</span><span class="p">,</span>
+        <span class="n">exposure</span><span class="p">,</span>
+        <span class="n">scale_factor</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is the fake observation builder for SpectrumLike which builds data</span>
+<span class="sd">        for a binned spectrum without dispersion. It must be overridden in child classes.</span>
+
+<span class="sd">        :param fake_data: series of values... they are ignored later</span>
+<span class="sd">        :param channel_set: a channel set</span>
+<span class="sd">        :param source_errors:</span>
+<span class="sd">        :param source_sys_errors:</span>
+<span class="sd">        :param is_poisson:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;response&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">):</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;A response was not provided. Cannot build synthetic observation&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">)</span>
+
+        <span class="n">observation</span> <span class="o">=</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">(</span>
+            <span class="n">fake_data</span><span class="p">,</span>
+            <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="n">count_errors</span><span class="o">=</span><span class="n">source_errors</span><span class="p">,</span>
+            <span class="n">sys_errors</span><span class="o">=</span><span class="n">source_sys_errors</span><span class="p">,</span>
+            <span class="n">quality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">scale_factor</span><span class="o">=</span><span class="n">scale_factor</span><span class="p">,</span>
+            <span class="n">is_poisson</span><span class="o">=</span><span class="n">is_poisson</span><span class="p">,</span>
+            <span class="n">mission</span><span class="o">=</span><span class="s2">&quot;fake_mission&quot;</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;fake_instrument&quot;</span><span class="p">,</span>
+            <span class="n">tstart</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">tstop</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">observation</span>
+
+<div class="viewcode-block" id="DispersionSpectrumLike.from_function"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.from_function">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_function</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">source_function</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">,</span>
+        <span class="n">source_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">source_sys_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_sys_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">exposure</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">scale_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># type: () -&gt; DispersionSpectrumLike</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.</span>
+
+<span class="sd">        :param name: simulated data set name</span>
+<span class="sd">        :param source_function: astromodels function</span>
+<span class="sd">        :param response: 3ML Instrument response</span>
+<span class="sd">        :param source_errors: (optional) gaussian source errors</span>
+<span class="sd">        :param source_sys_errors: (optional) systematic source errors</span>
+<span class="sd">        :param background_function: (optional) astromodels background function</span>
+<span class="sd">        :param background_errors: (optional) gaussian background errors</span>
+<span class="sd">        :param background_sys_errors: (optional) background systematic errors</span>
+<span class="sd">        :param exposure: the exposure to assume</span>
+<span class="sd">        :param scale_factor: the scale factor between source exposure / bkg exposure</span>
+<span class="sd">        :return: simulated DispersionSpectrumLike plugin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">channel_set</span> <span class="o">=</span> <span class="n">ChannelSet</span><span class="o">.</span><span class="n">from_instrument_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="n">energy_min</span><span class="p">,</span> <span class="n">energy_max</span> <span class="o">=</span> <span class="n">channel_set</span><span class="o">.</span><span class="n">bin_stack</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># pass the variables to the super class</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DispersionSpectrumLike</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">source_function</span><span class="p">,</span>
+            <span class="n">energy_min</span><span class="p">,</span>
+            <span class="n">energy_max</span><span class="p">,</span>
+            <span class="n">source_errors</span><span class="p">,</span>
+            <span class="n">source_sys_errors</span><span class="p">,</span>
+            <span class="n">background_function</span><span class="p">,</span>
+            <span class="n">background_errors</span><span class="p">,</span>
+            <span class="n">background_sys_errors</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span>
+            <span class="n">scale_factor</span><span class="o">=</span><span class="n">scale_factor</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

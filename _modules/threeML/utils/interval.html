@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>threeML.utils.interval &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../threeML.html">threeML</a> &raquo;</li>
+      <li>threeML.utils.interval</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for threeML.utils.interval</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span><span class="p">,</span> <span class="n">itemgetter</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="IntervalsDoNotOverlap"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalsDoNotOverlap">[docs]</a><span class="k">class</span> <span class="nc">IntervalsDoNotOverlap</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="IntervalsNotContiguous"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalsNotContiguous">[docs]</a><span class="k">class</span> <span class="nc">IntervalsNotContiguous</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Interval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval">[docs]</a><span class="k">class</span> <span class="nc">Interval</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">swap_if_inverted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span>
+
+        <span class="c1"># Note that this allows to have intervals of zero duration</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">swap_if_inverted</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">stop</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">start</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Invalid time interval! TSTART must be before TSTOP and TSTOP-TSTART &gt;0. &quot;</span>
+                    <span class="s2">&quot;Got tstart = </span><span class="si">%s</span><span class="s2"> and tstop = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
+
+<div class="viewcode-block" id="Interval.new"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mid_point</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="s2">&quot; interval </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2"> (width: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_width</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Interval.intersect"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.intersect">[docs]</a>    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="c1"># type: (Interval) -&gt; Interval</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a new time interval corresponding to the intersection between this interval and the provided one.</span>
+
+<span class="sd">        :param interval: a TimeInterval instance</span>
+<span class="sd">        :type interval: Interval</span>
+<span class="sd">        :return: new interval covering the intersection</span>
+<span class="sd">        :raise IntervalsDoNotOverlap : if the intervals do not overlap</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlaps_with</span><span class="p">(</span><span class="n">interval</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Current interval does not overlap with provided interval&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">IntervalsDoNotOverlap</span><span class="p">()</span>
+
+        <span class="n">new_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+        <span class="n">new_stop</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_stop</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Interval.merge"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="c1"># type: (Interval) -&gt; Interval</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals</span>
+<span class="sd">        must overlap.</span>
+
+<span class="sd">        :param interval: a TimeInterval instance</span>
+<span class="sd">         :type interval : Interval</span>
+<span class="sd">        :return: a new TimeInterval instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlaps_with</span><span class="p">(</span><span class="n">interval</span><span class="p">):</span>
+
+            <span class="n">new_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">new_stop</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_stop</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="n">IntervalsDoNotOverlap</span><span class="p">(</span><span class="s2">&quot;Could not merge non-overlapping intervals!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Interval.overlaps_with"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.overlaps_with">[docs]</a>    <span class="k">def</span> <span class="nf">overlaps_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="c1"># type: (Interval) -&gt; bool</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns whether the current time interval and the provided one overlap or not</span>
+
+<span class="sd">        :param interval: a TimeInterval instance</span>
+<span class="sd">        :type interval: Interval</span>
+<span class="sd">        :return: True or False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">or</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">and</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">and</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">and</span> <span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Interval.to_string"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns a string representation of the time interval that is like the</span>
+<span class="sd">        argument of many interval reading funcitons</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+
+            <span class="c1"># This is needed for things like comparisons to None or other objects.</span>
+            <span class="c1"># Of course if the other object is not even a TimeInterval, the two things</span>
+            <span class="c1"># cannot be equal</span>
+
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">stop</span></div>
+
+
+<div class="viewcode-block" id="IntervalSet"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet">[docs]</a><span class="k">class</span> <span class="nc">IntervalSet</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A set of intervals</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">Interval</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="o">=</span><span class="p">()):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IntervalSet.new"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new interval set of this type</span>
+<span class="sd">        :param args:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return: interval set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntervalSet.new_interval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.new_interval">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new_interval</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new interval of INTERVAL_TYPE</span>
+<span class="sd">        :param args:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return: interval</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">INTERVAL_TYPE</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntervalSet.from_strings"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_strings">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_strings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        These are intervals specified as &quot;-10 -- 5&quot;, &quot;0-10&quot;, and so on</span>
+
+<span class="sd">        :param intervals:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">list_of_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+            <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+
+            <span class="n">list_of_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">new_interval</span><span class="p">(</span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_interval</span><span class="p">(</span><span class="n">time_interval</span><span class="p">):</span>
+        <span class="c1"># The following regular expression matches any two numbers, positive or negative,</span>
+        <span class="c1"># like &quot;-10 --5&quot;,&quot;-10 - -5&quot;, &quot;-10-5&quot;, &quot;5-10&quot; and so on</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+            <span class="s2">&quot;(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)&quot;</span><span class="p">,</span> <span class="n">time_interval</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
+
+<div class="viewcode-block" id="IntervalSet.from_starts_and_stops"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_starts_and_stops">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_starts_and_stops</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a TimeIntervalSet from a list of start and stop times:</span>
+
+<span class="sd">        start = [-1,0]  -&gt;   [-1,0], [0,1]</span>
+<span class="sd">        stop =  [0,1]</span>
+
+<span class="sd">        :param starts:</span>
+<span class="sd">        :param stops:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">starts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">stops</span>
+        <span class="p">),</span> <span class="s2">&quot;starts length: </span><span class="si">%d</span><span class="s2"> and stops length: </span><span class="si">%d</span><span class="s2"> must have same length&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">starts</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">stops</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">list_of_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
+            <span class="n">list_of_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">new_interval</span><span class="p">(</span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntervalSet.from_list_of_edges"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_list_of_edges">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_list_of_edges</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a IntervalSet from a list of time edges:</span>
+
+<span class="sd">        edges = [-1,0,1] -&gt; [-1,0], [0,1]</span>
+
+
+<span class="sd">        :param edges:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># sort the time edges</span>
+
+        <span class="n">edges</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="n">list_of_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">list_of_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">new_interval</span><span class="p">(</span><span class="n">imin</span><span class="p">,</span> <span class="n">imax</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntervalSet.merge_intersecting_intervals"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.merge_intersecting_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">merge_intersecting_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        merges intersecting intervals into a contiguous intervals</span>
+
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get a copy of the sorted intervals</span>
+
+        <span class="n">sorted_intervals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="n">new_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="c1"># pop the first interval off the stack</span>
+
+            <span class="n">this_interval</span> <span class="o">=</span> <span class="n">sorted_intervals</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># see if that interval overlaps with the the next one</span>
+
+            <span class="k">if</span> <span class="n">this_interval</span><span class="o">.</span><span class="n">overlaps_with</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+                <span class="c1"># if so, pop the next one</span>
+
+                <span class="n">next_interval</span> <span class="o">=</span> <span class="n">sorted_intervals</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="c1"># and merge the two, appending them to the new intervals</span>
+
+                <span class="n">new_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_interval</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">next_interval</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># otherwise just append this interval</span>
+
+                <span class="n">new_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_interval</span><span class="p">)</span>
+
+                <span class="c1"># now if there is only one interval left</span>
+                <span class="c1"># it should not overlap with any other interval</span>
+                <span class="c1"># and the loop will stop</span>
+                <span class="c1"># otherwise, we continue</span>
+
+        <span class="c1"># if there was only one interval</span>
+        <span class="c1"># or a leftover from the merge</span>
+        <span class="c1"># we append it</span>
+        <span class="k">if</span> <span class="n">sorted_intervals</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="p">),</span> <span class="s2">&quot;there should only be one interval left over, this is a bug&quot;</span>  <span class="c1"># pragma: no cover</span>
+
+            <span class="c1"># we want to make sure that the last new interval did not</span>
+            <span class="c1"># overlap with the final interval</span>
+            <span class="k">if</span> <span class="n">new_intervals</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">new_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">overlaps_with</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+                    <span class="n">new_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">new_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">new_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">in_place</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">new_intervals</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_intervals</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntervalSet.extend"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">interval</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">interval_this</span><span class="p">,</span> <span class="n">interval_other</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">(),</span> <span class="n">other</span><span class="o">.</span><span class="n">argsort</span><span class="p">()):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="n">interval_this</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="p">[</span><span class="n">interval_other</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="IntervalSet.pop"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IntervalSet.sort"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a sorted copy of the set (sorted according to the tstart of the time intervals)</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">())(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="IntervalSet.argsort"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.argsort">[docs]</a>    <span class="k">def</span> <span class="nf">argsort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the indices which order the set</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Gather all tstarts</span>
+        <span class="n">tstarts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tstarts</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span></div>
+
+<div class="viewcode-block" id="IntervalSet.is_contiguous"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.is_contiguous">[docs]</a>    <span class="k">def</span> <span class="nf">is_contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether the time intervals are all contiguous, i.e., the stop time of one interval is the start</span>
+<span class="sd">        time of the next</span>
+
+<span class="sd">        :return: True or False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+        <span class="n">stops</span> <span class="o">=</span> <span class="p">[</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">starts</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stops</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">relative_tolerance</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether the time intervals are sorted</span>
+<span class="sd">        :return: True or False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+<div class="viewcode-block" id="IntervalSet.containing_bin"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.containing_bin">[docs]</a>    <span class="k">def</span> <span class="nf">containing_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        finds the index of the interval containing</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get the index of the first ebounds upper bound larger than energy</span>
+        <span class="c1"># (but never go below zero or above the last channel)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">idx</span></div>
+
+<div class="viewcode-block" id="IntervalSet.containing_interval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.containing_interval">[docs]</a>    <span class="k">def</span> <span class="nf">containing_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        returns either a mask of the intervals contained in the selection</span>
+<span class="sd">        or a new set of intervals within the selection. NOTE: no sort is performed</span>
+
+<span class="sd">        :param start: start of interval</span>
+<span class="sd">        :param stop: stop of interval</span>
+<span class="sd">        :param inner: if True, returns only intervals strictly contained within bounds, if False, returns outer bounds as well</span>
+<span class="sd">        :param as_mask: if you want a mask or the intervals</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop only once because every call unpacks the array</span>
+        <span class="c1"># we need to round for the comparison because we may have read from</span>
+        <span class="c1"># strings which are rounded to six decimals</span>
+
+        <span class="n">starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">stops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+        <span class="n">condition</span> <span class="o">=</span> <span class="p">(</span><span class="n">starts</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">stop</span> <span class="o">&gt;=</span> <span class="n">stops</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inner</span><span class="p">:</span>
+
+            <span class="c1"># now we get the end caps</span>
+            <span class="n">lower_condition</span> <span class="o">=</span> <span class="p">(</span><span class="n">starts</span> <span class="o">&lt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">stops</span><span class="p">)</span>
+
+            <span class="n">upper_condition</span> <span class="o">=</span> <span class="p">(</span><span class="n">starts</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">stop</span> <span class="o">&lt;=</span> <span class="n">stops</span><span class="p">)</span>
+
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span> <span class="o">|</span> <span class="n">lower_condition</span> <span class="o">|</span> <span class="n">upper_condition</span>
+
+        <span class="c1"># if we just want the mask</span>
+
+        <span class="k">if</span> <span class="n">as_mask</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="n">condition</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)[</span><span class="n">condition</span><span class="p">])</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">starts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the starts fo the set</span>
+
+<span class="sd">        :return: list of start times</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the stops of the set</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">stop</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mid_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">interval</span><span class="o">.</span><span class="n">mid_point</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">widths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">interval</span><span class="o">.</span><span class="n">_get_width</span><span class="p">()</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">absolute_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the minimum of the start times</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">absolute_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the maximum of the stop times</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return an array of time edges if contiguous</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_contiguous</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">:</span>
+
+            <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">interval</span><span class="o">.</span><span class="n">start</span>
+                <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">())(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">interval</span><span class="o">.</span><span class="n">stop</span>
+                    <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">())(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)</span>
+                <span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="n">IntervalsNotContiguous</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot return edges for non-contiguous intervals&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">edges</span>
+
+<div class="viewcode-block" id="IntervalSet.to_string"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="sd">        returns a set of string representaitons of the intervals</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bin_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        get a stacked view of the bins [[start_1,stop_1 ],</span>
+<span class="sd">                                        [start_2,stop_2 ]]</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

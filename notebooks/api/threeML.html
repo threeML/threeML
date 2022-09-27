@@ -1,80 +1,42 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>threeML package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
-   
-
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -82,25 +44,16 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
@@ -115,94 +68,39 @@
 <li class="toctree-l1"><a class="reference internal" href="../Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-  <!--
-  <div class="admonition note">
-    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
-    </p>
-  </div>
-  -->
-  <li id="lightdark-li">
-    <label for="lightdark-checkbox" id="lightdark-label">
-      <input type="checkbox" id="lightdark-checkbox"/>
-      <div class="btn-neutral"></div>
-    </label>
-  </li>
-  
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>threeML package</li>
-    
-
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-  <script type="text/javascript" src=../../_static/custom.js></script>
-  
            <div itemprop="articleBody">
-            
+             
   
 <style>
 /* CSS overrides for sphinx_rtd_theme */
@@ -227,60 +125,64 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="threeml-package">
-<h1>threeML package<a class="headerlink" href="#threeml-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<section id="threeml-package">
+<h1>threeML package<a class="headerlink" href="#threeml-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="threeML.bayesian.html">threeML.bayesian package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-autoemcee-sampler-module">threeML.bayesian.autoemcee_sampler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-bayesian-analysis-module">threeML.bayesian.bayesian_analysis module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-dynesty-sampler-module">threeML.bayesian.dynesty_sampler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-emcee-sampler-module">threeML.bayesian.emcee_sampler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-multinest-sampler-module">threeML.bayesian.multinest_sampler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-sampler-base-module">threeML.bayesian.sampler_base module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-tutorial-material-module">threeML.bayesian.tutorial_material module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-ultranest-sampler-module">threeML.bayesian.ultranest_sampler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#threeml-bayesian-zeus-sampler-module">threeML.bayesian.zeus_sampler module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.autoemcee_sampler">threeML.bayesian.autoemcee_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.bayesian_analysis">threeML.bayesian.bayesian_analysis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.dynesty_sampler">threeML.bayesian.dynesty_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.emcee_sampler">threeML.bayesian.emcee_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.multinest_sampler">threeML.bayesian.multinest_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.sampler_base">threeML.bayesian.sampler_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.tutorial_material">threeML.bayesian.tutorial_material module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.ultranest_sampler">threeML.bayesian.ultranest_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.zeus_sampler">threeML.bayesian.zeus_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.catalogs.html">threeML.catalogs package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#threeml-catalogs-fermi-module">threeML.catalogs.Fermi module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#threeml-catalogs-swift-module">threeML.catalogs.Swift module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#threeml-catalogs-virtualobservatorycatalog-module">threeML.catalogs.VirtualObservatoryCatalog module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.Fermi">threeML.catalogs.Fermi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.FermiGBM">threeML.catalogs.FermiGBM module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.FermiLAT">threeML.catalogs.FermiLAT module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.FermiLLE">threeML.catalogs.FermiLLE module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.Swift">threeML.catalogs.Swift module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.VirtualObservatoryCatalog">threeML.catalogs.VirtualObservatoryCatalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs.catalog_utils">threeML.catalogs.catalog_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.html#module-threeML.catalogs">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.classicMLE.html">threeML.classicMLE package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#threeml-classicmle-goodness-of-fit-module">threeML.classicMLE.goodness_of_fit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#threeml-classicmle-joint-likelihood-module">threeML.classicMLE.joint_likelihood module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#threeml-classicmle-joint-likelihood-set-module">threeML.classicMLE.joint_likelihood_set module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#threeml-classicmle-likelihood-ratio-test-module">threeML.classicMLE.likelihood_ratio_test module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#module-threeML.classicMLE.goodness_of_fit">threeML.classicMLE.goodness_of_fit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#module-threeML.classicMLE.joint_likelihood">threeML.classicMLE.joint_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#module-threeML.classicMLE.joint_likelihood_set">threeML.classicMLE.joint_likelihood_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#module-threeML.classicMLE.likelihood_ratio_test">threeML.classicMLE.likelihood_ratio_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.classicMLE.html#module-threeML.classicMLE">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.config.html">threeML.config package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.config.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-catalog-structure-module">threeML.config.catalog_structure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-config-module">threeML.config.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-config-structure-module">threeML.config.config_structure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-config-utils-module">threeML.config.config_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-fitting-structure-module">threeML.config.fitting_structure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-plotting-structure-module">threeML.config.plotting_structure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-plugin-structure-module">threeML.config.plugin_structure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#threeml-config-point-source-structure-module">threeML.config.point_source_structure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.catalog_structure">threeML.config.catalog_structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.config">threeML.config.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.config_structure">threeML.config.config_structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.config_utils">threeML.config.config_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.fitting_structure">threeML.config.fitting_structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.plotting_structure">threeML.config.plotting_structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.plugin_structure">threeML.config.plugin_structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config.point_source_structure">threeML.config.point_source_structure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.config.html#module-threeML.config">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.exceptions.html">threeML.exceptions package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.exceptions.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.exceptions.html#threeml-exceptions-custom-exceptions-module">threeML.exceptions.custom_exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.exceptions.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.exceptions.html#module-threeML.exceptions.custom_exceptions">threeML.exceptions.custom_exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.exceptions.html#module-threeML.exceptions">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.io.html">threeML.io package</a><ul>
@@ -289,292 +191,855 @@
 <li class="toctree-l4"><a class="reference internal" href="threeML.io.cern_root_utils.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="threeML.io.cern_root_utils.html#threeml-io-cern-root-utils-io-utils-module">threeML.io.cern_root_utils.io_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="threeML.io.cern_root_utils.html#threeml-io-cern-root-utils-tobject-to-numpy-module">threeML.io.cern_root_utils.tobject_to_numpy module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.cern_root_utils.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.cern_root_utils.html#module-threeML.io.cern_root_utils">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.io.plotting.html">threeML.io.plotting package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-cmap-cycle-module">threeML.io.plotting.cmap_cycle module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-data-residual-plot-module">threeML.io.plotting.data_residual_plot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-get-style-module">threeML.io.plotting.get_style module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-light-curve-plots-module">threeML.io.plotting.light_curve_plots module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-model-plot-module">threeML.io.plotting.model_plot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-model-plot-2d-module">threeML.io.plotting.model_plot_2D module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-model-plot-tags-module">threeML.io.plotting.model_plot_tags module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-post-process-data-plots-module">threeML.io.plotting.post_process_data_plots module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-step-plot-module">threeML.io.plotting.step_plot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.cmap_cycle">threeML.io.plotting.cmap_cycle module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.data_residual_plot">threeML.io.plotting.data_residual_plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.get_style">threeML.io.plotting.get_style module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.light_curve_plots">threeML.io.plotting.light_curve_plots module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.model_plot">threeML.io.plotting.model_plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.model_plot_2D">threeML.io.plotting.model_plot_2D module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.model_plot_tags">threeML.io.plotting.model_plot_tags module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.post_process_data_plots">threeML.io.plotting.post_process_data_plots module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting.step_plot">threeML.io.plotting.step_plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.io.plotting.html#module-threeML.io.plotting">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.io.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-calculate-flux-module">threeML.io.calculate_flux module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-configuration-module">threeML.io.configuration module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-detect-notebook-module">threeML.io.detect_notebook module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-dict-with-pretty-print-module">threeML.io.dict_with_pretty_print module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-download-from-ftp-module">threeML.io.download_from_ftp module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-download-from-http-module">threeML.io.download_from_http module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-file-utils-module">threeML.io.file_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-fits-file-module">threeML.io.fits_file module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-get-heasarc-table-as-pandas-module">threeML.io.get_heasarc_table_as_pandas module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-hdf5-utils-module">threeML.io.hdf5_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-logging-module">threeML.io.logging module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-network-module">threeML.io.network module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-package-data-module">threeML.io.package_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-results-table-module">threeML.io.results_table module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-rich-display-module">threeML.io.rich_display module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-serialization-module">threeML.io.serialization module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-suppress-stdout-module">threeML.io.suppress_stdout module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-table-module">threeML.io.table module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#threeml-io-uncertainty-formatter-module">threeML.io.uncertainty_formatter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.calculate_flux">threeML.io.calculate_flux module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.configuration">threeML.io.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.detect_notebook">threeML.io.detect_notebook module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.dict_with_pretty_print">threeML.io.dict_with_pretty_print module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.download_from_ftp">threeML.io.download_from_ftp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.download_from_http">threeML.io.download_from_http module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.file_utils">threeML.io.file_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.fits_file">threeML.io.fits_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.get_heasarc_table_as_pandas">threeML.io.get_heasarc_table_as_pandas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.hdf5_utils">threeML.io.hdf5_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.logging">threeML.io.logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.network">threeML.io.network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.package_data">threeML.io.package_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.results_table">threeML.io.results_table module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.rich_display">threeML.io.rich_display module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.serialization">threeML.io.serialization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.suppress_stdout">threeML.io.suppress_stdout module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.table">threeML.io.table module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io.uncertainty_formatter">threeML.io.uncertainty_formatter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.html#module-threeML.io">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.minimizer.html">threeML.minimizer package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-root-minimizer-module">threeML.minimizer.ROOT_minimizer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-grid-minimizer-module">threeML.minimizer.grid_minimizer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-minimization-module">threeML.minimizer.minimization module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-minuit-minimizer-module">threeML.minimizer.minuit_minimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-threeML.minimizer.grid_minimizer">threeML.minimizer.grid_minimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-threeML.minimizer.minimization">threeML.minimizer.minimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-threeML.minimizer.minuit_minimizer">threeML.minimizer.minuit_minimizer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-multinest-minimizer-module">threeML.minimizer.multinest_minimizer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-pagmo-minimizer-module">threeML.minimizer.pagmo_minimizer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-scipy-minimizer-module">threeML.minimizer.scipy_minimizer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#threeml-minimizer-tutorial-material-module">threeML.minimizer.tutorial_material module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-threeML.minimizer.scipy_minimizer">threeML.minimizer.scipy_minimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-threeML.minimizer.tutorial_material">threeML.minimizer.tutorial_material module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.minimizer.html#module-threeML.minimizer">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.parallel.html">threeML.parallel package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.parallel.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.parallel.html#threeml-parallel-parallel-client-module">threeML.parallel.parallel_client module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.parallel.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.parallel.html#module-threeML.parallel.parallel_client">threeML.parallel.parallel_client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.parallel.html#module-threeML.parallel">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.plugins.html">threeML.plugins package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="threeML.plugins.experimental.html">threeML.plugins.experimental package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#threeml-plugins-experimental-castrolike-module">threeML.plugins.experimental.CastroLike module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#module-threeML.plugins.experimental.CastroLike">threeML.plugins.experimental.CastroLike module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#threeml-plugins-experimental-sherpalike-module">threeML.plugins.experimental.SherpaLike module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#threeml-plugins-experimental-veritaslike-module">threeML.plugins.experimental.VERITASLike module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.plugins.experimental.html#module-threeML.plugins.experimental">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-binnedprofilelike-module">threeML.plugins.BinnedProfileLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-dispersionspectrumlike-module">threeML.plugins.DispersionSpectrumLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.BinnedProfileLike">threeML.plugins.BinnedProfileLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.DispersionSpectrumLike">threeML.plugins.DispersionSpectrumLike module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-fermilatlike-module">threeML.plugins.FermiLATLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-fermipylike-module">threeML.plugins.FermipyLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.FermipyLike">threeML.plugins.FermipyLike module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-hawclike-module">threeML.plugins.HAWCLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-ogiplike-module">threeML.plugins.OGIPLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-photometrylike-module">threeML.plugins.PhotometryLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-spectrumlike-module">threeML.plugins.SpectrumLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-swiftxrtlike-module">threeML.plugins.SwiftXRTLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-unbinnedpoissonlike-module">threeML.plugins.UnbinnedPoissonLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-unresolvedextendedxylike-module">threeML.plugins.UnresolvedExtendedXYLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#threeml-plugins-xylike-module">threeML.plugins.XYLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.OGIPLike">threeML.plugins.OGIPLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.PhotometryLike">threeML.plugins.PhotometryLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.SpectrumLike">threeML.plugins.SpectrumLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.SwiftXRTLike">threeML.plugins.SwiftXRTLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.UnbinnedPoissonLike">threeML.plugins.UnbinnedPoissonLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.UnresolvedExtendedXYLike">threeML.plugins.UnresolvedExtendedXYLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins.XYLike">threeML.plugins.XYLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.plugins.html#module-threeML.plugins">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.test.html">threeML.test package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.test.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-conftest-module">threeML.test.conftest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.conftest">threeML.test.conftest module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-generate-pha-module">threeML.test.generate_pha module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-aaa-against-xspec-module">threeML.test.test_AAA_against_xspec module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-fermipylike-module">threeML.test.test_FermipyLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-unresolvedextendedxylike-module">threeML.test.test_UnresolvedExtendedXYLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-xylike-module">threeML.test.test_XYLike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-analysis-results-module">threeML.test.test_analysis_results module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-basic-module">threeML.test.test_basic module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-bayesian-module">threeML.test.test_bayesian module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-catalogs-module">threeML.test.test_catalogs module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-configuration-module">threeML.test.test_configuration module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-download-gbm-data-module">threeML.test.test_download_GBM_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-download-lat-data-module">threeML.test.test_download_LAT_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-event-list-module">threeML.test.test_event_list module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-file-utils-module">threeML.test.test_file_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-fits-file-module">threeML.test.test_fits_file module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-fitted-point-sources-module">threeML.test.test_fitted_point_sources module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-generic-module">threeML.test.test_generic module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-get-package-data-module">threeML.test.test_get_package_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-goodness-of-fit-module">threeML.test.test_goodness_of_fit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-hawc-module">threeML.test.test_hawc module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-histogram-module">threeML.test.test_histogram module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-joint-likelihood-set-module">threeML.test.test_joint_likelihood_set module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-minimizers-module">threeML.test.test_minimizers module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-ogip-module">threeML.test.test_ogip module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-photometry-utils-module">threeML.test.test_photometry_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-plotting-module">threeML.test.test_plotting module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-plugin-loading-module">threeML.test.test_plugin_loading module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-power-of-two-utils-module">threeML.test.test_power_of_two_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-response-module">threeML.test.test_response module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-spectrum-class-module">threeML.test.test_spectrum_class module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-spectrumlike-module">threeML.test.test_spectrumlike module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-time-energy-fit-module">threeML.test.test_time_energy_fit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-time-interval-module">threeML.test.test_time_interval module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-time-series-module">threeML.test.test_time_series module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-unbinned-poisson-like-module">threeML.test.test_unbinned_poisson_like module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#threeml-test-test-verbosity-module">threeML.test.test_verbosity module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_AAA_against_xspec">threeML.test.test_AAA_against_xspec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_FermiLATLike">threeML.test.test_FermiLATLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_FermipyLike">threeML.test.test_FermipyLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_UnresolvedExtendedXYLike">threeML.test.test_UnresolvedExtendedXYLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_XYLike">threeML.test.test_XYLike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_analysis_results">threeML.test.test_analysis_results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_basic">threeML.test.test_basic module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_bayesian">threeML.test.test_bayesian module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_catalogs">threeML.test.test_catalogs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_configuration">threeML.test.test_configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_download_GBM_data">threeML.test.test_download_GBM_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_download_LAT_data">threeML.test.test_download_LAT_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_event_list">threeML.test.test_event_list module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_file_utils">threeML.test.test_file_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_fits_file">threeML.test.test_fits_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_fitted_point_sources">threeML.test.test_fitted_point_sources module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_generic">threeML.test.test_generic module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_get_package_data">threeML.test.test_get_package_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_goodness_of_fit">threeML.test.test_goodness_of_fit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_hawc">threeML.test.test_hawc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_histogram">threeML.test.test_histogram module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_joint_likelihood_set">threeML.test.test_joint_likelihood_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_minimizers">threeML.test.test_minimizers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_ogip">threeML.test.test_ogip module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_photometry_utils">threeML.test.test_photometry_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_plotting">threeML.test.test_plotting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_plugin_loading">threeML.test.test_plugin_loading module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_power_of_two_utils">threeML.test.test_power_of_two_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_response">threeML.test.test_response module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_spectrum_class">threeML.test.test_spectrum_class module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_spectrumlike">threeML.test.test_spectrumlike module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_time_energy_fit">threeML.test.test_time_energy_fit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_time_interval">threeML.test.test_time_interval module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_time_series">threeML.test.test_time_series module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_unbinned_poisson_like">threeML.test.test_unbinned_poisson_like module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test.test_verbosity">threeML.test.test_verbosity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.test.html#module-threeML.test">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="threeML.utils.html">threeML.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.OGIP.html">threeML.utils.OGIP package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#threeml-utils-ogip-pha-module">threeML.utils.OGIP.pha module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#threeml-utils-ogip-response-module">threeML.utils.OGIP.response module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#module-threeML.utils.OGIP.pha">threeML.utils.OGIP.pha module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#module-threeML.utils.OGIP.response">threeML.utils.OGIP.response module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.OGIP.html#module-threeML.utils.OGIP">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.html">threeML.utils.data_builders package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_builders.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_builders.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_builders.html#threeml-utils-data-builders-time-series-builder-module">threeML.utils.data_builders.time_series_builder module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_builders.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_builders.html#module-threeML.utils.data_builders.time_series_builder">threeML.utils.data_builders.time_series_builder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_builders.html#module-threeML.utils.data_builders">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_download.html">threeML.utils.data_download package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_download.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_download.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.data_download.html#module-threeML.utils.data_download">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.html">threeML.utils.fitted_objects package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#threeml-utils-fitted-objects-fitted-point-sources-module">threeML.utils.fitted_objects.fitted_point_sources module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#threeml-utils-fitted-objects-fitted-source-handler-module">threeML.utils.fitted_objects.fitted_source_handler module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#module-threeML.utils.fitted_objects.fitted_point_sources">threeML.utils.fitted_objects.fitted_point_sources module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#module-threeML.utils.fitted_objects.fitted_source_handler">threeML.utils.fitted_objects.fitted_source_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.fitted_objects.html#module-threeML.utils.fitted_objects">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.photometry.html">threeML.utils.photometry package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#threeml-utils-photometry-filter-library-module">threeML.utils.photometry.filter_library module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#threeml-utils-photometry-filter-set-module">threeML.utils.photometry.filter_set module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#threeml-utils-photometry-photometric-observation-module">threeML.utils.photometry.photometric_observation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#module-threeML.utils.photometry.filter_library">threeML.utils.photometry.filter_library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#module-threeML.utils.photometry.filter_set">threeML.utils.photometry.filter_set module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#module-threeML.utils.photometry.photometric_observation">threeML.utils.photometry.photometric_observation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.photometry.html#module-threeML.utils.photometry">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.polarization.html">threeML.utils.polarization package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.polarization.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.polarization.html#threeml-utils-polarization-binned-polarization-module">threeML.utils.polarization.binned_polarization module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.polarization.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.polarization.html#module-threeML.utils.polarization.binned_polarization">threeML.utils.polarization.binned_polarization module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.polarization.html#module-threeML.utils.polarization">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.html">threeML.utils.spectrum package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#threeml-utils-spectrum-binned-spectrum-module">threeML.utils.spectrum.binned_spectrum module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#threeml-utils-spectrum-binned-spectrum-set-module">threeML.utils.spectrum.binned_spectrum_set module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#threeml-utils-spectrum-pha-spectrum-module">threeML.utils.spectrum.pha_spectrum module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#threeml-utils-spectrum-share-spectrum-module">threeML.utils.spectrum.share_spectrum module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#threeml-utils-spectrum-spectrum-likelihood-module">threeML.utils.spectrum.spectrum_likelihood module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-threeML.utils.spectrum.binned_spectrum">threeML.utils.spectrum.binned_spectrum module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-threeML.utils.spectrum.binned_spectrum_set">threeML.utils.spectrum.binned_spectrum_set module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-threeML.utils.spectrum.pha_spectrum">threeML.utils.spectrum.pha_spectrum module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-threeML.utils.spectrum.share_spectrum">threeML.utils.spectrum.share_spectrum module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-threeML.utils.spectrum.spectrum_likelihood">threeML.utils.spectrum.spectrum_likelihood module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.spectrum.html#module-threeML.utils.spectrum">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.statistics.html">threeML.utils.statistics package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#threeml-utils-statistics-gammaln-module">threeML.utils.statistics.gammaln module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#threeml-utils-statistics-likelihood-functions-module">threeML.utils.statistics.likelihood_functions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#threeml-utils-statistics-stats-tools-module">threeML.utils.statistics.stats_tools module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#module-threeML.utils.statistics.gammaln">threeML.utils.statistics.gammaln module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#module-threeML.utils.statistics.likelihood_functions">threeML.utils.statistics.likelihood_functions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#module-threeML.utils.statistics.stats_tools">threeML.utils.statistics.stats_tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.statistics.html#module-threeML.utils.statistics">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.utils.time_series.html">threeML.utils.time_series package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#threeml-utils-time-series-binned-spectrum-series-module">threeML.utils.time_series.binned_spectrum_series module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#threeml-utils-time-series-event-list-module">threeML.utils.time_series.event_list module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#threeml-utils-time-series-polynomial-module">threeML.utils.time_series.polynomial module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#threeml-utils-time-series-time-series-module">threeML.utils.time_series.time_series module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#module-threeML.utils.time_series.binned_spectrum_series">threeML.utils.time_series.binned_spectrum_series module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#module-threeML.utils.time_series.event_list">threeML.utils.time_series.event_list module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#module-threeML.utils.time_series.polynomial">threeML.utils.time_series.polynomial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#module-threeML.utils.time_series.time_series">threeML.utils.time_series.time_series module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.utils.time_series.html#module-threeML.utils.time_series">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-bayesian-blocks-module">threeML.utils.bayesian_blocks module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-binner-module">threeML.utils.binner module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-cartesian-module">threeML.utils.cartesian module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-differentiation-module">threeML.utils.differentiation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-fermi-relative-mission-time-module">threeML.utils.fermi_relative_mission_time module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-histogram-module">threeML.utils.histogram module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-interval-module">threeML.utils.interval module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-numba-utils-module">threeML.utils.numba_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-power-of-two-utils-module">threeML.utils.power_of_two_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-progress-bar-module">threeML.utils.progress_bar module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-step-parameter-generator-module">threeML.utils.step_parameter_generator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-string-utils-module">threeML.utils.string_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-time-interval-module">threeML.utils.time_interval module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#threeml-utils-unique-deterministic-tag-module">threeML.utils.unique_deterministic_tag module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.bayesian_blocks">threeML.utils.bayesian_blocks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.binner">threeML.utils.binner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.cartesian">threeML.utils.cartesian module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.differentiation">threeML.utils.differentiation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.fermi_relative_mission_time">threeML.utils.fermi_relative_mission_time module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.histogram">threeML.utils.histogram module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.interval">threeML.utils.interval module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.numba_utils">threeML.utils.numba_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.power_of_two_utils">threeML.utils.power_of_two_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.progress_bar">threeML.utils.progress_bar module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.step_parameter_generator">threeML.utils.step_parameter_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.string_utils">threeML.utils.string_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.time_interval">threeML.utils.time_interval module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils.unique_deterministic_tag">threeML.utils.unique_deterministic_tag module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.utils.html#module-threeML.utils">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="threeml-analysis-results-module">
-<h2>threeML.analysis_results module<a class="headerlink" href="#threeml-analysis-results-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="threeml-data-list-module">
-<h2>threeML.data_list module<a class="headerlink" href="#threeml-data-list-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="threeml-plugin-prototype-module">
-<h2>threeML.plugin_prototype module<a class="headerlink" href="#threeml-plugin-prototype-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="threeml-random-variates-module">
-<h2>threeML.random_variates module<a class="headerlink" href="#threeml-random-variates-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-threeML.analysis_results">
+<span id="threeml-analysis-results-module"></span><h2>threeML.analysis_results module<a class="headerlink" href="#module-threeML.analysis_results" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.ANALYSIS_RESULTS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">ANALYSIS_RESULTS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis_results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#ANALYSIS_RESULTS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.ANALYSIS_RESULTS" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSExtension" title="threeML.io.fits_file.FITSExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSExtension</span></code></a></p>
+<p>Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>analysis_results</strong> (<em>_AnalysisResults</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.ANALYSIS_RESULTS_HDF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">ANALYSIS_RESULTS_HDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdf_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#ANALYSIS_RESULTS_HDF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.ANALYSIS_RESULTS_HDF" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.AnalysisResultsFITS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">AnalysisResultsFITS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsFITS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsFITS" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSFile" title="threeML.io.fits_file.FITSFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSFile</span></code></a></p>
+<p>A FITS file for storing one or more results from 3ML analysis</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.AnalysisResultsSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">AnalysisResultsSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsSet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></p>
+<p>A container for results which behaves like a list (but you cannot add/remove elements).</p>
+<p>You can index (analysis_set[0]), iterate (for item in analysis_set) and measure with len()</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.AnalysisResultsSet.characterize_sequence">
+<span class="sig-name descname"><span class="pre">characterize_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsSet.characterize_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsSet.characterize_sequence" title="Permalink to this definition"></a></dt>
+<dd><p>Characterize the sequence of these results. The provided data frame will be saved along with the results
+in the “SEQUENCE” extension to allow the interpretation of the results.</p>
+<p>This method is completely general, and allow for a lot of flexibility.</p>
+<p>If this is a binned analysis and you only want to save the lower and upper bound of the bins, use
+set_bins instead.</p>
+<p>If you only want to associate one quantity for each entry, use set_x.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.AnalysisResultsSet.set_bins">
+<span class="sig-name descname"><span class="pre">set_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsSet.set_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsSet.set_bins" title="Permalink to this definition"></a></dt>
+<dd><p>Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when
+saving these results to a FITS file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – a name for these bins (for example, “time” or “energy”). Please use only letters and numbers</p>
+</dd>
+</dl>
+<p>(no special characters)
+:param lower_bounds:
+:param upper_bounds:
+:param unit: unit for the boundaries (like “s” for seconds, or a astropy.units.Unit instance)
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.AnalysisResultsSet.set_x">
+<span class="sig-name descname"><span class="pre">set_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsSet.set_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsSet.set_x" title="Permalink to this definition"></a></dt>
+<dd><p>Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when
+saving these results to a FITS file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – a name for this sequence (for example, “time” or “energy”). Please use only letters and numbers</p>
+</dd>
+</dl>
+<p>(no special characters)
+:param x:
+:param unit: unit for x (like “s” for seconds, or a astropy.units.Unit instance)
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.AnalysisResultsSet.write_to">
+<span class="sig-name descname"><span class="pre">write_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_hdf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsSet.write_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsSet.write_to" title="Permalink to this definition"></a></dt>
+<dd><p>Write this set of results to a FITS file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – name for the output file</p></li>
+<li><p><strong>overwrite</strong> – True or False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">BayesianResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimized_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posterior_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistical_measures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_probabilty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_AnalysisResults</span></code></p>
+<p>Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and “error propagation”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimized_model</strong> – a Model instance with the MAP values of the parameters. A clone will be stored within</p>
+</dd>
+</dl>
+<p>the class, so there is no need to clone it before hand
+:type optimized_model: astromodels.Model
+:param samples: the samples for the parameters
+:type samples: np.ndarray
+:param posterior_values: a dictionary containing the posterior values for the different datasets at the HPD
+:type posterior_values: dict</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.comparison_corner_plot">
+<span class="sig-name descname"><span class="pre">comparison_corner_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">other_fits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.comparison_corner_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.comparison_corner_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Create a corner plot from many different fits which allow for co-plotting of parameters marginals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other_fits</strong> – other fitted results</p></li>
+<li><p><strong>parameters</strong> – parameters to plot</p></li>
+<li><p><strong>renamed_parameters</strong> – a python dictionary of parameters to rename.
+Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+{‘old label’: ‘new label’}</p></li>
+<li><p><strong>names</strong> – (optional) name for each chain first name is this chain followed by each added chain</p></li>
+<li><p><strong>kwargs</strong> – chain consumer kwargs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.convergence_plots">
+<span class="sig-name descname"><span class="pre">convergence_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples_in_each_subset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_subsets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.convergence_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.convergence_plots" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
+values if the MCMC has converged to the posterior distribution.</p>
+<p>The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
+is to take random samples from the chain (bootstrap)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples_in_each_subset</strong> – number of samples in each subset</p></li>
+<li><p><strong>n_subsets</strong> – number of subsets to take for each strategy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a matplotlib.figure instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.corner_plot">
+<span class="sig-name descname"><span class="pre">corner_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamed_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.corner_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.corner_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Produce the corner plot showing the marginal distributions in one and two directions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>renamed_parameters</strong> – a python dictionary of parameters to rename.
+Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+{‘old label’: ‘new label’}, where ‘old label’ is the full path of the parameter</p></li>
+<li><p><strong>components</strong> – a python list of parameter paths to use in the corner plot</p></li>
+<li><p><strong>kwargs</strong> – arguments to be passed to the corner function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a matplotlib.figure instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.corner_plot_cc">
+<span class="sig-name descname"><span class="pre">corner_plot_cc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renamed_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">cc_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.corner_plot_cc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.corner_plot_cc" title="Permalink to this definition"></a></dt>
+<dd><p>Corner plots using chainconsumer which allows for nicer plotting of
+marginals
+see: <a class="reference external" href="https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure">https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure</a>
+for all options
+:param parameters: list of parameters to plot
+:param renamed_parameters: a python dictionary of parameters to rename.</p>
+<blockquote>
+<div><p>Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+{‘old label’: ‘new label’}</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**cc_kwargs</strong> – <p>chainconsumer general keyword arguments</p>
+</p>
+</dd>
+<dt class="field-even">Return fig</dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'equal</span> <span class="pre">tail'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.display" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.freedman_diaconis_rule">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">freedman_diaconis_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.freedman_diaconis_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.freedman_diaconis_rule" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – an array of data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the optimal number of bins</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.get_correlation_matrix">
+<span class="sig-name descname"><span class="pre">get_correlation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.get_correlation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.get_correlation_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Estimate the covariance matrix from the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the correlation matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval">
+<span class="sig-name descname"><span class="pre">get_highest_density_posterior_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.get_highest_density_posterior_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval" title="Permalink to this definition"></a></dt>
+<dd><p>returns the highest density posterior interval for that parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter_path</strong> – path of the parameter or parameter instance</p></li>
+<li><p><strong>cl</strong> – credible interval to obtain</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(low bound, high bound)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.get_median_fit_model">
+<span class="sig-name descname"><span class="pre">get_median_fit_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.get_median_fit_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.get_median_fit_model" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the model parameters to the mean of the marginal distributions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.get_statistic_frame">
+<span class="sig-name descname"><span class="pre">get_statistic_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.get_statistic_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.get_statistic_frame" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.log_probability">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_probability</span></span><a class="headerlink" href="#threeML.analysis_results.BayesianResults.log_probability" title="Permalink to this definition"></a></dt>
+<dd><p>The log probability values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.BayesianResults.plot_chains">
+<span class="sig-name descname"><span class="pre">plot_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.plot_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.plot_chains" title="Permalink to this definition"></a></dt>
+<dd><p>Produce a plot of the series of samples for each parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>thin</strong> – use only one sample every ‘thin’ samples</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of matplotlib.figure instances</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.MLEResults">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">MLEResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimized_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">likelihood_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistical_measures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#MLEResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.MLEResults" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_AnalysisResults</span></code></p>
+<p>Build the _AnalysisResults object starting from a covariance matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimized_model</strong> – best fit model</p>
+</dd>
+</dl>
+<p>:type optimized_model:astromodels.Model
+:param covariance_matrix:
+:type covariance_matrix: np.ndarray
+:param likelihood_values:
+:type likelihood_values: dict
+:param n_samples: Number of samples to use
+:type n_samples: int
+:return: an _AnalysisResults instance</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.analysis_results.MLEResults.covariance_matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance_matrix</span></span><a class="headerlink" href="#threeML.analysis_results.MLEResults.covariance_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the covariance matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>covariance matrix or None (if the class was built from samples.
+Use estimate_covariance_matrix in that case)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.MLEResults.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#MLEResults.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.MLEResults.display" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.MLEResults.get_correlation_matrix">
+<span class="sig-name descname"><span class="pre">get_correlation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#MLEResults.get_correlation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.MLEResults.get_correlation_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Compute correlation matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the correlation matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.analysis_results.MLEResults.get_statistic_frame">
+<span class="sig-name descname"><span class="pre">get_statistic_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#MLEResults.get_statistic_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.MLEResults.get_statistic_frame" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.analysis_results.SEQUENCE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">SEQUENCE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#SEQUENCE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.SEQUENCE" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSExtension" title="threeML.io.fits_file.FITSExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSExtension</span></code></a></p>
+<p>Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.analysis_results.convert_fits_analysis_result_to_hdf">
+<span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">convert_fits_analysis_result_to_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_result_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#convert_fits_analysis_result_to_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.convert_fits_analysis_result_to_hdf" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.analysis_results.load_analysis_results">
+<span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">load_analysis_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_AnalysisResults</span></span></span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#load_analysis_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.load_analysis_results" title="Permalink to this definition"></a></dt>
+<dd><p>Load the results of one or more analysis from a FITS file produced by 3ML</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fits_file</strong> – path to the FITS file containing the results, as output by MLEResults or BayesianResults</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.analysis_results.load_analysis_results_hdf">
+<span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">load_analysis_results_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_AnalysisResults</span></span></span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#load_analysis_results_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.load_analysis_results_hdf" title="Permalink to this definition"></a></dt>
+<dd><p>Load the results of one or more analysis from a FITS file produced by 3ML</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fits_file</strong> – path to the FITS file containing the results, as output by MLEResults or BayesianResults</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-threeML.data_list">
+<span id="threeml-data-list-module"></span><h2>threeML.data_list module<a class="headerlink" href="#module-threeML.data_list" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.data_list.DataList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.data_list.</span></span><span class="sig-name descname"><span class="pre">DataList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data_sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/data_list.html#DataList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.data_list.DataList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for data sets. Can be accessed as a dictionary,
+with the [key] operator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.data_list.DataList.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/data_list.html#DataList.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.data_list.DataList.insert" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.data_list.DataList.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/data_list.html#DataList.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.data_list.DataList.keys" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.data_list.DataList.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/data_list.html#DataList.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.data_list.DataList.values" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-threeML.plugin_prototype">
+<span id="threeml-plugin-prototype-module"></span><h2>threeML.plugin_prototype module<a class="headerlink" href="#module-threeML.plugin_prototype" title="Permalink to this heading"></a></h2>
+<p>Define the interface for a plugin class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.plugin_prototype.</span></span><span class="sig-name descname"><span class="pre">PluginPrototype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuisance_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.get_log_like">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_log_like</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.get_log_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.get_log_like" title="Permalink to this definition"></a></dt>
+<dd><p>Return the value of the log-likelihood with the current values for the
+parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.get_name">
+<span class="sig-name descname"><span class="pre">get_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.get_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.get_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.get_number_of_data_points">
+<span class="sig-name descname"><span class="pre">get_number_of_data_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.get_number_of_data_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.get_number_of_data_points" title="Permalink to this definition"></a></dt>
+<dd><p>This returns the number of data points that are used to evaluate the likelihood.
+For binned measurements, this is the number of active bins used in the fit. For
+unbinned measurements, this would be the number of photons/particles that are
+evaluated on the likelihood</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.inner_fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inner_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.inner_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.inner_fit" title="Permalink to this definition"></a></dt>
+<dd><p>This is used for the profile likelihood. Keeping fixed all parameters in the
+LikelihoodModel, this method minimize the logLike over the remaining nuisance
+parameters, i.e., the parameters belonging only to the model for this
+particular detector. If there are no nuisance parameters, simply return the
+logLike value.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the name of this instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a string (this is enforced to be a valid python identifier)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.nuisance_parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuisance_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.nuisance_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary containing the nuisance parameters for this dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.set_model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">likelihood_model_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.set_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.set_model" title="Permalink to this definition"></a></dt>
+<dd><p>Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.tag">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tag</span></span><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.tag" title="Permalink to this definition"></a></dt>
+<dd><p>Gets/sets the tag for this instance, as (independent variable, start, [end])</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.update_nuisance_parameters">
+<span class="sig-name descname"><span class="pre">update_nuisance_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_nuisance_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.update_nuisance_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.update_nuisance_parameters" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-threeML.random_variates">
+<span id="threeml-random-variates-module"></span><h2>threeML.random_variates module<a class="headerlink" href="#module-threeML.random_variates" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.random_variates.</span></span><span class="sig-name descname"><span class="pre">RandomVariates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/random_variates.html#RandomVariates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+<p>A subclass of np.array which is meant to contain samples for one parameter. This class contains methods to easily
+compute properties for the parameter (errors and so on)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.average">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">average</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.average" title="Permalink to this definition"></a></dt>
+<dd><p>Returns average value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.equal_tail_interval">
+<span class="sig-name descname"><span class="pre">equal_tail_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/random_variates.html#RandomVariates.equal_tail_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates.equal_tail_interval" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the equal tail interval, i.e., an interval centered on the median of the distribution with
+the same probability on the right and on the left of the mean.</p>
+<p>If the distribution of the parameter is Gaussian and cl=0.68, this is equivalent to the 1 sigma confidence
+interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cl</strong> – confidence level (0 &lt; cl &lt; 1)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(low_bound, hi_bound)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.highest_posterior_density_interval">
+<span class="sig-name descname"><span class="pre">highest_posterior_density_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/random_variates.html#RandomVariates.highest_posterior_density_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates.highest_posterior_density_interval" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the Highest Posterior Density interval (HPD) for the parameter, for the given credibility level.</p>
+<p>NOTE: the returned interval is the HPD only if the posterior is not multimodal. If it is multimodal, you should
+probably report the full posterior, not only an interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cl</strong> – credibility level (0 &lt; cl &lt; 1)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(low_bound, hi_bound)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.median">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">median</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.median" title="Permalink to this definition"></a></dt>
+<dd><p>Returns median value</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.samples">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.samples" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.std">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">std</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.std" title="Permalink to this definition"></a></dt>
+<dd><p>Returns sample std value</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.value" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.var">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">var</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.var" title="Permalink to this definition"></a></dt>
+<dd><p>Returns sample variance value</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-threeML">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.get_available_plugins">
+<span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">get_available_plugins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML.html#get_available_plugins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.get_available_plugins" title="Permalink to this definition"></a></dt>
+<dd><p>Print a list of available plugins</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.is_module_importable">
+<span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">is_module_importable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_full_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML.html#is_module_importable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.is_module_importable" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.is_plugin_available">
+<span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">is_plugin_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML.html#is_plugin_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.is_plugin_available" title="Permalink to this definition"></a></dt>
+<dd><p>Test whether the plugin for the provided instrument is available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plugin</strong> – the name of the plugin class</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True or False</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
 
 
            </div>
-           
           </div>
-
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
-
-    </p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
