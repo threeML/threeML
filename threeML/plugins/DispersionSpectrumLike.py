@@ -10,7 +10,10 @@ from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import (
-    BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet)
+    BinnedSpectrum,
+    BinnedSpectrumWithDispersion,
+    ChannelSet,
+)
 
 log = setup_logger(__name__)
 
@@ -22,8 +25,9 @@ class DispersionSpectrumLike(SpectrumLike):
         self,
         name: str,
         observation: BinnedSpectrumWithDispersion,
-        background: Optional[Union[BinnedSpectrum, SpectrumLike,
-                                   XYLike]] = None,
+        background: Optional[
+            Union[BinnedSpectrum, SpectrumLike, XYLike]
+        ] = None,
         background_exposure: Optional[float] = None,
         verbose: bool = True,
         tstart: Optional[float] = None,
@@ -50,7 +54,7 @@ class DispersionSpectrumLike(SpectrumLike):
         :param background_exposure: (optional) adjust the background exposure of the modeled background data comes from and
         XYLike plugin
         :param verbose: turn on/off verbose logging
-                """
+        """
 
         if not isinstance(observation, BinnedSpectrumWithDispersion):
 
@@ -80,7 +84,9 @@ class DispersionSpectrumLike(SpectrumLike):
             tstop=tstop,
         )
 
-        self._predefined_energies: np.ndarray = self._response.monte_carlo_energies
+        self._predefined_energies: np.ndarray = (
+            self._response.monte_carlo_energies
+        )
 
     def set_model(self, likelihoodModel: Model) -> None:
         """
@@ -103,20 +109,20 @@ class DispersionSpectrumLike(SpectrumLike):
         # we simply integrate the model over the bins
 
         differential_flux, integral = self._get_diff_flux_and_integral(
-            self._like_model, integrate_method=self._model_integrate_method)
+            self._like_model, integrate_method=self._model_integrate_method
+        )
 
         log.debug(f"{self._name} passing intfral flux function to RSP")
 
         self._integral_flux = integral
 
         # pass to the response matrix
-        
+
         self._response.set_function(self._integral_flux)
 
-        
-    def _evaluate_model(self,
-                        precalc_fluxes: Optional[np.array] = None
-                        ) -> np.ndarray:
+    def _evaluate_model(
+        self, precalc_fluxes: Optional[np.array] = None
+    ) -> np.ndarray:
         """
         evaluates the full model over all channels
         :return:
@@ -129,7 +135,7 @@ class DispersionSpectrumLike(SpectrumLike):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        if not method in ["simpson", "trapz"]:
+        if not method in ["simpson", "trapz", "riemann"]:
 
             log.error("Only simpson and trapz are valid intergate methods.")
 
@@ -141,10 +147,11 @@ class DispersionSpectrumLike(SpectrumLike):
         # if like_model already set, upadte the integral function
         if self._like_model is not None:
             differential_flux, integral = self._get_diff_flux_and_integral(
-                self._like_model, integrate_method=method)
+                self._like_model, integrate_method=method
+            )
 
             self._integral_flux = integral
-                        
+
             self._response.set_function(self._integral_flux)
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
@@ -153,11 +160,12 @@ class DispersionSpectrumLike(SpectrumLike):
         model, as well as from the background (depending on the respective noise models)
 
         :return: a DispersionSpectrumLike simulated instance
-         """
+        """
 
         # pass the response thru to the constructor
-        return super(DispersionSpectrumLike,
-                     self).get_simulated_dataset(new_name=new_name, **kwargs)
+        return super(DispersionSpectrumLike, self).get_simulated_dataset(
+            new_name=new_name, **kwargs
+        )
 
     def get_pha_files(self):
         info = {}
@@ -189,14 +197,20 @@ class DispersionSpectrumLike(SpectrumLike):
     def _output(self):
         # type: () -> pd.Series
 
-        super_out = super(DispersionSpectrumLike,
-                          self)._output()  # type: pd.Series
+        super_out = super(
+            DispersionSpectrumLike, self
+        )._output()  # type: pd.Series
 
         the_df = pd.Series({"response": self._response.rsp_filename})
 
         return super_out.append(the_df)
 
-    def write_pha(self, filename: str, overwrite: bool = False, force_rsp_write: bool = False) -> None:
+    def write_pha(
+        self,
+        filename: str,
+        overwrite: bool = False,
+        force_rsp_write: bool = False,
+    ) -> None:
         """
         Writes the observation, background and (optional) rsp to PHAII fits files
 
@@ -215,12 +229,21 @@ class DispersionSpectrumLike(SpectrumLike):
 
         ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
         ogiplike.write_pha(
-            file_name=filename, overwrite=overwrite, force_rsp_write=force_rsp_write
+            file_name=filename,
+            overwrite=overwrite,
+            force_rsp_write=force_rsp_write,
         )
 
     @staticmethod
     def _build_fake_observation(
-            fake_data, channel_set, source_errors, source_sys_errors, is_poisson, exposure, scale_factor, **kwargs
+        fake_data,
+        channel_set,
+        source_errors,
+        source_sys_errors,
+        is_poisson,
+        exposure,
+        scale_factor,
+        **kwargs,
     ):
         """
         This is the fake observation builder for SpectrumLike which builds data
@@ -234,9 +257,11 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        if not  ( "response" in kwargs):
+        if not ("response" in kwargs):
 
-            log.error("A response was not provided. Cannot build synthetic observation")
+            log.error(
+                "A response was not provided. Cannot build synthetic observation"
+            )
 
             raise RuntimeError()
 
@@ -271,7 +296,7 @@ class DispersionSpectrumLike(SpectrumLike):
         background_errors=None,
         background_sys_errors=None,
         exposure=1.0,
-        scale_factor=1.0
+        scale_factor=1.0,
     ):
         # type: () -> DispersionSpectrumLike
         """
@@ -309,5 +334,5 @@ class DispersionSpectrumLike(SpectrumLike):
             background_sys_errors,
             response=response,
             exposure=exposure,
-            scale_factor=scale_factor
+            scale_factor=scale_factor,
         )

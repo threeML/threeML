@@ -1,9 +1,7 @@
 # Custom warning
 import math
-import re
 import signal
 import subprocess
-import sys
 import time
 import warnings
 from contextlib import contextmanager
@@ -60,15 +58,15 @@ def parallel_computation(profile=None, start_cluster=True):
 
     # Memorize the state of the use-parallel config
 
-    old_state = bool(threeML_config["parallel"]["use_parallel"])
+    old_state = bool(threeML_config.parallel.use_parallel)
 
-    old_profile = str(threeML_config["parallel"]["profile_name"])
+    old_profile = str(threeML_config.parallel.profile_name)
 
     # Set the use_parallel feature on, if available
 
     if has_parallel:
 
-        threeML_config["parallel"]["use_parallel"] = True
+        threeML_config.parallel.use_parallel = True
 
     else:
 
@@ -80,13 +78,13 @@ def parallel_computation(profile=None, start_cluster=True):
 
         )
 
-        threeML_config["parallel"]["use_parallel"] = False
+        threeML_config.parallel.use_parallel = False
 
     # Now use the specified profile (if any), otherwise the default one
 
     if profile is not None:
 
-        threeML_config["parallel"]["profile_name"] = str(profile)
+        threeML_config.parallel.profile_name = str(profile)
 
     # Here is where the content of the with parallel_computation statement gets
     # executed
@@ -156,14 +154,14 @@ def parallel_computation(profile=None, start_cluster=True):
         yield
 
     # Revert back
-    threeML_config["parallel"]["use_parallel"] = old_state
+    threeML_config.parallel.use_parallel = old_state
 
-    threeML_config["parallel"]["profile_name"] = old_profile
+    threeML_config.parallel.profile_name = old_profile
 
 
 def is_parallel_computation_active():
 
-    return bool(threeML_config["parallel"]["use_parallel"])
+    return bool(threeML_config.parallel.use_parallel)
 
 
 if has_parallel:
@@ -185,7 +183,7 @@ if has_parallel:
 
             if "profile" not in kwargs.keys():
 
-                kwargs["profile"] = threeML_config["parallel"]["profile_name"]
+                kwargs["profile"] = threeML_config.parallel.profile_name
 
             super(ParallelClient, self).__init__(*args, **kwargs)
 
@@ -246,7 +244,9 @@ if has_parallel:
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
-                worker, items_to_process, chunksize=chunk_size, ordered=ordered
+                worker, items_to_process,
+                #chunksize=chunk_size,
+                ordered=ordered
             )
 
             return self._current_amr

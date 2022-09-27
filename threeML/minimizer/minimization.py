@@ -713,7 +713,7 @@ class Minimizer(object):
             # so we need to make sure that the parameter has the best fit value)
             parameters_list[i]._set_internal_value(value)
 
-            if covariance_matrix is not None:
+            if (covariance_matrix is not None) and (covariance_matrix.ndim > 1):
 
                 element = covariance_matrix[i, i]
 
@@ -746,7 +746,7 @@ class Minimizer(object):
 
         self._correlation_matrix = np.zeros_like(self._covariance_matrix)
 
-        if covariance_matrix is not None:
+        if (covariance_matrix is not None) and (covariance_matrix.ndim > 1):
 
             for i in range(self.Npar):
 
@@ -792,12 +792,14 @@ class Minimizer(object):
         """
 
         best_fit_values = self._fit_results["value"].values
+        
+        log.debug("Restoring best fit:")
 
         for parameter_name, best_fit_value in zip(
             list(self.parameters.keys()), best_fit_values
         ):
-
             self.parameters[parameter_name]._set_internal_value(best_fit_value)
+            log.debug(f"{parameter_name} = {best_fit_value}" )
 
         # Regenerate the internal parameter dictionary with the new values
         self._internal_parameters = self._update_internal_parameter_dictionary()

@@ -2,8 +2,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
-from astromodels.utils.valid_variable import is_valid_variable_name
-
 from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -24,18 +22,55 @@ class OGIPLike(DispersionSpectrumLike):
         self,
         name: str,
         observation: Union[str, Path, PHASpectrum, PHAII],
-        background: Optional[Union[str, Path, PHASpectrum, PHAII, SpectrumLike,
-                                   XYLike]] = None,
+        background: Optional[
+            Union[str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike]
+        ] = None,
         response: Optional[str] = None,
         arf_file: Optional[str] = None,
         spectrum_number: Optional[int] = None,
         verbose: bool = True,
     ):
 
-        assert is_valid_variable_name(name), (
-            "Name %s is not a valid name for a plugin. You must use a name which is "
-            "a valid python identifier: no spaces, no operators (+,-,/,*), "
-            "it cannot start with a number, no special characters" % name)
+        """
+        Create a DisperionSpectrumLike plugin from OGIP data. This is the
+        main plugin to use for 'XSPEC' style data from FITS files.
+
+        Basic usage:
+
+        plugin = OGIPLike('name',
+                          observation='my_observation.fits',
+                          background='my_background.fits',
+                          response='rsp.rmf',
+                          arf_file='arf.arf')
+
+        Various combinations of these arguments can be used.
+        For example, a background may not be required or the
+        RMF and ARF may be combined into one file and entered as the response.
+
+        If using another plugin as a background rather than a data file,
+        simply pass that plugin as the background argument.
+
+
+
+        :param name:
+        :type name: str
+        :param observation:
+        :type observation: Union[str, Path, PHASpectrum, PHAII]
+        :param background:
+        :type background: Optional[
+                    Union[str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike]
+                ]
+        :param response:
+        :type response: Optional[str]
+        :param arf_file:
+        :type arf_file: Optional[str]
+        :param spectrum_number:
+        :type spectrum_number: Optional[int]
+        :param verbose:
+        :type verbose: bool
+        :returns:
+
+        """
 
         # Read the pha file (or the PHAContainer instance)
 
@@ -87,6 +122,10 @@ class OGIPLike(DispersionSpectrumLike):
 
             background = pha.background_file
 
+            if background is not None:
+
+                log.warning(f"Using background from FIT header: {background}")
+
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
 
         # Get a PHA instance with the background, we pass the response to get the energy bounds in the
@@ -99,7 +138,8 @@ class OGIPLike(DispersionSpectrumLike):
             bak = None
 
         elif isinstance(background, SpectrumLike) or isinstance(
-                background, XYLike):
+            background, XYLike
+        ):
 
             # this will be a background
 
@@ -121,37 +161,42 @@ class OGIPLike(DispersionSpectrumLike):
         # we do not need to pass the response as it is contained in the observation (pha) spectrum
         # already.
 
-        super(OGIPLike, self).__init__(name=name,
-                                       observation=pha,
-                                       background=bak,
-                                       verbose=verbose)
+        super(OGIPLike, self).__init__(
+            name=name, observation=pha, background=bak, verbose=verbose
+        )
 
-    def get_simulated_dataset(self, new_name: str = None, spectrum_number: int = 1, **kwargs):
-        # type: (str, dict) -> OGIPLike
+    def get_simulated_dataset(
+        self, new_name: Optional[str] = None, spectrum_number: int = 1, **kwargs
+    ) -> "OGIPLike":
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
 
         :param new_name: name of the simulated plugin
+        :param spectrum_number: spectrum number (default is 1)
         :param kwargs: keywords to pass back up to parents
         :return: a DispersionSpectrumLike simulated instance
-         """
+        """
 
         # pass the response thru to the constructor
-        return super(OGIPLike, self).get_simulated_dataset(new_name=new_name,
-                                                           spectrum_number=spectrum_number,
-                                                           response=self._response.clone(),
-                                                           **kwargs)
+        return super(OGIPLike, self).get_simulated_dataset(
+            new_name=new_name,
+            spectrum_number=spectrum_number,
+            response=self._response.clone(),
+            **kwargs,
+        )
 
     @property
     def grouping(self):
 
         return self._observed_spectrum.grouping
 
-    def write_pha(self,
-                  file_name: str,
-                  overwrite: bool = False,
-                  force_rsp_write: bool = False) -> None:
+    def write_pha(
+        self,
+        file_name: str,
+        overwrite: bool = False,
+        force_rsp_write: bool = False,
+    ) -> None:
         """
         Create a pha file of the current pha selections
 
@@ -165,9 +210,9 @@ class OGIPLike(DispersionSpectrumLike):
 
         pha_writer = PHAWrite(self)
 
-        pha_writer.write(file_name,
-                         overwrite=overwrite,
-                         force_rsp_write=force_rsp_write)
+        pha_writer.write(
+            file_name, overwrite=overwrite, force_rsp_write=force_rsp_write
+        )
 
     def _output(self):
         # type: () -> pd.Series
@@ -181,7 +226,7 @@ class OGIPLike(DispersionSpectrumLike):
 
         this_out = {
             "pha file": self._observed_spectrum.filename,
-            "bak file": bak_file
+            "bak file": bak_file,
         }
 
         this_df = pd.Series(this_out)
@@ -202,10 +247,18 @@ class OGIPLike(DispersionSpectrumLike):
 
         pha_files = dispersion_like.get_pha_files()
         observed = pha_files["pha"]
-        background = pha_files["bak"]
+
+        if "bak" in pha_files:
+
+            background = pha_files["bak"]
+
+        else:
+
+            background = None
 
         observed_pha = PHASpectrum.from_dispersion_spectrum(
-            observed, file_type="observed")
+            observed, file_type="observed"
+        )
 
         if background is None:
             background_pha = None
@@ -213,9 +266,10 @@ class OGIPLike(DispersionSpectrumLike):
 
             # we need to pass the response from the observations
             # to figure out the bounds of the background
-            
+
             background_pha = PHASpectrum.from_dispersion_spectrum(
-                background, file_type="background", response=observed.response)
+                background, file_type="background", response=observed.response
+            )
 
         return cls(
             dispersion_like.name,

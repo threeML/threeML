@@ -1,12 +1,9 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import str
-from builtins import range
-from past.utils import old_div
+from __future__ import division, print_function
+
 import collections
 import os
-import sys
 
+from builtins import range, str
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
@@ -15,12 +12,12 @@ from astromodels import Parameter
 from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
+from past.utils import old_div
 from threeML.exceptions.custom_exceptions import custom_warnings
-
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+from threeML.io.logging import setup_logger
 from threeML.plugin_prototype import PluginPrototype
 
-from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
 
 
@@ -676,7 +673,7 @@ class HAWCLike(PluginPrototype):
         x_limits = [-0.5, n_bins - 0.5]
         sub.set_xlim(x_limits)
 
-        sub.set_yscale("log", nonposy="clip")
+        sub.set_yscale("log", nonpositive="clip")
 
         sub.set_ylabel("Counts per bin")
 

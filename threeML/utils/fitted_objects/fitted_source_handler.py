@@ -115,6 +115,30 @@ class GenericFittedSourceHandler(object):
 
         arguments = {}
 
+        # first test a parameters to check the number of samples
+
+
+        for par in list(self._parameters.values()):
+
+            if par.free:
+
+                test_par = par
+
+                break
+
+        else:
+
+            log.error("There are no free parameters in the model!")
+
+            raise RuntimeError()
+
+        test_variate = self._analysis_results.get_variates(test_par.path)
+
+        if len(test_variate) > threeML_config.point_source.max_number_samples:
+
+            choices = np.random.choice(range(len(test_variate)), size=threeML_config.point_source.max_number_samples)
+
+        
         # because we might be using composite functions,
         # we have to keep track of parameter names in a non-elegant way
         for par, name in zip(list(self._parameters.values()), self._parameter_names):
@@ -127,13 +151,9 @@ class GenericFittedSourceHandler(object):
 
                 if len(this_variate) > threeML_config.point_source.max_number_samples:
 
-                    log.debug(
-                        f"Reduced {name} from {len(this_variate)} to {threeML_config.point_source.max_number_samples}")
-
                     
-                    this_variate = np.random.choice(
-                        this_variate, size=threeML_config.point_source.max_number_samples)
-                    
+                    this_variate = this_variate[choices]
+                
                 arguments[name] = this_variate
 
             else:

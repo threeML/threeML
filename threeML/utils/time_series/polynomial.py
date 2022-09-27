@@ -8,6 +8,7 @@ from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
+from threeML.config.config_utils import get_value
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import BadCovariance, FitFailed
 from threeML.io.logging import setup_logger, silence_console_log
@@ -172,7 +173,9 @@ class Polynomial(object):
         return np.sqrt(err2)
 
 
-def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterable[float], bayes: bool = False) -> Tuple[Polynomial, float]:
+def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
+            exposure: Iterable[float],
+            bayes: Optional[bool] = False) -> Tuple[Polynomial, float]:
     """ 
     function to fit a polynomial to data. 
     not a member to allow parallel computation
@@ -188,13 +191,12 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
-
     log.debug(f"starting polyfit with grade {grade} ")
 
-    if threeML_config.time_series.default_fit_method is not None:
-
-        bayes = threeML_config.time_series.default_fit_method
-        log.debug("using a default poly fit method")
+    bayes = get_value("bayes",
+                      bayes,
+                      bool,
+                      threeML_config.time_series.fit.bayes)
 
     nan_mask = np.isnan(y)
 
@@ -350,7 +352,9 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
     return final_polynomial, -min_log_likelihood
 
 
-def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop: float, exposure: float, bayes: bool) -> Tuple[Polynomial, float]:
+def unbinned_polyfit(events: Iterable[float], grade: int,
+                     t_start: Iterable[float], t_stop: Iterable[float],
+                     exposure: float, bayes: bool) -> Tuple[Polynomial, float]:
     """
     function to fit a polynomial to unbinned event data. 
     not a member to allow parallel computation
@@ -363,19 +367,16 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
     :param bayes: to do a bayesian fit or not
 
     """
-
     log.debug(f"starting unbinned_polyfit with grade {grade}")
     log.debug(f"have {len(events)} events with {exposure} exposure")
 
     # create 3ML plugins and fit them with 3ML!
-    # should eventuallly allow better config
 
     # select the model based on the grade
-
-    if threeML_config.time_series.default_fit_method is not None:
-
-        bayes = threeML_config.time_series.default_fit_method
-        log.debug("using a default poly fit method")
+    bayes = get_value("bayes",
+                      bayes,
+                      bool,
+                      threeML_config.time_series.fit.bayes)
 
     if len(events) == 0:
 
@@ -391,7 +392,9 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
         model = Model(ps)
 
-        observation = EventObservation(events, exposure, t_start, t_stop)
+        observation = EventObservation(events, exposure,
+                                       t_start, t_stop,
+                                       for_timeseries=True)
 
         xy = UnbinnedPoissonLike("series", observation=observation)
 

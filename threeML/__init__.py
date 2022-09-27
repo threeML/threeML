@@ -2,7 +2,7 @@
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import pandas as pd
 
-pd.set_option("max_columns", None)
+pd.set_option("display.max_columns", None)
 
 import os
 import traceback
@@ -22,19 +22,30 @@ except ImportError:
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
-from .config import threeML_config, show_configuration, get_current_configuration_copy
+from .config import (
+    threeML_config,
+    show_configuration,
+    get_current_configuration_copy,
+)
 
 log = setup_logger(__name__)
 log.propagate = False
 
 if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
+    log.warning("WARNINGs here are [red]NOT[/red] errors")
+    log.warning(
+        "but are inform you about optional packages that can be installed"
+    )
+    log.warning(
+        "[red] to disable these messages, turn off start_warning in your config file[/red]"
+    )
 
 if os.environ.get("DISPLAY") is None:
     if threeML_config["logging"]["startup_warnings"]:
         log.warning(
-        "no display variable set. using backend for graphics without display (agg)"
-    )
+            "no display variable set. using backend for graphics without display (agg)"
+        )
 
     import matplotlib as mpl
 
@@ -57,9 +68,13 @@ from astromodels import *
 
 # Finally import the serialization machinery
 from .io.serialization import *
+
 # Now import the optimizers first (to avoid conflicting libraries problems)
-from .minimizer.minimization import (GlobalMinimization, LocalMinimization,
-                                     _minimizers)
+from .minimizer.minimization import (
+    GlobalMinimization,
+    LocalMinimization,
+    _minimizers,
+)
 from .plugin_prototype import PluginPrototype
 
 # from .exceptions.custom_exceptions import custom_warnings
@@ -77,9 +92,9 @@ try:
 except ImportError:
     if threeML_config.logging.startup_warnings:
         log.warning(
-        "The cthreeML package is not installed. You will not be able to use plugins which require "
-        "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
-    )
+            "The cthreeML package is not installed. You will not be able to use plugins which require "
+            "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
+        )
 # Now look for plugins
 
 # This verifies if a module is importable
@@ -127,10 +142,10 @@ for i, module_full_path in enumerate(found_plugins):
     if not is_importable:
         if threeML_config.logging.startup_warnings:
             log.warning(
-            f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
-            "and configured?"
-            # custom_exceptions.CannotImportPlugin,
-        )
+                f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
+                "and configured?"
+                # custom_exceptions.CannotImportPlugin,
+            )
 
         _not_working_plugins[plugin_name] = failure_traceback
 
@@ -150,7 +165,9 @@ for i, module_full_path in enumerate(found_plugins):
 
         # Now import the plugin itself
 
-        import_command = f"from threeML.plugins.{plugin_name} import {plugin_name}"
+        import_command = (
+            f"from threeML.plugins.{plugin_name} import {plugin_name}"
+        )
 
         try:
 
@@ -183,11 +200,16 @@ def get_available_plugins():
 
 def _display_plugin_traceback(plugin):
     if threeML_config.logging.startup_warnings:
-        log.warning("#############################################################")
+        log.warning(
+            "#############################################################"
+        )
         log.warning("\nCouldn't import plugin %s" % plugin)
         log.warning("\nTraceback:\n")
         log.warning(_not_working_plugins[plugin])
-        log.warning("#############################################################")
+        log.warning(
+            "#############################################################"
+        )
+
 
 def is_plugin_available(plugin):
     """
@@ -239,61 +261,86 @@ import os
 import astropy.units as u
 
 # Import the results loader
-from threeML.analysis_results import (convert_fits_analysis_result_to_hdf,
-                                      load_analysis_results,
-                                      load_analysis_results_hdf)
+from threeML.analysis_results import (
+    convert_fits_analysis_result_to_hdf,
+    load_analysis_results,
+    load_analysis_results_hdf,
+)
+
 # Import catalogs
-from threeML.catalogs import (FermiGBMBurstCatalog, FermiGBMTriggerCatalog,
-                              FermiLATSourceCatalog, FermiLLEBurstCatalog, SwiftGRBCatalog)
+from threeML.catalogs import (
+    FermiGBMBurstCatalog,
+    FermiGBMTriggerCatalog,
+    FermiLATSourceCatalog,
+    FermiPySourceCatalog,
+    FermiLLEBurstCatalog,
+    SwiftGRBCatalog,
+)
 
-from threeML.io import (activate_warnings, silence_warnings,
-                        update_logging_level,
-                        silence_logs,
-                        silence_progress_bars,
-                        activate_progress_bars,
-                        toggle_progress_bars,
-                        quiet_mode,
-                        loud_mode,
-                        debug_mode,
-                        activate_logs
-                        
-
-
-
-                        )
+from threeML.io import (
+    activate_warnings,
+    silence_warnings,
+    update_logging_level,
+    silence_logs,
+    silence_progress_bars,
+    activate_progress_bars,
+    toggle_progress_bars,
+    quiet_mode,
+    loud_mode,
+    debug_mode,
+    activate_logs,
+)
 from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
-from threeML.io.plotting.model_plot import (plot_point_source_spectra,
-                                            plot_spectra)
+from threeML.io.plotting.model_plot import (
+    plot_point_source_spectra,
+    plot_spectra,
+)
 from threeML.io.plotting.post_process_data_plots import (
-    display_photometry_model_magnitudes, display_spectrum_model_counts)
+    display_photometry_model_magnitudes,
+    display_spectrum_model_counts,
+)
+
 #
 from threeML.io.uncertainty_formatter import interval_to_errors
+
 # import time series builder, soon to replace the Fermi plugins
 from threeML.utils.data_builders import *
-from threeML.utils.data_download.Fermi_GBM.download_GBM_data import \
-    download_GBM_trigger_data, download_GBM_daily_data
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
+    download_GBM_trigger_data,
+    download_GBM_daily_data,
+)
+
 # Import the LAT data downloader
-from threeML.utils.data_download.Fermi_LAT.download_LAT_data import \
-    download_LAT_data
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import (
+    download_LAT_data,
+)
+
 # Import LLE downloader
-from threeML.utils.data_download.Fermi_LAT.download_LLE_data import \
-    download_LLE_trigger_data
+from threeML.utils.data_download.Fermi_LAT.download_LLE_data import (
+    download_LLE_trigger_data,
+)
 
 # Import the Bayesian analysis
 from .bayesian.bayesian_analysis import BayesianAnalysis
 from .classicMLE.goodness_of_fit import GoodnessOfFit
 from .classicMLE.joint_likelihood import JointLikelihood
+
 # Import the joint likelihood set
-from .classicMLE.joint_likelihood_set import (JointLikelihoodSet,
-                                              JointLikelihoodSetAnalyzer)
+from .classicMLE.joint_likelihood_set import (
+    JointLikelihoodSet,
+    JointLikelihoodSetAnalyzer,
+)
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
+
 # Now read the configuration and make it available as threeML_config
 
 from .data_list import DataList
 from .io.calculate_flux import calculate_point_source_flux
+
 # Import the plot_style context manager and the function to create new styles
 
 from .parallel.parallel_client import parallel_computation
+
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
@@ -316,7 +363,6 @@ from .io import get_threeML_style, set_threeML_style
 var_to_check = ["OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"]
 
 
-
 for var in var_to_check:
 
     num_threads = os.environ.get(var)
@@ -330,24 +376,22 @@ for var in var_to_check:
         except ValueError:
             if threeML_config.logging.startup_warnings:
                 log.warning(
-                "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
-                "for optimum performances." % var,
-                # RuntimeWarning,
-            )
+                    "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
+                    "for optimum performances." % var,
+                    # RuntimeWarning,
+                )
 
     else:
 
         if threeML_config.logging.startup_warnings:
             log.warning(
-            "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
-            % var
-            #            RuntimeWarning,
-        )
+                "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
+                % var
+                #            RuntimeWarning,
+            )
 
 
-            
 del os
 del Path
 del warnings
 del SourceFileLoader
-

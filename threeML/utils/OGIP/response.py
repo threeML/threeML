@@ -286,6 +286,9 @@ class InstrumentResponse(object):
         return idx
 
     def plot_matrix(self) -> plt.Figure:
+        """
+
+        """
 
         fig, ax = plt.subplots()
 
@@ -320,7 +323,7 @@ class InstrumentResponse(object):
         mappable = ax.pcolormesh(
             self._monte_carlo_energies[idx_mc:],
             self._ebounds[idx_eb:],
-            self._matrix,
+            self._matrix[idx_eb:, idx_mc:],
             cmap=cmap,
             norm=SymLogNorm(1.0, 1.0, vmin=vmin, vmax=self._matrix.max()),
         )
@@ -409,6 +412,11 @@ class OGIPResponse(InstrumentResponse):
         :param rsp_file:
         :param arf_file:
         """
+
+
+        self._arf: Optional[np.ndarray] = None
+
+        self._rmf: Optional[np.ndarray] = None
 
         # Now make sure that the response file exist
 
@@ -587,7 +595,7 @@ class OGIPResponse(InstrumentResponse):
         f_chan_column_pos = data.columns.names.index("F_CHAN") + 1
 
         try:
-            tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
+            tlmin_fchan = int(header[f"TLMIN{f_chan_column_pos}"])
 
         except (KeyError):
             log.warning(
@@ -722,12 +730,33 @@ class OGIPResponse(InstrumentResponse):
                 "The ARF and the RMF have one or more MC channels which differ by more than 1%"
             )
 
+        # store the RMF and ARF separately
+
         # Multiply ARF and RMF
+        self._rmf = copy.deepcopy(self._matrix)
+        self._arf = arf
 
         matrix = self.matrix * arf
 
         # Override the matrix with the one multiplied by the arf
         self.replace_matrix(matrix)
+
+    @property
+    def arf(self) -> Optional[np.ndarray]:
+        """
+        The area response function
+        """
+
+        return self._arf
+
+    @property
+    def rmf(self) -> Optional[np.ndarray]:
+        """
+        The redistribution matrix function
+        """
+
+        return self._rmf
+
 
 
 class InstrumentResponseSet(object):

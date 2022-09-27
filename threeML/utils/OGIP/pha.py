@@ -1,13 +1,10 @@
-import os
-import warnings
-from builtins import object
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Optional
 
 import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np
-
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
@@ -16,7 +13,7 @@ from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 log = setup_logger(__name__)
 
 
-class PHAWrite(object):
+class PHAWrite:
     def __init__(self, *ogiplike):
         """
         This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as
@@ -607,7 +604,7 @@ class PHAII(FITSFile):
         super(PHAII, self).__init__(fits_extensions=[spectrum_extension])
 
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False):
+    def from_time_series(cls, time_series, use_poly=False) -> "PHAII":
 
         pha_information = time_series.get_information_dict(use_poly)
 
@@ -618,16 +615,16 @@ class PHAII(FITSFile):
             is_poisson = False
 
         return PHAII(
-            instrument_name=pha_information["instrument"],
-            telescope_name=pha_information["telescope"],
-            tstart=pha_information["tstart"],
-            telapse=pha_information["telapse"],
-            channel=pha_information["channel"],
-            rate=pha_information["rates"],
-            stat_err=pha_information["rate error"],
-            quality=pha_information["quality"].to_ogip(),
-            grouping=pha_information["grouping"],
-            exposure=pha_information["exposure"],
+            instrument_name=pha_information.instrument,
+            telescope_name=pha_information.telescope,
+            tstart=pha_information.tstart,
+            telapse=pha_information.telapse,
+            channel=pha_information.channel,
+            rate=pha_information.rates,
+            stat_err=pha_information.rate_error,
+            quality=pha_information.quality.to_ogip(),
+            grouping=pha_information.grouping,
+            exposure=pha_information.exposure,
             backscale=1.0,
             respfile=None,  # pha_information['response_file'],
             ancrfile=None,
@@ -635,7 +632,7 @@ class PHAII(FITSFile):
         )
 
     @classmethod
-    def from_fits_file(cls, fits_file):
+    def from_fits_file(cls, fits_file) -> FITSFile:
 
         with fits.open(fits_file) as f:
 

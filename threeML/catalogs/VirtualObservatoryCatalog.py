@@ -1,5 +1,3 @@
-
-from astromodels import *
 import astropy
 
 # from astropy.vo.client.vos_catalog import VOSCatalog
@@ -14,6 +12,8 @@ from astropy.coordinates import SkyCoord
 
 import astropy.table as astro_table
 
+import astropy.units as u
+
 from threeML.io.network import internet_connection_is_active
 from threeML.io.logging import setup_logger
 
@@ -22,7 +22,9 @@ log = setup_logger(__name__)
 # Workaround to support astropy 4.1+
 astropy_old = True
 astropy_version = astropy.__version__
-if int(astropy_version[0]) >= 4 and int(astropy_version[2]) >= 1:
+if int(astropy_version[0]) == 4 and int(astropy_version[2]) >= 1:
+    astropy_old = False
+elif int(astropy_version[0]) >=5:
     astropy_old = False
 
 class ConeSearchFailed(RuntimeError):
