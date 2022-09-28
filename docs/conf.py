@@ -100,6 +100,17 @@ if "GITHUB_TOKEN" in os.environ:
     rtds_action_error_if_missing = True
 
 
+
+sphinx_gallery_conf = {
+    "default_thumb_file": "media/logo.png"
+    #     'matplotlib_animations': True,
+    #     'image_srcset': ["2x"],
+    #     'nested_sections': False,
+    #     'show_api_usage': True,
+}
+
+
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 source_suffix = [".rst"]
@@ -233,6 +244,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
+
         master_doc,
         "TheMulti-MissionMaximumLikelihoodframework",
         "The Multi-Mission Maximum Likelihood framework Documentation",
@@ -243,14 +255,6 @@ texinfo_documents = [
     ),
 ]
 
-
-sphinx_gallery_conf = {
-    "default_thumb_file": "media/logo.png"
-    #     'matplotlib_animations': True,
-    #     'image_srcset': ["2x"],
-    #     'nested_sections': False,
-    #     'show_api_usage': True,
-}
 
 
 def setup(app):
