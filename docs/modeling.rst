@@ -5,7 +5,7 @@ Modeling
 
 Contents:
 
-.. toctree::
+.. nbgallery::
    :maxdepth: 3
 
    notebooks/spectral_models.ipynb
