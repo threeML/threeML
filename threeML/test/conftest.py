@@ -234,8 +234,8 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
     bayes = BayesianAnalysis(model, data_list)
 
     bayes.set_sampler("emcee")
-    bayes.sampler.setup(n_walkers=50, n_burn_in=50,
-                        n_iterations=100, seed=1234)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=200,
+                        n_iterations=500, seed=1234)
     samples = bayes.sample()
 
     return bayes, samples
@@ -293,8 +293,8 @@ def completed_bn090217206_bayesian_analysis_multicomp(
 
     bayes.set_sampler("emcee")
 
-    bayes.sampler.setup(n_walkers=50, n_burn_in=50,
-                        n_iterations=100, seed=1234)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=500,
+                        n_iterations=500, seed=1234)
 
     samples = bayes.sample()
 

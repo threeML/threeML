@@ -1,19 +1,21 @@
 import collections
 import copy
-from builtins import range
-from typing import Union
+from typing import Any, Dict, Optional, Union
 
 import numpy as np
 from speclite.filters import FilterResponse, FilterSequence
-
+from threeML.config import threeML_config
+from threeML.io.logging import setup_logger
+from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.photometry import FilterSet, PhotometericObservation
+
+log = setup_logger(__name__)
 
 __instrument_name = "Generic photometric data"
 
 
-class BandNode(object):
-
+class BandNode:
     def __init__(self, name, index, value, mask):
         """
         Container class that allows for the shutting on and off of bands
@@ -35,15 +37,18 @@ class BandNode(object):
 
         return self._on
 
-    on = property(_get_on, _set_on,
-                  doc="Turn on or off the band. Use booleans, like: 'p.on = True' "
-                  " or 'p.on = False'. ")
+    on = property(
+        _get_on,
+        _set_on,
+        doc="Turn on or off the band. Use booleans, like: 'p.on = True' "
+        " or 'p.on = False'. ",
+    )
 
     # Define property "fix"
 
     def _set_off(self, value=True):
 
-        self._on = (not value)
+        self._on = not value
 
         self._mask[self._index] = self._on
 
@@ -51,10 +56,12 @@ class BandNode(object):
 
         return not self._on
 
-    off = property(_get_off, _set_off,
-                   doc="Turn on or off the band. Use booleans, like: 'p.off = True' "
-                       " or 'p.off = False'. ")
-
+    off = property(
+        _get_off,
+        _set_off,
+        doc="Turn on or off the band. Use booleans, like: 'p.off = True' "
+        " or 'p.off = False'. ",
+    )
 
     def __repr__(self):
 
@@ -62,9 +69,12 @@ class BandNode(object):
 
 
 class PhotometryLike(XYLike):
-    def __init__(self, name: str,
-                 filters: Union[FilterSequence, FilterResponse],
-                 observation: PhotometericObservation):
+    def __init__(
+        self,
+        name: str,
+        filters: Union[FilterSequence, FilterResponse],
+        observation: PhotometericObservation,
+    ):
         """
         The photometry plugin is desinged to fit optical/IR/UV photometric data from a given
         filter system. Filters are given in the form a speclite (http://speclite.readthedocs.io)
@@ -89,7 +99,8 @@ class PhotometryLike(XYLike):
         """
 
         assert isinstance(
-            observation, PhotometericObservation), "Observation must be PhotometricObservation"
+            observation, PhotometericObservation
+        ), "Observation must be PhotometricObservation"
 
         # convert names so that only the filters are present
         # speclite uses '-' to separate instrument and filter
@@ -110,19 +121,27 @@ class PhotometryLike(XYLike):
 
         else:
 
-            RuntimeError(
-                "filters must be A FilterResponse or a FilterSequence")
+            log.error("filters must be A FilterResponse or a FilterSequence")
+
+            RuntimeError("filters must be A FilterResponse or a FilterSequence")
 
         # since we may only have a few of the  filters in use
         # we will mask the filters not needed. The will stay fixed
         # during the life of the plugin
 
-        assert observation.is_compatible_with_filter_set(
-            filters), "The data and filters are not congruent"
+        if not observation.is_compatible_with_filter_set(filters):
+
+            log.error("The data and filters are not congruent")
+
+            raise AssertionError("The data and filters are not congruent")
 
         mask = observation.get_mask_from_filter_sequence(filters)
 
-        assert mask.sum() > 0, "There are no data in this observation!"
+        if not mask.sum() > 0:
+
+            log.error("There are no data in this observation!")
+
+            raise AssertionError("There are no data in this observation!")
 
         # create a filter set and use only the bands that were specified
 
@@ -156,17 +175,20 @@ class PhotometryLike(XYLike):
 
         for i, band in enumerate(self._filter_set.filter_names):
 
-            node = BandNode(band, i, (self._magnitudes[i], self._magnitude_errors[i]),
-                            self._mask)
+            node = BandNode(
+                band,
+                i,
+                (self._magnitudes[i], self._magnitude_errors[i]),
+                self._mask,
+            )
 
             setattr(self, f"band_{band}", node)
-
 
     @property
     def observation(self) -> PhotometericObservation:
 
         return self._observation
-            
+
     @classmethod
     def from_kwargs(cls, name, filters, **kwargs):
         """
@@ -199,7 +221,12 @@ class PhotometryLike(XYLike):
         return cls(name, filters, PhotometericObservation.from_kwargs(**kwargs))
 
     @classmethod
-    def from_file(cls, name: str, filters: Union[FilterResponse, FilterSequence], file_name: str):
+    def from_file(
+        cls,
+        name: str,
+        filters: Union[FilterResponse, FilterSequence],
+        file_name: str,
+    ):
         """
         Create the a PhotometryLike plugin from a saved HDF5 data file
 
@@ -263,6 +290,175 @@ class PhotometryLike(XYLike):
 
         return self._filter_set.plot_filters()
 
+    def plot(
+        self,
+        data_color: str = "r",
+        model_color: str = "blue",
+        show_data: bool = True,
+        show_residuals: bool = True,
+        show_legend: bool = True,
+        model_label: Optional[str] = None,
+        model_kwargs: Optional[Dict[str, Any]] = None,
+        data_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> ResidualPlot:
+
+        """TODO describe function
+
+        :param data_color:
+        :type data_color: str
+        :param model_color:
+        :type model_color: str
+        :param show_data:
+        :type show_data: bool
+        :param show_residuals:
+        :type show_residuals: bool
+        :param show_legend:
+        :type show_legend: bool
+        :param model_label:
+        :type model_label: Optional[str]
+        :param model_kwargs:
+        :type model_kwargs: Optional[Dict[str, Any]]
+        :param data_kwargs:
+        :type data_kwargs: Optional[Dict[str, Any]]
+        :returns:
+
+        """
+
+        _default_model_kwargs = dict(color=model_color, alpha=1)
+
+        _sub_menu = threeML_config.plotting.residual_plot
+
+        _default_data_kwargs = dict(
+            color=data_color,
+            alpha=1,
+            fmt=_sub_menu.marker,
+            markersize=_sub_menu.size,
+            ls="",
+            elinewidth=_sub_menu.linewidth,
+            capsize=0,
+        )
+
+        # overwrite if these are in the confif
+
+        _kwargs_menu = threeML_config.plugins.photo.fit_plot
+
+        if _kwargs_menu.model_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.model_mpl_kwargs.items():
+
+                _default_model_kwargs[k] = v
+
+        if _kwargs_menu.data_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.data_mpl_kwargs.items():
+
+                _default_data_kwargs[k] = v
+
+        if model_kwargs is not None:
+
+            if not type(model_kwargs) == dict:
+
+                log.error("model_kwargs must be a dict")
+
+                raise RuntimeError()
+
+            for k, v in list(model_kwargs.items()):
+
+                if k in _default_model_kwargs:
+
+                    _default_model_kwargs[k] = v
+
+                else:
+
+                    _default_model_kwargs[k] = v
+
+        if data_kwargs is not None:
+
+            if not type(data_kwargs) == dict:
+
+                log.error("data_kwargs must be a dict")
+
+                raise RuntimeError()
+
+            for k, v in list(data_kwargs.items()):
+
+                if k in _default_data_kwargs:
+
+                    _default_data_kwargs[k] = v
+
+                else:
+
+                    _default_data_kwargs[k] = v
+
+        # since we define some defualts, lets not overwrite
+        # the users
+
+        _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
+
+        for d in _duplicates:
+
+            if (d[0] in _default_model_kwargs) and (
+                d[1] in _default_model_kwargs
+            ):
+
+                _default_model_kwargs.pop(d[0])
+
+            if (d[0] in _default_data_kwargs) and (
+                d[1] in _default_data_kwargs
+            ):
+
+                _default_data_kwargs.pop(d[0])
+
+        if model_label is None:
+            model_label = f"{self._name} Model"
+
+        avg_wave_length = (
+            self._filter_set.effective_wavelength.value
+        )  # type: np.ndarray
+
+        # need to sort because filters are not always in order
+
+        sort_idx = avg_wave_length.argsort()
+
+        expected_model_magnitudes = self._get_total_expectation()[sort_idx]
+        magnitudes = self.magnitudes[sort_idx]
+        mag_errors = self.magnitude_errors[sort_idx]
+        avg_wave_length = avg_wave_length[sort_idx]
+
+        residuals = (expected_model_magnitudes - magnitudes) / mag_errors
+
+        widths = self._filter_set.wavelength_bounds.widths[sort_idx]
+
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+
+        residual_plot.add_data(
+            x=avg_wave_length,
+            y=magnitudes,
+            xerr=widths / 2.0,
+            yerr=mag_errors,
+            residuals=residuals,
+            label=self._name,
+            show_data=show_data,
+            **_default_data_kwargs,
+        )
+
+        residual_plot.add_model(
+            avg_wave_length,
+            expected_model_magnitudes,
+            label=model_label,
+            **_default_model_kwargs,
+        )
+
+        return residual_plot.finalize(
+            xlabel=f"Wavelength\n({self._filter_set.waveunits})",
+            ylabel="Magnitudes",
+            xscale="linear",
+            yscale="linear",
+            invert_y=True,
+            show_legend=show_legend
+        )
+
     def _new_plugin(self, name, x, y, yerr):
         """
         construct a new PhotometryLike plugin. allows for returning a new plugin
@@ -287,7 +483,9 @@ class PhotometryLike(XYLike):
         new_observation = PhotometericObservation.from_dict(bands)
 
         new_photo = PhotometryLike(
-            name, filters=self._filter_set.speclite_filters, observation=new_observation
+            name,
+            filters=self._filter_set.speclite_filters,
+            observation=new_observation,
         )
 
         # apply the current mask
