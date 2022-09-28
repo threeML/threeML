@@ -50,12 +50,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampler_docs.html">Bayesian Sampler Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../plugins.html">Plugins</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="custom_plugins.html">Building Custom Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum_tutorial.html">Spectrum Plugins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Background Modeling</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Using-a-profile-likelihood">Using a profile likelihood</a></li>
@@ -75,13 +80,18 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
 </ul>
 
         </div>
@@ -488,7 +498,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:31 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:28 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -509,7 +519,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:32 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:30 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -551,7 +561,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:33 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:31 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -569,131 +579,18 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 </pre></div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Font family [&#39;sans-serif&#39;] not found. Falling back to DejaVu Sans.
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Font family [&#39;sans-serif&#39;] not found. Falling back to DejaVu Sans.
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_5_13.png" src="../_images/notebooks_Background_modeling_5_13.png" />
+<img alt="../_images/notebooks_Background_modeling_5_12.png" src="../_images/notebooks_Background_modeling_5_12.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_5_15.png" src="../_images/notebooks_Background_modeling_5_15.png" />
+<img alt="../_images/notebooks_Background_modeling_5_13.png" src="../_images/notebooks_Background_modeling_5_13.png" />
 </div>
 </div>
 <section id="Using-a-profile-likelihood">
@@ -729,7 +626,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:35 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:32 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -774,22 +671,22 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>2.19 -0.15 +0.16</td>
+      <td>2.15 +/- 0.13</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(2.99 +/- 0.11) x 10^2</td>
+      <td>(2.819 +/- 0.010) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(8 +/- 8) x 10^-2</td>
+      <td>(1.9 +/- 0.9) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.19 +/- 0.16</td>
+      <td>-2.74 +/- 0.10</td>
       <td></td>
     </tr>
   </tbody>
@@ -809,11 +706,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140286943953824">
-<tr><td>1.00</td><td>-0.63</td><td>0.77</td><td>0.02</td></tr>
-<tr><td>-0.63</td><td>1.00</td><td>-0.48</td><td>-0.55</td></tr>
-<tr><td>0.77</td><td>-0.48</td><td>1.00</td><td>0.01</td></tr>
-<tr><td>0.02</td><td>-0.55</td><td>0.01</td><td>1.00</td></tr>
+<div><table id="table140351061026176">
+<tr><td>1.00</td><td>-0.08</td><td>0.69</td><td>-0.56</td></tr>
+<tr><td>-0.08</td><td>1.00</td><td>-0.05</td><td>-0.06</td></tr>
+<tr><td>0.69</td><td>-0.05</td><td>1.00</td><td>-0.36</td></tr>
+<tr><td>-0.56</td><td>-0.06</td><td>-0.36</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -853,11 +750,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>fake</th>
-      <td>418.390317</td>
+      <td>415.065925</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>418.390317</td>
+      <td>415.065925</td>
     </tr>
   </tbody>
 </table>
@@ -900,112 +797,21 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>845.056497</td>
+      <td>838.407712</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>856.823176</td>
+      <td>850.174391</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_7_10.png" src="../_images/notebooks_Background_modeling_7_10.png" />
+<img alt="../_images/notebooks_Background_modeling_7_9.png" src="../_images/notebooks_Background_modeling_7_9.png" />
 </div>
 </div>
 <p>Our fit recovers the simulated parameters. However, we should have binned the spectrum up such that there is at least one background count per spectral bin for the profile to be valid.</p>
@@ -1027,7 +833,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:39 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">86</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1673" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1673</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:36 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">79</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1673" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1673</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -1072,22 +878,22 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>2.18 -0.17 +0.18</td>
+      <td>2.07 -0.17 +0.19</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(2.98 -0.13 +0.14) x 10^2</td>
+      <td>(2.86 +/- 0.13) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(7 +/- 9) x 10^-2</td>
+      <td>(1.7 +/- 1.0) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.04 +/- 0.16</td>
+      <td>-2.71 +/- 0.12</td>
       <td></td>
     </tr>
   </tbody>
@@ -1107,11 +913,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140286940096064">
-<tr><td>1.00</td><td>-0.71</td><td>0.80</td><td>0.14</td></tr>
-<tr><td>-0.71</td><td>1.00</td><td>-0.56</td><td>-0.62</td></tr>
-<tr><td>0.80</td><td>-0.56</td><td>1.00</td><td>0.11</td></tr>
-<tr><td>0.14</td><td>-0.62</td><td>0.11</td><td>1.00</td></tr>
+<div><table id="table140351057081632">
+<tr><td>1.00</td><td>-0.72</td><td>0.79</td><td>0.10</td></tr>
+<tr><td>-0.72</td><td>1.00</td><td>-0.55</td><td>-0.59</td></tr>
+<tr><td>0.79</td><td>-0.55</td><td>1.00</td><td>0.07</td></tr>
+<tr><td>0.10</td><td>-0.59</td><td>0.07</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -1151,11 +957,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>fake</th>
-      <td>316.09433</td>
+      <td>300.635145</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>316.09433</td>
+      <td>300.635145</td>
     </tr>
   </tbody>
 </table>
@@ -1198,11 +1004,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>640.464522</td>
+      <td>609.546152</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>652.231201</td>
+      <td>621.312831</td>
     </tr>
   </tbody>
 </table>
@@ -1211,167 +1017,15 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_9_10.png" src="../_images/notebooks_Background_modeling_9_10.png" />
+<img alt="../_images/notebooks_Background_modeling_9_9.png" src="../_images/notebooks_Background_modeling_9_9.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_9_12.png" src="../_images/notebooks_Background_modeling_9_12.png" />
+<img alt="../_images/notebooks_Background_modeling_9_10.png" src="../_images/notebooks_Background_modeling_9_10.png" />
 </div>
 </div>
 </section>
@@ -1393,7 +1047,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:42 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:38 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#469" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">469</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -1420,89 +1074,18 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_13_1.png" src="../_images/notebooks_Background_modeling_13_1.png" />
+<img alt="../_images/notebooks_Background_modeling_13_0.png" src="../_images/notebooks_Background_modeling_13_0.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_13_3.png" src="../_images/notebooks_Background_modeling_13_3.png" />
+<img alt="../_images/notebooks_Background_modeling_13_1.png" src="../_images/notebooks_Background_modeling_13_1.png" />
 </div>
 </div>
 <p>We now construct our background model and fit it to the data. Let’s assume we know that the line occurs at 511 keV, but we are unsure of its strength an width. We do not need to bin the data up because we are using a simple Poisson likelihood which is valid even when we have zero counts <a class="reference external" href="http://adsabs.harvard.edu/abs/1979ApJ...228..939C">Cash (1979)</a>.</p>
@@ -1542,7 +1125,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:43 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:39 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -1587,22 +1170,22 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>bkg.spectrum.main.composite.K_1</th>
-      <td>(3.29 -0.23 +0.25) x 10^-1</td>
+      <td>(3.14 -0.23 +0.25) x 10^-1</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.index_1</th>
-      <td>-1.40 +/- 0.04</td>
+      <td>-1.49 +/- 0.05</td>
       <td></td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.F_2</th>
-      <td>(3.4 +/- 0.6) x 10</td>
+      <td>(3.0 +/- 0.6) x 10</td>
       <td>1 / (cm2 s)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.sigma_2</th>
-      <td>(1.82 +/- 0.27) x 10</td>
+      <td>(1.51 +/- 0.24) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -1622,11 +1205,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140286938804176">
-<tr><td>1.00</td><td>0.17</td><td>-0.04</td><td>-0.02</td></tr>
-<tr><td>0.17</td><td>1.00</td><td>-0.04</td><td>-0.02</td></tr>
-<tr><td>-0.04</td><td>-0.04</td><td>1.00</td><td>0.04</td></tr>
-<tr><td>-0.02</td><td>-0.02</td><td>0.04</td><td>1.00</td></tr>
+<div><table id="table140351100167552">
+<tr><td>1.00</td><td>0.32</td><td>-0.04</td><td>-0.02</td></tr>
+<tr><td>0.32</td><td>1.00</td><td>-0.04</td><td>-0.02</td></tr>
+<tr><td>-0.04</td><td>-0.04</td><td>1.00</td><td>0.03</td></tr>
+<tr><td>-0.02</td><td>-0.02</td><td>0.03</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -1666,11 +1249,11 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>bkg</th>
-      <td>219.549999</td>
+      <td>209.16743</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>219.549999</td>
+      <td>209.16743</td>
     </tr>
   </tbody>
 </table>
@@ -1713,112 +1296,21 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>447.375860</td>
+      <td>426.610722</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>459.142539</td>
+      <td>438.377401</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_15_10.png" src="../_images/notebooks_Background_modeling_15_10.png" />
+<img alt="../_images/notebooks_Background_modeling_15_9.png" src="../_images/notebooks_Background_modeling_15_9.png" />
 </div>
 </div>
 <p>We now have a model and estimate for the background which we can use when fitting with the source spectrum. We now create a new plugin with just the total observation and pass our background plugin as the background argument.</p>
@@ -1840,7 +1332,7 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:45 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#459" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">459</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:41 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#459" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">459</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -1874,127 +1366,18 @@ findfont: Generic family &#39;sans-serif&#39; not found because none of the foll
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_19_1.png" src="../_images/notebooks_Background_modeling_19_1.png" />
+<img alt="../_images/notebooks_Background_modeling_19_0.png" src="../_images/notebooks_Background_modeling_19_0.png" />
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_19_3.png" src="../_images/notebooks_Background_modeling_19_3.png" />
+<img alt="../_images/notebooks_Background_modeling_19_1.png" src="../_images/notebooks_Background_modeling_19_1.png" />
 </div>
 </div>
 <p>Now we simply fit the spectrum as we did in the profiled case. The background plugin’s parameters are stored in our new plugin as nuissance parameters:</p>
@@ -2022,22 +1405,22 @@ OrderedDict([(&#39;cons_full&#39;,
               Parameter dec = 0.0 [deg]
               (min_value = -90.0, max_value = 90.0, delta = 0.1, free = False)),
              (&#39;bkg_bkg_spectrum_main_composite_K_1_full&#39;,
-              Parameter K_1 = 0.3285435588200485 [1 / (cm2 keV s)]
+              Parameter K_1 = 0.3143818463615976 [1 / (cm2 keV s)]
               (min_value = 0.0001, max_value = 10.0, delta = 0.1, free = True)),
              (&#39;bkg_bkg_spectrum_main_composite_piv_1_full&#39;,
               Parameter piv_1 = 100.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
              (&#39;bkg_bkg_spectrum_main_composite_index_1_full&#39;,
-              Parameter index_1 = -1.396195468405873 []
+              Parameter index_1 = -1.486407534775942 []
               (min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)),
              (&#39;bkg_bkg_spectrum_main_composite_F_2_full&#39;,
-              Parameter F_2 = 33.8924677000011 [1 / (cm2 s)]
+              Parameter F_2 = 29.835920483727616 [1 / (cm2 s)]
               (min_value = 0.0, max_value = 1000.0, delta = 0.1, free = True)),
              (&#39;bkg_bkg_spectrum_main_composite_mu_2_full&#39;,
               Parameter mu_2 = 511.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
              (&#39;bkg_bkg_spectrum_main_composite_sigma_2_full&#39;,
-              Parameter sigma_2 = 18.19514389703478 [keV]
+              Parameter sigma_2 = 15.10996361791277 [keV]
               (min_value = 2.0, max_value = 30.0, delta = 0.1, free = True)),
              (&#39;bkg_cons_bkg_full&#39;,
               Parameter cons_bkg = 1.0 []
@@ -2070,7 +1453,7 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">06:43:46 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">09:03:42 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1042" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1042</span></a>
 </pre></div>
 </div>
 <div class="nboutput docutils container">
@@ -2115,42 +1498,42 @@ OrderedDict([(&#39;cons_full&#39;,
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>2.19 -0.15 +0.16</td>
+      <td>2.11 -0.12 +0.13</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(2.95 +/- 0.10) x 10^2</td>
+      <td>(2.819 +/- 0.010) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(1.1 +/- 0.9) x 10^-1</td>
+      <td>(2.0 +/- 0.8) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.07 +/- 0.16</td>
+      <td>-2.74 +/- 0.10</td>
       <td></td>
     </tr>
     <tr>
       <th>K_1</th>
-      <td>(3.50 +/- 0.30) x 10^-1</td>
+      <td>(3.18 +/- 0.32) x 10^-1</td>
       <td>1 / (cm2 keV s)</td>
     </tr>
     <tr>
       <th>index_1</th>
-      <td>-1.41 +/- 0.04</td>
+      <td>-1.47 +/- 0.04</td>
       <td></td>
     </tr>
     <tr>
       <th>F_2</th>
-      <td>(2.8 +/- 0.5) x 10</td>
+      <td>(2.9 +/- 0.4) x 10</td>
       <td>1 / (cm2 s)</td>
     </tr>
     <tr>
       <th>sigma_2</th>
-      <td>(1.89 +/- 0.28) x 10</td>
+      <td>(1.42 +/- 0.20) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -2170,15 +1553,15 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140286988421248">
-<tr><td>1.00</td><td>-0.59</td><td>0.76</td><td>-0.04</td><td>0.13</td><td>-0.16</td><td>-0.01</td><td>-0.00</td></tr>
-<tr><td>-0.59</td><td>1.00</td><td>-0.45</td><td>-0.54</td><td>-0.02</td><td>0.19</td><td>-0.05</td><td>-0.03</td></tr>
-<tr><td>0.76</td><td>-0.45</td><td>1.00</td><td>-0.04</td><td>0.34</td><td>-0.22</td><td>-0.01</td><td>-0.01</td></tr>
-<tr><td>-0.04</td><td>-0.54</td><td>-0.04</td><td>1.00</td><td>-0.22</td><td>-0.29</td><td>-0.02</td><td>-0.01</td></tr>
-<tr><td>0.13</td><td>-0.02</td><td>0.34</td><td>-0.22</td><td>1.00</td><td>0.22</td><td>-0.03</td><td>-0.02</td></tr>
-<tr><td>-0.16</td><td>0.19</td><td>-0.22</td><td>-0.29</td><td>0.22</td><td>1.00</td><td>-0.02</td><td>-0.01</td></tr>
-<tr><td>-0.01</td><td>-0.05</td><td>-0.01</td><td>-0.02</td><td>-0.03</td><td>-0.02</td><td>1.00</td><td>0.17</td></tr>
-<tr><td>-0.00</td><td>-0.03</td><td>-0.01</td><td>-0.01</td><td>-0.02</td><td>-0.01</td><td>0.17</td><td>1.00</td></tr>
+<div><table id="table140351099934080">
+<tr><td>1.00</td><td>-0.08</td><td>0.69</td><td>-0.54</td><td>0.12</td><td>-0.03</td><td>-0.05</td><td>-0.01</td></tr>
+<tr><td>-0.08</td><td>1.00</td><td>-0.05</td><td>-0.06</td><td>-0.00</td><td>0.01</td><td>-0.00</td><td>-0.00</td></tr>
+<tr><td>0.69</td><td>-0.05</td><td>1.00</td><td>-0.37</td><td>0.32</td><td>-0.07</td><td>-0.03</td><td>-0.01</td></tr>
+<tr><td>-0.54</td><td>-0.06</td><td>-0.37</td><td>1.00</td><td>-0.27</td><td>-0.25</td><td>-0.04</td><td>-0.01</td></tr>
+<tr><td>0.12</td><td>-0.00</td><td>0.32</td><td>-0.27</td><td>1.00</td><td>0.41</td><td>-0.03</td><td>-0.02</td></tr>
+<tr><td>-0.03</td><td>0.01</td><td>-0.07</td><td>-0.25</td><td>0.41</td><td>1.00</td><td>-0.01</td><td>-0.01</td></tr>
+<tr><td>-0.05</td><td>-0.00</td><td>-0.03</td><td>-0.04</td><td>-0.03</td><td>-0.01</td><td>1.00</td><td>0.10</td></tr>
+<tr><td>-0.01</td><td>-0.00</td><td>-0.01</td><td>-0.01</td><td>-0.02</td><td>-0.01</td><td>0.10</td><td>1.00</td></tr>
 </table></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -2218,11 +1601,11 @@ OrderedDict([(&#39;cons_full&#39;,
   <tbody>
     <tr>
       <th>full</th>
-      <td>539.608432</td>
+      <td>519.747225</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>539.608432</td>
+      <td>519.747225</td>
     </tr>
   </tbody>
 </table>
@@ -2265,11 +1648,11 @@ OrderedDict([(&#39;cons_full&#39;,
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>1096.238141</td>
+      <td>1056.515728</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>1119.301947</td>
+      <td>1079.579533</td>
     </tr>
   </tbody>
 </table>
@@ -2288,150 +1671,11 @@ OrderedDict([(&#39;cons_full&#39;,
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Helvetica
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_24_1.png" src="../_images/notebooks_Background_modeling_24_1.png" />
+<img alt="../_images/notebooks_Background_modeling_24_0.png" src="../_images/notebooks_Background_modeling_24_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
