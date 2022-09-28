@@ -50,7 +50,7 @@ silence_warnings()
 Then we generate a simulated dataset for a source with a cutoff powerlaw spectrum with a constant photon index and cutoff but with a normalization that changes with time following a powerlaw:
 
 ```python
-def generate_one(K, ax):
+def generate_one(K):
 
     # Let's generate some data with y = Powerlaw(x)
 
@@ -89,23 +89,17 @@ Now that we have a simple function to create the datasets, let's build them.
 
 ```python tags=["nbsphinx-thumbbail"]
 
-datasets = [generate_one(k, ax) for k in normalizations]
-
+datasets = [generate_one(k) for k in normalizations]
 
 x = np.logspace(0, 2, 50)
 
 fig, ax = plt.subplots()
 
 
-line, = ax.loglog([], [], 'r-')
-
 for k in normalizations:
-
-	gen_function = Cutoff_powerlaw()
-    gen_function.K = K
-
-
-	ax.loglog(x, gen_function(x))
+    gen_function = Cutoff_powerlaw()
+    gen_function.K = k
+    ax.loglog(x, gen_function(x))
 
 ax.set_xlabel("Energy")
 ax.set_ylabel("Flux")
@@ -204,8 +198,4 @@ best_fit_parameters, likelihood_values = jl.fit()
 for p in plugins:
 
     _ = p.plot(x_scale='log', y_scale='log');
-```
-
-```python
-
 ```
