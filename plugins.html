@@ -27,7 +27,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Building Custom Plugins" href="notebooks/custom_plugins.html" />
+    <link rel="next" title="Constructing plugins from TimeSeries" href="notebooks/Building_Plugins_from_TimeSeries.html" />
     <link rel="prev" title="Bayesian Sampler Examples" href="notebooks/sampler_docs.html" /> 
 </head>
 
@@ -48,17 +48,12 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Intro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xspec_users.html">Notes for XSPEC Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Plugins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/custom_plugins.html">Building Custom Plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/spectrum_tutorial.html">Spectrum Plugins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/Background_modeling.html">Background Modeling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/Photometry_demo.html">Photometric Plugin</a></li>
@@ -74,18 +69,13 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Time-energy-fit.html">Time-energy fit</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
 </ul>
 
         </div>
@@ -141,98 +131,63 @@
 This is how we achieve the multi-messenger paradigm. A plugin handles its likelihood call internally and the likelhoods are combined within 3ML during a fit.</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/custom_plugins.html">Building Custom Plugins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/custom_plugins.html#The-PluginPrototype-class">The PluginPrototype class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/custom_plugins.html#Basic-Properties">Basic Properties</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/custom_plugins.html#name">name</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/custom_plugins.html#nuisance-parameters">nuisance parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/custom_plugins.html#Unique-Properties">Unique Properties</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/custom_plugins.html#set_model">set_model</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/custom_plugins.html#get_log_like">get_log_like</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/custom_plugins.html#inner_fit">inner_fit</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/custom_plugins.html#Making-a-custom-plugin">Making a custom plugin</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/spectrum_tutorial.html">Spectrum Plugins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/spectrum_tutorial.html#SpectrumLike">SpectrumLike</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/spectrum_tutorial.html#The-count-spectrum">The count spectrum</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/spectrum_tutorial.html#Selection">Selection</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/spectrum_tutorial.html#Rebinning">Rebinning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/spectrum_tutorial.html#Fitting">Fitting</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/spectrum_tutorial.html#DispersionSpectrumLike">DispersionSpectrumLike</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/spectrum_tutorial.html#OGIPLike">OGIPLike</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Constructing-time-series-objects-from-different-data-types">Constructing time series objects from different data types</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#GBM-Data">GBM Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#LAT-LLE-data">LAT LLE data</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Viewing-Lightcurves-and-selecting-source-intervals">Viewing Lightcurves and selecting source intervals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Fitting-a-polynomial-background">Fitting a polynomial background</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#What-occurs-during-a-fit?">What occurs during a fit?</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Saving-the-background-fit">Saving the background fit</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Creating-a-plugin">Creating a plugin</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Time-resolved-binning-and-plugin-creation">Time-resolved binning and plugin creation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Constant-Cadence">Constant Cadence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Custom">Custom</a></li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Significance">Significance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Bayesian-Blocks">Bayesian Blocks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html#Working-with-bins">Working with bins</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Background_modeling.html">Background Modeling</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Background_modeling.html#Using-a-profile-likelihood">Using a profile likelihood</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Background_modeling.html#Modeling-the-background">Modeling the background</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Photometry_demo.html">Photometric Plugin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Photometry_demo.html#Setup">Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Photometry_demo.html#Simple-example-of-building-a-filter">Simple example of building a filter</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Photometry_demo.html#3ML-filter-library">3ML filter library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Photometry_demo.html#Build-your-own-filters">Build your own filters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Photometry_demo.html#GROND-Example">GROND Example</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="notebooks/Photometry_demo.html#Model-specification">Model specification</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/hal_example.html">HAL (HAWC Accelerated Likelihood) plugin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/hal_example.html#Download">Download</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/hal_example.html#Exploratory-analysis">Exploratory analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/hal_example.html#Simple-model-fit">Simple model fit</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/hal_example.html#Assessing-the-Fit-Quality">Assessing the Fit Quality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/hal_example.html#Visualizing-the-Fit-Results">Visualizing the Fit Results</a></li>
-</ul>
-</li>
-</ul>
 </div>
-</section>
+<div class="sphx-glr-thumbcontainer">
+  <div class="figure align-center">
+    <img alt="thumbnail" src="./_images/notebooks_Building_Plugins_from_TimeSeries_14_158.png" />
+    <p class="caption">
+      <span class="caption-text">
+        <a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">
+          <span class="std std-ref">Constructing plugins from TimeSeries</span>
+        </a>
+      </span>
+    </p>
+  </div>
+</div>
+<div class="sphx-glr-thumbcontainer">
+  <div class="figure align-center">
+    <img alt="thumbnail" src="./_static/no_image.png" />
+    <p class="caption">
+      <span class="caption-text">
+        <a class="reference internal" href="notebooks/Background_modeling.html">
+          <span class="std std-ref">Background Modeling</span>
+        </a>
+      </span>
+    </p>
+  </div>
+</div>
+<div class="sphx-glr-thumbcontainer">
+  <div class="figure align-center">
+    <img alt="thumbnail" src="./_static/no_image.png" />
+    <p class="caption">
+      <span class="caption-text">
+        <a class="reference internal" href="notebooks/Photometry_demo.html">
+          <span class="std std-ref">Photometric Plugin</span>
+        </a>
+      </span>
+    </p>
+  </div>
+</div>
+<div class="sphx-glr-thumbcontainer">
+  <div class="figure align-center">
+    <img alt="thumbnail" src="./_static/no_image.png" />
+    <p class="caption">
+      <span class="caption-text">
+        <a class="reference internal" href="notebooks/hal_example.html">
+          <span class="std std-ref">HAL (HAWC Accelerated Likelihood) plugin</span>
+        </a>
+      </span>
+    </p>
+  </div>
+</div>
+<div class="sphx-glr-clear"></div></section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="notebooks/sampler_docs.html" class="btn btn-neutral float-left" title="Bayesian Sampler Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="notebooks/custom_plugins.html" class="btn btn-neutral float-right" title="Building Custom Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="notebooks/Building_Plugins_from_TimeSeries.html" class="btn btn-neutral float-right" title="Constructing plugins from TimeSeries" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
