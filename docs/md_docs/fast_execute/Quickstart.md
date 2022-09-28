@@ -79,7 +79,7 @@ parameters, like_values = xyl.fit(fit_function)
 
 Plot data and model:
 
-```python tags=["nbsphinx-thumbbail"]
+```python tags=["nbsphinx-thumbnail"]
 fig = xyl.plot(x_scale='log', y_scale='log')
 ```
 

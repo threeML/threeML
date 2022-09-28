@@ -70,7 +70,7 @@ phabs
 
 The spectral models behave just as any other **astromodels** spectral model and can be used in combination with other **astromodels** spectral models.
 
-```python tags=["nbsphinx-thumbbail"]
+```python tags=["nbsphinx-thumbnail"]
 from astromodels import Powerlaw
 
 am_plaw = Powerlaw()

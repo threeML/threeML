@@ -87,7 +87,7 @@ normalizations = 0.23 * time_tags ** (-3.5)
 
 Now that we have a simple function to create the datasets, let's build them.
 
-```python tags=["nbsphinx-thumbbail"]
+```python tags=["nbsphinx-thumbnail"]
 
 datasets = [generate_one(k) for k in normalizations]
 
