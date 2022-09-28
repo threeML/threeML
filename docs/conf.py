@@ -21,8 +21,8 @@ import mock
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('..'))
-#sys.path.insert(0, os.path.abspath('../threeML/classicMLE'))
+sys.path.insert(0, os.path.abspath(".."))
+# sys.path.insert(0, os.path.abspath('../threeML/classicMLE'))
 
 
 DOCS = Path(__file__).parent
@@ -50,7 +50,7 @@ def run_apidoc(app):
     )
 
 
-MOCK_MODULES = ['fermipy']
+MOCK_MODULES = ["fermipy"]
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
@@ -58,22 +58,21 @@ for mod_name in MOCK_MODULES:
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'nbsphinx',
-    'recommonmark',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
-    'sphinx_gallery.load_style',
+    "nbsphinx",
+    "recommonmark",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+    "sphinx.ext.napoleon",
+    "sphinx_gallery.load_style",
     "sphinx_rtd_dark_mode",
-
 ]
 
 napoleon_google_docstring = True
@@ -83,20 +82,15 @@ napoleon_use_param = False
 default_dark_mode = True
 
 
-
-
-
 if "GITHUB_TOKEN" in os.environ:
 
     extensions.append("rtds_action")
-
 
     # The path where the artifact should be extracted
     # Note: this is relative to the conf.py file!
     rtds_action_path = "notebooks"
     # # The "prefix" used in the `upload-artifact` step of the action
     rtds_action_artifact_prefix = "notebooks-for-"
-
 
     rtds_action_github_repo = "threeML/threeML"
 
@@ -108,42 +102,41 @@ if "GITHUB_TOKEN" in os.environ:
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-source_suffix = ['.rst']
+source_suffix = [".rst"]
 # source_parsers = {
 #     '.md': CommonMarkParser,
 # }
-#source_suffix = '.rst'
+# source_suffix = '.rst'
 
 # The encoding of source files.
-#source_encoding = 'utf-8-sig'
+# source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'The Multi-Mission Maximum Likelihood framework'
-copyright = u'2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack'
-author = u'G.Vianello'
+project = "The Multi-Mission Maximum Likelihood framework"
+copyright = "2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack"
+author = "G.Vianello"
 
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
 language = None
 
 
-
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', '**.ipynb_checkpoints']
+exclude_patterns = ["_build", "**.ipynb_checkpoints"]
 
 html_theme = "sphinx_rtd_dark_mode"
 
 
 html_theme_options = {
-    'logo_only':False,
-    'display_version': False,
-    'collapse_navigation': True,
-    'navigation_depth': 4,
-    'prev_next_buttons_location': 'bottom',  # top and bottom
+    "logo_only": False,
+    "display_version": False,
+    "collapse_navigation": True,
+    "navigation_depth": 4,
+    "prev_next_buttons_location": "bottom",  # top and bottom
 }
 
 html_logo = "media/logo.png"
@@ -153,10 +146,10 @@ html_favicon = "media/favicon.ico"
 autosectionlabel_prefix_document = True
 
 # A list of ignored prefixes for module index sorting.
-#modindex_common_prefix = []
+# modindex_common_prefix = []
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
-#keep_warnings = False
+# keep_warnings = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -166,20 +159,17 @@ todo_include_todos = False
 
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TheMulti-MissionMaximumLikelihoodframeworkdoc'
+htmlhelp_basename = "TheMulti-MissionMaximumLikelihoodframeworkdoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
-
     # Latex figure (float) alignment
     # 'figure_align': 'htbp',
 }
@@ -188,29 +178,34 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'TheMulti-MissionMaximumLikelihoodframework.tex', u'The Multi-Mission Maximum Likelihood framework Documentation',
-     u'G.Vianello', 'manual'),
+    (
+        master_doc,
+        "TheMulti-MissionMaximumLikelihoodframework.tex",
+        "The Multi-Mission Maximum Likelihood framework Documentation",
+        "G.Vianello",
+        "manual",
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+# latex_logo = None
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+# latex_use_parts = False
 
 # If true, show page references after internal links.
-#latex_show_pagerefs = False
+# latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-#latex_show_urls = False
+# latex_show_urls = False
 
 # Documents to append as an appendix to all manuals.
-#latex_appendices = []
+# latex_appendices = []
 
 # If false, no module index is generated.
-#latex_domain_indices = True
+# latex_domain_indices = True
 
 
 # -- Options for manual page output ---------------------------------------
@@ -218,12 +213,17 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'themulti-missionmaximumlikelihoodframework', u'The Multi-Mission Maximum Likelihood framework Documentation',
-     [author], 1)
+    (
+        master_doc,
+        "themulti-missionmaximumlikelihoodframework",
+        "The Multi-Mission Maximum Likelihood framework Documentation",
+        [author],
+        1,
+    )
 ]
 
 # If true, show URL addresses after external links.
-#man_show_urls = False
+# man_show_urls = False
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -232,23 +232,26 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'TheMulti-MissionMaximumLikelihoodframework', u'The Multi-Mission Maximum Likelihood framework Documentation',
-     author, 'TheMulti-MissionMaximumLikelihoodframework', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "TheMulti-MissionMaximumLikelihoodframework",
+        "The Multi-Mission Maximum Likelihood framework Documentation",
+        author,
+        "TheMulti-MissionMaximumLikelihoodframework",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 
-#texinfo_no_detailmenu = False
-# nbsphinx_thumbnails = {
-#     'examples/scatter': 'examples/screenshot/scatter.png',
-#     'examples/volshow': 'examples/screenshot/volshow-head.png',
-#     'examples/mesh': 'examples/screenshot/mesh.png',
-#     'examples/animation': 'examples/screenshot/wave.gif',
-#     'examples/mcmc': 'examples/screenshot/mcmc.gif',
-#     'examples/bqplot': 'examples/screenshot/bqplot.png',
-#     'examples/bokeh': 'examples/screenshot/bokeh.png',
-#     'examples/scales': 'examples/screenshot/scales.png',
-#     'examples/moebius': 'examples/screenshot/moebius.png',
-#     'examples/bars': 'examples/screenshot/bars.gif',
+sphinx_gallery_conf = {
+    "default_thumb_file": "media/logo.png"
+    #     'matplotlib_animations': True,
+    #     'image_srcset': ["2x"],
+    #     'nested_sections': False,
+    #     'show_api_usage': True,
+}
+
+
 def setup(app):
     app.connect("builder-inited", run_apidoc)

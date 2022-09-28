@@ -242,7 +242,7 @@ jl_src = JointLikelihood(src_model,DataList(modeled_background_plugin))
 _ = jl_src.fit()
 ```
 
-```python deletable=true editable=true
+```python deletable=true editable=true tags=["nbsphinx-thumbbail"]
 
 # over plot the joint background and source fits
 fig = modeled_background_plugin.display_model(step=False)

@@ -332,7 +332,7 @@ bs.results.display()
 fluxes_bs = bs.results.get_flux(100 * u.keV, 1 * u.MeV)
 ```
 
-```python
+```python tags=["nbsphinx-thumbbail"]
 fig = plot_spectra(bs.results, ene_min=0.1, ene_max=1e6, num_ene=500, 
                           flux_unit='erg / (cm2 s)')
 ```
