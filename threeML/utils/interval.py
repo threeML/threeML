@@ -1,10 +1,12 @@
-import re
 import copy
-from operator import itemgetter, attrgetter
+import re
+from operator import attrgetter, itemgetter
+
 import numpy as np
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
+
 
 class IntervalsDoNotOverlap(RuntimeError):
     pass
@@ -14,8 +16,8 @@ class IntervalsNotContiguous(RuntimeError):
     pass
 
 
-class Interval(object):
-    def __init__(self, start: float, stop: float, swap_if_inverted: bool=False):
+class Interval:
+    def __init__(self, start: float, stop: float, swap_if_inverted: bool = False):
 
         self._start: float = float(start)
         self._stop: float = float(stop)
@@ -69,7 +71,7 @@ class Interval(object):
         )
 
     def intersect(self, interval):
-        #type: (Interval) -> Interval 
+        # type: (Interval) -> Interval
         """
         Returns a new time interval corresponding to the intersection between this interval and the provided one.
 
@@ -81,9 +83,7 @@ class Interval(object):
 
         if not self.overlaps_with(interval):
             log.exception("Current interval does not overlap with provided interval")
-            raise IntervalsDoNotOverlap(
-                
-            )
+            raise IntervalsDoNotOverlap()
 
         new_start = max(self._start, interval.start)
         new_stop = min(self._stop, interval.stop)
@@ -91,7 +91,7 @@ class Interval(object):
         return self.new(new_start, new_stop)
 
     def merge(self, interval):
-        #type: (Interval) -> Interval 
+        # type: (Interval) -> Interval
         """
         Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals
         must overlap.
@@ -113,7 +113,7 @@ class Interval(object):
             raise IntervalsDoNotOverlap("Could not merge non-overlapping intervals!")
 
     def overlaps_with(self, interval):
-        #type: (Interval) -> bool 
+        # type: (Interval) -> bool
         """
         Returns whether the current time interval and the provided one overlap or not
 
@@ -167,7 +167,7 @@ class Interval(object):
             return self.start == other.start and self.stop == other.stop
 
 
-class IntervalSet(object):
+class IntervalSet:
     """
     A set of intervals
 
@@ -243,9 +243,11 @@ class IntervalSet(object):
         :return:
         """
 
-        assert len(starts) == len(stops), (
-            "starts length: %d and stops length: %d must have same length"
-            % (len(starts), len(stops))
+        assert len(starts) == len(
+            stops
+        ), "starts length: %d and stops length: %d must have same length" % (
+            len(starts),
+            len(stops),
         )
 
         list_of_intervals = []

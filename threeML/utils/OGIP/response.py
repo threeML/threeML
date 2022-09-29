@@ -286,6 +286,9 @@ class InstrumentResponse(object):
         return idx
 
     def plot_matrix(self) -> plt.Figure:
+        """
+
+        """
 
         fig, ax = plt.subplots()
 
@@ -320,7 +323,7 @@ class InstrumentResponse(object):
         mappable = ax.pcolormesh(
             self._monte_carlo_energies[idx_mc:],
             self._ebounds[idx_eb:],
-            self._matrix,
+            self._matrix[idx_eb:, idx_mc:],
             cmap=cmap,
             norm=SymLogNorm(1.0, 1.0, vmin=vmin, vmax=self._matrix.max()),
         )
@@ -592,7 +595,7 @@ class OGIPResponse(InstrumentResponse):
         f_chan_column_pos = data.columns.names.index("F_CHAN") + 1
 
         try:
-            tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
+            tlmin_fchan = int(header[f"TLMIN{f_chan_column_pos}"])
 
         except (KeyError):
             log.warning(
