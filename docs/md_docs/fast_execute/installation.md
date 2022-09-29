@@ -67,7 +67,7 @@ conda environment:
 
 ```bash
 
-conda create --name threeml -c conda-forge -c xpsecmodels python=3.7 xpsec-modelsonly numpy scipy matplotlib
+conda create --name threeml -c conda-forge -c xpsecmodels python=3.9 xpsec-modelsonly numpy scipy matplotlib
 ```
 
 This must be done *before* installing `astromodels`.
@@ -101,7 +101,7 @@ install 3ML by creating an environment with (*note the exceptions above
 w.r.t. to include XSPEC support*):
 
 ```bash
-conda create --name threeML -c conda-forge python=3.7 numpy scipy matplotlib
+conda create --name threeML -c conda-forge python=3.9 numpy scipy matplotlib
 ```
 
 then activating your environment:
