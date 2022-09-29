@@ -80,7 +80,7 @@ def do_the_test(cat_name):
         
         if cat_name == "4FGL-DR3":
             fa_vo = (model_vo[astro_name](e*u.MeV)).to(u.cm**-2 / u.s / u.MeV).value if astro_name in model_vo.sources else np.nan
-
+        print ('--------------------------------',name,cat_name)
         assert np.allclose( f_fermipy, fa_fits) and np.allclose(f_fermipy, fa_cat)
         assert cat_name != "4FGL-DR3" or np.allclose(f_fermipy, fa_vo)
             
