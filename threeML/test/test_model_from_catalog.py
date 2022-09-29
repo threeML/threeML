@@ -1,7 +1,5 @@
 from astromodels import *
 from threeML import *
-from fermipy.catalog import Catalog
-from fermipy.gtanalysis import GTAnalysis
 
 from threeML.catalogs.catalog_utils import _sanitize_fgl_name
 from astropy.coordinates import SkyCoord
@@ -12,8 +10,6 @@ from threeML.io.logging import setup_logger
 log = setup_logger(__name__)
 import copy
 import yaml
-
-import pandas as pd
 
 from threeML.io.network import internet_connection_is_active
 
@@ -41,6 +37,7 @@ evclass_irf = {
 
 
 def do_the_test(cat_name):
+    from fermipy.gtanalysis import GTAnalysis
 
     gta = GTAnalysis(f"2config_Crab_{cat_name}.yaml",logging={'verbosity' : 3})
     gta.setup()
