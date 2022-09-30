@@ -190,3 +190,5 @@ def test_read_model_from_catalogs():
     
         
         do_the_test(cat_name)
+        
+        assert(False)
