@@ -5,11 +5,14 @@ import subprocess
 import time
 import warnings
 from contextlib import contextmanager
-from distutils.spawn import find_executable
+import shutil
+from pathlib import Path
 
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.utils.progress_bar import tqdm
+
+import sys
 
 log = setup_logger(__name__)
 
@@ -35,6 +38,19 @@ except ImportError:
 else:
 
     has_parallel = True
+
+
+def get_base_prefix_compat():
+    """Get base/real prefix, or sys.prefix if there is none."""
+    return (
+        getattr(sys, "base_prefix", None)
+        or getattr(sys, "real_prefix", None)
+        or sys.prefix
+    )
+
+
+def in_virtualenv():
+    return get_base_prefix_compat() != sys.prefix
 
 
 class NoParallelEnvironment(UserWarning):
@@ -75,7 +91,6 @@ def parallel_computation(profile=None, start_cluster=True):
         log.warning(
             "You requested parallel computation, but no parallel environment is available. You need "
             "to install the ipyparallel package. Continuing with serial computation...",
-
         )
 
         threeML_config.parallel.use_parallel = False
@@ -96,22 +111,41 @@ def parallel_computation(profile=None, start_cluster=True):
         # Get the command line together
 
         # First find out path of ipcluster
-        ipcluster_path = find_executable("ipcluster")
 
-        cmd_line = [ipcluster_path, "start"]
+        # first let's see if we are in a virtaul env
+
+        if in_virtualenv():
+
+            ipcluster_path = Path(sys.prefix) / "bin" / "ipcluster"
+
+            if not ipcluster_path.exists():
+
+                log.warning(f"you are using the virtualenv {sys.prefix}")
+                log.warning("but no ipcluster executable was found!")
+
+                ipcluster_path = shutil.which("ipcluster")
+
+                log.warning(f"using {ipcluster_path} instead")
+
+        else:
+
+            ipcluster_path = shutil.which("ipcluster")
+
+        cmd_line = [str(ipcluster_path), "start"]
 
         if profile is not None:
 
-            cmd_line.append(" --profile=%s" % profile)
+            cmd_line.append(f"--profile={profile}")
 
         # Start process asynchronously with Popen, suppressing all output
-        print("Starting ipyparallel cluster with this command line:")
-        print(" ".join(cmd_line))
+        log.info("Starting ipyparallel cluster with this command line:")
+        log.info(" ".join(cmd_line))
 
-        ipycluster_process = subprocess.Popen(cmd_line)
+        ipycluster_process = subprocess.Popen(
+            cmd_line, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+        )
 
-        rc = Client()
-
+        rc = Client(profile=profile)
         # Wait for the engines to become available
 
         while True:
@@ -120,15 +154,16 @@ def parallel_computation(profile=None, start_cluster=True):
 
                 view = rc[:]
 
-            except:
+            except Exception as e:
 
+                log.info("waiting on cluster to start")
                 time.sleep(0.5)
 
                 continue
 
             else:
 
-                print("%i engines are active" % (len(view)))
+                log.info(f"{len(view)} engines are active")
 
                 break
 
@@ -141,7 +176,7 @@ def parallel_computation(profile=None, start_cluster=True):
 
             # This gets executed in any case, even if there is an exception
 
-            print("\nShutting down ipcluster...")
+            log.info("\nShutting down ipcluster...")
 
             ipycluster_process.send_signal(signal.SIGINT)
 
@@ -240,18 +275,22 @@ if has_parallel:
                 if chunk_size is None:
 
                     chunk_size = int(
-                        math.ceil(n_items / float(n_active_engines) / 20))
+                        math.ceil(n_items / float(n_active_engines) / 20)
+                    )
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
-                worker, items_to_process,
-                #chunksize=chunk_size,
-                ordered=ordered
+                worker,
+                items_to_process,
+                # chunksize=chunk_size,
+                ordered=ordered,
             )
 
             return self._current_amr
 
-        def execute_with_progress_bar(self, worker, items, chunk_size=None, name="progress"):
+        def execute_with_progress_bar(
+            self, worker, items, chunk_size=None, name="progress"
+        ):
 
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
@@ -273,8 +312,9 @@ if has_parallel:
                 results.append(res)
 
             # Reorder the list according to the id
-            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
-
+            return list(
+                map(lambda x: x[1], sorted(results, key=lambda x: x[0]))
+            )
 
 else:
 
