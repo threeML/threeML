@@ -3,6 +3,7 @@ import math
 import signal
 import subprocess
 import time
+from typing import Optional
 import warnings
 from contextlib import contextmanager
 import shutil
@@ -40,7 +41,7 @@ else:
     has_parallel = True
 
 
-def get_base_prefix_compat():
+def get_base_prefix_compat() -> str:
     """Get base/real prefix, or sys.prefix if there is none."""
     return (
         getattr(sys, "base_prefix", None)
@@ -49,7 +50,7 @@ def get_base_prefix_compat():
     )
 
 
-def in_virtualenv():
+def in_virtualenv() -> bool:
     return get_base_prefix_compat() != sys.prefix
 
 
@@ -62,7 +63,11 @@ warnings.simplefilter("always", NoParallelEnvironment)
 
 
 @contextmanager
-def parallel_computation(profile=None, start_cluster=True):
+def parallel_computation(
+    profile: Optional[str] = None,
+    start_cluster: bool = True,
+    n_jobs: Optional[int] = None,
+) -> None:
     """
     A context manager which turns on parallel execution temporarily
 
@@ -137,6 +142,10 @@ def parallel_computation(profile=None, start_cluster=True):
 
             cmd_line.append(f"--profile={profile}")
 
+        if n_jobs is not None:
+
+            cmd_line.append(f"-n {n_jobs}")
+
         # Start process asynchronously with Popen, suppressing all output
         log.info("Starting ipyparallel cluster with this command line:")
         log.info(" ".join(cmd_line))
@@ -194,7 +203,7 @@ def parallel_computation(profile=None, start_cluster=True):
     threeML_config.parallel.profile_name = old_profile
 
 
-def is_parallel_computation_active():
+def is_parallel_computation_active() -> bool:
 
     return bool(threeML_config.parallel.use_parallel)
 
@@ -202,7 +211,7 @@ def is_parallel_computation_active():
 if has_parallel:
 
     class ParallelClient(Client):
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args, **kwargs) -> None:
             """
             Wrapper around the IPython Client class, which forces the use of dill for object serialization
 
