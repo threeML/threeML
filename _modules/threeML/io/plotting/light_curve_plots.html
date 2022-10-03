@@ -103,19 +103,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.io.plotting.light_curve_plots</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
-
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
-
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
-
 <span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
 <span class="kn">from</span> <span class="nn">threeML.io.plotting.step_plot</span> <span class="kn">import</span> <span class="n">step_plot</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+<span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
 
 
 <span class="c1"># this file contains routines for plotting binned light curves</span>
@@ -151,13 +148,15 @@
     <span class="n">light_curve_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">light_curve_color</span>
     <span class="n">selection_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">selection_color</span>
     <span class="n">background_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_color</span>
-    <span class="n">background_selection_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_selection_color</span>
+    <span class="n">background_selection_color</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_selection_color</span>
+    <span class="p">)</span>
 
     <span class="c1"># first plot the full lightcurve</span>
 
     <span class="n">step_plot</span><span class="p">(</span>
         <span class="n">time_bins</span><span class="p">,</span>
-        <span class="n">cnts</span><span class="o">/</span> <span class="n">width</span><span class="p">,</span>
+        <span class="n">cnts</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span>
         <span class="n">ax</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="n">light_curve_color</span><span class="p">,</span>
         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Light Curve&quot;</span><span class="p">,</span>
@@ -171,7 +170,8 @@
 
         <span class="k">for</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="ow">in</span> <span class="n">selection</span><span class="p">:</span>
             <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
-                <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span><span class="p">)</span>
+                <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span>
+            <span class="p">)</span>
 
             <span class="n">all_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_mask</span><span class="p">)</span>
 
@@ -206,7 +206,8 @@
         <span class="n">all_masks</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="ow">in</span> <span class="n">bkg_selections</span><span class="p">:</span>
             <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
-                <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span><span class="p">)</span>
+                <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span>
+            <span class="p">)</span>
 
             <span class="n">all_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_mask</span><span class="p">)</span>
 
@@ -238,7 +239,7 @@
     <span class="k">if</span> <span class="n">bkg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="c1"># now plot the estimated background</span>
-        <span class="c1"># the bkg is a rate </span>
+        <span class="c1"># the bkg is a rate</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mean_time</span><span class="p">,</span> <span class="n">bkg</span><span class="p">,</span> <span class="n">background_color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Background&quot;</span><span class="p">)</span>
 
     <span class="c1"># ax.fill_between(selection, bottom, top, color=&quot;#fc8d62&quot;, alpha=.4)</span>
@@ -344,8 +345,7 @@
 
     <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
 
-    <span class="n">counts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
-        <span class="n">tte</span><span class="o">.</span><span class="n">arrival_times</span> <span class="o">-</span> <span class="n">tte</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+    <span class="n">counts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">tte</span><span class="o">.</span><span class="n">arrival_times</span> <span class="o">-</span> <span class="n">tte</span><span class="o">.</span><span class="n">trigger_time</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
 
     <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
 

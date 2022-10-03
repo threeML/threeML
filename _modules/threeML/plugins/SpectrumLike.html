@@ -106,7 +106,6 @@
 <span></span><span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">zip</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
@@ -118,8 +117,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">PointSource</span><span class="p">,</span> <span class="n">clone_model</span>
 <span class="kn">from</span> <span class="nn">astromodels.core.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">astromodels.functions.priors</span> <span class="kn">import</span> <span class="n">Uniform_prior</span><span class="p">,</span> <span class="n">Truncated_gaussian</span>
-
+<span class="kn">from</span> <span class="nn">astromodels.functions.priors</span> <span class="kn">import</span> <span class="n">Truncated_gaussian</span><span class="p">,</span> <span class="n">Uniform_prior</span>
 <span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
 <span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span> <span class="nn">threeML.config.plotting_structure</span> <span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
@@ -140,7 +138,9 @@
 <span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">Significance</span>
 <span class="kn">from</span> <span class="nn">threeML.utils.string_utils</span> <span class="kn">import</span> <span class="n">dash_separated_string_to_tuple</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
+<span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -157,7 +157,9 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">observation</span><span class="p">:</span> <span class="n">BinnedSpectrum</span><span class="p">,</span>
-        <span class="n">background</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BinnedSpectrum</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">,</span> <span class="s2">&quot;SpectrumLike&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">background</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">BinnedSpectrum</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">,</span> <span class="s2">&quot;SpectrumLike&quot;</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">background_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -193,7 +195,9 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">BinnedSpectrum</span><span class="p">):</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The observed spectrum is not an instance of BinnedSpectrum&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;The observed spectrum is not an instance of BinnedSpectrum&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Precomputed observed (for speed)</span>
 
@@ -264,7 +268,9 @@
         <span class="p">)</span>
 
         <span class="n">nuisance_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">nuisance_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span>
+        <span class="n">nuisance_parameters</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span>
 
         <span class="c1"># if we have a background model we are going</span>
         <span class="c1"># to link all those parameters to new nuisance parameters</span>
@@ -325,11 +331,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_count_errors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span>
         <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_count_errors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_background_counts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_background_counts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_scaled_background_counts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span>
         <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaled_background_counts</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span>
 
         <span class="c1"># This will be used to keep track of how many syntethic datasets have been generated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_synthetic_datasets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
@@ -373,9 +383,9 @@
         <span class="c1"># no checks are involved because the appropriate</span>
         <span class="c1"># noise models are pre-selected</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_evaluator</span> <span class="o">=</span> <span class="n">statistic_lookup</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_noise_model</span><span class="p">][</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">background_noise_model</span>
-        <span class="p">](</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_evaluator</span> <span class="o">=</span> <span class="n">statistic_lookup</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_noise_model</span>
+        <span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">background_noise_model</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_count_errors_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -478,9 +488,9 @@
                     <span class="n">observation_noise_model</span> <span class="o">=</span> <span class="s2">&quot;poisson&quot;</span>
                     <span class="n">background_noise_model</span> <span class="o">=</span> <span class="s2">&quot;poisson&quot;</span>
 
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">int64</span>
-                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
 
@@ -490,7 +500,9 @@
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
 
-                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error in background spectrum: negative counts!&quot;</span><span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="s2">&quot;Error in background spectrum: negative counts!&quot;</span>
+                        <span class="p">)</span>
 
                         <span class="k">raise</span> <span class="n">NegativeBackground</span><span class="p">()</span>
 
@@ -501,7 +513,9 @@
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
 
-                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error in background spectrum: negative background!&quot;</span><span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="s2">&quot;Error in background spectrum: negative background!&quot;</span>
+                        <span class="p">)</span>
 
                         <span class="k">raise</span> <span class="n">NegativeBackground</span><span class="p">()</span>
 
@@ -562,7 +576,8 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Background modeled from plugin: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span><span class="o">.</span><span class="n">name</span>
+                <span class="s2">&quot;Background modeled from plugin: </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span><span class="o">.</span><span class="n">name</span>
             <span class="p">)</span>
 
             <span class="n">bkg_noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span><span class="o">.</span><span class="n">observation_noise_model</span>
@@ -610,7 +625,9 @@
 
             <span class="c1"># we are explicitly violating duck-typing</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">background</span><span class="p">,</span> <span class="n">XYLike</span>
+            <span class="p">):</span>
 
                 <span class="n">background_plugin</span> <span class="o">=</span> <span class="n">background</span>
 
@@ -643,8 +660,10 @@
 
                 <span class="c1"># this assumes the observed spectrum is already set!</span>
 
-                <span class="n">scaled_background_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_expected_background_counts_scaled</span><span class="p">(</span>
-                    <span class="n">background_spectrum</span>
+                <span class="n">scaled_background_counts</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_get_expected_background_counts_scaled</span><span class="p">(</span>
+                        <span class="n">background_spectrum</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>  <span class="c1"># type: np.ndarray</span>
 
         <span class="k">return</span> <span class="p">(</span>
@@ -668,7 +687,9 @@
         <span class="c1"># area scale factor between background and source</span>
         <span class="c1"># and exposure ratio between background and source</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
 
             <span class="c1"># there is no background so the area scaling is unity</span>
 
@@ -703,7 +724,9 @@
                     <span class="c1"># in this case, the XYLike data could come from anything, so area scaling is set to unity</span>
                     <span class="c1"># TODO: could this be wrong?</span>
 
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_scale_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">scale_factor</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_scale_factor</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">scale_factor</span>
+                    <span class="p">)</span>
 
                     <span class="c1"># if the background exposure is set in the constructor, then this will scale it, otherwise</span>
                     <span class="c1"># this will be unity</span>
@@ -911,7 +934,9 @@
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;creating new spectrumlike from background&quot;</span><span class="p">)</span>
 
-        <span class="n">background_only_spectrum</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">spectrum_like</span><span class="o">.</span><span class="n">background_spectrum</span><span class="p">)</span>
+        <span class="n">background_only_spectrum</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
+            <span class="n">spectrum_like</span><span class="o">.</span><span class="n">background_spectrum</span>
+        <span class="p">)</span>
 
         <span class="n">background_spectrum_like</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span>
@@ -1238,7 +1263,9 @@
             <span class="c1"># otherwise, we will start out with all channels deselected</span>
             <span class="c1"># and turn the on/off by the arguments</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="s2">&quot;all&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 
@@ -1282,7 +1309,9 @@
 
                     <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span>
 
-                        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">n_channels</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">n_channels</span>
+                        <span class="p">):</span>
 
                             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                                 <span class="sa">f</span><span class="s2">&quot;%s is larger than the number of channels: %d&quot;</span>
@@ -1298,7 +1327,9 @@
 
                     <span class="k">else</span><span class="p">:</span>
 
-                        <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">containing_bin</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+                        <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">containing_bin</span><span class="p">(</span>
+                            <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                        <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
 
@@ -1313,7 +1344,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s2">&quot;Range </span><span class="si">%s</span><span class="s2"> translates to channels </span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="s2">&quot;Range </span><span class="si">%s</span><span class="s2"> translates to channels </span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&quot;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="p">)</span>
 
         <span class="c1"># If you are just excluding channels</span>
@@ -1335,7 +1367,9 @@
 
                     <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span>
 
-                        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">n_channels</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">n_channels</span>
+                        <span class="p">):</span>
 
                             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is larger than the number of channels: </span><span class="si">%d</span><span class="s2">&quot;</span>
@@ -1351,7 +1385,9 @@
 
                     <span class="k">else</span><span class="p">:</span>
 
-                        <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">containing_bin</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+                        <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">containing_bin</span><span class="p">(</span>
+                            <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                        <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
 
@@ -1382,7 +1418,9 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_quality</span><span class="p">:</span>
 
-            <span class="n">number_of_native_good_channels</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">quality</span><span class="o">.</span><span class="n">good</span><span class="p">)</span>
+            <span class="n">number_of_native_good_channels</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">quality</span><span class="o">.</span><span class="n">good</span>
+            <span class="p">)</span>
             <span class="n">number_of_user_good_channels</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">number_of_user_good_channels</span> <span class="o">&gt;</span> <span class="n">number_of_native_good_channels</span><span class="p">:</span>
@@ -1418,13 +1456,17 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_background_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_scaled_background_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaled_background_counts</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_background_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
             <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_scaled_background_counts</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scaled_background_counts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">]</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
+                <span class="p">]</span>
 
     <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">_without_mask_nor_rebinner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1503,7 +1545,9 @@
             <span class="c1"># Get the source model for all channels (that&#39;s why we don&#39;t use the .folded_model property)</span>
 
             <span class="n">source_model_counts</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_model</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span><span class="o">.</span><span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_model</span><span class="p">()</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span><span class="o">.</span><span class="n">value</span>
             <span class="p">)</span>
 
             <span class="c1"># sometimes the first channel has ZERO</span>
@@ -1519,7 +1563,9 @@
 
                 <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span>
+                <span class="p">)</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">source_model_counts</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
@@ -1589,11 +1635,15 @@
                     <span class="n">new_scale_factor</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_scale_factor</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;made </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">randomized_background_counts</span><span class="p">)</span><span class="si">}</span><span class="s2"> bkg counts&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;made </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">randomized_background_counts</span><span class="p">)</span><span class="si">}</span><span class="s2"> bkg counts&quot;</span>
+                <span class="p">)</span>
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-                <span class="n">new_background</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_evaluator</span><span class="o">.</span><span class="n">synthetic_background_plugin</span>
+                <span class="n">new_background</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_evaluator</span><span class="o">.</span><span class="n">synthetic_background_plugin</span>
+                <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
@@ -1626,7 +1676,9 @@
             <span class="c1"># can recall them later</span>
             <span class="k">if</span> <span class="n">store_model</span><span class="p">:</span>
 
-                <span class="n">new_spectrum_plugin</span><span class="o">.</span><span class="n">_simulation_storage</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">)</span>
+                <span class="n">new_spectrum_plugin</span><span class="o">.</span><span class="n">_simulation_storage</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span>
+                <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
@@ -1695,7 +1747,9 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This data has no background, cannot rebin on background!&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;This data has no background, cannot rebin on background!&quot;</span>
+            <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -1728,7 +1782,9 @@
 
         <span class="c1"># NOTE: the rebinner takes care of the mask already</span>
 
-        <span class="n">rebinner</span> <span class="o">=</span> <span class="n">Rebinner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span><span class="p">,</span> <span class="n">min_number_of_counts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
+        <span class="n">rebinner</span> <span class="o">=</span> <span class="n">Rebinner</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span><span class="p">,</span> <span class="n">min_number_of_counts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">rebinner</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">):</span>
 
@@ -1737,7 +1793,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">set_ogip_grouping</span><span class="p">(</span><span class="n">rebinner</span><span class="o">.</span><span class="n">grouping</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">set_ogip_grouping</span><span class="p">(</span><span class="n">rebinner</span><span class="o">.</span><span class="n">grouping</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">set_ogip_grouping</span><span class="p">(</span>
+                        <span class="n">rebinner</span><span class="o">.</span><span class="n">grouping</span>
+                    <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_apply_rebinner</span><span class="p">(</span><span class="n">rebinner</span><span class="p">)</span>
 
@@ -1752,12 +1810,14 @@
         <span class="c1"># Apply the rebinning to everything.</span>
         <span class="c1"># NOTE: the output of the .rebin method are the vectors with the mask *already applied*</span>
 
-        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_counts</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span><span class="p">)</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_counts</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_count_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_count_errors</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_observed_count_errors</span>
-            <span class="p">)</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_count_errors</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_count_errors</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -1771,9 +1831,9 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># NOTE: the output of the .rebin method are the vectors with the mask *already applied*</span>
 
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span>
-                <span class="p">)</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Now using </span><span class="si">%s</span><span class="s2"> bins&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">n_bins</span><span class="p">)</span>
 
@@ -1806,7 +1866,8 @@
         <span class="c1"># X-ray astronomy, where the background region has a different size with respect to the source region</span>
 
         <span class="n">scale_factor</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">/</span> <span class="n">background_spectrum</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">scale_factor</span>
+            <span class="o">/</span> <span class="n">background_spectrum</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># The expected number of counts is the rate in the background file multiplied by its exposure, renormalized</span>
@@ -1814,7 +1875,9 @@
         <span class="c1"># (see http://heasarc.gsfc.nasa.gov/docs/asca/abc_backscal.html)</span>
 
         <span class="n">bkg_counts</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">background_spectrum</span><span class="o">.</span><span class="n">rates</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">exposure</span> <span class="o">*</span> <span class="n">scale_factor</span>
+            <span class="n">background_spectrum</span><span class="o">.</span><span class="n">rates</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">exposure</span>
+            <span class="o">*</span> <span class="n">scale_factor</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">bkg_counts</span>
@@ -1862,9 +1925,9 @@
 
         <span class="c1"># reset the likelihood</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_evaluator</span> <span class="o">=</span> <span class="n">statistic_lookup</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_observation_noise_model</span><span class="p">][</span>
-            <span class="n">new_model</span>
-        <span class="p">](</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_evaluator</span> <span class="o">=</span> <span class="n">statistic_lookup</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observation_noise_model</span>
+        <span class="p">][</span><span class="n">new_model</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;You are setting the background noise model to something that is not specified in the spectrum.</span><span class="se">\</span>
@@ -1921,7 +1984,9 @@
         <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Sets/gets the noise model for the background spectrum&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="SpectrumLike.get_log_like"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_log_like">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="SpectrumLike.get_log_like"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_log_like">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calls the likelihood from the pre-setup likelihood evaluator that &quot;knows&quot; of the currently set</span>
 <span class="sd">        noise models</span>
@@ -1975,7 +2040,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span> <span class="o">=</span> <span class="n">integral</span></div>
 
-    <span class="k">def</span> <span class="nf">_evaluate_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_evaluate_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.</span>
 <span class="sd">        This can be overloaded to convolve the model with a response, for example</span>
@@ -2004,7 +2071,9 @@
                 <span class="p">]</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="SpectrumLike.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="SpectrumLike.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The model integrated over the energy bins. Note that it only returns the  model for the</span>
 <span class="sd">        currently active channels/measurements</span>
@@ -2041,7 +2110,9 @@
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predefined_energies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_integral_flux</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_integral_flux</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">edges</span>
+                <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
@@ -2067,7 +2138,8 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
                 <span class="p">(</span><span class="n">model</span><span class="p">,)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_background_model</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_background_model</span><span class="p">()</span>
+                    <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -2079,7 +2151,9 @@
 
         <span class="k">else</span><span class="p">:</span>
 
-            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_background_model</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_background_model</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
+            <span class="p">)</span>
 
         <span class="c1"># TODO: should I use the constant here?</span>
 
@@ -2140,7 +2214,8 @@
 
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                     <span class="s2">&quot;This SpectumLike plugin has been assigned to source </span><span class="si">%s</span><span class="s2">, &quot;</span>
-                    <span class="s2">&quot;which does not exist in the current model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
+                    <span class="s2">&quot;which does not exist in the current model&quot;</span>
+                    <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span>
                 <span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
@@ -2191,7 +2266,9 @@
                         <span class="n">diff_fluxes_edges</span> <span class="o">=</span> <span class="n">differential_flux</span><span class="p">(</span><span class="n">e_edges</span><span class="p">)</span>
                         <span class="n">diff_fluxes_mid</span> <span class="o">=</span> <span class="n">differential_flux</span><span class="p">(</span><span class="n">e_m</span><span class="p">)</span>
 
-                        <span class="k">return</span> <span class="n">_simps</span><span class="p">(</span><span class="n">ee1</span><span class="p">,</span> <span class="n">ee2</span><span class="p">,</span> <span class="n">diff_fluxes_edges</span><span class="p">,</span> <span class="n">diff_fluxes_mid</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">_simps</span><span class="p">(</span>
+                            <span class="n">ee1</span><span class="p">,</span> <span class="n">ee2</span><span class="p">,</span> <span class="n">diff_fluxes_edges</span><span class="p">,</span> <span class="n">diff_fluxes_mid</span>
+                        <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
@@ -2225,7 +2302,9 @@
                         <span class="n">diff_fluxes_edges</span> <span class="o">=</span> <span class="n">differential_flux</span><span class="p">(</span><span class="n">e_edges</span><span class="p">)</span>
 
                         <span class="k">return</span> <span class="n">_trapz</span><span class="p">(</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">diff_fluxes_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">diff_fluxes_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                                <span class="p">[</span><span class="n">diff_fluxes_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">diff_fluxes_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+                            <span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
                             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ee1</span><span class="p">,</span> <span class="n">ee2</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
                         <span class="p">)</span>
 
@@ -2234,7 +2313,9 @@
                 <span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
                     <span class="c1"># single energy values given</span>
                     <span class="k">return</span> <span class="n">_trapz</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">differential_flux</span><span class="p">(</span><span class="n">e1</span><span class="p">),</span> <span class="n">differential_flux</span><span class="p">(</span><span class="n">e2</span><span class="p">)]),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">differential_flux</span><span class="p">(</span><span class="n">e1</span><span class="p">),</span> <span class="n">differential_flux</span><span class="p">(</span><span class="n">e2</span><span class="p">)]</span>
+                        <span class="p">),</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">]),</span>
                     <span class="p">)</span>
 
@@ -2311,7 +2392,9 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameter</span><span class="o">.</span><span class="n">set_uninformative_prior</span><span class="p">(</span><span class="n">Uniform_prior</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SpectrumLike.fix_effective_area_correction"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.fix_effective_area_correction">[docs]</a>    <span class="k">def</span> <span class="nf">fix_effective_area_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="SpectrumLike.fix_effective_area_correction"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.fix_effective_area_correction">[docs]</a>    <span class="k">def</span> <span class="nf">fix_effective_area_correction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)</span>
 
@@ -2377,7 +2460,9 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_background_integrate_method</span> <span class="o">=</span> <span class="n">method</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> changing background integration method to </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2"> changing background integration method to </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
         <span class="c1"># if background_plugin is set, update the integral function</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2533,7 +2618,9 @@
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;ideal&quot;</span><span class="p">:</span>
 
-                <span class="n">background_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scaled_background_counts</span><span class="p">)</span>
+                <span class="n">background_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scaled_background_counts</span>
+                <span class="p">)</span>
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
 
@@ -2627,7 +2714,9 @@
 
         <span class="k">else</span><span class="p">:</span>
 
-            <span class="n">src_rate_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observed_count_errors</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">exposure</span>
+            <span class="n">src_rate_err</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observed_count_errors</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">exposure</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">src_rate_err</span>
 
@@ -2702,13 +2791,17 @@
                 <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">is_poisson</span>
             <span class="p">):</span>
 
-                <span class="n">significance</span> <span class="o">=</span> <span class="n">sig_obj</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">total_count_error</span>
+                <span class="n">significance</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sig_obj</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">total_count_error</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;We haven&#39;t put in other significances yet&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;We haven&#39;t put in other significances yet&quot;</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Significance with no background is not yet computed accurately&quot;</span>
@@ -2744,13 +2837,17 @@
                 <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_spectrum</span><span class="o">.</span><span class="n">is_poisson</span>
             <span class="p">):</span>
 
-                <span class="n">significance</span> <span class="o">=</span> <span class="n">sig_obj</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span>
+                <span class="n">significance</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sig_obj</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;We haven&#39;t put in other significances yet&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;We haven&#39;t put in other significances yet&quot;</span>
+                <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">significance</span>
 
@@ -2803,7 +2900,9 @@
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;ideal&quot;</span><span class="p">:</span>
 
-                <span class="n">background_counts</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_scaled_background_counts</span><span class="p">)</span>
+                <span class="n">background_counts</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_current_scaled_background_counts</span>
+                <span class="p">)</span>
 
                 <span class="n">background_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">background_counts</span><span class="p">)</span>
 
@@ -2849,7 +2948,9 @@
             <span class="c1">#            background_errors /= self._background_exposure</span>
 
             <span class="n">background_rate</span> <span class="o">=</span> <span class="n">background_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
-            <span class="n">background_rate_errors</span> <span class="o">=</span> <span class="n">background_errors</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
+            <span class="n">background_rate_errors</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">background_errors</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
+            <span class="p">)</span>
 
         <span class="c1"># Gaussian observation</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2857,8 +2958,12 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">observed_counts</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_counts</span><span class="p">)</span>
 
-                <span class="n">background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-                <span class="n">background_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+                <span class="n">background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                    <span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+                <span class="p">)</span>
+                <span class="n">background_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                    <span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+                <span class="p">)</span>
 
                 <span class="n">background_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
@@ -2908,7 +3013,9 @@
             <span class="n">energy_min</span><span class="p">,</span>
             <span class="n">energy_max</span><span class="p">,</span>
             <span class="n">observed_rates</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">][</span><span class="s2">&quot;ogip&quot;</span><span class="p">][</span><span class="s2">&quot;data_plot&quot;</span><span class="p">][</span><span class="s2">&quot;counts_color&quot;</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">][</span><span class="s2">&quot;ogip&quot;</span><span class="p">][</span><span class="s2">&quot;data_plot&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;counts_color&quot;</span>
+            <span class="p">],</span>
             <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Total&quot;</span><span class="p">,</span>
@@ -2944,7 +3051,9 @@
                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
                 <span class="n">capsize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="c1"># label=data._name,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">][</span><span class="s2">&quot;ogip&quot;</span><span class="p">][</span><span class="s2">&quot;data_plot&quot;</span><span class="p">][</span><span class="s2">&quot;counts_color&quot;</span><span class="p">],</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">][</span><span class="s2">&quot;ogip&quot;</span><span class="p">][</span><span class="s2">&quot;data_plot&quot;</span><span class="p">][</span>
+                    <span class="s2">&quot;counts_color&quot;</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2974,7 +3083,9 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">starts</span><span class="p">),</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">stops</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="n">energy_width_unrebinned</span> <span class="o">=</span> <span class="n">energy_max_unrebinned</span> <span class="o">-</span> <span class="n">energy_min_unrebinned</span>
+            <span class="n">energy_width_unrebinned</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">energy_max_unrebinned</span> <span class="o">-</span> <span class="n">energy_min_unrebinned</span>
+            <span class="p">)</span>
             <span class="n">observed_rate_unrebinned</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure</span>
 
             <span class="n">observed_rate_unrebinned_err</span> <span class="o">=</span> <span class="p">(</span>
@@ -3013,7 +3124,8 @@
                     <span class="p">)</span>
 
                     <span class="n">background_rate_unrebinned_err</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_exposure</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span><span class="p">)</span>
+                        <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_exposure</span>
                     <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">non_used_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -3028,7 +3140,9 @@
                     <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
 
-                <span class="n">background_rate_unrebinned</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">observed_rate_unrebinned</span><span class="p">)</span>
+                <span class="n">background_rate_unrebinned</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+                    <span class="n">observed_rate_unrebinned</span>
+                <span class="p">)</span>
                 <span class="n">background_rate_unrebinned_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
                     <span class="n">observed_rate_unrebinned_err</span>
                 <span class="p">)</span>
@@ -3144,7 +3258,9 @@
 
             <span class="k">if</span> <span class="n">significance_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;channels below the significance threshold shown in red</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;channels below the significance threshold shown in red</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
                 <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
                     <span class="n">significance_mask</span> <span class="o">=</span> <span class="p">(</span>
@@ -3201,7 +3317,9 @@
         <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;is poisson&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">is_poisson</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;modeled from plugin </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;modeled from plugin </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_plugin</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
             <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;significance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">significance</span>
             <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;src/bkg area ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area_ratio</span>
             <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;src/bkg exposure ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure_ratio</span>
@@ -3303,9 +3421,13 @@
             <span class="n">new_observed_rate</span><span class="p">,</span>
             <span class="n">new_model_rate</span><span class="p">,</span>
             <span class="n">new_background_rate</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="n">this_rebinner</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span><span class="n">observed_rate</span><span class="p">,</span> <span class="n">expected_model_rate</span><span class="p">,</span> <span class="n">background_rate</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">this_rebinner</span><span class="o">.</span><span class="n">rebin</span><span class="p">(</span>
+            <span class="n">observed_rate</span><span class="p">,</span> <span class="n">expected_model_rate</span><span class="p">,</span> <span class="n">background_rate</span>
+        <span class="p">)</span>
         <span class="p">(</span><span class="n">new_observed_rate_err</span><span class="p">,)</span> <span class="o">=</span> <span class="n">this_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span><span class="n">observed_rate_err</span><span class="p">)</span>
-        <span class="p">(</span><span class="n">new_background_rate_err</span><span class="p">,)</span> <span class="o">=</span> <span class="n">this_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span><span class="n">background_rate_err</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">new_background_rate_err</span><span class="p">,)</span> <span class="o">=</span> <span class="n">this_rebinner</span><span class="o">.</span><span class="n">rebin_errors</span><span class="p">(</span>
+            <span class="n">background_rate_err</span>
+        <span class="p">)</span>
 
         <span class="c1"># adjust channels</span>
         <span class="n">new_energy_min</span><span class="p">,</span> <span class="n">new_energy_max</span> <span class="o">=</span> <span class="n">this_rebinner</span><span class="o">.</span><span class="n">get_new_start_and_stop</span><span class="p">(</span>
@@ -3323,7 +3445,9 @@
         <span class="k">for</span> <span class="n">e_min</span><span class="p">,</span> <span class="n">e_max</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">new_energy_min</span><span class="p">,</span> <span class="n">new_energy_max</span><span class="p">):</span>
 
             <span class="c1"># Find all channels in this rebinned bin</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean_energy_unrebinned</span> <span class="o">&gt;=</span> <span class="n">e_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mean_energy_unrebinned</span> <span class="o">&lt;=</span> <span class="n">e_max</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean_energy_unrebinned</span> <span class="o">&gt;=</span> <span class="n">e_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
+                <span class="n">mean_energy_unrebinned</span> <span class="o">&lt;=</span> <span class="n">e_max</span>
+            <span class="p">)</span>
 
             <span class="c1"># Find the rates for these channels</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">observed_rate</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
@@ -3366,7 +3490,9 @@
         <span class="p">)</span>
 
         <span class="c1"># the rebinned counts expected from the model</span>
-        <span class="n">rebinned_model_counts</span> <span class="o">=</span> <span class="n">new_model_rate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">exposure</span>
+        <span class="n">rebinned_model_counts</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">new_model_rate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">exposure</span>
+        <span class="p">)</span>
 
         <span class="c1"># and also the rebinned background</span>
 
@@ -3398,8 +3524,8 @@
             <span class="n">rebinned_observed_counts</span><span class="p">,</span>
             <span class="n">rebinned_background_counts</span>
             <span class="o">+</span> <span class="n">rebinned_model_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_scale_factor</span><span class="p">,</span>
-            <span class="c1">#min([self._total_scale_factor, 1.0])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_total_scale_factor</span>
+            <span class="c1"># min([self._total_scale_factor, 1.0])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_total_scale_factor</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Divide the various cases</span>
@@ -3412,7 +3538,9 @@
                 <span class="o">/</span> <span class="n">rebinned_model_counts</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">residual_errors</span> <span class="o">=</span> <span class="n">rebinned_observed_count_errors</span> <span class="o">/</span> <span class="n">rebinned_model_counts</span>
+            <span class="n">residual_errors</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">rebinned_observed_count_errors</span> <span class="o">/</span> <span class="n">rebinned_model_counts</span>
+            <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">residual_errors</span> <span class="o">=</span> <span class="kc">None</span>
@@ -3430,10 +3558,8 @@
 
                 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
 
-                    <span class="n">residuals</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">significance_calc</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
-                            <span class="n">rebinned_background_errors</span>
-                        <span class="p">)</span>
+                    <span class="n">residuals</span> <span class="o">=</span> <span class="n">significance_calc</span><span class="o">.</span><span class="n">li_and_ma_equivalent_for_gaussian_background</span><span class="p">(</span>
+                        <span class="n">rebinned_background_errors</span>
                     <span class="p">)</span>
 
                 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -3546,7 +3672,9 @@
 
         <span class="n">_default_model_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">model_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">_default_background_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">background_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+        <span class="n">_default_background_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">background_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">_sub_menu</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">residual_plot</span>
 
@@ -3643,11 +3771,15 @@
 
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">_duplicates</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span>
+            <span class="p">):</span>
 
                 <span class="n">_default_model_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span>
+            <span class="p">):</span>
 
                 <span class="n">_default_data_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
@@ -3668,7 +3800,9 @@
 
         <span class="c1"># compute the values for the plotting</span>
 
-        <span class="n">rebinned_quantities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_counts_arrays</span><span class="p">(</span><span class="n">min_rate</span><span class="p">,</span> <span class="n">ratio_residuals</span><span class="p">)</span>
+        <span class="n">rebinned_quantities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_counts_arrays</span><span class="p">(</span>
+            <span class="n">min_rate</span><span class="p">,</span> <span class="n">ratio_residuals</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">source_only</span><span class="p">:</span>
             <span class="n">y_label</span> <span class="o">=</span> <span class="s2">&quot;Net rate</span><span class="se">\n</span><span class="s2">(counts s$^{-1}$ keV$^{-1}$)&quot;</span>
@@ -3773,7 +3907,9 @@
                 <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">model_label</span><span class="p">,</span> <span class="o">**</span><span class="n">_default_model_kwargs</span><span class="p">)</span>
+            <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">model_label</span><span class="p">,</span> <span class="o">**</span><span class="n">_default_model_kwargs</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">residual_plot</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span>
             <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy</span><span class="se">\n</span><span class="s2">(keV)&quot;</span><span class="p">,</span>
