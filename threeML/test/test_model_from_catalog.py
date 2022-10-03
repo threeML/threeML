@@ -111,6 +111,7 @@ def do_the_test(cat_name):
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
+@pytest.mark.xfail
 def test_read_model_from_catalogs():
 
 
