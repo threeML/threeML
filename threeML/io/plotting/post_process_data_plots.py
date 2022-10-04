@@ -3,7 +3,6 @@ import numpy as np
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
 
-
 try:
     from threeML.plugins.FermiLATLike import FermiLATLike
 
@@ -20,7 +19,9 @@ from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.step_plot import step_plot
 
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+if threeML_config.plotting.use_threeml_style:
+
+    plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 log = setup_logger(__name__)
 
@@ -345,6 +346,18 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             log.error("show_background must be a boolean")
             raise TypeError()
 
+    data_kwargs = None
+
+    if "data_kwargs" in kwargs:
+
+        data_kwargs = kwargs.pop("data_kwargs")
+
+    model_kwargs = None
+
+    if "model_kwargs" in kwargs:
+
+        model_kwargs = kwargs.pop("model_kwargs")
+
     if len(data_keys) <= data_per_plot:
         # If less than data_per_plot detectors need to be plotted,
         # just plot it in one plot
@@ -390,6 +403,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                 source_only=source_only,
                 background_color=background_color,
                 background_label=background_label,
+                model_kwargs=model_kwargs,
+                data_kwargs=data_kwargs,
             )
 
         return residual_plot.figure
@@ -518,6 +533,14 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
     data_keys = new_data_keys
 
+    if "show_data" in kwargs:
+
+        show_data = bool(kwargs.pop("show_data"))
+
+    else:
+
+        show_data = True
+
     show_residuals = True
 
     if "show_residuals" in kwargs:
@@ -540,6 +563,14 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
+
+    if "data_color" in kwargs:
+
+        data_colors = [kwargs.pop("data_color")] * len(data_keys)
+
+    if "model_color" in kwargs:
+
+        model_colors = [kwargs.pop("model_color")] * len(data_keys)
 
     # Now override defaults according to the optional keywords, if present
 
@@ -578,7 +609,23 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
             )
             raise ValueError()
 
+    data_kwargs = None
+
+    if "data_kwargs" in kwargs:
+
+        data_kwargs = kwargs.pop("data_kwargs")
+
+    model_kwargs = None
+
+    if "model_kwargs" in kwargs:
+
+        model_kwargs = kwargs.pop("model_kwargs")
+
     residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+
+    if "model_subplot" in kwargs:
+
+        kwargs.pop("model_subplot")
 
     axes = residual_plot.axes
 
@@ -590,7 +637,14 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         data: photolike.PhotometryLike = analysis.data_list[key]
 
         data.plot(
-            model_subplot=axes, model_color=model_color, data_color=data_color
+            model_subplot=axes,
+            model_color=model_color,
+            data_color=data_color,
+            model_kwargs=model_kwargs,
+            data_kwargs=data_kwargs,
+            show_residuals=show_residuals,
+            show_legend=show_legend,
+            **kwargs,
         )
 
     return residual_plot

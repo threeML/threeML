@@ -258,10 +258,10 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
           python-version: 3.9
-          channels: conda-forge, threeml, xspecmodels, defaults
+          channels: threeml, conda-forge, xspecmodels, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: true
 
@@ -282,7 +282,15 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          
+          if [[ "${ISDEV}" == "true" ]]; then
+
+          mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
+          
+          fi
+        env:
+          ISDEV: ${{contains(github.ref, 'dev')}}
 
       - name: Install the package
         shell: bash -l {0}
@@ -375,7 +383,7 @@ jobs:
           pip install -e .
           pip install zeus_mcmc dynesty
           pip install black
-          pip install --no-binary :all: root_numpy
+          #pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
@@ -476,3 +484,117 @@ jobs:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ github.ref }}
+
+
+  api_doc:
+    name: "Create the API stubs"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Build the API doc
+        run: |
+
+          brew install c-blosc
+          brew install hdf5
+
+
+          pip3 install cython tempita
+          pip3 install numpy scipy numba astropy
+
+          python setup.py develop
+
+          brew install sphinx-doc pandoc
+
+          pip3 install wheel
+          pip3 install mock recommonmark
+          pip3 install sphinx-rtd-dark-mode
+          pip3 install -U sphinx
+
+
+          sphinx-apidoc -f -o docs/api/ threeML
+
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: api-stubs-for-${{ github.sha }}
+          path: docs/api
+
+
+
+
+  build_docs:
+    name: "Build the Documentation"
+    runs-on: macos-latest
+    needs: [upload_notebooks, api_doc]
+    steps:
+
+
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install package
+        run: |
+
+          brew install c-blosc
+          brew install hdf5
+
+          pip3 install wheel
+          pip3 install tempita
+          pip3 install numpy scipy numba astropy
+
+          brew install sphinx-doc pandoc
+
+
+          pip3 install mock recommonmark
+          pip3 install sphinx-rtd-dark-mode sphinx-math-dollar
+          pip3 install -U sphinx
+          pip3 install -r docs/requirements.txt
+
+          python3 setup.py develop
+
+          rm -rf docs/md_docs/*
+
+
+
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/notebooks
+
+
+      - uses: actions/download-artifact@master
+        with:
+          name: api-stubs-for-${{ github.sha }}
+          path: docs/notebooks/api
+
+
+      - name: Build and Commit
+        uses: sphinx-notes/pages@v2
+        with:
+          documentation_path: docs
+          sphinx_version: 5.1.1
+          requirements_path: docs/requirements.txt
+
+
+      - name: Push changes
+        if: github.event_name == 'push' #&& startsWith(github.event.ref, 'refs/tags')
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages

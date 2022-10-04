@@ -27,6 +27,7 @@ With any of the samplers, you can pass keywords to access their setups. Read eac
 
 ```python
 from threeML import *
+from threeML.plugins.XYLike import XYLike
 
 import numpy as np
 import dynesty

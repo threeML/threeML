@@ -6,7 +6,7 @@ This is how we achieve the multi-messenger paradigm. A plugin handles its likeli
 
 Contents:
 
-.. toctree::
+.. nbgallery::
    :maxdepth: 4
 
    notebooks/custom_plugins.ipynb

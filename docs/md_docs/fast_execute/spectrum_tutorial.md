@@ -331,7 +331,7 @@ dispersion_spectrum_generator = DispersionSpectrumLike.from_function('test',
 
 We can view the response and the count spectrum created.
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 threeML_config.plugins.ogip.response_zero_color = "k"
 threeML_config.plugins.ogip.response_cmap = "magma"
 
