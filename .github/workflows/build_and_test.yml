@@ -47,13 +47,20 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel
-                  pip install --upgrade astromodels
+                  if [[ "${ISDEV}" == "true" ]]; then
+                    pip install --upgrade --pre astromodels
+                  else
+                    pip install --upgrade astromodels
+                  fi
+                  
                   pip install --upgrade flake8 coverage pytest-cov cython
 
                   # temp fix for speclite
                   pip install git+https://github.com/desihub/speclite.git
                   
                   pip install -e .
+              env:
+                  ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Lint with flake8
               run: |
                   # stop the build if there are Python syntax errors or undefined names
