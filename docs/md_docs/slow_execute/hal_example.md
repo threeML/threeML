@@ -212,7 +212,7 @@ fig = hawc.display_fit(smoothing_kernel_sigma=0.01,display_colorbar=True)
 
 Same, but with smoothing:
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 fig = hawc.display_fit(smoothing_kernel_sigma=0.2,display_colorbar=True)
 ```
 

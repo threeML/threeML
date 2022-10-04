@@ -3,7 +3,7 @@ Intro
 
 Contents:
 
-.. toctree::
+.. nbgallery::
    :maxdepth: 2
    
    notebooks/Quickstart.ipynb

@@ -150,7 +150,7 @@ grond = PhotometryLike.from_kwargs('GROND',
                        K=(18.,.01))
 ```
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 _ = grond.display_filters()
 ```
 

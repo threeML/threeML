@@ -66,6 +66,7 @@ jobs:
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
+                  pip install fermipy
               env:
                   ISDEV: ${{contains(github.ref, 'dev')}} 
             - name: Conda list

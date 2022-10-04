@@ -1,5 +1,3 @@
-from builtins import map, object, zip
-
 __author__ = "grburgess"
 
 import functools
@@ -7,7 +5,6 @@ import itertools
 
 import numpy as np
 from astromodels import use_astromodels_memoization
-
 from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.utils.progress_bar import tqdm
