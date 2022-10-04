@@ -60,7 +60,11 @@ jobs:
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
                   echo "Running on development branch: ${ISDEV} "
-
+                  echo "BASE REF: ${GITHUB_BASE_REF} True/False: ${ISDEV_BASE}"
+                  echo "HEAD REF: ${GITHUB_HEAD_REF} True/False: ${ISDEV_HEAD}"
+                  echo "ISDEV_BASE2: ${ISDEV_BASE2} "
+                  echo "GITHUB_EVENT_PATH: ${GITHUB_EVENT_PATH}"
+                
                   if [[ "${ISDEV}" == "true" ]]; then
 
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
@@ -68,7 +72,10 @@ jobs:
                   fi
                   pip install fermipy
               env:
-                  ISDEV: ${{contains(github.ref, 'dev')}} 
+                  ISDEV: ${{contains(github.ref, 'dev')}}
+                  ISDEV_BASE: ${{contains(github.base_ref, 'dev')}}
+                  ISDEV_HEAD: ${{contains(github.head_ref, 'dev')}}
+                  ISDEV_BASE2: ${{contains(github.event.pull_request.base.ref, 'dev')}}
             - name: Conda list
               shell: bash -l {0}
               run: |
