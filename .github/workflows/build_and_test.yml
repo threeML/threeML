@@ -180,7 +180,7 @@ jobs:
                   fi
                   pip install fermipy
               env:
-                  ISDEV: ${{contains(github.ref, 'dev')}}      
+                  ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
               shell: bash -l {0}
               run: |
