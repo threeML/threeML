@@ -1,6 +1,6 @@
 import copy
 from builtins import object
-from typing import Optional
+from typing import Optional, Tuple
 
 import numba as nb
 import numpy as np
@@ -21,8 +21,8 @@ log = setup_logger(__name__)
 _known_noise_models = {}
 
 
-class BinnedStatistic(object):
-    def __init__(self, spectrum_plugin):
+class BinnedStatistic:
+    def __init__(self, spectrum_plugin) -> None:
         """
 
         A class to hold the likelihood call and randomization of spectrum counts
@@ -32,24 +32,27 @@ class BinnedStatistic(object):
 
         self._spectrum_plugin = spectrum_plugin
 
-    def get_current_value(self):
-        RuntimeError("must be implemented in subclass")
+    def get_current_value(self) -> Tuple[float]:
 
-    def get_randomized_source_counts(self, source_model_counts):
+        log.error("must be implemented in subclass")
+
+        raise RuntimeError("must be implemented in subclass")
+
+    def get_randomized_source_counts(self, source_model_counts: np.ndarray) -> Optional[np.ndarray]:
         return None
 
-    def get_randomized_source_errors(self):
+    def get_randomized_source_errors(self) -> Optional[np.ndarray]:
         return None
 
-    def get_randomized_background_counts(self):
+    def get_randomized_background_counts(self) -> Optional[np.ndarray]:
         return None
 
-    def get_randomized_background_errors(self):
+    def get_randomized_background_errors(self) -> Optional[np.ndarray]:
         return None
 
 
 class GaussianObservedStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+    def get_current_value(self, precalc_fluxes: Optional[np.ndarray] = None):
 
         model_counts = self._spectrum_plugin.get_model(
             precalc_fluxes=precalc_fluxes
@@ -106,7 +109,7 @@ class GaussianObservedStatistic(BinnedStatistic):
 
 
 class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+    def get_current_value(self, precalc_fluxes: Optional[np.ndarray] = None):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -152,7 +155,7 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+    def get_current_value(self, precalc_fluxes: Optional[np.ndarray] = None):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -218,7 +221,7 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+    def get_current_value(self, precalc_fluxes: Optional[np.ndarray] = None):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -255,7 +258,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+    def get_current_value(self, precalc_fluxes: Optional[np.ndarray] = None):
         # Scale factor between source and background spectrum
         model_counts = self._spectrum_plugin.get_model(
             precalc_fluxes=precalc_fluxes
@@ -310,7 +313,7 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes: Optional[np.array] = None):
+    def get_current_value(self, precalc_fluxes: Optional[np.ndarray] = None):
         expected_model_counts = self._spectrum_plugin.get_model(
             precalc_fluxes=precalc_fluxes
         )

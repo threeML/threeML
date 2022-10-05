@@ -110,11 +110,6 @@ jobs:
                   pip install git+https://github.com/desihub/speclite.git
 
                   pip install -e .
-            - name: Lint with flake8
-              run: |
-                  # stop the build if there are Python syntax errors or undefined names
-                  flake8 .
-
 
             - name: Test pip on ${{ matrix.python-version }}
               run: |
