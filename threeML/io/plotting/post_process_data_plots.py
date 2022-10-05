@@ -3,7 +3,6 @@ import numpy as np
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
 
-
 try:
     from threeML.plugins.FermiLATLike import FermiLATLike
 
@@ -20,7 +19,9 @@ from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.step_plot import step_plot
 
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+if threeML_config.plotting.use_threeml_style:
+
+    plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 log = setup_logger(__name__)
 

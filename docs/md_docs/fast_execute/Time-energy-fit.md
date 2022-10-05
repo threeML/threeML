@@ -31,6 +31,7 @@ np.seterr(all="ignore")
 ```python
 %%capture
 import matplotlib.pyplot as plt
+#import matplotlib.animation as animation
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
@@ -49,7 +50,7 @@ silence_warnings()
 Then we generate a simulated dataset for a source with a cutoff powerlaw spectrum with a constant photon index and cutoff but with a normalization that changes with time following a powerlaw:
 
 ```python
-def generate_one(K, ax):
+def generate_one(K):
 
     # Let's generate some data with y = Powerlaw(x)
 
@@ -68,10 +69,6 @@ def generate_one(K, ax):
     y = xyl_generator.y
     y_err = xyl_generator.yerr
 
-    ax.loglog(x, gen_function(x))
-    
-    ax.set_xlabel("Energy")
-    ax.set_ylabel("Flux")
 
     return x, y, y_err
 ```
@@ -90,10 +87,22 @@ normalizations = 0.23 * time_tags ** (-3.5)
 
 Now that we have a simple function to create the datasets, let's build them.
 
-```python tags=["nbsphinx-thumbbail"]
+```python tags=["nbsphinx-thumbnail"]
+
+datasets = [generate_one(k) for k in normalizations]
+
+x = np.logspace(0, 2, 50)
+
 fig, ax = plt.subplots()
 
-datasets = [generate_one(k, ax) for k in normalizations]
+
+for k in normalizations:
+    gen_function = Cutoff_powerlaw()
+    gen_function.K = k
+    ax.loglog(x, gen_function(x))
+
+ax.set_xlabel("Energy")
+ax.set_ylabel("Flux")
 ```
 
 ## Setup the model
@@ -189,8 +198,4 @@ best_fit_parameters, likelihood_values = jl.fit()
 for p in plugins:
 
     _ = p.plot(x_scale='log', y_scale='log');
-```
-
-```python
-
 ```

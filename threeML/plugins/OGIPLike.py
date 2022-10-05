@@ -164,14 +164,14 @@ class OGIPLike(DispersionSpectrumLike):
         )
 
     def get_simulated_dataset(
-        self, new_name: Optional[str] = None, **kwargs
+        self, new_name: Optional[str] = None, spectrum_number: int = 1, **kwargs
     ) -> "OGIPLike":
-
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
 
         :param new_name: name of the simulated plugin
+        :param spectrum_number: spectrum number (default is 1)
         :param kwargs: keywords to pass back up to parents
         :return: a DispersionSpectrumLike simulated instance
         """
@@ -179,7 +179,7 @@ class OGIPLike(DispersionSpectrumLike):
         # pass the response thru to the constructor
         return super(OGIPLike, self).get_simulated_dataset(
             new_name=new_name,
-            spectrum_number=1,
+            spectrum_number=spectrum_number,
             response=self._response.clone(),
             **kwargs,
         )

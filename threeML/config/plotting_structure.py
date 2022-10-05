@@ -105,7 +105,7 @@ class ResidualPlot:
 
 @dataclass
 class GenericPlotting:
-
+    use_threeml_style: bool = True
     mplstyle: str = "threeml.mplstyle"
     residual_plot: ResidualPlot = ResidualPlot()
 

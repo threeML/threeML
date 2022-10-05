@@ -1,5 +1,3 @@
-from __future__ import division
-
 import collections
 
 from dataclasses import dataclass
@@ -28,7 +26,9 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.gammaln import logfactorial
 from threeML.utils.statistics.stats_tools import Significance
 
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+if threeML_config.plotting.use_threeml_style:
+
+    plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 __instrument_name = "Fermi LAT (standard classes)"
@@ -110,9 +110,13 @@ class LikelihoodModelConverter:
         else:
             # We pass from the model just one source
 
-            log.info(f"Setting single point source {self.likelihood_model} ... ")
+            log.info(
+                f"Setting single point source {self.likelihood_model} ... "
+            )
 
-            index = self.likelihood_model.point_sources.keys().index(self.source_name)
+            index = self.likelihood_model.point_sources.keys().index(
+                self.source_name
+            )
             this_src = self._make_file_spectrum(index)
             all_sources_for_pylike.append(this_src)
 
@@ -166,7 +170,9 @@ class LikelihoodModelConverter:
         """
 
         name = self.likelihood_model.get_point_source_name(ip)
-        values = self.likelihood_model.get_point_source_fluxes(ip, self.energies_kev)
+        values = self.likelihood_model.get_point_source_fluxes(
+            ip, self.energies_kev
+        )
 
         temp_name = "__%s_%s.txt" % (name, get_random_unique_name())
 
@@ -192,7 +198,9 @@ class LikelihoodModelConverter:
                 "</source>\n",
             )
         )
-        src = FuncFactory.minidom.parseString(src).getElementsByTagName("source")[0]
+        src = FuncFactory.minidom.parseString(src).getElementsByTagName(
+            "source"
+        )[0]
         src = FuncFactory.Source(src)
 
         src.spectrum = FuncFactory.FileFunction()
@@ -393,7 +401,9 @@ class FermiLATLike(PluginPrototype):
 
         self._source_name: str = source_name
 
-    def set_model(self, likelihood_model: Model, source_name: Optional[str] = None):
+    def set_model(
+        self, likelihood_model: Model, source_name: Optional[str] = None
+    ):
         """
         Set the model to be used in the joint minimization.
         Must be a likelihood_model instance.
@@ -426,7 +436,9 @@ class FermiLATLike(PluginPrototype):
             likelihood_model, self.irf, source_name=self._source_name
         )
 
-        self._lmc.set_file_spectrum_energies(self.emin, self.emax, self.n_energies)
+        self._lmc.set_file_spectrum_energies(
+            self.emin, self.emax, self.n_energies
+        )
 
         xml_file = str("%s.xml" % get_random_unique_name())
         temp_files = self._lmc.write_xml(xml_file, self.ra, self.dec, self.rad)
@@ -474,7 +486,9 @@ class FermiLATLike(PluginPrototype):
     def clear_source_name(self) -> None:
         if self._source_name is not None:
 
-            log.info(f"Clearing {self._source_name} as a source for this plugin.")
+            log.info(
+                f"Clearing {self._source_name} as a source for this plugin."
+            )
 
             self._source_name = None
 
@@ -531,7 +545,11 @@ class FermiLATLike(PluginPrototype):
             # create a tuple with only this source
 
             itr = (
-                [self.likelihood_model.point_sources.keys().index(self._source_name)],
+                [
+                    self.likelihood_model.point_sources.keys().index(
+                        self._source_name
+                    )
+                ],
                 [self._source_name],
             )
 
@@ -556,7 +574,9 @@ class FermiLATLike(PluginPrototype):
 
             # Cap the values to avoid numerical errors
 
-            capped_values = numpy.minimum(numpy.maximum(values * 1000, 1e-25), 1e5)
+            capped_values = numpy.minimum(
+                numpy.maximum(values * 1000, 1e-25), 1e5
+            )
 
             my_file_function.setSpectrum(energies / 1000.0, capped_values)
 
@@ -566,7 +586,7 @@ class FermiLATLike(PluginPrototype):
 
         self.like.syncSrcParams()
 
-    def get_log_like(self):
+    def get_log_like(self) -> float:
         """
         Return the value of the log-likelihood with the current values for the
         parameters stored in the ModelManager instance
@@ -628,7 +648,9 @@ class FermiLATLike(PluginPrototype):
         ec = (e1 + e2) / 2.0
         de = (e2 - e1) / 2.0
 
-        sum_model = numpy.zeros_like(self.like._srcCnts(self.like.sourceNames()[0]))
+        sum_model = numpy.zeros_like(
+            self.like._srcCnts(self.like.sourceNames()[0])
+        )
 
         fig = plt.figure()
 
@@ -738,7 +760,9 @@ class FermiLATLike(PluginPrototype):
 
         _default_model_kwargs = dict(color=model_color, alpha=1)
 
-        _default_background_kwargs = dict(color=background_color, alpha=1, ls="--")
+        _default_background_kwargs = dict(
+            color=background_color, alpha=1, ls="--"
+        )
 
         _sub_menu = threeML_config.plotting.residual_plot
 
@@ -804,7 +828,9 @@ class FermiLATLike(PluginPrototype):
 
         if background_kwargs is not None:
 
-            assert type(background_kwargs) == dict, "background_kwargs must be a dict"
+            assert (
+                type(background_kwargs) == dict
+            ), "background_kwargs must be a dict"
 
             for k, v in list(background_kwargs.items()):
 
@@ -823,11 +849,15 @@ class FermiLATLike(PluginPrototype):
 
         for d in _duplicates:
 
-            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
+            if (d[0] in _default_model_kwargs) and (
+                d[1] in _default_model_kwargs
+            ):
 
                 _default_model_kwargs.pop(d[0])
 
-            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
+            if (d[0] in _default_data_kwargs) and (
+                d[1] in _default_data_kwargs
+            ):
 
                 _default_data_kwargs.pop(d[0])
 
@@ -853,7 +883,9 @@ class FermiLATLike(PluginPrototype):
         de = (e2 - e1) / 2.0
 
         conversion_factor = de * self.__observation_duration
-        sum_model = numpy.zeros_like(self.like._srcCnts(self.like.sourceNames()[0]))
+        sum_model = numpy.zeros_like(
+            self.like._srcCnts(self.like.sourceNames()[0])
+        )
 
         sum_backgrounds = numpy.zeros_like(
             self.like._srcCnts(self.like.sourceNames()[0])

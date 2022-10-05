@@ -21,6 +21,11 @@ One of the most powerful aspects of **XSPEC** is a huge modeling community. Whil
 For details on installing **astromodels** with **XSPEC** support, visit the 3ML or **astromodels** installation page. 
 
 
+<div class="alert alert-block alert-info">
+<b>Tip:</b> astromodels / 3ML already have ZDust, absorption and APEC models built in!
+</div>
+
+
 Let's explore how we can use **XSPEC** spectral models in 3ML. 
 <!-- #endregion -->
 
@@ -65,7 +70,7 @@ phabs
 
 The spectral models behave just as any other **astromodels** spectral model and can be used in combination with other **astromodels** spectral models.
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 from astromodels import Powerlaw
 
 am_plaw = Powerlaw()
