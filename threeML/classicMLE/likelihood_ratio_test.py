@@ -55,9 +55,7 @@ class LikelihoodRatioTest:
             log.warning(
                 "two hyp. are nested, by definition the more complex hypothesis should give a "
             )
-            log.warning(
-                "better or equal fit with respect to the null hypothesis."
-            )
+            log.warning("better or equal fit with respect to the null hypothesis.")
 
         # Check that the dataset is the same
 
@@ -93,9 +91,7 @@ class LikelihoodRatioTest:
 
         new_datas = []
 
-        for dataset in list(
-            self._joint_likelihood_instance0.data_list.values()
-        ):
+        for dataset in list(self._joint_likelihood_instance0.data_list.values()):
 
             # Make sure that the active likelihood model is the null hypothesis
             # This is needed if the user has used the same DataList instance for both
@@ -119,18 +115,12 @@ class LikelihoodRatioTest:
         # Make a copy of the best fit models, so that we don't touch the original models during the fit, and we
         # also always restart from the best fit (instead of the last iteration)
 
-        new_model0 = clone_model(
-            self._joint_likelihood_instance0.likelihood_model
-        )
-        new_model1 = clone_model(
-            self._joint_likelihood_instance1.likelihood_model
-        )
+        new_model0 = clone_model(self._joint_likelihood_instance0.likelihood_model)
+        new_model1 = clone_model(self._joint_likelihood_instance1.likelihood_model)
 
         return new_model0, new_model1
 
-    def by_mc(
-        self, n_iterations=1000, continue_on_failure=False, save_pha=False
-    ):
+    def by_mc(self, n_iterations=1000, continue_on_failure=False, save_pha=False):
         """
         Compute the Likelihood Ratio Test by generating Monte Carlo datasets and fitting the current models on them.
         The fraction of synthetic datasets which have a value for the TS larger or equal to the observed one gives
@@ -162,9 +152,7 @@ class LikelihoodRatioTest:
         jl_set.set_minimizer(self._joint_likelihood_instance0.minimizer_in_use)
 
         # Run the set
-        data_frame, like_data_frame = jl_set.go(
-            continue_on_failure=continue_on_failure
-        )
+        data_frame, like_data_frame = jl_set.go(continue_on_failure=continue_on_failure)
 
         # Get the TS values
 
@@ -203,10 +191,7 @@ class LikelihoodRatioTest:
         fig, ax = plt.subplots()
 
         counts, bins, _ = ax.hist(
-            self._TS_distribution,
-            density=True,
-            label="monte carlo",
-            **hist_kwargs
+            self._TS_distribution, density=True, label="monte carlo", **hist_kwargs
         )
 
         ax.axvline(self._reference_TS, color="r", ls="--", label="Ref. TS")
@@ -223,9 +208,7 @@ class LikelihoodRatioTest:
 
             dof = len(
                 self._joint_likelihood_instance1.likelihood_model.free_parameters
-            ) - len(
-                self._joint_likelihood_instance0.likelihood_model.free_parameters
-            )
+            ) - len(self._joint_likelihood_instance0.likelihood_model.free_parameters)
 
             assert (
                 dof >= 0

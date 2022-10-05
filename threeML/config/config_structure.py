@@ -36,6 +36,7 @@ class Parallel:
     use_parallel: bool = False
     use_joblib: bool = False
 
+
 @dataclass
 class Interface:
     progress_bars: bool = "on"

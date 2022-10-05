@@ -281,9 +281,7 @@ if has_parallel:
 
                 if chunk_size is None:
 
-                    chunk_size = int(
-                        math.ceil(n_items / float(n_active_engines) / 20)
-                    )
+                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
@@ -319,9 +317,7 @@ if has_parallel:
                 results.append(res)
 
             # Reorder the list according to the id
-            return list(
-                map(lambda x: x[1], sorted(results, key=lambda x: x[0]))
-            )
+            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 
 else:
 

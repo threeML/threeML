@@ -16,7 +16,9 @@ from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
-    half_chi2, poisson_log_likelihood_ideal_bkg)
+    half_chi2,
+    poisson_log_likelihood_ideal_bkg,
+)
 
 if threeML_config.plotting.use_threeml_style:
 

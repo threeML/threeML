@@ -47,10 +47,7 @@ def _gbm_and_lle_valid_source_check(source):
 
 def _sanitize_fgl_name(fgl_name):
     swap = (
-        fgl_name.replace(" ", "_")
-        .replace("+", "p")
-        .replace("-", "m")
-        .replace(".", "d")
+        fgl_name.replace(" ", "_").replace("+", "p").replace("-", "m").replace(".", "d")
     )
 
     if swap[0] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
@@ -88,9 +85,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             )
         else:
             this_spectrum.index = float(catalog_entry["dnde_index"]) * -1
-            this_spectrum.K = float(catalog_entry["dnde"]) / (
-                u.cm**2 * u.s * u.MeV
-            )
+            this_spectrum.K = float(catalog_entry["dnde"]) / (u.cm**2 * u.s * u.MeV)
         this_spectrum.index.fix = fix
         this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
             u.cm**2 * u.s * u.MeV
@@ -149,9 +144,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             )
         else:
             this_spectrum.index = float(catalog_entry["dnde_index"]) * -1
-            this_spectrum.K = float(catalog_entry["dnde"]) / (
-                u.cm**2 * u.s * u.MeV
-            )
+            this_spectrum.K = float(catalog_entry["dnde"]) / (u.cm**2 * u.s * u.MeV)
 
         this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
 
@@ -300,9 +293,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         if "FERMIPY_DATA_DIR" not in os.environ:
             os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data")
 
-        the_dir = os.path.join(
-            os.path.expandvars(catalog_entry["extdir"]), "Templates"
-        )
+        the_dir = os.path.join(os.path.expandvars(catalog_entry["extdir"]), "Templates")
 
         the_template = os.path.join(the_dir, the_file)
 
@@ -528,9 +519,7 @@ class ModelFromFGL(astromodels.Model):
 
                         src.spectrum.main.shape.parameters[par].free = free
 
-    def free_extended_sources_within_radius(
-        self, radius, normalization_only=True
-    ):
+    def free_extended_sources_within_radius(self, radius, normalization_only=True):
         """
         Free the parameters for the point sources within the given radius of the center of the search cone
 
@@ -540,9 +529,7 @@ class ModelFromFGL(astromodels.Model):
         """
         self._free_or_fix_ext(True, radius, normalization_only)
 
-    def fix_extended_sources_within_radius(
-        self, radius, normalization_only=True
-    ):
+    def fix_extended_sources_within_radius(self, radius, normalization_only=True):
         """
         Fixes the parameters for the point sources within the given radius of the center of the search cone
 

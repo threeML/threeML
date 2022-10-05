@@ -392,16 +392,18 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
 
 class NotAvailableStatistic(object):
-
     def __init__(self, spectrum_plugin):
-        """
-        """
-        log.error('The required statistic is currently restricted to the IXPE plugin only.')
+        """ """
+        log.error(
+            "The required statistic is currently restricted to the IXPE plugin only."
+        )
         raise RuntimeError()
+
 
 try:
     from ixpe.likelihood import GaussianObservedGaussianBackgroundStatistic
-    log.info('IXPE plugin found. Enabling Gaussian source with Gaussian background.')
+
+    log.info("IXPE plugin found. Enabling Gaussian source with Gaussian background.")
 except:
     GaussianObservedGaussianBackgroundStatistic = NotAvailableStatistic
 
@@ -414,7 +416,9 @@ statistic_lookup = {
         None: PoissonObservedNoBackgroundStatistic,
         "modeled": PoissonObservedModeledBackgroundStatistic,
     },
-    "gaussian": {None: GaussianObservedStatistic,
-                 'gaussian':GaussianObservedGaussianBackgroundStatistic},
+    "gaussian": {
+        None: GaussianObservedStatistic,
+        "gaussian": GaussianObservedGaussianBackgroundStatistic,
+    },
     None: {None: None},
 }

@@ -244,72 +244,88 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
 
             self._astropy_table = self._fermipy_catalog.table
 
-            #Stupid but necessary: Remove catalog values if we're reading in a pre-fit ROI.
+            # Stupid but necessary: Remove catalog values if we're reading in a pre-fit ROI.
             catalog_columns = ["GLAT", "GLON", "RAJ2000", "DEJ2000"]
             prefit_columns = ["glat", "glon", "ra", "dec"]
-            for col1, col2 in zip( catalog_columns, prefit_columns):
-                if col1 in list(self._astropy_table.columns) and col2 in list(self._astropy_table.columns):
+            for col1, col2 in zip(catalog_columns, prefit_columns):
+                if col1 in list(self._astropy_table.columns) and col2 in list(
+                    self._astropy_table.columns
+                ):
                     self._astropy_table.remove_column(col1)
 
-            #remove multi-dimensional columns
-            good_columns = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) <= 1]
+            # remove multi-dimensional columns
+            good_columns = [
+                name
+                for name in self._astropy_table.colnames
+                if len(self._astropy_table[name].shape) <= 1
+            ]
             self._astropy_table = self._astropy_table[good_columns]
 
-            #remove duplicate columns
-            if "Extended" in list(self._astropy_table.columns) and  "extended" in list(self._astropy_table.columns):
+            # remove duplicate columns
+            if "Extended" in list(self._astropy_table.columns) and "extended" in list(
+                self._astropy_table.columns
+            ):
                 self._astropy_table.remove_column("Extended")
 
             self._astropy_table.convert_bytestring_to_unicode()
             ##### This prevents an issue with multi dimension columns:
-            #names = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) <= 1]
-            #log.info("COL NAMES = ", names)
-            #self._vo_dataframe = self._astropy_table[names].to_pandas()
+            # names = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) <= 1]
+            # log.info("COL NAMES = ", names)
+            # self._vo_dataframe = self._astropy_table[names].to_pandas()
             ### Comment the following
             self._vo_dataframe = self._astropy_table.to_pandas()
 
-            if ("Pivot_Energy" in self._astropy_table.columns) and ("pivot_energy" in self._astropy_table.columns):
-                self._vo_dataframe.rename(columns = {"Pivot_Energy":"pivot_energy_catalog"}, inplace=True)
+            if ("Pivot_Energy" in self._astropy_table.columns) and (
+                "pivot_energy" in self._astropy_table.columns
+            ):
+                self._vo_dataframe.rename(
+                    columns={"Pivot_Energy": "pivot_energy_catalog"}, inplace=True
+                )
 
-            self._vo_dataframe.rename(columns = str.lower, inplace=True)
+            self._vo_dataframe.rename(columns=str.lower, inplace=True)
 
             rename_dict = {
-                "spectrumtype":   "spectrum_type",
-                "raj2000":        "ra",
-                "dej2000":        "dec",
-                "name":    "name_fermipy",
-                "source_name":    "name",
+                "spectrumtype": "spectrum_type",
+                "raj2000": "ra",
+                "dej2000": "dec",
+                "name": "name_fermipy",
+                "source_name": "name",
                 "plec_expfactor": "plec_exp_factor",
             }
 
             if "class1" in self._vo_dataframe.columns:
 
-                self._vo_dataframe["source_type"] = self._vo_dataframe["class1"] + self._vo_dataframe["class2"]
-            
+                self._vo_dataframe["source_type"] = (
+                    self._vo_dataframe["class1"] + self._vo_dataframe["class2"]
+                )
+
             else:
-                
+
                 self._vo_dataframe["source_type"] = self._vo_dataframe["class"]
 
             if "assoc1" in self._vo_dataframe:
-            
+
                 self._vo_dataframe["assoc_name"] = numpy.where(
-                    ( self._vo_dataframe["assoc1"] != "" ),
+                    (self._vo_dataframe["assoc1"] != ""),
                     self._vo_dataframe["assoc1"],
-                    self._vo_dataframe["assoc2"] )
+                    self._vo_dataframe["assoc2"],
+                )
             else:
                 self._vo_dataframe["assoc_name"] = ""
-
 
             if "assoc_gam1" in self._vo_dataframe:
 
                 self._vo_dataframe["tevcat_assoc"] = numpy.where(
-                    ( self._vo_dataframe["assoc_gam1"] != "" ),
+                    (self._vo_dataframe["assoc_gam1"] != ""),
                     self._vo_dataframe["assoc_gam1"],
-                    self._vo_dataframe["assoc_gam2"] )
+                    self._vo_dataframe["assoc_gam2"],
+                )
 
                 self._vo_dataframe["tevcat_assoc"] = numpy.where(
-                    ( self._vo_dataframe["tevcat_assoc"] != "" ),
+                    (self._vo_dataframe["tevcat_assoc"] != ""),
                     self._vo_dataframe["tevcat_assoc"],
-                    self._vo_dataframe["assoc_gam3"] )
+                    self._vo_dataframe["assoc_gam3"],
+                )
             else:
                 self._vo_dataframe["tevcat_assoc"] = ""
 

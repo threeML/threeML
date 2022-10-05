@@ -109,7 +109,8 @@ def _read_pha_or_pha2_file(
     else:
 
         log.error(
-            f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}")
+            f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}"
+        )
 
         raise RuntimeError()
 
@@ -837,7 +838,8 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         else:
 
             log.error(
-                f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}")
+                f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}"
+            )
 
             raise RuntimeError()
 
