@@ -11,7 +11,6 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 from threeML.config.config import threeML_config
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
@@ -254,9 +253,13 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
                 self._astropy_table.remove_column("Extended")
             
             self._astropy_table.convert_bytestring_to_unicode()
+            ##### This prevents an issue with multi dimension columns:
+            #names = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) <= 1]
+            #log.info("COL NAMES = ", names)
+            #self._vo_dataframe = self._astropy_table[names].to_pandas()
+            ### Comment the following
             self._vo_dataframe = self._astropy_table.to_pandas()
 
-            
             if ("Pivot_Energy" in self._astropy_table.columns) and ("pivot_energy" in self._astropy_table.columns):
                 self._vo_dataframe.rename(columns = {"Pivot_Energy":"pivot_energy_catalog"}, inplace=True)
 

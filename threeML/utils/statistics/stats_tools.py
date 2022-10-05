@@ -352,3 +352,11 @@ class Significance:
         sign = np.where(o > b, 1, -1)
 
         return sign * S
+
+    def gaussian_background(self, sigma_c,sigma_b):
+        """
+        :param sigma_b: The gaussian 1 sigma errors on the background
+        :return:
+
+        """
+        return self.net/np.sqrt(sigma_c**2+sigma_b**2)
