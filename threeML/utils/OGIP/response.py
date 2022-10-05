@@ -15,9 +15,11 @@ from numpy.ma import shape
 from past.utils import old_div
 from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import (file_existing_and_readable,
-                                   fits_file_existing_and_readable,
-                                   sanitize_filename)
+from threeML.io.file_utils import (
+    file_existing_and_readable,
+    fits_file_existing_and_readable,
+    sanitize_filename,
+)
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
@@ -245,6 +247,7 @@ class InstrumentResponse(object):
         if precalc_fluxes is None:
 
             try:
+
                 fluxes = self._integral_function(
                     # self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]
                 )
@@ -256,6 +259,7 @@ class InstrumentResponse(object):
                 )
 
         else:
+
             fluxes = precalc_fluxes
 
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where
