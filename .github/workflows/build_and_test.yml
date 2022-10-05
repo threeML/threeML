@@ -47,10 +47,9 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel
+                  pip install --upgrade astromodels
                   if [[ "${ISDEV}" == "true" ]]; then
-                    pip install --upgrade --pre astromodels
-                  else
-                    pip install --upgrade astromodels
+                    pip install --upgrade --pre --no-deps astromodels
                   fi
                   
                   pip install --upgrade flake8 coverage pytest-cov cython
