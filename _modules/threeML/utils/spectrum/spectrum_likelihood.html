@@ -45,10 +45,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
@@ -63,18 +60,11 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
 </ul>
 
         </div>
@@ -502,6 +492,21 @@
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">background_count_errors</span><span class="p">)</span></div></div>
 
 
+<div class="viewcode-block" id="NotAvailableStatistic"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic">[docs]</a><span class="k">class</span> <span class="nc">NotAvailableStatistic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum_plugin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;The required statistic is currently restricted to the IXPE plugin only.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span></div>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">ixpe.likelihood</span> <span class="kn">import</span> <span class="n">GaussianObservedGaussianBackgroundStatistic</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;IXPE plugin found. Enabling Gaussian source with Gaussian background.&#39;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">GaussianObservedGaussianBackgroundStatistic</span> <span class="o">=</span> <span class="n">NotAvailableStatistic</span>
+
+
 <span class="n">statistic_lookup</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;poisson&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;poisson&quot;</span><span class="p">:</span> <span class="n">PoissonObservedPoissonBackgroundStatistic</span><span class="p">,</span>
@@ -510,7 +515,8 @@
         <span class="kc">None</span><span class="p">:</span> <span class="n">PoissonObservedNoBackgroundStatistic</span><span class="p">,</span>
         <span class="s2">&quot;modeled&quot;</span><span class="p">:</span> <span class="n">PoissonObservedModeledBackgroundStatistic</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="n">GaussianObservedStatistic</span><span class="p">},</span>
+    <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="n">GaussianObservedStatistic</span><span class="p">,</span>
+                 <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span><span class="n">GaussianObservedGaussianBackgroundStatistic</span><span class="p">},</span>
     <span class="kc">None</span><span class="p">:</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
 <span class="p">}</span>
 

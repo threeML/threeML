@@ -45,10 +45,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
@@ -63,18 +60,11 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
 </ul>
 
         </div>
@@ -226,6 +216,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Model</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Rebinner</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stokes</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># probe the noise models and then setup the appropriate count errors</span>
 
@@ -532,10 +523,10 @@
                     <span class="n">observation_noise_model</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
                     <span class="n">background_noise_model</span> <span class="o">=</span> <span class="s2">&quot;gaussian&quot;</span>
 
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-                        <span class="k">raise</span> <span class="n">NegativeBackground</span><span class="p">(</span>
-                            <span class="s2">&quot;Error in background spectrum: negative background!&quot;</span>
-                        <span class="p">)</span>
+                    <span class="c1">#if not np.all(self._background_counts &gt;= 0):</span>
+                    <span class="c1">#    raise NegativeBackground(</span>
+                    <span class="c1">#        &quot;Error in background spectrum: negative background!&quot;</span>
+                    <span class="c1">#    )</span>
 
         <span class="k">else</span><span class="p">:</span>
 
@@ -2181,13 +2172,13 @@
 
             <span class="k">def</span> <span class="nf">differential_flux</span><span class="p">(</span><span class="n">energies</span><span class="p">):</span>
                 <span class="n">fluxes</span> <span class="o">=</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">get_point_source_fluxes</span><span class="p">(</span>
-                    <span class="mi">0</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
+                    <span class="mi">0</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span> <span class="n">stokes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stokes</span>
                 <span class="p">)</span>
 
                 <span class="c1"># If we have only one point source, this will never be executed</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_point_sources</span><span class="p">):</span>
                     <span class="n">fluxes</span> <span class="o">+=</span> <span class="n">likelihood_model</span><span class="o">.</span><span class="n">get_point_source_fluxes</span><span class="p">(</span>
-                        <span class="n">i</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
+                        <span class="n">i</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span> <span class="n">stokes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stokes</span>
                     <span class="p">)</span>
 
                 <span class="k">return</span> <span class="n">fluxes</span>
@@ -2533,16 +2524,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">cnt_err</span> <span class="o">=</span> <span class="kc">None</span>
-
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;self._observation_noise_model = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_noise_model</span> <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;self._background_noise_model = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_noise_model</span> <span class="o">==</span> <span class="s2">&quot;poisson&quot;</span><span class="p">:</span>
 
             <span class="n">cnt_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observed_counts</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">cnt_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_count_errors</span>
-
+            <span class="c1">#if self._background_noise_model is None:</span>
+            <span class="n">cnt_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_count_errors</span>
+            <span class="c1">#elif self._background_noise_model is &quot;gaussian&quot;:</span>
+            <span class="c1">#    cnt_err = self._observed_count_errors</span>
                 <span class="c1"># calculate all the correct quantites</span>
 
         <span class="k">return</span> <span class="n">cnt_err</span>
@@ -2588,12 +2581,15 @@
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This is a bug&quot;</span><span class="p">)</span>
 
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># gaussian observation</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Observed counts</span>
                 <span class="n">background_counts</span> <span class="o">=</span> <span class="kc">None</span>
 
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+
+                <span class="n">background_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_counts</span>
                 <span class="c1"># calculate all the correct quantites</span>
 
         <span class="k">return</span> <span class="n">background_counts</span>
@@ -2647,6 +2643,10 @@
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">background_errors</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+
+                <span class="n">background_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_count_errors</span>
 
         <span class="k">return</span> <span class="n">background_errors</span>
 
@@ -2968,6 +2968,19 @@
                 <span class="n">background_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
                 <span class="n">background_rate_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">observed_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+                <span class="n">cnt_err</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_count_errors</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+                <span class="n">observed_counts</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_counts</span><span class="p">)</span>
+
+                <span class="n">background_counts</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_background_counts</span><span class="p">)</span>
+
+                <span class="n">background_errors</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_back_count_errors</span><span class="p">)</span>
+
+                <span class="n">background_rate</span> <span class="o">=</span> <span class="n">background_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
+
+                <span class="n">background_rate_errors</span> <span class="o">=</span> <span class="n">background_errors</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_exposure</span>
 
                 <span class="n">cnt_err</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_observed_count_errors</span><span class="p">)</span>
 
@@ -3452,7 +3465,7 @@
             <span class="c1"># Find the rates for these channels</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">observed_rate</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">min_rate</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
 
                 <span class="c1"># All empty, cannot weight</span>
                 <span class="n">this_mean_energy</span> <span class="o">=</span> <span class="p">(</span><span class="n">e_min</span> <span class="o">+</span> <span class="n">e_max</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
@@ -3579,10 +3592,12 @@
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
                     <span class="n">residuals</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">rebinned_observed_counts</span> <span class="o">-</span> <span class="n">rebinned_model_counts</span>
-                    <span class="p">)</span> <span class="o">/</span> <span class="n">rebinned_observed_count_errors</span>
+                                        <span class="n">rebinned_observed_counts</span> <span class="o">-</span> <span class="n">rebinned_model_counts</span>
+                                <span class="p">)</span> <span class="o">/</span> <span class="n">rebinned_observed_count_errors</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_noise_model</span> <span class="o">==</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span>
+
+                    <span class="n">residuals</span> <span class="o">=</span> <span class="n">significance_calc</span><span class="o">.</span><span class="n">gaussian_background</span><span class="p">(</span><span class="n">rebinned_observed_count_errors</span><span class="p">,</span><span class="n">rebinned_background_errors</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
 
