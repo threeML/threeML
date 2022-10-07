@@ -32,7 +32,7 @@ class Logging:
 class Parallel:
     profile_name: str = "default"
     use_parallel: bool = False
-
+    use_joblib: bool = False
 
 @dataclass
 class Interface:
