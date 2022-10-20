@@ -242,6 +242,7 @@ class InstrumentResponse(object):
         if precalc_fluxes is None:
 
             try:
+
                 fluxes = self._integral_function(
                     # self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]
                 )
@@ -253,6 +254,7 @@ class InstrumentResponse(object):
                 )
 
         else:
+
             fluxes = precalc_fluxes
 
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where

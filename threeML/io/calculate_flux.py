@@ -4,11 +4,7 @@ import collections
 
 import numpy as np
 import pandas as pd
-
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
-
-# from threeML.io.rich_display import display
 from threeML.utils.fitted_objects.fitted_point_sources import (
     FittedPointSourceSpectralHandler,
 )
@@ -87,7 +83,8 @@ def _setup_analysis_dictionaries(
                     try:
 
                         comps = [
-                            c.name for c in source.spectrum.main.composite.functions
+                            c.name
+                            for c in source.spectrum.main.composite.functions
                         ]
 
                     except Exception:
@@ -126,7 +123,8 @@ def _setup_analysis_dictionaries(
                     try:
 
                         comps = [
-                            c.name for c in source.spectrum.main.composite.functions
+                            c.name
+                            for c in source.spectrum.main.composite.functions
                         ]
 
                     except Exception:
@@ -154,7 +152,9 @@ def _setup_analysis_dictionaries(
 
     if mle_analyses:
 
-        for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
+        for key in tqdm(
+            list(mle_analyses.keys()), desc="processing MLE analyses"
+        ):
 
             # if we want to use this source
 
@@ -192,7 +192,9 @@ def _setup_analysis_dictionaries(
 
                     if not components_to_use:
 
-                        component_dict[component] = FittedPointSourceSpectralHandler(
+                        component_dict[
+                            component
+                        ] = FittedPointSourceSpectralHandler(
                             mle_analyses[key]["analysis"],
                             mle_analyses[key]["source"],
                             energy_range,
@@ -287,7 +289,9 @@ def _setup_analysis_dictionaries(
                     # extracting all components
 
                     if not components_to_use:
-                        component_dict[component] = FittedPointSourceSpectralHandler(
+                        component_dict[
+                            component
+                        ] = FittedPointSourceSpectralHandler(
                             bayesian_analyses[key]["analysis"],
                             bayesian_analyses[key]["source"],
                             energy_range,
@@ -304,7 +308,9 @@ def _setup_analysis_dictionaries(
                     # or just some of them
 
                     if component in components_to_use:
-                        component_dict[component] = FittedPointSourceSpectralHandler(
+                        component_dict[
+                            component
+                        ] = FittedPointSourceSpectralHandler(
                             bayesian_analyses[key]["analysis"],
                             bayesian_analyses[key]["source"],
                             energy_range,
@@ -347,7 +353,9 @@ def _setup_analysis_dictionaries(
     return mle_analyses, bayesian_analyses, num_sources_to_use, duplicate_keys
 
 
-def _collect_sums_into_dictionaries(analyses, use_components, components_to_use):
+def _collect_sums_into_dictionaries(
+    analyses, use_components, components_to_use
+):
     """
 
     :param analyses:
@@ -451,7 +459,7 @@ def _compute_output(analyses, _defaults, out):
 
                 samples = analyses[key]["components"][component]
 
-                label = "%s: %s" % (key, component)
+                label = f"{key}: {component}"
 
                 _append_best_fit_and_errors(
                     samples,
@@ -473,7 +481,7 @@ def _compute_output(analyses, _defaults, out):
 
             samples = analyses[key]["fitted point source"]
 
-            label = "%s: total" % key
+            label = f"{key}: total"
 
             _append_best_fit_and_errors(
                 samples, _defaults, label, fluxes, p_errors, n_errors, labels
@@ -497,7 +505,9 @@ def _compute_output(analyses, _defaults, out):
         out.append(None)
 
 
-def _compute_output_with_components(_defaults, component_sum_dict, total_analysis, out):
+def _compute_output_with_components(
+    _defaults, component_sum_dict, total_analysis, out
+):
 
     fluxes = []
     n_errors = []
