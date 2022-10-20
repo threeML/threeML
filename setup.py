@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import sys
-
-import glob
 
 from setuptools import setup
 
 import versioneer
-
 
 # This dynamically loads a module and return it in a variable.
 # Will use it for check optional dependencies
