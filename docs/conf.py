@@ -139,14 +139,15 @@ language = None
 # directories to ignore when looking for source files.
 exclude_patterns = ["_build", "**.ipynb_checkpoints"]
 
-html_theme = "sphinx_rtd_dark_mode"
+html_theme = "pydata_sphinx_theme"
+#html_theme = "sphinx_rtd_dark_mode"
 
 
 html_theme_options = {
     "logo_only": False,
     "display_version": False,
     "collapse_navigation": True,
-    "navigation_depth": 4,
+    "navigation_depth": 2,
     "prev_next_buttons_location": "bottom",  # top and bottom
 }
 
