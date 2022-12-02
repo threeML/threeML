@@ -90,8 +90,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Fitting XMM-Newton data with the APEC model</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Fitting XMM-Newton data with the APEC model</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -210,10 +210,11 @@ div.nboutput.container div.prompt > div {
     }
 }
 
-/* disable scrollbars on prompts */
+/* disable scrollbars and line breaks on prompts */
 div.nbinput.container div.prompt pre,
 div.nboutput.container div.prompt pre {
     overflow: hidden;
+    white-space: pre;
 }
 
 /* input/output area */
@@ -406,11 +407,11 @@ as well as the pseudo-continuum and over 10,000 individual emission lines.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%capture
 
-<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+from threeML import *
 
-<span class="n">modapec</span> <span class="o">=</span> <span class="n">APEC</span><span class="p">()</span>
+modapec = APEC()
 </pre></div>
 </div>
 </div>
@@ -419,7 +420,7 @@ as well as the pseudo-continuum and over 10,000 individual emission lines.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">init_session</span><span class="p">(</span><span class="n">abund_table</span><span class="o">=</span><span class="s1">&#39;AG89&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>modapec.init_session(abund_table=&#39;AG89&#39;)
 </pre></div>
 </div>
 </div>
@@ -439,7 +440,7 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>modapec.display()
 </pre></div>
 </div>
 </div>
@@ -559,13 +560,13 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="c1"># 3 keV temperature</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>modapec.kT.value = 3.0 # 3 keV temperature
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="c1"># Normalization, proportional to emission measure</span>
+modapec.K.value = 1e-3 # Normalization, proportional to emission measure
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">redshift</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1"># Source redshift</span>
+modapec.redshift.value = 0. # Source redshift
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">abund</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="c1"># The metal abundance of each element is set to 0.3 times the Solar abundance</span>
+modapec.abund.value = 0.3 # The metal abundance of each element is set to 0.3 times the Solar abundance
 </pre></div>
 </div>
 </div>
@@ -574,11 +575,11 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
 
-<span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="c1"># Set up the energy grid</span>
+energies = np.logspace(-1., 1.5, 1000) # Set up the energy grid
 
-<span class="n">ktgrid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">7.0</span><span class="p">,</span><span class="mf">9.0</span><span class="p">,</span><span class="mf">12.0</span><span class="p">,</span><span class="mf">15.0</span><span class="p">]</span> <span class="c1"># Temperature grid</span>
+ktgrid = [0.2,0.5,1.0,2.0,3.0,5.0,7.0,9.0,12.0,15.0] # Temperature grid
 <br/></pre></div>
 </div>
 </div>
@@ -586,41 +587,41 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">colors</span>
-<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cmx</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+import matplotlib.cm as cmx
 
-<span class="o">%</span><span class="k">matplotlib</span> inline
+%matplotlib inline
 
-<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()):</span>
-    <span class="n">item</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+plt.clf()
+fig=plt.figure(figsize=(13,10))
+ax = fig.add_axes([0.12, 0.12, 0.85, 0.85])
+for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+    item.set_fontsize(18)
 
-<span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ktgrid</span><span class="p">)</span>
+nspec = len(ktgrid)
 
-<span class="n">values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">)</span>
-<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;gist_rainbow&#39;</span><span class="p">)</span>
-<span class="n">cNorm</span>  <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">scalarMap</span> <span class="o">=</span> <span class="n">cmx</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cNorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">)</span>
-<span class="n">ccc</span><span class="o">=</span><span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
-    <span class="n">ccc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalarMap</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+values = range(nspec)
+cm = plt.get_cmap(&#39;gist_rainbow&#39;)
+cNorm  = colors.Normalize(vmin=0, vmax=values[-1])
+scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=cm)
+ccc=[]
+for i in range(nspec):
+    ccc.append(scalarMap.to_rgba(i))
 
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
-    <span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">ktgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">modapec</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;kT=</span><span class="si">%g</span><span class="s1"> keV&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">ktgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+for i in range(nspec):
+    modapec.kT.value = ktgrid[i]
+    plt.plot(energies,modapec(energies),color=ccc[i],label=&#39;kT=%g keV&#39;%(ktgrid[i]))
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+plt.xscale(&#39;log&#39;)
+plt.yscale(&#39;log&#39;)
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Photon Flux&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">15.</span><span class="p">,</span><span class="mf">1e-8</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Z=0.3 $Z_\odot$ and varying temperature&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+plt.xlabel(&#39;Energy [keV]&#39;,fontsize=28)
+plt.ylabel(&#39;Photon Flux&#39;,fontsize=28)
+plt.axis([0.1,15.,1e-8,1.0])
+plt.title(&#39;Z=0.3 $Z_\odot$ and varying temperature&#39;,fontsize=28)
+plt.legend(fontsize=22, ncol=2)
 <br/></pre></div>
 </div>
 </div>
@@ -653,9 +654,9 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Zgrid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]</span> <span class="c1"># Metallicities wrt Solar</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>Zgrid = [0., 0.1, 0.3, 0.5, 1., 2.] # Metallicities wrt Solar
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span>
+modapec.kT.value = 1.0
 </pre></div>
 </div>
 </div>
@@ -663,35 +664,35 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()):</span>
-    <span class="n">item</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.clf()
+fig=plt.figure(figsize=(13,10))
+ax = fig.add_axes([0.12, 0.12, 0.85, 0.85])
+for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+    item.set_fontsize(18)
 
-<span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Zgrid</span><span class="p">)</span>
+nspec = len(Zgrid)
 
-<span class="n">values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">)</span>
-<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;gist_rainbow&#39;</span><span class="p">)</span>
-<span class="n">cNorm</span>  <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">scalarMap</span> <span class="o">=</span> <span class="n">cmx</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cNorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">)</span>
-<span class="n">ccc</span><span class="o">=</span><span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
-    <span class="n">ccc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalarMap</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+values = range(nspec)
+cm = plt.get_cmap(&#39;gist_rainbow&#39;)
+cNorm  = colors.Normalize(vmin=0, vmax=values[-1])
+scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=cm)
+ccc=[]
+for i in range(nspec):
+    ccc.append(scalarMap.to_rgba(i))
 
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
-    <span class="n">modapec</span><span class="o">.</span><span class="n">abund</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Zgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">modapec</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Z/Z_\odot$=</span><span class="si">%g</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">Zgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+for i in range(nspec):
+    modapec.abund.value = Zgrid[i]
+    plt.plot(energies,modapec(energies),color=ccc[i],label=&#39;$Z/Z_\odot$=%g&#39;%(Zgrid[i]))
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+plt.xscale(&#39;log&#39;)
+plt.yscale(&#39;log&#39;)
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Photon Flux&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">15.</span><span class="p">,</span><span class="mf">1e-7</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;kT=1 keV and varying metallicity&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+plt.xlabel(&#39;Energy [keV]&#39;,fontsize=28)
+plt.ylabel(&#39;Photon Flux&#39;,fontsize=28)
+plt.axis([0.1,15.,1e-7,0.1])
+plt.title(&#39;kT=1 keV and varying metallicity&#39;,fontsize=28)
+plt.legend(fontsize=22)
 <br/></pre></div>
 </div>
 </div>
@@ -727,23 +728,23 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phabs</span> <span class="o">=</span> <span class="n">PhAbs</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>phabs = PhAbs()
 
-<span class="n">phabs</span><span class="o">.</span><span class="n">NH</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># A value of 1 corresponds to 1e22 cm-2</span>
+phabs.NH.value = 0.1 # A value of 1 corresponds to 1e22 cm-2
 
-<span class="n">phabs</span><span class="o">.</span><span class="n">NH</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># NH is fixed</span>
+phabs.NH.fix = True # NH is fixed
 
-<span class="n">phabs</span><span class="o">.</span><span class="n">init_xsect</span><span class="p">(</span><span class="n">abund_table</span><span class="o">=</span><span class="s1">&#39;AG89&#39;</span><span class="p">)</span>
+phabs.init_xsect(abund_table=&#39;AG89&#39;)
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="c1"># Initial values</span>
+modapec.kT = 3.0 # Initial values
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">0.1</span>
+modapec.K = 0.1
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">redshift</span> <span class="o">=</span> <span class="mf">0.1</span>
+modapec.redshift = 0.1
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">abund</span> <span class="o">=</span> <span class="mf">0.3</span>
+modapec.abund = 0.3
 
-<span class="n">mod_comb</span> <span class="o">=</span> <span class="n">phabs</span> <span class="o">*</span> <span class="n">modapec</span>
+mod_comb = phabs * modapec
 </pre></div>
 </div>
 </div>
@@ -752,13 +753,13 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xmm_pha</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/xmm/pnS004-A2443_reg2.fak&quot;</span><span class="p">)</span>
-<span class="n">xmm_rmf</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/xmm/pnS004-A2443_reg2.rmf&quot;</span><span class="p">)</span>
-<span class="n">xmm_arf</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/xmm/pnS004-A2443_reg2.arf&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>xmm_pha = get_path_of_data_file(&quot;datasets/xmm/pnS004-A2443_reg2.fak&quot;)
+xmm_rmf = get_path_of_data_file(&quot;datasets/xmm/pnS004-A2443_reg2.rmf&quot;)
+xmm_arf = get_path_of_data_file(&quot;datasets/xmm/pnS004-A2443_reg2.arf&quot;)
 
-<span class="n">ogip</span> <span class="o">=</span> <span class="n">OGIPLike</span><span class="p">(</span><span class="s2">&quot;ogip&quot;</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="n">xmm_pha</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">xmm_rmf</span><span class="p">,</span> <span class="n">arf_file</span><span class="o">=</span><span class="n">xmm_arf</span><span class="p">)</span>
+ogip = OGIPLike(&quot;ogip&quot;, observation=xmm_pha, response=xmm_rmf, arf_file=xmm_arf)
 
-<span class="n">pts</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s1">&#39;mysource&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">spectral_shape</span><span class="o">=</span><span class="n">mod_comb</span><span class="p">)</span>
+pts = PointSource(&#39;mysource&#39;,0,0,spectral_shape=mod_comb)
 <br/></pre></div>
 </div>
 </div>
@@ -767,15 +768,15 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">ogip</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig = ogip.view_count_spectrum()
 
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+fig.set_size_inches(13,10)
 
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+ax = fig.get_axes()[0]
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">right</span><span class="o">=</span><span class="mf">14.</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Energy [keV]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Rate [counts s$^{-1}$ keV$^{-1}$]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+ax.set_xlim(left=0.3,right=14.)
+ax.set_xlabel(&#39;Energy [keV]&#39;,fontsize=28)
+ax.set_ylabel(&#39;Rate [counts s$^{-1}$ keV$^{-1}$]&#39;,fontsize=28)
 <br/><br/></pre></div>
 </div>
 </div>
@@ -791,17 +792,17 @@ Will not thermally broaden lines
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ogip</span><span class="o">.</span><span class="n">remove_rebinning</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ogip.remove_rebinning()
 
-<span class="n">ogip</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s1">&#39;0.5-10.&#39;</span><span class="p">)</span>
+ogip.set_active_measurements(&#39;0.5-10.&#39;)
 
-<span class="n">ogip</span><span class="o">.</span><span class="n">rebin_on_source</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+ogip.rebin_on_source(20)
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+model = Model(pts)
 
-<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">DataList</span><span class="p">(</span><span class="n">ogip</span><span class="p">))</span>
+jl = JointLikelihood(model,DataList(ogip))
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+result = jl.fit()
 <br/></pre></div>
 </div>
 </div>
@@ -980,9 +981,9 @@ Values of statistical measures:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">display_spectrum_model_counts</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span><span class="n">data_color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span><span class="n">model_color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">min_rate</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig = display_spectrum_model_counts(jl,data_color=&#39;blue&#39;,model_color=&#39;red&#39;, min_rate=5e-4)
 
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+fig.set_size_inches(13,10)
 <br/></pre></div>
 </div>
 </div>
