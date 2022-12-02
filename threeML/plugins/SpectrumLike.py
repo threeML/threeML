@@ -2099,7 +2099,7 @@ class SpectrumLike(PluginPrototype):
                 def differential_flux(energies):
 
                     return likelihood_model.sources[self._source_name](
-                        energies, tag=self._tag
+                        energies, tag=self._tag, stokes=self._stokes
                     )
 
                 log.debug(
