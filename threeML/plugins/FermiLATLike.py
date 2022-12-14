@@ -482,6 +482,14 @@ class FermiLATLike(PluginPrototype):
 
         self.update_nuisance_parameters(new_nuisance_parameters)
 
+    def get_number_of_data_points(self):
+
+        number_of_data_points = self.like.total_nobs()
+
+        log.debug("Number of events in LAT likelihood fit: %d" % number_of_data_points)
+
+        return number_of_data_points
+
     def clear_source_name(self) -> None:
         if self._source_name is not None:
 

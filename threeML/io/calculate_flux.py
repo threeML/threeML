@@ -89,7 +89,15 @@ def _setup_analysis_dictionaries(
 
                     except:
 
-                        comps = []
+                        try:
+
+                            comps = [
+                                c for c in source.components
+                            ]
+
+                        except:
+
+                            comps = []
 
                     # duplicate components
                     comps = [
@@ -126,7 +134,15 @@ def _setup_analysis_dictionaries(
 
                     except:
 
-                        comps = []
+                        try:
+
+                            comps = [
+                                c for c in source.components
+                            ]
+
+                        except:
+
+                            comps = []
 
                     # duplicate components
                     comps = [
@@ -152,7 +168,6 @@ def _setup_analysis_dictionaries(
         for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
 
             # if we want to use this source
-
             if (
                 not use_components
                 or ("total" in components_to_use)
