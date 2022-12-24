@@ -20,14 +20,19 @@ from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.data_residual_plot import ResidualPlot
-from threeML.io.plotting.light_curve_plots import (channel_plot,
-                                                   disjoint_patch_plot)
+from threeML.io.plotting.light_curve_plots import (
+    channel_plot,
+    disjoint_patch_plot,
+)
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.binner import Rebinner
-from threeML.utils.spectrum.binned_spectrum import (BinnedSpectrum, ChannelSet,
-                                                    Quality)
+from threeML.utils.spectrum.binned_spectrum import (
+    BinnedSpectrum,
+    ChannelSet,
+    Quality,
+)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
@@ -428,7 +433,7 @@ class SpectrumLike(PluginPrototype):
                     observation_noise_model = "gaussian"
                     background_noise_model = "gaussian"
 
-                    #if not np.all(self._background_counts >= 0):
+                    # if not np.all(self._background_counts >= 0):
                     #    raise NegativeBackground(
                     #        "Error in background spectrum: negative background!"
                     #    )
@@ -2429,19 +2434,23 @@ class SpectrumLike(PluginPrototype):
         """
 
         cnt_err = None
-        log.debug('self._observation_noise_model = %s' % self._observation_noise_model )
-        log.debug('self._background_noise_model = %s' % self._background_noise_model )
+        log.debug(
+            "self._observation_noise_model = %s" % self._observation_noise_model
+        )
+        log.debug(
+            "self._background_noise_model = %s" % self._background_noise_model
+        )
         if self._observation_noise_model == "poisson":
 
             cnt_err = np.sqrt(self._observed_counts)
 
         else:
 
-            #if self._background_noise_model is None:
+            # if self._background_noise_model is None:
             cnt_err = self._observed_count_errors
-            #elif self._background_noise_model is "gaussian":
+            # elif self._background_noise_model is "gaussian":
             #    cnt_err = self._observed_count_errors
-                # calculate all the correct quantites
+            # calculate all the correct quantites
 
         return cnt_err
 
@@ -2486,7 +2495,7 @@ class SpectrumLike(PluginPrototype):
 
                 raise RuntimeError("This is a bug")
 
-        else: # gaussian observation
+        else:  # gaussian observation
 
             if self._background_noise_model is None:
                 # Observed counts
@@ -2885,7 +2894,9 @@ class SpectrumLike(PluginPrototype):
 
                 background_rate = background_counts / self._background_exposure
 
-                background_rate_errors = background_errors / self._background_exposure
+                background_rate_errors = (
+                    background_errors / self._background_exposure
+                )
 
                 cnt_err = copy.copy(self._current_observed_count_errors)
 
@@ -2909,11 +2920,11 @@ class SpectrumLike(PluginPrototype):
             background_rate /= self._background_scale_factor
             background_rate_errors /= self._background_scale_factor
 
-            background_label = "Scaled %sBackground" % modeled_label
+            background_label = f"Scaled {modeled_label}Background"
 
         else:
 
-            background_label = "%sBackground" % modeled_label
+            background_label = f"{modeled_label}Background"
 
         # Make the plots
         fig, ax = plt.subplots()
@@ -3105,10 +3116,16 @@ class SpectrumLike(PluginPrototype):
 
             # make some nice top and bottom plot ranges
 
-            tmp_bkg = background_rate_unrebinned / energy_width_unrebinned
+            # tmp_bkg = background_rate_unrebinned / energy_width_unrebinned
+            # tmp_bkg = tmp_bkg[np.isfinite(tmp_bkg)]
+
+            # tmp_obs = observed_rate_unrebinned / energy_width_unrebinned
+            # tmp_obs = tmp_obs[np.isfinite(tmp_obs)]
+
+            tmp_bkg = background_rate / energy_width
             tmp_bkg = tmp_bkg[np.isfinite(tmp_bkg)]
 
-            tmp_obs = observed_rate_unrebinned / energy_width_unrebinned
+            tmp_obs = observed_rates / energy_width
             tmp_obs = tmp_obs[np.isfinite(tmp_obs)]
 
             top = max([max(tmp_bkg), max(tmp_obs)]) * 1.5
@@ -3498,11 +3515,14 @@ class SpectrumLike(PluginPrototype):
 
                 if self._background_noise_model is None:
                     residuals = (
-                                        rebinned_observed_counts - rebinned_model_counts
-                                ) / rebinned_observed_count_errors
+                        rebinned_observed_counts - rebinned_model_counts
+                    ) / rebinned_observed_count_errors
                 elif self._background_noise_model == "gaussian":
 
-                    residuals = significance_calc.gaussian_background(rebinned_observed_count_errors,rebinned_background_errors)
+                    residuals = significance_calc.gaussian_background(
+                        rebinned_observed_count_errors,
+                        rebinned_background_errors,
+                    )
 
                 else:
 

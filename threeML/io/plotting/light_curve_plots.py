@@ -30,7 +30,7 @@ def binned_light_curve_plot(
     """
     fig, ax = plt.subplots()
 
-    top      = max(old_div(cnts[width > 0], width[width > 0])) * 1.2
+    top = max(old_div(cnts[width > 0], width[width > 0])) * 1.2
 
     min_cnts = min(old_div(cnts[cnts > 0], width[cnts > 0])) * 0.95
     bottom = min_cnts
