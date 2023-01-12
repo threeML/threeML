@@ -239,16 +239,24 @@ def poisson_observed_gaussian_background(
         # Let's do the branch with background > 0 first
 
         if background_counts[idx] > 0:
-
-            log_likes[idx] = (
-                -((b[idx] - background_counts[idx]) ** 2) / (2 * s2)
-                + observed_counts[idx] * log(b[idx] + expected_model_counts[idx])
-                - b[idx]
-                - expected_model_counts[idx]
-                - logfactorial(observed_counts[idx])
-                - 0.5 * _log_pi_2
-                - log(background_error[idx])
-            )
+            if observed_counts[idx] > 0:
+                log_likes[idx] = (
+                    -((b[idx] - background_counts[idx]) ** 2) / (2 * s2)
+                    + observed_counts[idx] * log(b[idx] + expected_model_counts[idx])
+                    - b[idx]
+                    - expected_model_counts[idx]
+                    - logfactorial(observed_counts[idx])
+                    - 0.5 * _log_pi_2
+                    - log(background_error[idx])
+                )
+            else:
+                log_likes[idx] = (
+                    -((b[idx] - background_counts[idx]) ** 2) / (2 * s2)
+                    - b[idx]
+                    - expected_model_counts[idx]
+                    - 0.5 * _log_pi_2
+                    - log(background_error[idx])
+                )
 
         # Let's do the other branch
 
@@ -261,6 +269,13 @@ def poisson_observed_gaussian_background(
                 - expected_model_counts[idx]
                 - logfactorial(observed_counts[idx])
             )
+        # print ('N=',observed_counts[idx],
+        #        'M=',expected_model_counts[idx],
+        #        'B=',background_counts[idx],
+        #        'BE=', background_error[idx],
+        #        'b=',b[idx],
+        #        'b+M=', b[idx] + expected_model_counts[idx],
+        #        'LL=',log_likes[idx])
 
     return log_likes, b
 

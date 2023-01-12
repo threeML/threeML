@@ -6,9 +6,16 @@ import threeML.plugins.SpectrumLike as speclike
 try:
     from threeML.plugins.FermiLATLike import FermiLATLike
 
-    LATLike = True
+    FermiLATLike_flag = True
 except:
-    LATLike = False
+    FermiLATLike_flag = False
+
+try:
+    from threeML.plugins.FermipyLike import FermipyLike
+
+    FermipyLike_flag = False
+except:
+    FermipyLike_flag = False
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
@@ -86,11 +93,13 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             if isinstance(analysis.data_list[key], speclike.SpectrumLike):
                 new_data_keys.append(key)
-            elif LATLike and isinstance(analysis.data_list[key], FermiLATLike):
+            elif FermiLATLike_flag and isinstance(analysis.data_list[key], FermiLATLike):
+                new_data_keys.append(key)
+            elif FermipyLike_flag and isinstance(analysis.data_list[key], FermipyLike):
                 new_data_keys.append(key)
             else:
                 log.warning(
-                    "Dataset %s is not of the SpectrumLike or FermiLATLike  kind. Cannot be plotted by display_spectrum_model_counts"
+                    "Dataset %s is not of the SpectrumLike, FermiLATLike or FermipyLATLike kind. Cannot be plotted by display_spectrum_model_counts"
                     % key
                 )
 

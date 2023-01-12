@@ -324,9 +324,10 @@ class FermiLATLike(PluginPrototype):
         self.n_energies = 200
 
         with fits.open(event_file) as file:
-            self.__observation_duration = (
-                file[0].header["TSTOP"] - file[0].header["TSTART"]
-            )
+            #self.__observation_duration = (
+            #    file[0].header["TSTOP"] - file[0].header["TSTART"]
+            #)
+            self.__observation_duration =  (file['GTI'].data.STOP - file['GTI'].data.START).sum()
 
         # This is the limit on the effective area correction factor,
         # which is a multiplicative factor in front of the whole model

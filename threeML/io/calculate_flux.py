@@ -468,7 +468,6 @@ def _compute_output(analyses, _defaults, out):
         if get_total:
             # it ends up that we need to plot the total spectrum
             # which is just a repeat of the process
-
             samples = analyses[key]["fitted point source"]
 
             label = "%s: total" % key
