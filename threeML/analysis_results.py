@@ -8,7 +8,7 @@ import math
 import os
 from builtins import map, object, range, str
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 import astromodels
 import astropy.units as u
@@ -22,6 +22,7 @@ from astromodels.core.my_yaml import my_yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
 from past.utils import old_div
+from rich.console import Console
 
 from threeML import __version__
 from threeML.config.config import threeML_config
@@ -29,10 +30,8 @@ from threeML.exceptions.custom_exceptions import BadCovariance
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile, fits
-from threeML.io.hdf5_utils import (
-    recursively_load_dict_contents_from_group,
-    recursively_save_dict_contents_to_group,
-)
+from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
+                                   recursively_save_dict_contents_to_group)
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
@@ -41,9 +40,13 @@ from threeML.io.table import NumericMatrix
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.random_variates import RandomVariates
 
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+if threeML_config.plotting.use_threeml_style:
+
+    plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 log = setup_logger(__name__)
+
+_rich_console = Console()
 
 try:
 
@@ -192,9 +195,7 @@ class ANALYSIS_RESULTS_HDF(object):
 
         hdf_obj.create_dataset(
             "NAME",
-            data=np.array(
-                list(free_parameters.keys()), dtype=h5py.string_dtype()
-            ),
+            data=np.array(list(free_parameters.keys()), dtype=h5py.string_dtype()),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
@@ -273,22 +274,16 @@ class ANALYSIS_RESULTS_HDF(object):
             raise RuntimeError("This AR is invalid!")
 
         # Now add two keywords for each instrument
-        stat_series = (
-            analysis_results.optimal_statistic_values
-        )  # type: pd.Series
+        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
-        for i, (plugin_instance_name, stat_value) in enumerate(
-            stat_series.items()
-        ):
+        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
 
             hdf_obj.attrs["STAT%i" % i] = stat_value
             hdf_obj.attrs["PN%i" % i] = plugin_instance_name
 
         # Now add the statistical measures
 
-        measure_series = (
-            analysis_results.statistical_measures
-        )  # type: pd.Series
+        measure_series = analysis_results.statistical_measures  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
             hdf_obj.attrs["MEAS%i" % i] = measure
@@ -382,14 +377,10 @@ class ANALYSIS_RESULTS(FITSExtension):
             dummy[0] = log_probability
 
         # Serialize the model so it can be placed in the header
-        yaml_model_serialization = my_yaml.dump(
-            optimized_model.to_dict_with_types()
-        )
+        yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
         # Replace characters which cannot be contained in a FITS header with other characters
-        yaml_model_serialization = _escape_yaml_for_fits(
-            yaml_model_serialization
-        )
+        yaml_model_serialization = _escape_yaml_for_fits(yaml_model_serialization)
 
         # Get data frame with parameters (always use equal tail errors)
 
@@ -411,22 +402,16 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Init FITS extension
 
-        super(ANALYSIS_RESULTS, self).__init__(
-            data_tuple, self._HEADER_KEYWORDS
-        )
+        super(ANALYSIS_RESULTS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords with their values for this instance
         self.hdu.header.set("MODEL", yaml_model_serialization)
         self.hdu.header.set("RESUTYPE", analysis_results.analysis_type)
 
         # Now add two keywords for each instrument
-        stat_series = (
-            analysis_results.optimal_statistic_values
-        )  # type: pd.Series
+        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
-        for i, (plugin_instance_name, stat_value) in enumerate(
-            stat_series.items()
-        ):
+        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
             self.hdu.header.set(
                 "STAT%i" % i,
                 stat_value,
@@ -440,14 +425,10 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Now add the statistical measures
 
-        measure_series = (
-            analysis_results.statistical_measures
-        )  # type: pd.Series
+        measure_series = analysis_results.statistical_measures  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
-            self.hdu.header.set(
-                "MEAS%i" % i, measure, comment="Measure type %i" % i
-            )
+            self.hdu.header.set("MEAS%i" % i, measure, comment="Measure type %i" % i)
             self.hdu.header.set(
                 "MV%i" % i, measure_value, comment="Measure value %i" % i
             )
@@ -473,9 +454,7 @@ class AnalysisResultsFITS(FITSFile):
             # We got elements to write the SEQUENCE extension
 
             # Make SEQUENCE extension
-            sequence_ext = SEQUENCE(
-                kwargs["sequence_name"], kwargs["sequence_tuple"]
-            )
+            sequence_ext = SEQUENCE(kwargs["sequence_name"], kwargs["sequence_tuple"])
 
             extensions.append(sequence_ext)
 
@@ -493,9 +472,7 @@ class AnalysisResultsFITS(FITSFile):
         super(AnalysisResultsFITS, self).__init__(fits_extensions=extensions)
 
         # Set a couple of keywords in the primary header
-        self._hdu_list[0].header.set(
-            "DATE", datetime.datetime.now().isoformat()
-        )
+        self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
         self._hdu_list[0].header.set(
             "ORIGIN",
             "3ML",
@@ -560,9 +537,7 @@ class _AnalysisResults(object):
         self._free_parameters = self._optimized_model.free_parameters
 
         # Gather also the optimized values of the parameters
-        self._values = np.array(
-            [x.value for x in list(self._free_parameters.values())]
-        )
+        self._values = np.array([x.value for x in list(self._free_parameters.values())])
 
         # Set the analysis type
         self._analysis_type = analysis_type
@@ -582,9 +557,7 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(
-        self, filename: str, overwrite: bool = False, as_hdf: bool = False
-    ):
+    def write_to(self, filename: str, overwrite: bool = False, as_hdf: bool = False):
         """
         Write results to a FITS or HDF5 file
 
@@ -665,9 +638,7 @@ class _AnalysisResults(object):
         # Get the arguments of function which have not been specified
         # in the calling sequence (the **kwargs dictionary)
         # (they will be excluded from the vectorization)
-        to_be_excluded = [
-            item for item in arguments if item not in list(kwargs.keys())
-        ]
+        to_be_excluded = [item for item in arguments if item not in list(kwargs.keys())]
 
         # Vectorize the function
         vectorized = np.vectorize(function, excluded=to_be_excluded)
@@ -677,9 +648,7 @@ class _AnalysisResults(object):
         wrapper = functools.partial(vectorized, **kwargs)
 
         # Finally make so that the result is always a RandomVariate
-        wrapper2 = lambda *args, **kwargs: RandomVariates(
-            wrapper(*args, **kwargs)
-        )
+        wrapper2 = lambda *args, **kwargs: RandomVariates(wrapper(*args, **kwargs))
 
         return wrapper2
 
@@ -810,8 +779,7 @@ class _AnalysisResults(object):
         else:
 
             raise ValueError(
-                "error_type must be either 'equal tail' or 'hpd'. Got %s"
-                % error_type
+                "error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type
             )
 
         # Build the data frame
@@ -845,9 +813,7 @@ class _AnalysisResults(object):
 
                 if this_par.has_transformation():
 
-                    best_fit_internal = this_par.transformation.forward(
-                        values[-1]
-                    )
+                    best_fit_internal = this_par.transformation.forward(values[-1])
 
                     _, neg_error = this_par.internal_to_external_delta(
                         best_fit_internal, -std_dev
@@ -1051,13 +1017,19 @@ class BayesianResults(_AnalysisResults):
 
         return self._get_statistic_frame(name="-log(posterior)")
 
-    def display(
-        self, display_correlation=False, error_type="equal tail", cl=0.68
-    ):
+    def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
 
         best_fit_table = self._get_results_table(error_type, cl)
 
-        print("Maximum a posteriori probability (MAP) point:\n")
+        if threeML_config.bayesian.use_median_fit:
+
+            _rich_console.print("[medium_spring_green bold underline] Median posterior point:")
+
+        else:
+
+            _rich_console.print(
+                "[medium_spring_green bold underline]Maximum a posteriori probability (MAP) point:\n"
+            )
 
         best_fit_table.display()
 
@@ -1068,15 +1040,19 @@ class BayesianResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            print("\nCorrelation matrix:\n")
+            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
 
             display(corr_matrix)
 
-        print("\nValues of -log(posterior) at the minimum:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of -log(posterior) at the minimum:\n"
+        )
 
         display(self.get_statistic_frame())
 
-        print("\nValues of statistical measures:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of statistical measures:\n"
+        )
 
         display(self.get_statistic_measure_frame())
 
@@ -1102,9 +1078,7 @@ class BayesianResults(_AnalysisResults):
                 len(list(self._free_parameters.keys()))
                 == self._samples_transposed.T[0].shape[0]
             ), (
-                "Mismatch between sample"
-                " dimensions and number of free"
-                " parameters"
+                "Mismatch between sample" " dimensions and number of free" " parameters"
             )
 
             components = self._free_parameters.keys()
@@ -1123,9 +1097,7 @@ class BayesianResults(_AnalysisResults):
                         ]
                     )
                 except ValueError:
-                    raise ValueError(
-                        "Parameter %s must be a free parameter" % name
-                    )
+                    raise ValueError("Parameter %s must be a free parameter" % name)
             samples = np.array(samples).T
 
         labels = []
@@ -1158,11 +1130,11 @@ class BayesianResults(_AnalysisResults):
             cmap.with_extremes(
                 under=corner_style.extremes,
                 over=corner_style.extremes,
-               bad=corner_style.extremes,
+                bad=corner_style.extremes,
             )
             cmap.set_extremes(
-               under=corner_style.extremes,
-               over=corner_style.extremes,
+                under=corner_style.extremes,
+                over=corner_style.extremes,
                 bad=corner_style.extremes,
             )
         except:
@@ -1202,9 +1174,7 @@ class BayesianResults(_AnalysisResults):
         """
         return self._log_probability
 
-    def corner_plot_cc(
-        self, parameters=None, renamed_parameters=None, **cc_kwargs
-    ):
+    def corner_plot_cc(self, parameters=None, renamed_parameters=None, **cc_kwargs):
         """
         Corner plots using chainconsumer which allows for nicer plotting of
         marginals
@@ -1241,16 +1211,12 @@ class BayesianResults(_AnalysisResults):
         labels = []
         priors = []
 
-        for i, (parameter_name, parameter) in enumerate(
-            self._free_parameters.items()
-        ):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
 
-            priors.append(
-                self._optimized_model.parameters[parameter_name].prior
-            )
+            priors.append(self._optimized_model.parameters[parameter_name].prior)
 
         # Rename the parameters if needed.
 
@@ -1413,9 +1379,7 @@ class BayesianResults(_AnalysisResults):
         labels = []
         # priors = []
 
-        for i, (parameter_name, parameter) in enumerate(
-            self._free_parameters.items()
-        ):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
@@ -1443,9 +1407,7 @@ class BayesianResults(_AnalysisResults):
 
         if names is not None:
 
-            cc.add_chain(
-                self._samples_transposed.T, parameters=labels, name=names[0]
-            )
+            cc.add_chain(self._samples_transposed.T, parameters=labels, name=names[0])
 
         else:
 
@@ -1554,9 +1516,7 @@ class BayesianResults(_AnalysisResults):
             this_bootstrap_variances = []
 
             for i in range(n_subsets):
-                samples = np.random.choice(
-                    this_samples, n_samples_in_each_subset
-                )
+                samples = np.random.choice(this_samples, n_samples_in_each_subset)
 
                 this_bootstrap_averages.append(np.average(samples))
                 this_bootstrap_variances.append(np.std(samples))
@@ -1582,21 +1542,15 @@ class BayesianResults(_AnalysisResults):
 
             fig.suptitle(parameter_name)
 
-            plot_one_histogram(
-                subs[0], averages[parameter_name], "sliding window"
-            )
-            plot_one_histogram(
-                subs[0], bootstrap_averages[parameter_name], "bootstrap"
-            )
+            plot_one_histogram(subs[0], averages[parameter_name], "sliding window")
+            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], "bootstrap")
 
             subs[0].set_ylabel("N subsets")
             subs[0].set_xlabel("Average")
 
             subs[0].legend()
 
-            plot_one_histogram(
-                subs[1], variances[parameter_name], "sliding window"
-            )
+            plot_one_histogram(subs[1], variances[parameter_name], "sliding window")
             plot_one_histogram(
                 subs[1], bootstrap_variances[parameter_name], "bootstrap"
             )
@@ -1726,9 +1680,7 @@ class MLEResults(_AnalysisResults):
 
             if not np.all(np.isfinite(covariance_matrix)):
 
-                log.error(
-                    "Covariance matrix contains Nan or inf. Cannot continue."
-                )
+                log.error("Covariance matrix contains Nan or inf. Cannot continue.")
 
                 raise BadCovariance()
 
@@ -1845,7 +1797,7 @@ class MLEResults(_AnalysisResults):
             error_type="covariance", cl=cl, covariance=self.covariance_matrix
         )
 
-        print("Best fit values:\n")
+        _rich_console.print("[medium_spring_green bold underline]Best fit values:\n")
 
         best_fit_table.display()
 
@@ -1856,15 +1808,15 @@ class MLEResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            print("\nCorrelation matrix:\n")
+            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
 
             display(corr_matrix)
 
-        print("\nValues of -log(likelihood) at the minimum:\n")
+        _rich_console.print("[medium_spring_green bold underline]\nValues of -log(likelihood) at the minimum:\n")
 
         display(self.get_statistic_frame())
 
-        print("\nValues of statistical measures:\n")
+        _rich_console.print("[medium_spring_green bold underline]\nValues of statistical measures:\n")
 
         display(self.get_statistic_measure_frame())
 
@@ -1900,9 +1852,7 @@ class AnalysisResultsSet(collections.abc.Sequence):
         :return:
         """
 
-        assert len(x) == len(
-            self
-        ), "Wrong number of bounds (%i, should be %i)" % (
+        assert len(x) == len(self), "Wrong number of bounds (%i, should be %i)" % (
             len(x),
             len(self),
         )
@@ -2117,9 +2067,7 @@ def _load_one_results(fits_extension):
     analysis_type = fits_extension.header.get("RESUTYPE")
 
     # Gather the optimized model
-    serialized_model = _escape_back_yaml_from_fits(
-        fits_extension.header.get("MODEL")
-    )
+    serialized_model = _escape_back_yaml_from_fits(fits_extension.header.get("MODEL"))
     model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
 
     optimized_model = ModelParser(model_dict=model_dict).get_model()
@@ -2153,9 +2101,7 @@ def _load_one_results(fits_extension):
 
         # Get covariance matrix
 
-        covariance_matrix = np.atleast_2d(
-            fits_extension.data.field("COVARIANCE").T
-        )
+        covariance_matrix = np.atleast_2d(fits_extension.data.field("COVARIANCE").T)
 
         # Instance and return
 
@@ -2306,9 +2252,7 @@ def _load_set_of_results(open_fits_file, n_results):
     all_results = []
 
     for i in range(n_results):
-        all_results.append(
-            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1])
-        )
+        all_results.append(_load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
 
     this_set = AnalysisResultsSet(all_results)
 

@@ -11,7 +11,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.9
       - name: install latex
         uses: xu-cheng/texlive-action/small@v1
           
@@ -68,7 +68,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -79,7 +79,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+          key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
@@ -88,7 +88,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
           channels: conda-forge, threeml, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: true
@@ -113,9 +113,6 @@ jobs:
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
-          # temporary fix for fermi tools
-          conda install -c conda-forge clhep=2.4.4.1
-
       - name: Install the package
         shell: bash -l {0}
         run: |
@@ -123,9 +120,7 @@ jobs:
           pip install -e .
 
           pip install black
-          pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
-          pip install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -151,7 +146,7 @@ jobs:
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -171,7 +166,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: 3.7
+          python-version: 3.9
           channels: conda-forge, fermi, threeml, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: true
@@ -203,8 +198,7 @@ jobs:
           pip install -e .
 
           pip install black
-          pip install --no-binary :all: root_numpy
-          pip install git+https://github.com/desihub/speclite.git
+          pip install fermipy
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -218,8 +212,8 @@ jobs:
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
 
           # Update GtBurst:
-          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
-          python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+          #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+          #python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
 
@@ -246,7 +240,7 @@ jobs:
           
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -257,17 +251,17 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-xspec_notebooks-python-3.7-${{ hashFiles('ci/environment_xspec.yml') }}
+          key: conda-xspec_notebooks-python-3.9-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge, threeml, xspecmodels, defaults
+          python-version: 3.9
+          channels: threeml, conda-forge, xspecmodels, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: true
 
@@ -288,7 +282,15 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          
+          if [[ "${ISDEV}" == "true" ]]; then
+
+          mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
+          
+          fi
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Install the package
         shell: bash -l {0}
@@ -297,7 +299,6 @@ jobs:
           pip install -e .
 
           pip install black
-          pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
@@ -328,7 +329,7 @@ jobs:
           path: docs/notebooks
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -382,8 +383,13 @@ jobs:
           pip install -e .
           pip install zeus_mcmc dynesty
           pip install black
-          pip install --no-binary :all: root_numpy
+          #pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre --no-deps astromodels
+          fi
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -423,7 +429,7 @@ jobs:
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     
     steps:
       - name: Checkout
@@ -483,3 +489,117 @@ jobs:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ github.ref }}
+
+
+  api_doc:
+    name: "Create the API stubs"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Build the API doc
+        run: |
+
+          brew install c-blosc
+          brew install hdf5
+
+
+          pip3 install cython tempita
+          pip3 install numpy scipy numba astropy
+
+          python setup.py develop
+
+          brew install sphinx-doc pandoc
+
+          pip3 install wheel
+          pip3 install mock recommonmark
+          pip3 install sphinx-rtd-dark-mode
+          pip3 install -U sphinx
+
+
+          sphinx-apidoc -f -o docs/api/ threeML
+
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: api-stubs-for-${{ github.sha }}
+          path: docs/api
+
+
+
+
+  build_docs:
+    name: "Build the Documentation"
+    runs-on: macos-latest
+    needs: [upload_notebooks, api_doc]
+    steps:
+
+
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install package
+        run: |
+
+          brew install c-blosc
+          brew install hdf5
+
+          pip3 install wheel
+          pip3 install tempita
+          pip3 install numpy scipy numba astropy
+
+          brew install sphinx-doc pandoc
+
+
+          pip3 install mock recommonmark
+          pip3 install sphinx-rtd-dark-mode sphinx-math-dollar
+          pip3 install -U sphinx
+          pip3 install -r docs/requirements.txt
+
+          python3 setup.py develop
+
+          rm -rf docs/md_docs/*
+
+
+
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/notebooks
+
+
+      - uses: actions/download-artifact@master
+        with:
+          name: api-stubs-for-${{ github.sha }}
+          path: docs/notebooks/api
+
+
+      - name: Build and Commit
+        uses: sphinx-notes/pages@v2
+        with:
+          documentation_path: docs
+          sphinx_version: 5.1.1
+          requirements_path: docs/requirements.txt
+
+
+      - name: Push changes
+        if: github.event_name == 'push' #&& startsWith(github.event.ref, 'refs/tags')
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages

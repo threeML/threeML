@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.13.8
+      jupytext_version: 1.14.1
   kernelspec:
     display_name: Python 3 (ipykernel)
     language: python
@@ -178,6 +178,21 @@ data = DataList(LAT)
 jl = JointLikelihood(model, data)
 ```
 
+The normalization factors of the LAT background components are included in the models as nuisance parameters. They are only added during the previous step (during the model assignment). Let's display them:
+
+```python
+for k, v in LAT.nuisance_parameters.items():
+    print (k, ":", v)
+```
+
+We will fix the isotropic BG as we are not sensitive to it with this dataset. We will also fix one more weak source.
+
+```python
+model.LAT_isodiff_Normalization.fix = True
+model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
+model.display()
+```
+
 ### Performing the fit
 
 ```python
@@ -210,8 +225,8 @@ Or we might want to produce a contour plot
 
 ```python
 res = jl.get_contours(
-    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',0.7e-13,1.3e-13, 20,
-    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index',-2.0,-1.6, 20
+    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',1.6e-13,2.2e-13, 20,
+    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index',-2.0,-1.7, 20
 )
 ```
 
@@ -241,7 +256,7 @@ All the plots are saved in the output directory as png files:
 We can also plot the resulting model:
 
 ```python
-energies=sp.logspace(1,8,100) *u.MeV
+energies=sp.logspace(1,6,100) *u.MeV
 fig, ax=plt.subplots()
 # we only want to visualize the relevant sources...
 src_to_plot=['Crab','PSR_J0534p2200']
@@ -265,7 +280,7 @@ ax.legend(loc=0,frameon=False)
 
 ax.set_xlabel("Energy (MeV)")
 ax.set_ylabel(r"Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$")
-ax.set_ylim([1e-20,1e-3])
+ax.set_ylim([1e-18,1e-8])
 
 #show the plot
 fig
@@ -273,12 +288,12 @@ fig
 
 We can also do a bayesian analysis.
 
-This will set priors based on the current defined min-max (log-uniform or uniform)
 
+This will set priors based on the current defined min-max (log-uniform or uniform). 
 
 ```python
-
 for param in model.free_parameters.values():
+
     if param.has_transformation():
         param.set_uninformative_prior( Log_uniform_prior )
     else:
@@ -290,6 +305,13 @@ for param in model.free_parameters.values():
 shutil.rmtree(fermipy_output_directory)
 
 bayes = BayesianAnalysis(model, data)
+```
+
+Take care of the nuisance parameters `LAT_isodiff_Normalization` and `LAT_galdiff_Prefactor`, which are only created during the previous step.
+
+```python
+model.LAT_isodiff_Normalization.fix = True
+model.LAT_galdiff_Prefactor.set_uninformative_prior( Log_uniform_prior )
 ```
 
 ```python

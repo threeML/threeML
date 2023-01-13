@@ -300,8 +300,8 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         loglike, bkg_model = poisson_observed_gaussian_background(
             self._spectrum_plugin.current_observed_counts,
-            self._spectrum_plugin.current_background_counts,
-            self._spectrum_plugin.current_background_count_errors,
+            self._spectrum_plugin.current_background_counts * self._spectrum_plugin.scale_factor,
+            self._spectrum_plugin.current_background_count_errors * self._spectrum_plugin.scale_factor,
             expected_model_counts,
         )
 
@@ -397,6 +397,21 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
         return copy.copy(self._spectrum_plugin.background_count_errors)
 
 
+class NotAvailableStatistic(object):
+
+    def __init__(self, spectrum_plugin):
+        """
+        """
+        log.error('The required statistic is currently restricted to the IXPE plugin only.')
+        raise RuntimeError()
+
+try:
+    from ixpe.likelihood import GaussianObservedGaussianBackgroundStatistic
+    log.info('IXPE plugin found. Enabling Gaussian source with Gaussian background.')
+except:
+    GaussianObservedGaussianBackgroundStatistic = NotAvailableStatistic
+
+
 statistic_lookup = {
     "poisson": {
         "poisson": PoissonObservedPoissonBackgroundStatistic,
@@ -405,7 +420,8 @@ statistic_lookup = {
         None: PoissonObservedNoBackgroundStatistic,
         "modeled": PoissonObservedModeledBackgroundStatistic,
     },
-    "gaussian": {None: GaussianObservedStatistic},
+    "gaussian": {None: GaussianObservedStatistic,
+                 'gaussian':GaussianObservedGaussianBackgroundStatistic},
     None: {None: None},
 }
 

@@ -27,8 +27,9 @@ from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
 
-    
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+if threeML_config.plotting.use_threeml_style:
+
+    plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)
