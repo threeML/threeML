@@ -136,53 +136,17 @@ if ‘resume-similar’, continue previous run if available. Only works when dim
 
         param_names = list(self._free_parameters.keys())
 
-        n_dim = len(param_names)
+        chain_name = self._kwargs.pop('log_dir')
 
         loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
-        # We need to check if the MCMC
-        # chains will have a place on
-        # the disk to write and if not,
-        # create one
-
-        chain_name = self._kwargs.pop("log_dir")
-        if chain_name is not None:
-            mcmc_chains_out_dir = ""
-            tmp = chain_name.split("/")
-            for s in tmp[:-1]:
-                mcmc_chains_out_dir += s + "/"
-
-            if using_mpi:
-
-                # if we are running in parallel and this is not the
-                # first engine, then we want to wait and let everything finish
-
-                if rank != 0:
-
-                    # let these guys take a break
-                    time.sleep(1)
-
-                else:
-
-                    # create mcmc chains directory only on first engine
-
-                    if not os.path.exists(mcmc_chains_out_dir):
-                        log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
-                        os.makedirs(mcmc_chains_out_dir)
-
-            else:
-
-                if not os.path.exists(mcmc_chains_out_dir):
-                    log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
-                    os.makedirs(mcmc_chains_out_dir)
-
-        # Multinest must be run parallel via an external method
+        # UltraNest must be run parallel via an external method
         # see the demo in the examples folder!!
 
         if threeML_config["parallel"]["use_parallel"]:
 
             raise RuntimeError(
-                "If you want to run ultranest in parallell you need to use an ad-hoc method"
+                "If you want to run ultranest in parallel you need to use an ad-hoc method"
             )
 
         else:
