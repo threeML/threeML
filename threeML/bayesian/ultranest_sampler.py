@@ -133,6 +133,13 @@ class UltraNestSampler(UnitCubeSampler):
 
         param_names = list(self._free_parameters.keys())
 
+
+        chain_name = self._kwargs.pop('log_dir')
+
+        loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
+
+        # UltraNest must be run parallel via an external method
+
         loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # We need to check if the MCMC
@@ -171,12 +178,13 @@ class UltraNestSampler(UnitCubeSampler):
                     os.makedirs(mcmc_chains_out_dir)
 
         # Multinest must be run parallel via an external method
+
         # see the demo in the examples folder!!
 
         if threeML_config["parallel"]["use_parallel"]:
 
             raise RuntimeError(
-                "If you want to run ultranest in parallell you need to use an ad-hoc method"
+                "If you want to run ultranest in parallel you need to use an ad-hoc method"
             )
 
         else:
