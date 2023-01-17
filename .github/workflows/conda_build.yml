@@ -78,7 +78,7 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  conda install -c conda-forge boa -n base
+                  mamba install -c conda-forge boa
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
@@ -152,7 +152,7 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  conda install -c conda-forge boa -n base
+                  mamba install -c conda-forge boa
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
