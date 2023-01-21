@@ -13,7 +13,7 @@ except:
 try:
     from threeML.plugins.FermipyLike import FermipyLike
 
-    FermipyLike_flag = False
+    FermipyLike_flag = True
 except:
     FermipyLike_flag = False
 

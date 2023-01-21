@@ -412,7 +412,7 @@ class FermipyLike(PluginPrototype):
 
         # This is empty at the beginning, will be instanced in the set_model method
         self._gta = None
- 
+        # observation_duration = self._configuration["selection"]["tmax"] - self._configuration["selection"]["tmin"]
         self.set_inner_minimization(True)
 
 
@@ -525,6 +525,25 @@ class FermipyLike(PluginPrototype):
             )
 
         return self._gta
+
+    def get_observation_duration(self):
+        event_file = self._configuration["data"]["evfile"]
+        tmin = self._configuration["selection"]["tmin"]
+        tmax = self._configuration["selection"]["tmax"]
+        with fits.open(event_file) as file:
+            gti_start = file['GTI'].data.START
+            gti_stop  = file['GTI'].data.STOP
+
+        myfilter = (gti_stop > tmin) * (gti_start < tmax)
+
+        gti_sum = (gti_stop[myfilter] - gti_start[myfilter]).sum()
+
+        observation_duration = gti_sum - \
+                               (tmin - gti_start[myfilter][0]) - \
+                               (gti_stop[myfilter][-1]-tmax)
+
+        print('FermipyLike - GTI SUM = ', observation_duration)
+        return observation_duration
 
     def set_model(self, likelihood_model_instance):
         """
@@ -772,245 +791,255 @@ class FermipyLike(PluginPrototype):
         srcName, parName = self._split_nuisance_parameter(paramName)
         self.gta.set_parameter(srcName, parName, value, scale = 1, update_source=False)
 
-    # def display_model(
-    #     self,
-    #     data_color: str = "k",
-    #     model_color: str = "r",
-    #     background_color: str = "b",
-    #     show_data: bool = True,
-    #     show_residuals: bool = True,
-    #     ratio_residuals: bool = False,
-    #     show_legend: bool = True,
-    #     model_label: Optional[str] = None,
-    #     model_kwargs: Optional[Dict[str, Any]] = None,
-    #     data_kwargs: Optional[Dict[str, Any]] = None,
-    #     background_kwargs: Optional[Dict[str, Any]] = None,
-    #     **kwargs,
-    # ) -> ResidualPlot:
-    #     """
-    #     Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
-    #     a previous axis to 'model_subplot'.
-    #
-    #     Example usage:
-    #
-    #     fig = data.display_model()
-    #
-    #     fig2 = data2.display_model(model_subplot=fig.axes)
-    #
-    #
-    #     :param data_color: the color of the data
-    #     :param model_color: the color of the model
-    #     :param show_data: (bool) show_the data with the model
-    #     :param show_residuals: (bool) shoe the residuals
-    #     :param ratio_residuals: (bool) use model ratio instead of residuals
-    #     :param show_legend: (bool) show legend
-    #     :param model_label: (optional) the label to use for the model default is plugin name
-    #     :param model_kwargs: plotting kwargs affecting the plotting of the model
-    #     :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
-    #     :param background_kwargs: plotting kwargs affecting the plotting of the background
-    #     :return:
-    #     """
-    #     #event_file = self._configuration
-    #     #with fits.open(event_file) as file:
-    #         #self.__observation_duration = (
-    #         #    file[0].header["TSTOP"] - file[0].header["TSTART"]
-    #         #)
-    #     #    self.__observation_duration = (
-    #     #        (file[1].header["STOP"] - file[1].header["START"]).sum()
-    #     #    )
-    #     self.__observation_duration=1.0
-    #     self._source_name='GRB'
-    #     # set up the default plotting
-    #
-    #     _default_model_kwargs = dict(color=model_color, alpha=1)
-    #
-    #     _default_background_kwargs = dict(
-    #         color=background_color, alpha=1, ls="--"
-    #     )
-    #
-    #     _sub_menu = threeML_config.plotting.residual_plot
-    #
-    #     _default_data_kwargs = dict(
-    #         color=data_color,
-    #         alpha=1,
-    #         fmt=_sub_menu.marker,
-    #         markersize=_sub_menu.size,
-    #         ls="",
-    #         elinewidth=2,  # _sub_menu.linewidth,
-    #         capsize=0,
-    #     )
-    #
-    #     # overwrite if these are in the confif
-    #
-    #     _kwargs_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
-    #
-    #     if _kwargs_menu.model_mpl_kwargs is not None:
-    #
-    #         for k, v in _kwargs_menu.model_mpl_kwargs.items():
-    #
-    #             _default_model_kwargs[k] = v
-    #
-    #     if _kwargs_menu.data_mpl_kwargs is not None:
-    #
-    #         for k, v in _kwargs_menu.data_mpl_kwargs.items():
-    #
-    #             _default_data_kwargs[k] = v
-    #
-    #     if _kwargs_menu.background_mpl_kwargs is not None:
-    #
-    #         for k, v in _kwargs_menu.background_mpl_kwargs.items():
-    #
-    #             _default_background_kwargs[k] = v
-    #
-    #     if model_kwargs is not None:
-    #
-    #         assert type(model_kwargs) == dict, "model_kwargs must be a dict"
-    #
-    #         for k, v in list(model_kwargs.items()):
-    #
-    #             if k in _default_model_kwargs:
-    #
-    #                 _default_model_kwargs[k] = v
-    #
-    #             else:
-    #
-    #                 _default_model_kwargs[k] = v
-    #
-    #     if data_kwargs is not None:
-    #
-    #         assert type(data_kwargs) == dict, "data_kwargs must be a dict"
-    #
-    #         for k, v in list(data_kwargs.items()):
-    #
-    #             if k in _default_data_kwargs:
-    #
-    #                 _default_data_kwargs[k] = v
-    #
-    #             else:
-    #
-    #                 _default_data_kwargs[k] = v
-    #
-    #     if background_kwargs is not None:
-    #
-    #         assert (
-    #             type(background_kwargs) == dict
-    #         ), "background_kwargs must be a dict"
-    #
-    #         for k, v in list(background_kwargs.items()):
-    #
-    #             if k in _default_background_kwargs:
-    #
-    #                 _default_background_kwargs[k] = v
-    #
-    #             else:
-    #
-    #                 _default_background_kwargs[k] = v
-    #
-    #     # since we define some defualts, lets not overwrite
-    #     # the users
-    #
-    #     _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
-    #
-    #     for d in _duplicates:
-    #
-    #         if (d[0] in _default_model_kwargs) and (
-    #             d[1] in _default_model_kwargs
-    #         ):
-    #
-    #             _default_model_kwargs.pop(d[0])
-    #
-    #         if (d[0] in _default_data_kwargs) and (
-    #             d[1] in _default_data_kwargs
-    #         ):
-    #
-    #             _default_data_kwargs.pop(d[0])
-    #
-    #         if (d[0] in _default_background_kwargs) and (
-    #             d[1] in _default_background_kwargs
-    #         ):
-    #
-    #             _default_background_kwargs.pop(d[0])
-    #
-    #     if model_label is None:
-    #         model_label = "%s Model" % self._name
-    #
-    #     residual_plot = ResidualPlot(
-    #         show_residuals=show_residuals,
-    #         ratio_residuals=ratio_residuals,
-    #         **kwargs,
-    #     )
-    #
-    #     e1 = self._gta.energies[:-1] * 1000.0  # this has to be in keV
-    #     e2 = self._gta.energies[1:] * 1000.0  # this has to be in keV
-    #
-    #     ec = (e1 + e2) / 2.0
-    #     de = (e2 - e1) / 2.0
-    #
-    #     conversion_factor = de * self.__observation_duration
-    #     sum_model = np.zeros_like(
-    #         self._gta.model_counts_spectrum(self._gta.like.sourceNames()[0])
-    #     )
-    #
-    #     sum_backgrounds = np.zeros_like(
-    #         self._gta.model_counts_spectrum(self._gta.like.sourceNames()[0])
-    #     )
-    #
-    #     for source_name in self._gta.like.sourceNames():
-    #
-    #         source_counts = self._gta.model_counts_spectrum(source_name)[0]
-    #
-    #         sum_model = sum_model + source_counts
-    #         if source_name != self._source_name:
-    #             sum_backgrounds = sum_backgrounds + source_counts
-    #
-    #         residual_plot.add_model(
-    #             ec,
-    #             source_counts / conversion_factor,
-    #             label=source_name,  # , **_default_model_kwargs
-    #         )
-    #         # sub.plot(ec, self._gta.like._srcCnts(source_name), label=source_name)
-    #     residual_plot.add_model(
-    #         ec,
-    #         sum_model / conversion_factor,
-    #         label="Total Model",
-    #         **_default_model_kwargs,
-    #     )
-    #
-    #     # sub.plot(ec, sum_model, label="Total Model")
-    #
-    #     y = self._gta._roi_data['counts']
-    #     y_err = np.sqrt(y)
-    #
-    #     significance_calc = Significance(Non=y, Noff=sum_backgrounds)
-    #
-    #     if ratio_residuals:
-    #         resid = old_div((y - sum_model), sum_model)
-    #         resid_err = old_div(y_err, sum_model)
-    #     else:
-    #         # resid     = significance_calc.li_and_ma()
-    #         resid = significance_calc.known_background()
-    #         resid_err = np.ones_like(resid)
-    #
-    #     y = y / conversion_factor
-    #     y_err = y_err / conversion_factor
-    #
-    #     residual_plot.add_data(
-    #         ec[y > 0],
-    #         y[y > 0],
-    #         resid[y > 0],
-    #         residual_yerr=resid_err[y > 0],
-    #         yerr=y_err[y > 0],
-    #         xerr=de[y > 0],
-    #         label=self._name,
-    #         show_data=show_data,
-    #         **_default_data_kwargs,
-    #     )
-    #     y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
-    #
-    #     return residual_plot.finalize(
-    #         xlabel="Energy\n(keV)",
-    #         ylabel=y_label,
-    #         xscale="log",
-    #         yscale="log",
-    #         show_legend=show_legend,
-    #     )
+    def display_model(
+        self,
+        data_color: str = "k",
+        model_color: str = "r",
+        background_color: str = "b",
+        show_data: bool = True,
+        show_residuals: bool = True,
+        ratio_residuals: bool = False,
+        show_legend: bool = True,
+        model_label: Optional[str] = None,
+        model_kwargs: Optional[Dict[str, Any]] = None,
+        data_kwargs: Optional[Dict[str, Any]] = None,
+        background_kwargs: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> ResidualPlot:
+        """
+        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
+        a previous axis to 'model_subplot'.
+
+        Example usage:
+
+        fig = data.display_model()
+
+        fig2 = data2.display_model(model_subplot=fig.axes)
+
+
+        :param data_color: the color of the data
+        :param model_color: the color of the model
+        :param show_data: (bool) show_the data with the model
+        :param show_residuals: (bool) shoe the residuals
+        :param ratio_residuals: (bool) use model ratio instead of residuals
+        :param show_legend: (bool) show legend
+        :param model_label: (optional) the label to use for the model default is plugin name
+        :param model_kwargs: plotting kwargs affecting the plotting of the model
+        :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
+        :param background_kwargs: plotting kwargs affecting the plotting of the background
+        :return:
+        """
+        #event_file = self._configuration
+        #with fits.open(event_file) as file:
+            #observation_duration = (
+            #    file[0].header["TSTOP"] - file[0].header["TSTART"]
+            #)
+        #    observation_duration = (
+        #        (file[1].header["STOP"] - file[1].header["START"]).sum()
+        #    )
+        self._source_name='GRB'
+        debug=False
+        # set up the default plotting
+
+        _default_model_kwargs = dict(color=model_color, alpha=1)
+
+        _default_background_kwargs = dict(
+            color=background_color, alpha=1, ls="--"
+        )
+
+        _sub_menu = threeML_config.plotting.residual_plot
+
+        _default_data_kwargs = dict(
+            color=data_color,
+            alpha=1,
+            fmt=_sub_menu.marker,
+            markersize=_sub_menu.size,
+            ls="",
+            elinewidth=2,  # _sub_menu.linewidth,
+            capsize=0,
+        )
+
+        # overwrite if these are in the confif
+
+        _kwargs_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
+
+        if _kwargs_menu.model_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.model_mpl_kwargs.items():
+
+                _default_model_kwargs[k] = v
+
+        if _kwargs_menu.data_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.data_mpl_kwargs.items():
+
+                _default_data_kwargs[k] = v
+
+        if _kwargs_menu.background_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.background_mpl_kwargs.items():
+
+                _default_background_kwargs[k] = v
+
+        if model_kwargs is not None:
+
+            assert type(model_kwargs) == dict, "model_kwargs must be a dict"
+
+            for k, v in list(model_kwargs.items()):
+
+                if k in _default_model_kwargs:
+
+                    _default_model_kwargs[k] = v
+
+                else:
+
+                    _default_model_kwargs[k] = v
+
+        if data_kwargs is not None:
+
+            assert type(data_kwargs) == dict, "data_kwargs must be a dict"
+
+            for k, v in list(data_kwargs.items()):
+
+                if k in _default_data_kwargs:
+
+                    _default_data_kwargs[k] = v
+
+                else:
+
+                    _default_data_kwargs[k] = v
+
+        if background_kwargs is not None:
+
+            assert (
+                type(background_kwargs) == dict
+            ), "background_kwargs must be a dict"
+
+            for k, v in list(background_kwargs.items()):
+
+                if k in _default_background_kwargs:
+
+                    _default_background_kwargs[k] = v
+
+                else:
+
+                    _default_background_kwargs[k] = v
+
+        # since we define some defualts, lets not overwrite
+        # the users
+
+        _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
+
+        for d in _duplicates:
+
+            if (d[0] in _default_model_kwargs) and (
+                d[1] in _default_model_kwargs
+            ):
+
+                _default_model_kwargs.pop(d[0])
+
+            if (d[0] in _default_data_kwargs) and (
+                d[1] in _default_data_kwargs
+            ):
+
+                _default_data_kwargs.pop(d[0])
+
+            if (d[0] in _default_background_kwargs) and (
+                d[1] in _default_background_kwargs
+            ):
+
+                _default_background_kwargs.pop(d[0])
+
+        if model_label is None:
+            model_label = "%s Model" % self._name
+
+        residual_plot = ResidualPlot(
+            show_residuals=show_residuals,
+            ratio_residuals=ratio_residuals,
+            **kwargs,
+        )
+
+        e1 = self._gta.energies[:-1] * 1000.0  # this has to be in keV
+        e2 = self._gta.energies[1:] * 1000.0  # this has to be in keV
+        if debug: print("ENERGIES [MeV]",self._gta.energies)
+
+        ec = (e1 + e2) / 2.0
+        de = (e2 - e1) / 2.0
+
+        observation_duration = self.get_observation_duration()
+
+        conversion_factor = de * observation_duration
+        sum_model = np.zeros_like(
+            self._gta.model_counts_spectrum(self._gta.like.sourceNames()[0])[0]
+        )
+
+        sum_backgrounds = np.zeros_like(sum_model)
+
+
+        for source_name in self._gta.like.sourceNames():
+
+            source_counts = self._gta.model_counts_spectrum(source_name)[0]
+
+            if debug: print (source_name,' source_counts=', source_counts)
+
+            sum_model = sum_model + source_counts
+            if source_name != self._source_name:
+                sum_backgrounds = sum_backgrounds + source_counts
+
+
+            residual_plot.add_model(
+                ec,
+                source_counts / conversion_factor,
+                label=source_name,  # , **_default_model_kwargs
+            )
+            # sub.plot(ec, self._gta.like._srcCnts(source_name), label=source_name)
+
+        if debug: print ('sum_model=',sum_model)
+        if debug: print ('sum_backgrounds=',sum_backgrounds)
+
+        residual_plot.add_model(
+            ec,
+            sum_model / conversion_factor,
+            label="Total Model",
+            **_default_model_kwargs,
+        )
+
+        # sub.plot(ec, sum_model, label="Total Model")
+
+        y = self._gta._roi_data['counts']
+        y_err = np.sqrt(y)
+        if debug: print ('counts=', y)
+
+        significance_calc = Significance(Non=y, Noff=sum_backgrounds)
+
+        if ratio_residuals:
+            resid = old_div((y - sum_model), sum_model)
+            resid_err = old_div(y_err, sum_model)
+        else:
+            # resid     = significance_calc.li_and_ma()
+            resid = significance_calc.known_background()
+            resid_err = np.ones_like(resid)
+
+        y = y / conversion_factor
+        y_err = y_err / conversion_factor
+
+        residual_plot.add_data(
+            ec[y > 0],
+            y[y > 0],
+            resid[y > 0],
+            residual_yerr=resid_err[y > 0],
+            yerr=y_err[y > 0],
+            xerr=de[y > 0],
+            label=self._name,
+            show_data=show_data,
+            **_default_data_kwargs,
+        )
+        y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
+
+        return residual_plot.finalize(
+            xlabel="Energy\n(keV)",
+            ylabel=y_label,
+            xscale="log",
+            yscale="log",
+            show_legend=show_legend,
+        )
