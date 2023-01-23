@@ -1126,7 +1126,9 @@ class FermipyLike(PluginPrototype):
 
                         fixed_sources.append(name)
 
-        # in this branch, we will show all sources
+        log.debug(f"fixed_sources: {fixed_sources} ")
+        log.debug(f"free_sources: {free_sources} ")
+        log.debug(f"primary_sources: {primary_sources} ")
 
         if not show_background_sources:
 
