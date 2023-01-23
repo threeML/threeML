@@ -1,33 +1,32 @@
 from __future__ import division
-from past.utils import old_div
-import astromodels
-import numpy as np
+
+import collections
 import os
-import yaml
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import astromodels
 import astropy.io.fits as fits
-from astropy.stats import circmean
-from astropy import units as u
-import collections
-
+import numpy as np
+import yaml
 from astromodels import Model, Parameter
 from astromodels.core import parameter_transformation
-
+from astropy import units as u
+from astropy.stats import circmean
+from past.utils import old_div
 from threeML.config.config import threeML_config
-
+from threeML.config.plotting_structure import FermiSpectrumPlot
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import sanitize_filename
-from threeML.plugin_prototype import PluginPrototype
-from threeML.utils.statistics.gammaln import logfactorial
-from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
-from threeML.utils.power_of_two_utils import is_power_of_2
-from threeML.io.package_data import get_path_of_data_file
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.file_utils import sanitize_filename
 from threeML.io.logging import setup_logger
-
-from threeML.utils.statistics.stats_tools import Significance
+from threeML.io.package_data import get_path_of_data_file
+from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
+from threeML.plugin_prototype import PluginPrototype
+from threeML.utils.power_of_two_utils import is_power_of_2
+from threeML.utils.statistics.gammaln import logfactorial
+from threeML.utils.statistics.stats_tools import Significance
+from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
 log = setup_logger(__name__)
 
@@ -912,9 +911,19 @@ class FermipyLike(PluginPrototype):
     def display_model(
         self,
         data_color: str = "k",
-        model_color: str = "r",
+        model_cmap: str = threeML_config.plugins.fermipy.fit_plot.model_cmap.value,
+        model_color: Optional[
+            str
+        ] = threeML_config.plugins.fermipy.fit_plot.model_color,
+        total_model_color: str = threeML_config.plugins.fermipy.fit_plot.total_model_color,
         background_color: str = "b",
         show_data: bool = True,
+        primary_sources: Optional[Union[str, List[str]]] = None,
+        show_background_sources: bool = threeML_config.plugins.fermipy.fit_plot.show_background_sources,
+        shade_fixed_sources: bool = threeML_config.plugins.fermipy.fit_plot.shade_fixed_sources,
+        shade_secondary_source: bool = threeML_config.plugins.fermipy.fit_plot.shade_secondary_sources,
+        fixed_sources_color: str = threeML_config.plugins.fermipy.fit_plot.fixed_sources_color,
+        secondary_sources_color: str = threeML_config.plugins.fermipy.fit_plot.secondary_sources_color,
         show_residuals: bool = True,
         ratio_residuals: bool = False,
         show_legend: bool = True,
@@ -947,19 +956,11 @@ class FermipyLike(PluginPrototype):
         :param background_kwargs: plotting kwargs affecting the plotting of the background
         :return:
         """
-        # event_file = self._configuration
-        # with fits.open(event_file) as file:
-        # observation_duration = (
-        #    file[0].header["TSTOP"] - file[0].header["TSTART"]
-        # )
-        #    observation_duration = (
-        #        (file[1].header["STOP"] - file[1].header["START"]).sum()
-        #    )
-        self._source_name = "GRB"
+        # self._source_name = "GRB"
 
         # set up the default plotting
 
-        _default_model_kwargs = dict(color=model_color, alpha=1)
+        _default_model_kwargs = dict(alpha=1)
 
         _default_background_kwargs = dict(
             color=background_color, alpha=1, ls="--"
@@ -979,7 +980,9 @@ class FermipyLike(PluginPrototype):
 
         # overwrite if these are in the confif
 
-        _kwargs_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
+        _kwargs_menu: FermiSpectrumPlot = (
+            threeML_config.plugins.fermipy.fit_plot
+        )
 
         if _kwargs_menu.model_mpl_kwargs is not None:
 
@@ -1088,27 +1091,173 @@ class FermipyLike(PluginPrototype):
         observation_duration = self.get_observation_duration()
 
         conversion_factor = de * observation_duration
+
+        # now lets figure out the free and fixed sources
+
+        if primary_sources is not None:
+
+            primary_source_names = np.atleast_1d(primary_sources)
+            primary_sources = []
+
+        fixed_sources = []
+        free_sources = []
+
+        for name in self._gta.like.sourceNames():
+
+            if primary_sources is not None:
+
+                if name in primary_source_names:
+
+                    primary_sources.append(name)
+
+            else:
+
+                if name in self._likelihood_model.sources[name]:
+
+                    this_source: astromodels.sources.Source = (
+                        self._likelihood_model.sources[name]
+                    )
+
+                    if this_source.has_free_parameters:
+
+                        free_sources.append(name)
+
+                    else:
+
+                        fixed_sources.append(name)
+
+        # in this branch, we will show all sources
+
+        if not show_background_sources:
+
+            if primary_sources is None:
+
+                msg = "no primary_sources set! Cannot compute net rate"
+
+                log.error(msg)
+
+                raise RuntimeError(msg)
+
+        n_model_colors = 0
+
+        if not shade_fixed_sources and show_background_sources:
+            n_model_colors += len(fixed_sources)
+
+        if not shade_secondary_source and show_background_sources:
+            n_model_colors += len(free_sources)
+
+        if primary_sources is not None:
+            n_model_colors += len(primary_sources)
+
+        if model_color is not None:
+
+            model_colors = [model_color] * n_model_colors
+
+        else:
+
+            model_colors = cmap_intervals(n_model_colors, model_cmap)
+
         sum_model = np.zeros_like(
             self._gta.model_counts_spectrum(self._gta.like.sourceNames()[0])[0]
         )
 
         sum_backgrounds = np.zeros_like(sum_model)
 
-        for source_name in self._gta.like.sourceNames():
+        color_itr = 0
+
+        for source_name in fixed_sources:
 
             source_counts = self._gta.model_counts_spectrum(source_name)[0]
 
             log.debug(f"{source_name}: source_counts= {source_counts}")
 
-            sum_model = sum_model + source_counts
-            if source_name != self._source_name:
+            if not show_background_sources:
+
                 sum_backgrounds = sum_backgrounds + source_counts
 
-            residual_plot.add_model(
-                ec,
-                source_counts / conversion_factor,
-                label=source_name,  # , **_default_model_kwargs
-            )
+            else:
+
+                sum_model += source_counts
+
+                if shade_fixed_sources:
+
+                    color = fixed_sources_color
+                    label = None
+
+                else:
+
+                    color = model_colors[color_itr]
+
+                    color_itr += 1
+
+                    label = source_name
+
+                residual_plot.add_model(
+                    ec,
+                    source_counts / conversion_factor,
+                    label=label,
+                    color=color,
+                    **_default_model_kwargs,
+                )
+
+        for source_name in free_sources:
+
+            source_counts = self._gta.model_counts_spectrum(source_name)[0]
+
+            log.debug(f"{source_name}: source_counts= {source_counts}")
+
+            if not show_background_sources:
+
+                sum_backgrounds = sum_backgrounds + source_counts
+
+            else:
+
+                sum_model += source_counts
+
+                if shade_secondary_source:
+
+                    color = secondary_sources_color
+                    label = None
+
+                else:
+
+                    color = model_colors[color_itr]
+
+                    color_itr += 1
+                    label = source_name
+
+                residual_plot.add_model(
+                    ec,
+                    source_counts / conversion_factor,
+                    label=label,
+                    color=color,
+                    **_default_model_kwargs,
+                )
+
+        if primary_sources is not None:
+
+            for source_name in primary_sources:
+
+                source_counts = self._gta.model_counts_spectrum(source_name)[0]
+
+                log.debug(f"{source_name}: source_counts= {source_counts}")
+
+                sum_model += source_counts
+                # sum_backgrounds = sum_backgrounds + source_counts
+
+                color = model_colors[color_itr]
+
+                color_itr += 1
+                label = source_name
+
+                residual_plot.add_model(
+                    ec,
+                    source_counts / conversion_factor,
+                    label=label,
+                    color=color,
+                    **_default_model_kwargs,
+                )
+
             # sub.plot(ec, self._gta.like._srcCnts(source_name), label=source_name)
 
         log.debug(f"sum_model={sum_model}")
@@ -1118,10 +1267,13 @@ class FermipyLike(PluginPrototype):
             ec,
             sum_model / conversion_factor,
             label="Total Model",
+            color=total_model_color,
             **_default_model_kwargs,
         )
 
         # sub.plot(ec, sum_model, label="Total Model")
+
+        # now get the counts
 
         y = self._gta._roi_data["counts"]
         y_err = np.sqrt(y)
@@ -1151,7 +1303,14 @@ class FermipyLike(PluginPrototype):
             show_data=show_data,
             **_default_data_kwargs,
         )
-        y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
+
+        if show_background_sources:
+
+            y_label = "Rate\n(counts s$^{-1}$ keV$^{-1}$)"
+
+        else:
+
+            y_label = "Net Rate\n(counts s$^{-1}$ keV$^{-1}$)"
 
         return residual_plot.finalize(
             xlabel="Energy\n(keV)",
