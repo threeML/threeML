@@ -27,17 +27,14 @@ class BinnedSpectrumPlot:
     background_mpl_kwargs: Optional[Dict[str, Any]] = None
 
 
-
 @dataclass
 class FermiSpectrumPlot(BinnedSpectrumPlot):
     total_model_color: str = "r"
-    show_background_sources: bool = False
+    show_background_sources: bool = True
     shade_fixed_sources: bool = True
     shade_secondary_sources: bool = False
     fixed_sources_color: str = "grey"
-    secondary_sources_color: str= "k"
-
-
+    secondary_sources_color: str = "k"
 
 
 @dataclass
