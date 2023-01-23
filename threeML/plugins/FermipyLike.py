@@ -1094,6 +1094,8 @@ class FermipyLike(PluginPrototype):
 
         # now lets figure out the free and fixed sources
 
+        primary_source_names = []
+
         if primary_sources is not None:
 
             primary_source_names = np.atleast_1d(primary_sources)
@@ -1104,21 +1106,39 @@ class FermipyLike(PluginPrototype):
 
         for name in self._gta.like.sourceNames():
 
-            if primary_sources is not None:
+            if name in primary_source_names:
 
-                if name in primary_source_names:
-
-                    primary_sources.append(name)
+                primary_sources.append(name)
 
             else:
 
-                if name in self._likelihood_model.sources[name]:
+                if name in self._likelihood_model.sources:
 
                     this_source: astromodels.sources.Source = (
                         self._likelihood_model.sources[name]
                     )
 
                     if this_source.has_free_parameters:
+
+                        free_sources.append(name)
+
+                    else:
+
+                        fixed_sources.append(name)
+
+                elif name == "galdiff":
+
+                    if self._nuisance_parameters["LAT_galdiff_Prefactor"].free:
+
+                        free_sources.append(name)
+
+                    else:
+
+                        fixed_sources.append(name)
+
+                elif name == "isodiff":
+
+                    if self._nuisance_parameters["LAT_isodiff_Prefactor"].free:
 
                         free_sources.append(name)
 
@@ -1151,6 +1171,8 @@ class FermipyLike(PluginPrototype):
         if primary_sources is not None:
             n_model_colors += len(primary_sources)
 
+        log.debug(f"there are {n_model_colors} colors to be used")
+
         if model_color is not None:
 
             model_colors = [model_color] * n_model_colors
@@ -1173,13 +1195,13 @@ class FermipyLike(PluginPrototype):
 
             log.debug(f"{source_name}: source_counts= {source_counts}")
 
+            sum_model += source_counts
+
             if not show_background_sources:
 
                 sum_backgrounds = sum_backgrounds + source_counts
 
             else:
-
-                sum_model += source_counts
 
                 if shade_fixed_sources:
 
@@ -1208,13 +1230,13 @@ class FermipyLike(PluginPrototype):
 
             log.debug(f"{source_name}: source_counts= {source_counts}")
 
+            sum_model += source_counts
+
             if not show_background_sources:
 
                 sum_backgrounds = sum_backgrounds + source_counts
 
             else:
-
-                sum_model += source_counts
 
                 if shade_secondary_source:
 
@@ -1281,7 +1303,7 @@ class FermipyLike(PluginPrototype):
         y_err = np.sqrt(y)
         log.debug(f"counts={y}")
 
-        significance_calc = Significance(Non=y, Noff=sum_backgrounds)
+        significance_calc = Significance(Non=y, Noff=sum_model)
 
         if ratio_residuals:
             resid = old_div((y - sum_model), sum_model)
