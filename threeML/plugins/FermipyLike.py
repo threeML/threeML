@@ -592,7 +592,7 @@ class FermipyLike(PluginPrototype):
             - (gti_stop[myfilter][-1] - tmax)
         )
 
-        print("FermipyLike - GTI SUM = ", observation_duration)
+        log.info(f"FermipyLike - GTI SUM...:{observation_duration}")
         return observation_duration
 
     def set_model(self, likelihood_model_instance):
@@ -912,9 +912,7 @@ class FermipyLike(PluginPrototype):
         self,
         data_color: str = "k",
         model_cmap: str = threeML_config.plugins.fermipy.fit_plot.model_cmap.value,
-        model_color: Optional[
-            str
-        ] = threeML_config.plugins.fermipy.fit_plot.model_color,
+        model_color: str = threeML_config.plugins.fermipy.fit_plot.model_color,
         total_model_color: str = threeML_config.plugins.fermipy.fit_plot.total_model_color,
         background_color: str = "b",
         show_data: bool = True,
@@ -956,7 +954,10 @@ class FermipyLike(PluginPrototype):
         :param background_kwargs: plotting kwargs affecting the plotting of the background
         :return:
         """
-        # self._source_name = "GRB"
+        # The model color is set to red by default...
+        # It should be set to none or all the free sources will have the same color
+        model_color=None
+        log.debug(f'model_color : {model_color}')
 
         # set up the default plotting
 
@@ -1127,24 +1128,24 @@ class FermipyLike(PluginPrototype):
                         fixed_sources.append(name)
 
                 elif name == "galdiff":
+                    # Diffuse emission models should be always displayed with the other sources
+                    # if self._nuisance_parameters["LAT_galdiff_Prefactor"].free:
 
-                    if self._nuisance_parameters["LAT_galdiff_Prefactor"].free:
+                    free_sources.append(name)
 
-                        free_sources.append(name)
+                    #else:
 
-                    else:
-
-                        fixed_sources.append(name)
+                    #    fixed_sources.append(name)
 
                 elif name == "isodiff":
+                    # Diffuse emission models should be always displayed with the other sources
+                    #if self._nuisance_parameters["LAT_isodiff_Normalization"].free:
 
-                    if self._nuisance_parameters["LAT_isodiff_Normalization"].free:
+                    free_sources.append(name)
 
-                        free_sources.append(name)
+                    #else:
 
-                    else:
-
-                        fixed_sources.append(name)
+                    #    fixed_sources.append(name)
 
         log.debug(f"fixed_sources: {fixed_sources} ")
         log.debug(f"free_sources: {free_sources} ")
@@ -1193,7 +1194,7 @@ class FermipyLike(PluginPrototype):
 
             source_counts = self._gta.model_counts_spectrum(source_name)[0]
 
-            log.debug(f"{source_name}: source_counts= {source_counts}")
+            log.debug(f"{source_name}: source_counts= {source_counts.sum()}")
 
             sum_model += source_counts
 
@@ -1228,7 +1229,7 @@ class FermipyLike(PluginPrototype):
 
             source_counts = self._gta.model_counts_spectrum(source_name)[0]
 
-            log.debug(f"{source_name}: source_counts= {source_counts}")
+            log.debug(f"{source_name}: source_counts= {source_counts.sum()}")
 
             sum_model += source_counts
 
@@ -1250,6 +1251,7 @@ class FermipyLike(PluginPrototype):
                     color_itr += 1
                     label = source_name
 
+
                 residual_plot.add_model(
                     ec,
                     source_counts / conversion_factor,
@@ -1264,7 +1266,7 @@ class FermipyLike(PluginPrototype):
 
                 source_counts = self._gta.model_counts_spectrum(source_name)[0]
 
-                log.debug(f"{source_name}: source_counts= {source_counts}")
+                log.debug(f"{source_name}: source_counts= {source_counts.sum()}")
 
                 sum_model += source_counts
                 # sum_backgrounds = sum_backgrounds + source_counts
@@ -1284,8 +1286,8 @@ class FermipyLike(PluginPrototype):
 
             # sub.plot(ec, self._gta.like._srcCnts(source_name), label=source_name)
 
-        log.debug(f"sum_model={sum_model}")
-        log.debug(f"sum_backgrounds={sum_backgrounds}")
+        log.debug(f"sum_model={sum_model.sum()}")
+        log.debug(f"sum_backgrounds={sum_backgrounds.sum()}")
 
         residual_plot.add_model(
             ec,
@@ -1301,7 +1303,7 @@ class FermipyLike(PluginPrototype):
 
         y = self._gta._roi_data["counts"]
         y_err = np.sqrt(y)
-        log.debug(f"counts={y}")
+        log.debug(f"counts={y.sum()}")
 
         significance_calc = Significance(Non=y, Noff=sum_model)
 
