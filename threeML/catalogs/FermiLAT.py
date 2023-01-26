@@ -140,12 +140,12 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             return new_table.group_by("name")
 
 
-    def get_model(self, use_association_name=True, flux_1_100_gev_min=None):
+    def get_model(self, use_association_name=True, exposure=None, npred_min=0):
         '''
         Build the model with FGL sources
         :param use_association_name: use the name of the associated source (stored in assoc_name column)
-        :param flux_1_100_gev_min: minimum flux above 1 GeV in order to get 0.1 event in the LAT
-                if the flux is less than the flux_1_100_gev_min, the source is not added to the model.
+        :param exposure: exposure in cm2 * seconds (can be calculated with gtexposure)
+        :param npred_min: minimum number of predicted events.
         :return: model
         '''
 
@@ -157,10 +157,10 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         sources = []
         source_names = []
         for name, row in self._last_query_results.T.items():
-            if flux_1_100_gev_min is not None and flux_1_100_gev_min>0:
-                npred = row['flux_1_100_gev'] * 0.1 / flux_1_100_gev_min
-                log.debug('FGL source %s: npred = %.1e' % (name, npred))
-                if row['flux_1_100_gev'] < flux_1_100_gev_min:
+            if exposure is not None:
+                npred = row['flux_1_100_gev'] * exposure
+                log.debug('Source %s npred= %.1e' % (name, npred) )
+                if npred < npred_min:
                     continue
             # If there is an association and use_association is True, use that name, otherwise the 3FGL name
             if row["assoc_name"] != "" and use_association_name:
