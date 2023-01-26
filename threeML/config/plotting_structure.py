@@ -29,7 +29,7 @@ class BinnedSpectrumPlot:
 
 @dataclass
 class FermiSpectrumPlot(BinnedSpectrumPlot):
-    total_model_color: str = "r"
+    total_model_color: str = "k"
     show_background_sources: bool = True
     shade_fixed_sources: bool = True
     shade_secondary_sources: bool = False
