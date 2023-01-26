@@ -1303,11 +1303,8 @@ class JointLikelihood(object):
 
         # Remove this source from the model
         _ = model_clone.remove_source(source_name)
-
-        if len(model_clone.free_parameters.keys())==0:
-            log.error(
-                f"Unable to compute TS: number of free parameters is 0")
-            raise RuntimeError
+        #import copy
+        #data_list_clone = copy.deepcopy(self._data_list)
 
         # Fit
         another_jl = JointLikelihood(model_clone, self._data_list)
