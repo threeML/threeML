@@ -28,13 +28,26 @@ class BinnedSpectrumPlot:
 
 
 @dataclass
-class FermiSpectrumPlot(BinnedSpectrumPlot):
+class FermiSpectrumPlot:
     total_model_color: str = "k"
     show_background_sources: bool = True
     shade_fixed_sources: bool = True
     shade_secondary_sources: bool = False
     fixed_sources_color: str = "grey"
     secondary_sources_color: str = "k"
+    data_cmap: MPLCmap = MPLCmap.Set1
+    model_cmap: MPLCmap = MPLCmap.Set1
+    background_cmap: MPLCmap = MPLCmap.Set1
+    step: bool = False
+    show_legend: bool = True
+    show_residuals: bool = True
+    data_color: Optional[str] = None
+    model_color: Optional[str] = None
+    background_color: Optional[str] = None
+    data_mpl_kwargs: Optional[Dict[str, Any]] = None
+    model_mpl_kwargs: Optional[Dict[str, Any]] = None
+    background_mpl_kwargs: Optional[Dict[str, Any]] = None
+
 
 
 @dataclass
