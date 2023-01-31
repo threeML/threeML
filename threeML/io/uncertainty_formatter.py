@@ -1,5 +1,3 @@
-from __future__ import division
-
 import re
 
 import numpy as np
@@ -15,7 +13,7 @@ def interval_to_errors(value, low_bound, hi_bound):
     """
     Convert error intervals to errors
 
-    :param value: central value 
+    :param value: central value
     :param low_bound: interval low bound
     :param hi_bound: interval high bound
     :return: (error minus, error plus)
@@ -38,14 +36,12 @@ def get_uncertainty_tokens(x):
     this_str = x.__str__()
 
     is_inf = False
-    
+
     if "inf" in this_str:
         is_inf = True
 
-
         this_str = this_str.replace("inf", "nan")
-        
-    
+
     try:
 
         number, uncertainty, exponent = re.match(
@@ -53,10 +49,11 @@ def get_uncertainty_tokens(x):
             this_str.replace("+/-", " ").replace("nan", "0"),
         ).groups()
 
-    except:
+    except Exception:
 
         log.error(
-            f"Could not extract number, uncertainty and exponent from  {x.__str__()}. This is likely a bug.")
+            f"Could not extract number, uncertainty and exponent from  {x.__str__()}. This is likely a bug."
+        )
 
         raise RuntimeError()
 
@@ -64,7 +61,6 @@ def get_uncertainty_tokens(x):
 
         uncertainty = "inf"
 
-    
     return number, uncertainty, exponent
 
 
@@ -92,13 +88,13 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     if not np.isfinite(error_p):
 
-        log.warning(f"the positive uncertainty is not finite ")
+        log.warning("the positive uncertainty is not finite ")
 
         error_p_is_nan = True
 
     if not np.isfinite(error_m):
 
-        log.warning(f"the negative uncertainty is not finite ")
+        log.warning("the negative uncertainty is not finite ")
 
         error_m_is_nan = True
 

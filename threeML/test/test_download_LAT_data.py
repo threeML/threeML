@@ -1,5 +1,6 @@
-import shutil
 import os
+import shutil
+
 import pytest
 
 from threeML import *
@@ -24,9 +25,10 @@ else:
 
 # This defines a decorator which can be applied to single tests to
 # skip them if the condition is not met
-skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
-                                                  reason="Fermi Science Tools not installed",
-                                                  )
+skip_if_LAT_is_not_available = pytest.mark.skipif(
+    not has_Fermi,
+    reason="Fermi Science Tools not installed",
+)
 
 
 @skip_if_internet_is_not_available
@@ -89,8 +91,7 @@ def test_download_LLE_data():
 
     with pytest.raises(TypeError):
 
-        download_LLE_trigger_data(
-            trigger_name=80916009, destination_directory=temp_dir)
+        download_LLE_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
 
     with pytest.raises(NameError):
 

@@ -3,21 +3,20 @@ from __future__ import division
 import re
 from builtins import map, str
 
+import astromodels
 import numpy
-from astromodels import *
-from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
-from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from .catalog_utils import _gbm_and_lle_valid_source_check
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 log = setup_logger(__name__)
+
 
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
@@ -120,7 +119,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             post_bkg = "%f-%f" % (hi_start, hi_stop)
             full_bkg = "%s,%s" % (pre_bkg, post_bkg)
 
-            background_dict = {"pre": pre_bkg, "post": post_bkg, "full": full_bkg}
+            background_dict = {
+                "pre": pre_bkg,
+                "post": post_bkg,
+                "full": full_bkg,
+            }
 
             # now we want the fluence interval and peak flux intervals
 
@@ -257,7 +260,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         beta = row[primary_string + "beta"]
         amp = row[primary_string + "ampl"]
 
-        band = Band()
+        band = astromodels.Band()
 
         if amp < 0.0:
             amp = 0.0
@@ -294,9 +297,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         band.beta = beta
 
         # build the model
-        ps = PointSource(name, ra, dec, spectral_shape=band)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=band)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, band
 
@@ -323,7 +326,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # need to correct epeak to e cut
         ecut = old_div(epeak, (2 - index))
 
-        cpl = Cutoff_powerlaw()
+        cpl = astromodels.Cutoff_powerlaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -347,9 +350,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         cpl.index = index
 
-        ps = PointSource(name, ra, dec, spectral_shape=cpl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=cpl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, cpl
 
@@ -372,7 +375,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pivot = row[primary_string + "pivot"]
         amp = row[primary_string + "ampl"]
 
-        pl = Powerlaw()
+        pl = astromodels.Powerlaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -381,9 +384,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pl.piv = pivot
         pl.index = index
 
-        ps = PointSource(name, ra, dec, spectral_shape=pl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=pl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, pl
 
@@ -409,7 +412,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         break_energy = row[primary_string + "brken"]
         pivot = row[primary_string + "pivot"]
 
-        sbpl = SmoothlyBrokenPowerLaw()
+        sbpl = astromodels.SmoothlyBrokenPowerLaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -449,9 +452,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         sbpl.break_scale.free = True
 
-        ps = PointSource(name, ra, dec, spectral_shape=sbpl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=sbpl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, sbpl
 
@@ -485,8 +488,7 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
             "ra",
             "dec",
             "trigger_time",
-            "localization_source"
-            
+            "localization_source",
         ]
 
         new_table["ra"].format = "5.3f"
@@ -497,4 +499,3 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
     def _source_is_valid(self, source):
 
         return _gbm_and_lle_valid_source_check(source)
-

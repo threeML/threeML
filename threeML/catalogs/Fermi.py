@@ -5,12 +5,12 @@ import re
 from builtins import map, str
 
 import numpy as np
-from astromodels import *
+import astropy.units as u
+import astromodels
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
@@ -151,7 +151,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             post_bkg = "%f-%f" % (hi_start, hi_stop)
             full_bkg = "%s,%s" % (pre_bkg, post_bkg)
 
-            background_dict = {"pre": pre_bkg, "post": post_bkg, "full": full_bkg}
+            background_dict = {
+                "pre": pre_bkg,
+                "post": post_bkg,
+                "full": full_bkg,
+            }
 
             # now we want the fluence interval and peak flux intervals
 
@@ -288,7 +292,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         beta = row[primary_string + "beta"]
         amp = row[primary_string + "ampl"]
 
-        band = Band()
+        band = astromodels.Band()
 
         if amp < 0.0:
             amp = 0.0
@@ -325,9 +329,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         band.beta = beta
 
         # build the model
-        ps = PointSource(name, ra, dec, spectral_shape=band)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=band)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, band
 
@@ -354,7 +358,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # need to correct epeak to e cut
         ecut = old_div(epeak, (2 - index))
 
-        cpl = Cutoff_powerlaw()
+        cpl = astromodels.Cutoff_powerlaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -378,9 +382,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         cpl.index = index
 
-        ps = PointSource(name, ra, dec, spectral_shape=cpl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=cpl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, cpl
 
@@ -403,7 +407,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pivot = row[primary_string + "pivot"]
         amp = row[primary_string + "ampl"]
 
-        pl = Powerlaw()
+        pl = astromodels.Powerlaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -412,9 +416,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pl.piv = pivot
         pl.index = index
 
-        ps = PointSource(name, ra, dec, spectral_shape=pl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=pl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, pl
 
@@ -440,7 +444,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         break_energy = row[primary_string + "brken"]
         pivot = row[primary_string + "pivot"]
 
-        sbpl = SmoothlyBrokenPowerLaw()
+        sbpl = astromodels.SmoothlyBrokenPowerLaw()
 
         if amp < 0.0:
             amp = 0.0
@@ -480,9 +484,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         sbpl.break_scale.free = True
 
-        ps = PointSource(name, ra, dec, spectral_shape=sbpl)
+        ps = astromodels.PointSource(name, ra, dec, spectral_shape=sbpl)
 
-        model = Model(ps)
+        model = astromodels.Model(ps)
 
         return model, sbpl
 
@@ -491,7 +495,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
-        The Fermi-GBM trigger catalog. 
+        The Fermi-GBM trigger catalog.
 
         :param update: force update the XML VO table
         """
@@ -517,8 +521,7 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
             "ra",
             "dec",
             "trigger_time",
-            "localization_source"
-            
+            "localization_source",
         ]
 
         new_table["ra"].format = "5.3f"
@@ -531,8 +534,6 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
         return _gbm_and_lle_valid_source_check(source)
 
 
-
-    
 #########
 
 threefgl_types = {
@@ -586,14 +587,16 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     if spectrum_type == "PowerLaw":
 
-        this_spectrum = Powerlaw()
+        this_spectrum = astromodels.Powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.index = float(catalog_entry["pl_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -604,9 +607,11 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "LogParabola":
 
-        this_spectrum = Log_parabola()
+        this_spectrum = astromodels.Log_parabola()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
         this_spectrum.alpha.fix = fix
@@ -614,7 +619,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -624,15 +629,17 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "PLExpCutoff":
 
-        this_spectrum = Cutoff_powerlaw()
+        this_spectrum = astromodels.Cutoff_powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -646,20 +653,22 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        this_spectrum = Super_cutoff_powerlaw()
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
         a = float(catalog_entry["plec_exp_factor_s"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
-        conv = math.exp(a * E0 ** b)
+        conv = math.exp(a * E0**b)
         this_spectrum.index = float(catalog_entry["plec_index_s"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.gamma = b
         this_spectrum.gamma.fix = fix
         this_spectrum.piv = E0 * u.MeV
         this_spectrum.K = (
-            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+            conv * float(catalog_entry["plec_flux_density"]) / (u.cm**2 * u.s * u.MeV)
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -678,7 +687,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
     return this_source
 
 
-class ModelFrom3FGL(Model):
+class ModelFrom3FGL(astromodels.Model):
     def __init__(self, ra_center, dec_center, *sources):
 
         self._ra_center = float(ra_center)
@@ -789,7 +798,9 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # to the dictionary above
 
         table["short_source_type"] = table["source_type"]
-        table["source_type"] = np.array(list(map(translate, table["short_source_type"])))
+        table["source_type"] = np.array(
+            list(map(translate, table["short_source_type"]))
+        )
 
         if "Search_Offset" in table.columns:
 
@@ -810,7 +821,12 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         else:
 
             new_table = table[
-                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name",
+                "source_type",
+                "short_source_type" "ra",
+                "dec",
+                "assoc_name",
+                "tevcat_assoc",
             ]
 
             return new_table.group_by("name")

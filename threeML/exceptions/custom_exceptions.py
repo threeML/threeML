@@ -110,7 +110,10 @@ class deprecated(object):
                 "always", DeprecationWarning
             )  # turn off filter
             custom_warnings.warn_explicit(
-                msg, category=DeprecationWarning, filename=filename, lineno=lineno
+                msg,
+                category=DeprecationWarning,
+                filename=filename,
+                lineno=lineno,
             )
             custom_warnings.simplefilter("default", DeprecationWarning)  # reset filter
             return cls_or_func(*args, **kwargs)

@@ -117,7 +117,7 @@ def Vector(numba_type):
             ---------
             arr : 1d array
                 Array to set this vector to. After this operation, self.arr
-                will be equal to arr. The dtype of this array must be the 
+                will be equal to arr. The dtype of this array must be the
                 same dtype as used to create the vector. Cannot be a readonly
                 vector.
             """
@@ -131,7 +131,7 @@ def Vector(numba_type):
             ---------
             arr : 1d array
                 Array to set this vector to. After this operation, self.arr
-                will be equal to arr. The dtype of this array must be the 
+                will be equal to arr. The dtype of this array must be the
                 same dtype as used to create the vector.
             """
             self.full_arr = arr.copy()

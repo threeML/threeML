@@ -41,10 +41,16 @@ def test_spectrum_constructor():
     model = Model(ps)
 
     obs_spectrum = BinnedSpectrum(
-        counts=np.ones(len(ebounds)), exposure=1, ebounds=ebounds, is_poisson=True
+        counts=np.ones(len(ebounds)),
+        exposure=1,
+        ebounds=ebounds,
+        is_poisson=True,
     )
     bkg_spectrum = BinnedSpectrum(
-        counts=np.ones(len(ebounds)), exposure=1, ebounds=ebounds, is_poisson=True
+        counts=np.ones(len(ebounds)),
+        exposure=1,
+        ebounds=ebounds,
+        is_poisson=True,
     )
 
     assert np.all(obs_spectrum.counts == obs_spectrum.rates)
@@ -70,7 +76,10 @@ def test_spectrum_constructor():
         is_poisson=False,
     )
     bkg_spectrum = BinnedSpectrum(
-        counts=np.ones(len(ebounds)), exposure=1, ebounds=ebounds, is_poisson=True
+        counts=np.ones(len(ebounds)),
+        exposure=1,
+        ebounds=ebounds,
+        is_poisson=True,
     )
 
     with pytest.raises(NotImplementedError):
@@ -103,7 +112,10 @@ def test_spectrum_constructor_no_background():
     ebounds = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
 
     obs_spectrum = BinnedSpectrum(
-        counts=np.ones(len(ebounds)), exposure=1, ebounds=ebounds, is_poisson=True
+        counts=np.ones(len(ebounds)),
+        exposure=1,
+        ebounds=ebounds,
+        is_poisson=True,
     )
 
     assert np.all(obs_spectrum.counts == obs_spectrum.rates)
@@ -128,7 +140,11 @@ def addition_proof_weighted(x, y, z):
 
 
 def spectrum_addition(
-    obs_spectrum_1, obs_spectrum_2, obs_spectrum_incompatible, addition, addition_proof
+    obs_spectrum_1,
+    obs_spectrum_2,
+    obs_spectrum_incompatible,
+    addition,
+    addition_proof,
 ):
     obs_spectrum = addition(obs_spectrum_1, obs_spectrum_2)
 
@@ -195,10 +211,16 @@ def test_spectrum_addition_poisson():
     ebounds_different = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
 
     obs_spectrum_1 = BinnedSpectrum(
-        counts=np.ones(len(ebounds)), exposure=1, ebounds=ebounds, is_poisson=True
+        counts=np.ones(len(ebounds)),
+        exposure=1,
+        ebounds=ebounds,
+        is_poisson=True,
     )
     obs_spectrum_2 = BinnedSpectrum(
-        counts=np.ones(len(ebounds)), exposure=2, ebounds=ebounds, is_poisson=True
+        counts=np.ones(len(ebounds)),
+        exposure=2,
+        ebounds=ebounds,
+        is_poisson=True,
     )
     obs_spectrum_incompatible = BinnedSpectrum(
         counts=np.ones(len(ebounds_different)),

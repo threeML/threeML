@@ -122,8 +122,9 @@ class GridMinimizer(GlobalMinimizer):
 
             except ValueError:
 
-                log.error("Could not find parameter %s in current model" %
-                          parameter_path)
+                log.error(
+                    "Could not find parameter %s in current model" % parameter_path
+                )
 
                 raise ValueError()
 
@@ -214,9 +215,12 @@ class GridMinimizer(GlobalMinimizer):
                 # We call _minimize() and not minimize() so that the best fit values are
                 # in the internal system.
 
-                this_best_fit_values_internal, this_minimum = _minimizer._minimize()
+                (
+                    this_best_fit_values_internal,
+                    this_minimum,
+                ) = _minimizer._minimize()
 
-            except:
+            except Exception:
 
                 # A failure is not a problem here, only if all of the fit fail then we have a problem
                 # but this case is handled later
@@ -240,7 +244,6 @@ class GridMinimizer(GlobalMinimizer):
 
         if internal_best_fit_values is None:
             log.error("All fit starting from values in the grid have failed!")
-            raise AllFitFailed(
-            )
+            raise AllFitFailed()
 
         return internal_best_fit_values, overall_minimum

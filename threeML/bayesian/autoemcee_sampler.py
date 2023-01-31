@@ -1,7 +1,5 @@
-import logging
-import os
 import time
-from pathlib import Path
+
 
 import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
@@ -14,7 +12,7 @@ try:
 
     import autoemcee
 
-except:
+except ImportError:
 
     has_autoemcee = False
 
@@ -38,7 +36,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 
@@ -54,18 +53,17 @@ class AutoEmceeSampler(UnitCubeSampler):
 
         assert has_autoemcee, "You must install AutoEmcee to use this sampler"
 
-        super(AutoEmceeSampler, self).__init__(
-            likelihood_model, data_list, **kwargs)
+        super(AutoEmceeSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
         self,
-            num_global_samples=10000,
-            num_chains=4,
-            num_walkers=None,
-            max_ncalls=1000000,
-            max_improvement_loops=4,
-            num_initial_steps=100,
-            min_autocorr_times=0
+        num_global_samples=10000,
+        num_chains=4,
+        num_walkers=None,
+        max_ncalls=1000000,
+        max_improvement_loops=4,
+        num_initial_steps=100,
+        min_autocorr_times=0,
     ):
         """
         Sample until MCMC chains have converged.
@@ -121,9 +119,9 @@ class AutoEmceeSampler(UnitCubeSampler):
     def sample(self, quiet=False):
         """
         sample using the UltraNest numerical integration method
-        :rtype: 
+        :rtype:
 
-        :returns: 
+        :returns:
 
         """
         if not self._is_setup:
@@ -140,8 +138,7 @@ class AutoEmceeSampler(UnitCubeSampler):
 
         n_dim = len(param_names)
 
-        loglike, autoemcee_prior = self._construct_unitcube_posterior(
-            return_copy=True)
+        loglike, autoemcee_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # We need to check if the MCMC
         # chains will have a place on
@@ -151,7 +148,8 @@ class AutoEmceeSampler(UnitCubeSampler):
         if threeML_config["parallel"]["use_parallel"]:
 
             log.error(
-                "If you want to run ultranest in parallell you need to use an ad-hoc method")
+                "If you want to run ultranest in parallell you need to use an ad-hoc method"
+            )
 
             raise RuntimeError()
 
@@ -162,22 +160,21 @@ class AutoEmceeSampler(UnitCubeSampler):
                 loglike,
                 transform=autoemcee_prior,
                 vectorized=False,
-                sampler="goodman-weare"
+                sampler="goodman-weare",
             )
 
             with use_astromodels_memoization(False):
                 log.debug("Start autoemcee run")
-                sampler.run(self._num_global_samples,
-                            self._num_chains,
-                            self._num_walkers,
-                            self._max_ncalls,
-                            self._max_improvement_loops,
-                            self._num_initial_steps,
-                            self._min_autocorr_times,
-                            progress=threeML_config.interface.progress_bars
-
-
-                            )
+                sampler.run(
+                    self._num_global_samples,
+                    self._num_chains,
+                    self._num_walkers,
+                    self._max_ncalls,
+                    self._max_improvement_loops,
+                    self._num_initial_steps,
+                    self._min_autocorr_times,
+                    progress=threeML_config.interface.progress_bars,
+                )
                 log.debug("autoemcee run done")
 
         process_fit = False
@@ -187,18 +184,14 @@ class AutoEmceeSampler(UnitCubeSampler):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
-            if rank != 0:
+            comm.Barrier()
 
-                # let these guys take a break
-                time.sleep(1)
+            if rank != 0:
 
                 # these engines do not need to read
                 process_fit = False
 
             else:
-
-                # wait for a moment to allow it all to turn off
-                time.sleep(1)
 
                 process_fit = True
 
@@ -213,18 +206,23 @@ class AutoEmceeSampler(UnitCubeSampler):
             self._sampler = sampler
 
             self._raw_samples = np.concatenate(
-                [sampler.transform(s.get_chain(flat=True)) for s in self._sampler.samplers])
+                [
+                    sampler.transform(s.get_chain(flat=True))
+                    for s in self._sampler.samplers
+                ]
+            )
 
             # First we need the prior
             log_prior = [self._log_prior(x) for x in self._raw_samples]
 
             self._log_probability_values = np.concatenate(
-                [s.get_log_prob(flat=True) for s in self._sampler.samplers])
+                [s.get_log_prob(flat=True) for s in self._sampler.samplers]
+            )
 
             self._log_like_values = self._log_probability_values - log_prior
 
             self._marginal_likelihood = None
-            
+
             self._build_samples_dictionary()
 
             self._build_results()

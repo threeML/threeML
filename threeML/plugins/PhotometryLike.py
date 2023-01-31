@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional, Union
 
 import numpy as np
 from speclite.filters import FilterResponse, FilterSequence
+
 from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.io.plotting.data_residual_plot import ResidualPlot
@@ -398,15 +399,11 @@ class PhotometryLike(XYLike):
 
         for d in _duplicates:
 
-            if (d[0] in _default_model_kwargs) and (
-                d[1] in _default_model_kwargs
-            ):
+            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
 
                 _default_model_kwargs.pop(d[0])
 
-            if (d[0] in _default_data_kwargs) and (
-                d[1] in _default_data_kwargs
-            ):
+            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
 
                 _default_data_kwargs.pop(d[0])
 
@@ -456,7 +453,7 @@ class PhotometryLike(XYLike):
             xscale="linear",
             yscale="linear",
             invert_y=True,
-            show_legend=show_legend
+            show_legend=show_legend,
         )
 
     def _new_plugin(self, name, x, y, yerr):

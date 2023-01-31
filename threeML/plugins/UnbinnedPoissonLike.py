@@ -14,7 +14,7 @@ __instrument_name = "n.a."
 
 log = setup_logger(__name__)
 
-_tiny = np.float64(np.finfo(1.).tiny)
+_tiny = np.float64(np.finfo(1.0).tiny)
 
 
 class EventObservation(object):
@@ -24,7 +24,7 @@ class EventObservation(object):
         exposure: float,
         start: Union[float, np.ndarray],
         stop: Union[float, np.ndarray],
-        for_timeseries: bool = False
+        for_timeseries: bool = False,
     ):
 
         self._events = np.array(events)
@@ -59,7 +59,7 @@ class EventObservation(object):
 
         self._n_events: int = len(self._events)
 
-        log.debug(f"created event observation with")
+        log.debug("created event observation with")
         log.debug(f"{self._start} {self._stop}")
 
         self._for_timeseries = for_timeseries
@@ -104,7 +104,7 @@ class UnbinnedPoissonLike(PluginPrototype):
     ) -> None:
         """
         This is a generic likelihood for unbinned Poisson data.
-        It is very slow for many events. 
+        It is very slow for many events.
 
         :param name: the plugin name
         :param observation: and EventObservation container
@@ -125,18 +125,16 @@ class UnbinnedPoissonLike(PluginPrototype):
             total_dt = 0
 
             if self._observation.is_multi_interval:
-                for start, stop in zip(self._observation.start,
-                                       self._observation.stop):
-                    total_dt += stop-start
+                for start, stop in zip(self._observation.start, self._observation.stop):
+                    total_dt += stop - start
             else:
-                total_dt = self._observation.stop-self._observation.start
+                total_dt = self._observation.stop - self._observation.start
 
-            self._dead_corr = self._observation.exposure/total_dt
+            self._dead_corr = self._observation.exposure / total_dt
         else:
-            self._dead_corr = 1.
+            self._dead_corr = 1.0
 
-        super(UnbinnedPoissonLike, self).__init__(
-            name=name, nuisance_parameters={})
+        super(UnbinnedPoissonLike, self).__init__(name=name, nuisance_parameters={})
 
     def set_model(self, model: astromodels.Model) -> None:
         """
@@ -232,7 +230,7 @@ class UnbinnedPoissonLike(PluginPrototype):
         parameters
         """
 
-        n_expected_counts: float = 0.
+        n_expected_counts: float = 0.0
 
         if self._observation.is_multi_interval:
 
@@ -254,7 +252,7 @@ class UnbinnedPoissonLike(PluginPrototype):
         # use numba to sum the events
         sum_logM = _evaluate_logM_sum(M, self._n_events)
 
-        minus_log_like = -n_expected_counts*self._dead_corr + sum_logM
+        minus_log_like = -n_expected_counts * self._dead_corr + sum_logM
 
         return minus_log_like
 
@@ -285,7 +283,7 @@ def _evaluate_logM_sum(M, size):
 
     if tink_mask.sum() > 0:
         logM = np.zeros(size)
-        logM[tink_mask] = (np.abs(M[tink_mask])/_tiny) + np.log(_tiny) - 1
+        logM[tink_mask] = (np.abs(M[tink_mask]) / _tiny) + np.log(_tiny) - 1
         logM[non_tiny_mask] = np.log(M[non_tiny_mask])
 
     else:

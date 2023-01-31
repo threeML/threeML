@@ -1,8 +1,14 @@
 from __future__ import print_function
-from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make
+from threeML.io.file_utils import (
+    sanitize_filename,
+    if_directory_not_existing_then_make,
+)
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
-from threeML.io.download_from_http import ApacheDirectory, RemoteDirectoryNotFound
+from threeML.io.download_from_http import (
+    ApacheDirectory,
+    RemoteDirectoryNotFound,
+)
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
     _validate_fermi_trigger_name,

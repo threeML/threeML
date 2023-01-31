@@ -156,7 +156,9 @@ def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
     assert np.allclose(res[1], exp_p2, rtol=0.1)
 
 
-def test_basic_bayesian_analysis_results(completed_bn090217206_bayesian_analysis):
+def test_basic_bayesian_analysis_results(
+    completed_bn090217206_bayesian_analysis,
+):
 
     bayes, samples = completed_bn090217206_bayesian_analysis
 
@@ -173,7 +175,11 @@ def test_basic_analsis_multicomp_results(
     fitted_joint_likelihood_bn090217206_nai_multicomp,
 ):
 
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai_multicomp
+    (
+        jl,
+        fit_results,
+        like_frame,
+    ) = fitted_joint_likelihood_bn090217206_nai_multicomp
 
     jl.restore_best_fit()
 
@@ -197,7 +203,7 @@ def test_basic_bayesian_analysis_results_multicomp(
         [-2.91016381e-01, -3.29625316e-02, -1.59072260e-06, -4.83703088e00]
     )
     expected_positive_errors = np.array(
-        [3.50705889e-01, 3.53797125e-02, 2.41408813e-06, 4.29616142e+00]
+        [3.50705889e-01, 3.53797125e-02, 2.41408813e-06, 4.29616142e00]
     )
 
     assert np.allclose(frame["value"].values, expected_central_values, rtol=0.1)
@@ -236,7 +242,9 @@ def test_gbm_workflow():
     for det in gbm_detectors:
 
         ts_cspec = TimeSeriesBuilder.from_gbm_cspec_or_ctime(
-            det, cspec_or_ctime_file=dload[det]["cspec"], rsp_file=dload[det]["rsp"]
+            det,
+            cspec_or_ctime_file=dload[det]["cspec"],
+            rsp_file=dload[det]["rsp"],
         )
 
         ts_cspec.set_background_interval(*background_interval.split(","))

@@ -14,7 +14,12 @@ import matplotlib.pyplot as plt
 
 class IntervalContainer(object):
     def __init__(
-        self, start, stop, parameter_values, likelihood_values, n_integration_points
+        self,
+        start,
+        stop,
+        parameter_values,
+        likelihood_values,
+        n_integration_points,
     ):
 
         # Make sure there is no NaN or infinity
@@ -55,7 +60,10 @@ class IntervalContainer(object):
 
         res = scipy.optimize.minimize_scalar(
             self._minus_likelihood_interp,
-            bounds=(np.log10(self._min_par_value), np.log10(self._max_par_value)),
+            bounds=(
+                np.log10(self._min_par_value),
+                np.log10(self._max_par_value),
+            ),
             method="bounded",
             options={"maxiter": 10000, "disp": True, "xatol": 1e-3},
         )
@@ -69,7 +77,7 @@ class IntervalContainer(object):
 
         assert res.success, "Could not find minimum"
 
-        self._minimum = (10 ** res.x, float(res.fun))
+        self._minimum = (10**res.x, float(res.fun))
 
     @property
     def start(self):
@@ -112,7 +120,10 @@ class IntervalContainer(object):
 
             # Look for negative bound using BRENTQ
             low_bound_cl, res = scipy.optimize.brentq(
-                bounding_f, self._min_par_value, self._minimum[0], full_output=True
+                bounding_f,
+                self._min_par_value,
+                self._minimum[0],
+                full_output=True,
             )
 
             assert res.converged, "Could not find lower bound"
@@ -136,7 +147,10 @@ class IntervalContainer(object):
 
             # Look for positive bound using BRENTQ
             hi_bound_cl, res = scipy.optimize.brentq(
-                bounding_f, self._minimum[0], self._max_par_value, full_output=True
+                bounding_f,
+                self._minimum[0],
+                self._max_par_value,
+                full_output=True,
             )
 
             assert res.converged, "Could not find upper bound"
@@ -312,7 +326,7 @@ class CastroLike(PluginPrototype):
 
                 # Make an errorbar that is constant length in log space
                 dy_ = np.log10(y_hi) - 0.2
-                dy = y_hi - 10 ** dy_
+                dy = y_hi - 10**dy_
 
                 uls_yerrs.append(dy)
 

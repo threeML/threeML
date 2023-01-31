@@ -125,8 +125,8 @@ class MultinestMinimizer(GlobalMinimizer):
 
     def _minimize(self):
         """
-            Minimize the function using the Multinest sampler
-         """
+        Minimize the function using the Multinest sampler
+        """
 
         n_dim = len(self.parameters)
 

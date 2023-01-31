@@ -1,17 +1,16 @@
 import collections
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 
+from threeML.io.logging import setup_logger
 from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
-from threeML.io.logging import setup_logger
-
 
 log = setup_logger(__name__)
+
 
 class LLEFile(object):
     def __init__(self, lle_file, ft2_file, rsp_file):
@@ -51,9 +50,10 @@ class LLEFile(object):
             self._gti_stop = ft1_["GTI"].data["STOP"]
 
             try:
+
                 self._trigger_time = ft1_["EVENTS"].header["TRIGTIME"]
 
-            except:
+            except Exception:
 
                 # For whatever reason
                 log.warning(
@@ -215,9 +215,11 @@ class LLEFile(object):
     @trigger_time.setter
     def trigger_time(self, val):
 
-        assert self._tstart <= val <= self._tstop, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._tstart, self._tstop)
+        assert (
+            self._tstart <= val <= self._tstop
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._tstart,
+            self._tstop,
         )
 
         self._trigger_time = val
@@ -292,12 +294,12 @@ class LLEFile(object):
     def _output(self):
 
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
 
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 

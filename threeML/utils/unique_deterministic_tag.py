@@ -12,6 +12,6 @@ def get_unique_deterministic_tag(string):
     try:
         return hashlib.md5(string.encode("utf-8")).hexdigest()
 
-    except:
+    except Exception:
 
         return hashlib.md5(string).hexdigest()

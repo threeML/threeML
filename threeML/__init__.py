@@ -34,9 +34,7 @@ log.propagate = False
 if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
     log.warning("WARNINGs here are [red]NOT[/red] errors")
-    log.warning(
-        "but are inform you about optional packages that can be installed"
-    )
+    log.warning("but are inform you about optional packages that can be installed")
     log.warning(
         "[red] to disable these messages, turn off start_warning in your config file[/red]"
     )
@@ -165,9 +163,7 @@ for i, module_full_path in enumerate(found_plugins):
 
         # Now import the plugin itself
 
-        import_command = (
-            f"from threeML.plugins.{plugin_name} import {plugin_name}"
-        )
+        import_command = f"from threeML.plugins.{plugin_name} import {plugin_name}"
 
         try:
 
@@ -200,15 +196,11 @@ def get_available_plugins():
 
 def _display_plugin_traceback(plugin):
     if threeML_config.logging.startup_warnings:
-        log.warning(
-            "#############################################################"
-        )
+        log.warning("#############################################################")
         log.warning("\nCouldn't import plugin %s" % plugin)
         log.warning("\nTraceback:\n")
         log.warning(_not_working_plugins[plugin])
-        log.warning(
-            "#############################################################"
-        )
+        log.warning("#############################################################")
 
 
 def is_plugin_available(plugin):

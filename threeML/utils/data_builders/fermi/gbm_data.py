@@ -1,6 +1,5 @@
 import collections
 import re
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
@@ -8,14 +7,15 @@ import pandas as pd
 import requests
 
 from threeML.io.logging import setup_logger
-from threeML.utils.fermi_relative_mission_time import \
-    compute_fermi_relative_mission_times
+from threeML.utils.fermi_relative_mission_time import (
+    compute_fermi_relative_mission_times,
+)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
 log = setup_logger(__name__)
 
 
-class GBMTTEFile(object):
+class GBMTTEFile:
     def __init__(self, ttefile: str) -> None:
         """
 
@@ -60,7 +60,7 @@ class GBMTTEFile(object):
         try:
             self._trigger_time = tte["PRIMARY"].header["TRIGTIME"]
 
-        except:
+        except Exception:
 
             # For continuous data
             log.warning(
@@ -95,9 +95,11 @@ class GBMTTEFile(object):
     @trigger_time.setter
     def trigger_time(self, val) -> None:
 
-        assert self._start_events <= val <= self._stop_events, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._start_events, self._stop_events)
+        assert (
+            self._start_events <= val <= self._stop_events
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events,
+            self._stop_events,
         )
 
         self._trigger_time = val
@@ -195,7 +197,7 @@ class GBMTTEFile(object):
             mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
             mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
 
-        except:
+        except Exception:
 
             log.warning(
                 "You do not have the requests library, cannot get time system from Heasarc "
@@ -212,12 +214,12 @@ class GBMTTEFile(object):
 
     def _output(self):
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = collections.OrderedDict()
@@ -249,7 +251,7 @@ class GBMCdata(object):
 
             self._trigger_time = cdata["PRIMARY"].header["TRIGTIME"]
 
-        except:
+        except Exception:
 
             # For continuous data
             log.warning(
@@ -281,9 +283,11 @@ class GBMCdata(object):
     @trigger_time.setter
     def trigger_time(self, val) -> None:
 
-        assert self._start_events <= val <= self._stop_events, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._start_events, self._stop_events)
+        assert (
+            self._start_events <= val <= self._stop_events
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events,
+            self._stop_events,
         )
 
         self._trigger_time = val
@@ -356,7 +360,7 @@ class GBMCdata(object):
             mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
             mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
 
-        except:
+        except Exception:
 
             log.warning(
                 "You do not have the requests library, cannot get time system from Heasarc "
@@ -373,12 +377,12 @@ class GBMCdata(object):
 
     def _output(self):
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = collections.OrderedDict()

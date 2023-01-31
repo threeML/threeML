@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 import astropy.units as u
@@ -12,6 +11,7 @@ from threeML.io.logging import setup_logger
 
 
 log = setup_logger(__name__)
+
 
 def get_speclite_filter_path() -> Path:
 
@@ -94,7 +94,7 @@ class FilterLibrary(object):
                             meta=dict(
                                 group_name=instrument,
                                 band_name=ff,
-                            )
+                            ),
                         )
 
                         filters.append(this_filter)

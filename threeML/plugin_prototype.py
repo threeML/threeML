@@ -44,9 +44,7 @@ class PluginPrototype(metaclass=abc.ABCMeta):
 
             log.error("Sorry, you cannot use 'total' as name for a plugin.")
 
-            raise AssertionError(
-                "Sorry, you cannot use 'total' as name for a plugin."
-            )
+            raise AssertionError("Sorry, you cannot use 'total' as name for a plugin.")
 
         self._name: str = name
 
@@ -56,9 +54,7 @@ class PluginPrototype(metaclass=abc.ABCMeta):
 
             log.error("nuisance_parameters are not a dict and are invalid!")
 
-            raise AssertionError(
-                "nuisance_parameters are not a dict and are invalid!"
-            )
+            raise AssertionError("nuisance_parameters are not a dict and are invalid!")
 
         self._nuisance_parameters: Dict[str, Parameter] = nuisance_parameters
 
@@ -101,9 +97,7 @@ class PluginPrototype(metaclass=abc.ABCMeta):
 
             log.error("nuisance_parameters are not a dict and are invalid!")
 
-            raise AssertionError(
-                "nuisance_parameters are not a dict and are invalid!"
-            )
+            raise AssertionError("nuisance_parameters are not a dict and are invalid!")
 
         self._nuisance_parameters = new_nuisance_parameters
 

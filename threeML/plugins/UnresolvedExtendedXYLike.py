@@ -14,7 +14,9 @@ from threeML.io.package_data import get_path_of_data_file
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.statistics.likelihood_functions import (
-    half_chi2, poisson_log_likelihood_ideal_bkg)
+    half_chi2,
+    poisson_log_likelihood_ideal_bkg,
+)
 
 __instrument_name = "n.a."
 
@@ -62,8 +64,7 @@ class UnresolvedExtendedXYLike(XYLike):
         if self._likelihood_model is not None and source_name is not None:
 
             assert source_name in self._likelihood_model.sources, (
-                "Source %s is not contained in "
-                "the likelihood model" % source_name
+                "Source %s is not contained in " "the likelihood model" % source_name
             )
 
         self._source_name = source_name
@@ -83,11 +84,12 @@ class UnresolvedExtendedXYLike(XYLike):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert self._source_name in likelihood_model_instance.sources, (
-                "This XYLike plugin refers to the source %s, "
-                "but that source is not in the likelihood model"
-                % (self._source_name)
-            )
+            if self._source_name not in likelihood_model_instance.sources:
+                msg = f"This XYLike plugin refers to the source {self._source_name}, but that source is not in the likelihood model"
+
+                log.error(msg)
+
+                raise AssertionError(msg)
 
         self._likelihood_model = likelihood_model_instance
 
@@ -95,12 +97,8 @@ class UnresolvedExtendedXYLike(XYLike):
 
         if self._source_name is None:
 
-            n_point_sources = (
-                self._likelihood_model.get_number_of_point_sources()
-            )
-            n_ext_sources = (
-                self._likelihood_model.get_number_of_extended_sources()
-            )
+            n_point_sources = self._likelihood_model.get_number_of_point_sources()
+            n_ext_sources = self._likelihood_model.get_number_of_extended_sources()
 
             assert (
                 n_point_sources + n_ext_sources > 0
@@ -111,9 +109,7 @@ class UnresolvedExtendedXYLike(XYLike):
             expectation_point = np.sum(
                 [
                     source(self._x, tag=self._tag)
-                    for source in list(
-                        self._likelihood_model.point_sources.values()
-                    )
+                    for source in list(self._likelihood_model.point_sources.values())
                 ],
                 axis=0,
             )
@@ -121,9 +117,7 @@ class UnresolvedExtendedXYLike(XYLike):
             expectation_ext = np.sum(
                 [
                     source.get_spatially_integrated_flux(self._x)
-                    for source in list(
-                        self._likelihood_model.extended_sources.values()
-                    )
+                    for source in list(self._likelihood_model.extended_sources.values())
                 ],
                 axis=0,
             )
@@ -138,9 +132,9 @@ class UnresolvedExtendedXYLike(XYLike):
 
             if self._source_name in self._likelihood_model.point_sources:
 
-                expectation = self._likelihood_model.point_sources[
-                    self._source_name
-                ](self._x)
+                expectation = self._likelihood_model.point_sources[self._source_name](
+                    self._x
+                )
 
             elif self._source_name in self._likelihood_model.extended_sources:
 
@@ -158,9 +152,7 @@ class UnresolvedExtendedXYLike(XYLike):
 
         return expectation
 
-    def plot(
-        self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"
-    ):
+    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"):
 
         fig, sub = plt.subplots(1, 1)
 

@@ -131,6 +131,7 @@ def test_analysis_results_input_output(xy_fitted_joint_likelihood):
 
     _results_are_same(ar, ar_reloaded)
 
+
 def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
 
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
@@ -149,7 +150,6 @@ def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
 
     _results_are_same(ar, ar_reloaded)
 
-    
 
 def test_analysis_set_input_output(xy_fitted_joint_likelihood):
 
@@ -206,15 +206,14 @@ def test_conversion_fits2hdf(xy_fitted_joint_likelihood):
 
     analysis_set_reloaded = load_analysis_results_hdf("_analysis_set_test.h5")
 
-        # Test they are the same
+    # Test they are the same
     assert len(analysis_set_reloaded) == len(analysis_set)
 
     for res1, res2 in zip(analysis_set, analysis_set_reloaded):
 
         _results_are_same(res1, res2)
 
-    
-        
+
 def test_analysis_set_input_output_hdf(xy_fitted_joint_likelihood):
 
     # Collect twice the same analysis results just to see if we can
@@ -338,12 +337,12 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
 
     ar.corner_plot()
 
-    ar.corner_plot(components = [*ar._free_parameters.keys()][0:2])
+    ar.corner_plot(components=[*ar._free_parameters.keys()][0:2])
 
 
 def test_one_free_parameter_input_output():
 
-    fluxUnit = 1.0 / (u.TeV * u.cm ** 2 * u.s)
+    fluxUnit = 1.0 / (u.TeV * u.cm**2 * u.s)
 
     temp_file = "__test_mle.fits"
 

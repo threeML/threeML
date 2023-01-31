@@ -77,14 +77,15 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return self._binned_spectrum_set
 
-    def view_lightcurve(self,
-                        start: float = -10,
-                        stop: float = 20.0,
-                        dt: float = 1.0,
-                        use_binner: bool = False,
-                        use_echans_start: int = 0,
-                        use_echans_stop: int = -1,
-                        with_dead_time=True
+    def view_lightcurve(
+        self,
+        start: float = -10,
+        stop: float = 20.0,
+        dt: float = 1.0,
+        use_binner: bool = False,
+        use_echans_start: int = 0,
+        use_echans_stop: int = -1,
+        with_dead_time=True,
     ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
@@ -97,38 +98,48 @@ class BinnedSpectrumSeries(TimeSeries):
 
         # validate echan mask input
         if not isinstance(use_echans_start, int):
-            log.error(f"The use_echans_start variable must be a integer."
-                      f" Input is {use_echans_start}.")
+            log.error(
+                f"The use_echans_start variable must be a integer."
+                f" Input is {use_echans_start}."
+            )
             raise AssertionError()
 
         if not np.abs(use_echans_start) < self.n_channels:
-            log.error(f"The use_echans_start variable must be"
-                      f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
-                      f" Input is {use_echans_start}.")
+            log.error(
+                f"The use_echans_start variable must be"
+                f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
+                f" Input is {use_echans_start}."
+            )
             raise AssertionError()
 
         if not isinstance(use_echans_stop, int):
-            log.error(f"The use_echans_stop variable must be a integer."
-                      f" Input is {use_echans_stop}.")
+            log.error(
+                f"The use_echans_stop variable must be a integer."
+                f" Input is {use_echans_stop}."
+            )
             raise AssertionError()
 
         if not np.abs(use_echans_stop) < self.n_channels:
-            log.error(f"The use_echans_stop variable must be"
-                      f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
-                      f" Input is {use_echans_start}.")
+            log.error(
+                f"The use_echans_stop variable must be"
+                f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
+                f" Input is {use_echans_start}."
+            )
             raise AssertionError()
 
         if use_echans_start < 0:
-            use_echans_start = self.n_channels+use_echans_start
+            use_echans_start = self.n_channels + use_echans_start
 
         if use_echans_stop < 0:
-            use_echans_stop = self.n_channels+use_echans_stop
+            use_echans_stop = self.n_channels + use_echans_stop
 
         if not use_echans_stop >= use_echans_start:
-            log.error(f"The use_echans_stop variable must be larger"
-                      f" or equal than the use_echans_start variable"
-                      f" Input is use_echans_start: {use_echans_start}"
-                      f" > use_echans_stop: {use_echans_stop}")
+            log.error(
+                f"The use_echans_stop variable must be larger"
+                f" or equal than the use_echans_start variable"
+                f" Input is use_echans_start: {use_echans_start}"
+                f" > use_echans_stop: {use_echans_stop}"
+            )
             raise AssertionError()
 
         # git a set of bins containing the intervals
@@ -149,20 +160,17 @@ class BinnedSpectrumSeries(TimeSeries):
                 np.sum(
                     self.count_per_channel_over_interval(
                         time_bin.start_time, time_bin.stop_time
-                    )[use_echans_start:use_echans_stop+1]
+                    )[use_echans_start : use_echans_stop + 1]
                 )
             )
 
             # use the actual exposure
 
-            
-
-            width_dead.append(self.exposure_over_interval(
-                    time_bin.start_time, time_bin.stop_time))
+            width_dead.append(
+                self.exposure_over_interval(time_bin.start_time, time_bin.stop_time)
+            )
 
             # just use the "defined edges"
-
-            
 
             width.append(time_bin.duration)
 
@@ -173,18 +181,14 @@ class BinnedSpectrumSeries(TimeSeries):
             bkg = []
             for j, time_bin in enumerate(bins):
                 tmpbkg = 0.0
-                for poly in self.polynomials[use_echans_start:use_echans_stop+1]:
+                for poly in self.polynomials[use_echans_start : use_echans_stop + 1]:
 
                     tmpbkg += poly.integral(time_bin.start_time, time_bin.stop_time)
-                    
-                
-                bkg.append(tmpbkg/width[j])
-                
-            
-            
+
+                bkg.append(tmpbkg / width[j])
+
         else:
 
-            
             bkg = None
 
         # pass all this to the light curve plotter
@@ -287,10 +291,8 @@ class BinnedSpectrumSeries(TimeSeries):
 
         # get all the starts and stops from these time intervals
 
-        true_starts = np.array(
-            self._binned_spectrum_set.time_intervals.start_times)
-        true_stops = np.array(
-            self._binned_spectrum_set.time_intervals.stop_times)
+        true_starts = np.array(self._binned_spectrum_set.time_intervals.start_times)
+        true_stops = np.array(self._binned_spectrum_set.time_intervals.stop_times)
 
         new_starts = []
         new_stops = []
@@ -359,11 +361,9 @@ class BinnedSpectrumSeries(TimeSeries):
             # so the mask is selecting time.
             # a sum along axis=0 is a sum in time, while axis=1 is a sum in energy
 
-            selected_counts.extend(
-                self._binned_spectrum_set.counts_per_bin[mask])
+            selected_counts.extend(self._binned_spectrum_set.counts_per_bin[mask])
 
-            selected_exposure.extend(
-                self._binned_spectrum_set.exposure_per_bin[mask])
+            selected_exposure.extend(self._binned_spectrum_set.exposure_per_bin[mask])
             selected_midpoints.extend(
                 self._binned_spectrum_set.time_intervals.mid_points[mask]
             )
@@ -387,8 +387,7 @@ class BinnedSpectrumSeries(TimeSeries):
             )
 
             log.info(
-                "Auto-determined polynomial order: %d"
-                % self._optimal_polynomial_grade
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
             )
 
         else:
@@ -413,7 +412,10 @@ class BinnedSpectrumSeries(TimeSeries):
             client = ParallelClient()
 
             polynomials = client.execute_with_progress_bar(
-                worker, selected_counts.T, name=f"Fitting {self._instrument} background")
+                worker,
+                selected_counts.T,
+                name=f"Fitting {self._instrument} background",
+            )
 
         else:
 
@@ -464,8 +466,7 @@ class BinnedSpectrumSeries(TimeSeries):
         time_intervals = self._adjust_to_true_intervals(time_intervals)
 
         # start out with no time bins selection
-        all_idx = np.zeros(
-            len(self._binned_spectrum_set.time_intervals), dtype=bool)
+        all_idx = np.zeros(len(self._binned_spectrum_set.time_intervals), dtype=bool)
 
         # now we need to sum up the counts and total time
 
@@ -479,15 +480,14 @@ class BinnedSpectrumSeries(TimeSeries):
             # it is inner or outer
 
             all_idx = np.logical_or(
-                all_idx, self._select_bins(
-                    interval.start_time, interval.stop_time)
+                all_idx,
+                self._select_bins(interval.start_time, interval.stop_time),
             )
 
             total_time += interval.duration
 
         # sum along the time axis
-        self._counts = self._binned_spectrum_set.counts_per_bin[all_idx].sum(
-            axis=0)
+        self._counts = self._binned_spectrum_set.counts_per_bin[all_idx].sum(axis=0)
 
         # the selected time intervals
 
@@ -499,8 +499,7 @@ class BinnedSpectrumSeries(TimeSeries):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!")
+                raise RuntimeError("A polynomial fit to the channels does not exist!")
 
             for chan in range(self._n_channels):
 
@@ -508,11 +507,11 @@ class BinnedSpectrumSeries(TimeSeries):
                 counts_err = 0
 
                 for tmin, tmax in zip(
-                    self._time_intervals.start_times, self._time_intervals.stop_times
+                    self._time_intervals.start_times,
+                    self._time_intervals.stop_times,
                 ):
                     # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(
-                        tmin, tmax)
+                    total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (
                         self._polynomials[chan].integral_error(tmin, tmax)
                     ) ** 2
@@ -525,8 +524,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
             self._poly_count_err = np.array(tmp_err)
 
-        self._exposure = self._binned_spectrum_set.exposure_per_bin[all_idx].sum(
-        )
+        self._exposure = self._binned_spectrum_set.exposure_per_bin[all_idx].sum()
 
         self._active_dead_time = total_time - self._exposure
 

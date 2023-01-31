@@ -1,15 +1,19 @@
-from __future__ import division
-
-from builtins import map, range, zip
-
 import matplotlib.pyplot as plt
 import numpy as np
-from astromodels import (Function1D, FunctionMeta, Gaussian, Model,
-                         PointSource, use_astromodels_memoization)
+from astromodels import (
+    Function1D,
+    FunctionMeta,
+    Gaussian,
+    Model,
+    PointSource,
+    use_astromodels_memoization,
+)
 from past.utils import old_div
+
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.minimizer.grid_minimizer import GridMinimizer
+
 # from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 from threeML.minimizer.minuit_minimizer import MinuitMinimizer
 from threeML.plugin_prototype import PluginPrototype
@@ -27,7 +31,6 @@ def get_callback(jl):
     return global_minim_callback
 
 
-
 class JointLikelihoodWrap(JointLikelihood):
     def fit(self, *args, **kwargs):
 
@@ -40,7 +43,7 @@ class JointLikelihoodWrap(JointLikelihood):
 
                 super(JointLikelihoodWrap, self).fit(*args, **kwargs)
 
-            except:
+            except Exception:
 
                 raise
 
@@ -122,10 +125,12 @@ def plot_minimizer_path(jl, points=False):
     """
 
     qx_ = np.array(
-        jl.likelihood_model.test.spectrum.main.shape._traversed_points, dtype=float
+        jl.likelihood_model.test.spectrum.main.shape._traversed_points,
+        dtype=float,
     )
     qy_ = np.array(
-        jl.likelihood_model.test.spectrum.main.shape._returned_values, dtype=float
+        jl.likelihood_model.test.spectrum.main.shape._returned_values,
+        dtype=float,
     )
 
     fig, sub = plt.subplots(1, 1)
@@ -225,7 +230,7 @@ class Simple(Function1D, metaclass=FunctionMeta):
             min : 1.0
             max : 100
 
-        """
+    """
 
     def _setup(self):
 
@@ -294,7 +299,7 @@ class Complex(Simple):
             min : 1.0
             max : 100
 
-        """
+    """
 
     def _setup(self):
 

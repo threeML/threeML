@@ -1,13 +1,12 @@
 from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-from builtins import object
+
+import matplotlib.pyplot as plt
 import numpy as np
+from past.utils import old_div
 from sherpa.astro import datastack
 from sherpa.models import TableModel
+
 from threeML.plugin_prototype import PluginPrototype
-import matplotlib.pyplot as plt
 
 __instrument_name = "All OGIP compliant instruments"
 
@@ -47,11 +46,10 @@ class Likelihood2SherpaTableModel(object):
         self.onExtSrc = []  # list of extended sources in the ON region
         nExtsrc = self.likelihoodModel.getNumberOfExtendedSources()
         if nExtsrc > 0:
-            raise NotImplemented("Cannot support extended sources yet")
+            raise NotImplementedError("Cannot support extended sources yet")
 
     def update(self):
-        """Update the model values.
-        """
+        """Update the model values."""
         vals = np.zeros(len(self.table_model._TableModel__x))
         for ipt in self.onPtSrc:
             vals += [
@@ -159,8 +157,7 @@ class SherpaLike(PluginPrototype):
         return self.get_log_like()
 
     def display(self):
-        """creates plots comparing data to model
-        """
+        """creates plots comparing data to model"""
         # datastack.ui.set_xlog()
         # datastack.ui.set_ylog()
         # self.ds.plot_data()

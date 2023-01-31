@@ -24,8 +24,9 @@ astropy_old = True
 astropy_version = astropy.__version__
 if int(astropy_version[0]) == 4 and int(astropy_version[2]) >= 1:
     astropy_old = False
-elif int(astropy_version[0]) >=5:
+elif int(astropy_version[0]) >= 5:
     astropy_old = False
+
 
 class ConeSearchFailed(RuntimeError):
     pass
@@ -110,9 +111,9 @@ class VirtualObservatoryCatalog(object):
                 if table is None:
 
                     log.error("Your search returned nothing")
-                    
+
                     return None
-                    
+
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (
@@ -120,10 +121,10 @@ class VirtualObservatoryCatalog(object):
                 )
 
                 str_df = pandas_df.select_dtypes([object])
-                
+
                 if astropy_old:
                     str_df = str_df.stack().str.decode("utf-8").unstack()
-                
+
                 for col in str_df:
                     pandas_df[col] = str_df[col]
 
@@ -132,7 +133,7 @@ class VirtualObservatoryCatalog(object):
                     pandas_df.index = new_index
 
                 self._last_query_results = pandas_df
-                
+
                 out = self.apply_format(table)
 
                 # This is needed to avoid strange errors

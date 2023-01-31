@@ -24,7 +24,6 @@ skip_if_autoemcee_is_not_available = pytest.mark.skipif(
 )
 
 
-
 try:
     import dynesty
 except:
@@ -169,7 +168,6 @@ def test_autoemcee(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     check_results(res)
 
-    
 
 @skip_if_dynesty_is_not_available
 def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
@@ -187,8 +185,6 @@ def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
-
-
 @skip_if_dynesty_is_not_available
 def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
@@ -204,8 +200,6 @@ def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     check_results(res)
 
-
-    
 
 @skip_if_zeus_is_not_available
 def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
@@ -238,6 +232,7 @@ def test_bayes_plots(completed_bn090217206_bayesian_analysis):
 
     bayes.restore_median_fit()
 
+
 def test_bayes_shared(fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1):
 
     jl, _, _ = fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1
@@ -266,7 +261,7 @@ def test_bayes_shared(fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1):
     samples = bayes.sample()
 
     res_not_shared = bayes.results.get_data_frame()
-    
+
     assert np.isclose(
         res_shared["value"]["bn090217206.spectrum.main.Powerlaw.K"],
         res_not_shared["value"]["bn090217206.spectrum.main.Powerlaw.K"],

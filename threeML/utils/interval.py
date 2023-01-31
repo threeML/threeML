@@ -3,6 +3,7 @@ import re
 from operator import attrgetter, itemgetter
 
 import numpy as np
+
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
@@ -225,7 +226,8 @@ class IntervalSet:
         # like "-10 --5","-10 - -5", "-10-5", "5-10" and so on
 
         tokens = re.match(
-            "(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)", time_interval
+            "(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)",
+            time_interval,
         ).groups()
 
         return [float(x) for x in tokens]

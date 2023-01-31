@@ -1,4 +1,3 @@
-
 import warnings
 from builtins import object, range
 
@@ -11,8 +10,11 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger, silence_console_log
-from threeML.minimizer.minimization import (LocalMinimization, _Minimization,
-                                            _minimizers)
+from threeML.minimizer.minimization import (
+    LocalMinimization,
+    _Minimization,
+    _minimizers,
+)
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import trange
 
@@ -51,7 +53,9 @@ class JointLikelihoodSet(object):
             if not isinstance(model_or_models, Model):
 
                 log.error(
-                    "The model getter function should return a model or a list of " "models")
+                    "The model getter function should return a model or a list of "
+                    "models"
+                )
 
                 raise RuntimeError()
 
@@ -69,11 +73,10 @@ class JointLikelihoodSet(object):
             # Check that all models are instances of Model
             for this_model in model_or_models:
 
-                if not isinstance(
-                    this_model, Model
-                ):
+                if not isinstance(this_model, Model):
                     log.error(
-                        "The model getter function should return a model or a list of models")
+                        "The model getter function should return a model or a list of models"
+                    )
 
                     raise RuntimeError()
 
@@ -117,10 +120,11 @@ class JointLikelihoodSet(object):
         else:
 
             if not minimizer.upper() in _minimizers:
-                log.error("Minimizer %s is not available on this system. "
-                          "Available minimizers: %s"
-                          % (minimizer, ",".join(list(_minimizers.keys())))
-                          )
+                log.error(
+                    "Minimizer %s is not available on this system. "
+                    "Available minimizers: %s"
+                    % (minimizer, ",".join(list(_minimizers.keys())))
+                )
 
                 raise RuntimeError()
             # The string can only specify a local minimization. This will return an error if that is not the case.
@@ -258,9 +262,11 @@ class JointLikelihoodSet(object):
 
                     results.append(self.worker(i))
 
-        assert len(results) == self._n_iterations, (
-            "Something went wrong, I have %s results "
-            "for %s intervals" % (len(results), self._n_iterations)
+        assert (
+            len(results) == self._n_iterations
+        ), "Something went wrong, I have %s results " "for %s intervals" % (
+            len(results),
+            self._n_iterations,
         )
 
         # Store the results in the data frames

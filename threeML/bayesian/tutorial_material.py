@@ -1,15 +1,21 @@
-from builtins import zip
-from builtins import map
-from astromodels import Model, PointSource, Uniform_prior, Log_uniform_prior
-from threeML.data_list import DataList
-from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.minimizer.tutorial_material import Simple, Complex, CustomLikelihoodLike
-
-from astromodels import use_astromodels_memoization
-
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
+from astromodels import (
+    Log_uniform_prior,
+    Model,
+    PointSource,
+    Uniform_prior,
+    use_astromodels_memoization,
+)
+
+from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.data_list import DataList
+from threeML.minimizer.tutorial_material import (
+    Complex,
+    CustomLikelihoodLike,
+    Simple,
+)
 
 
 class BayesianAnalysisWrap(BayesianAnalysis):
@@ -24,7 +30,7 @@ class BayesianAnalysisWrap(BayesianAnalysis):
 
                 super(BayesianAnalysisWrap, self).sample(*args, **kwargs)
 
-            except:
+            except Exception:
 
                 raise
 
@@ -154,10 +160,12 @@ def plot_sample_path(bayes, burn_in=None, truth=None):
     """
 
     qx_ = np.array(
-        bayes.likelihood_model.test.spectrum.main.shape._traversed_points, dtype=float
+        bayes.likelihood_model.test.spectrum.main.shape._traversed_points,
+        dtype=float,
     )
     qy_ = np.array(
-        bayes.likelihood_model.test.spectrum.main.shape._returned_values, dtype=float
+        bayes.likelihood_model.test.spectrum.main.shape._returned_values,
+        dtype=float,
     )
 
     fig, (ax, ax1) = plt.subplots(

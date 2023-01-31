@@ -44,7 +44,10 @@ def _get_wrapper(function, point, minima, maxima):
 
         scaled_value = scaled_point[i]
 
-        scaled_min_value, scaled_max_value = (scaled_minima[i], scaled_maxima[i])
+        scaled_min_value, scaled_max_value = (
+            scaled_minima[i],
+            scaled_maxima[i],
+        )
 
         if scaled_value == scaled_min_value or scaled_value == scaled_max_value:
 
@@ -118,9 +121,13 @@ def _get_wrapper(function, point, minima, maxima):
 
 def get_jacobian(function, point, minima, maxima):
 
-    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(
-        function, point, minima, maxima
-    )
+    (
+        wrapper,
+        scaled_deltas,
+        scaled_point,
+        orders_of_magnitude,
+        n_dim,
+    ) = _get_wrapper(function, point, minima, maxima)
 
     # Compute the Jacobian matrix at best_fit_values
     jacobian_vector = nd.Jacobian(wrapper, scaled_deltas, method="central")(
@@ -140,9 +147,13 @@ def get_jacobian(function, point, minima, maxima):
 
 def get_hessian(function, point, minima, maxima):
 
-    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(
-        function, point, minima, maxima
-    )
+    (
+        wrapper,
+        scaled_deltas,
+        scaled_point,
+        orders_of_magnitude,
+        n_dim,
+    ) = _get_wrapper(function, point, minima, maxima)
 
     # Compute the Hessian matrix at best_fit_values
 

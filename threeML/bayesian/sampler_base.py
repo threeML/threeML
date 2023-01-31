@@ -21,7 +21,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 
@@ -202,7 +203,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         # set the median or MAP
 
-                # Instance the result
+        # Instance the result
         if threeML_config.bayesian.use_median_fit:
 
             self.restore_median_fit()
@@ -210,7 +211,6 @@ class SamplerBase(metaclass=abc.ABCMeta):
         else:
 
             self.restore_MAP_fit()
-
 
         # Find maximum of the log posterior
 
@@ -427,7 +427,7 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
             return -np.inf
 
-        except:
+        except Exception:
 
             # We don't want to catch more serious issues
 

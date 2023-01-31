@@ -7,7 +7,7 @@ try:
     from threeML.plugins.FermiLATLike import FermiLATLike
 
     LATLike = True
-except:
+except ImportError:
     LATLike = False
 
 from threeML.config.config import threeML_config
@@ -195,9 +195,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             _cmap_len = max(data_per_plot, _sub_menu.n_colors)
 
-            data_colors_base = cmap_intervals(
-                _cmap_len, kwargs.pop("data_cmap")
-            )
+            data_colors_base = cmap_intervals(_cmap_len, kwargs.pop("data_cmap"))
             data_colors = []
             for i in range(len(data_keys)):
                 data_colors.append(data_colors_base[i % data_per_plot])
@@ -231,9 +229,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             _cmap_len = max(data_per_plot, _sub_menu.n_colors)
 
-            model_colors_base = cmap_intervals(
-                _cmap_len, kwargs.pop("model_cmap")
-            )
+            model_colors_base = cmap_intervals(_cmap_len, kwargs.pop("model_cmap"))
             model_colors = []
             for i in range(len(data_keys)):
                 model_colors.append(model_colors_base[i % data_per_plot])
@@ -268,9 +264,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             )
             background_colors = []
             for i in range(len(data_keys)):
-                background_colors.append(
-                    background_colors_base[i % data_per_plot]
-                )
+                background_colors.append(background_colors_base[i % data_per_plot])
 
     elif "background_colors" in kwargs:
         background_colors = kwargs.pop("background_colors")
@@ -300,24 +294,18 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         model_labels = kwargs.pop("model_labels")
 
         if len(model_labels) != len(data_keys):
-            log.error(
-                "You must have the same number of model labels as data sets"
-            )
+            log.error("You must have the same number of model labels as data sets")
             raise ValueError()
     else:
 
-        model_labels = [
-            "%s Model" % analysis.data_list[key]._name for key in data_keys
-        ]
+        model_labels = ["%s Model" % analysis.data_list[key]._name for key in data_keys]
 
     if "background_labels" in kwargs:
 
         background_labels = kwargs.pop("background_labels")
 
         if len(background_labels) != len(data_keys):
-            log.error(
-                "You must have the same number of background labels as data sets"
-            )
+            log.error("You must have the same number of background labels as data sets")
             raise ValueError()
 
     else:
@@ -550,9 +538,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = threeML_config.plugins.photo.fit_plot.step
 
-    data_cmap = (
-        threeML_config.plugins.photo.fit_plot.data_cmap.value
-    )  # plt.cm.rainbow
+    data_cmap = threeML_config.plugins.photo.fit_plot.data_cmap.value  # plt.cm.rainbow
 
     model_cmap = threeML_config.plugins.photo.fit_plot.model_cmap.value
 
@@ -630,9 +616,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     axes = residual_plot.axes
 
     # go thru the detectors
-    for key, data_color, model_color in zip(
-        data_keys, data_colors, model_colors
-    ):
+    for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
 
         data: photolike.PhotometryLike = analysis.data_list[key]
 

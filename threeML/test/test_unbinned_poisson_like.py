@@ -5,8 +5,10 @@ from astromodels import Gaussian, Line, Log_normal, Model, PointSource
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
-                                                 UnbinnedPoissonLike)
+from threeML.plugins.UnbinnedPoissonLike import (
+    EventObservation,
+    UnbinnedPoissonLike,
+)
 
 from .conftest import event_observation_contiguous, event_observation_split
 
@@ -44,8 +46,8 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
     ps = PointSource("s", 0, 0, spectral_shape=s)
 
     s.a.bounds = (0, None)
-    s.a.value = .1
-    s.b.value = .1
+    s.a.value = 0.1
+    s.b.value = 0.1
 
     s.a.prior = Log_normal(mu=np.log(10), sigma=1)
     s.b.prior = Gaussian(mu=0, sigma=1)
@@ -56,14 +58,13 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
     ######
     ######
 
-    
     ub1 = UnbinnedPoissonLike("test", observation=event_observation_contiguous)
 
     jl = JointLikelihood(m, DataList(ub1))
 
     jl.fit(quiet=True)
 
-    np.testing.assert_allclose([s.a.value, s.b.value], [6.11, 1.45], rtol=.5)
+    np.testing.assert_allclose([s.a.value, s.b.value], [6.11, 1.45], rtol=0.5)
 
     ba = BayesianAnalysis(m, DataList(ub1))
 
@@ -75,7 +76,7 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.restore_median_fit()
 
-    np.testing.assert_allclose([s.a.value, s.b.value], [6.11, 1.45], rtol=.5)
+    np.testing.assert_allclose([s.a.value, s.b.value], [6.11, 1.45], rtol=0.5)
 
     ######
     ######
@@ -87,7 +88,7 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     jl.fit(quiet=True)
 
-    np.testing.assert_allclose([s.a.value, s.b.value], [2., .2], rtol=.5)
+    np.testing.assert_allclose([s.a.value, s.b.value], [2.0, 0.2], rtol=0.5)
 
     ba = BayesianAnalysis(m, DataList(ub2))
 
@@ -99,4 +100,4 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     ba.restore_median_fit()
 
-    np.testing.assert_allclose([s.a.value, s.b.value], [2., .2], rtol=10)
+    np.testing.assert_allclose([s.a.value, s.b.value], [2.0, 0.2], rtol=10)

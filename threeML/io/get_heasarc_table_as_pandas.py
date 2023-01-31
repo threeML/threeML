@@ -13,9 +13,11 @@ import astropy.io.votable as votable
 import astropy.time as astro_time
 import yaml
 
-from threeML.io.file_utils import (file_existing_and_readable,
-                                   if_directory_not_existing_then_make,
-                                   sanitize_filename)
+from threeML.io.file_utils import (
+    file_existing_and_readable,
+    if_directory_not_existing_then_make,
+    sanitize_filename,
+)
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
@@ -46,10 +48,10 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
     # point to the cache directory and create it if it is not existing
 
     cache_directory: Path = Path("~/.threeML/.cache").expanduser()
-    
+
     if_directory_not_existing_then_make(cache_directory)
 
-    cache_file = cache_directory /  f"{heasarc_table_name}_cache.yml"
+    cache_file = cache_directory / f"{heasarc_table_name}_cache.yml"
 
     cache_file_sanatized = sanitize_filename(cache_file)
 
@@ -79,8 +81,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
             yaml_cache = yaml.load(cache, Loader=yaml.SafeLoader)
 
             cached_time = astro_time.Time(
-                datetime.datetime(
-                    *list(map(int, yaml_cache["last save"].split("-"))))
+                datetime.datetime(*list(map(int, yaml_cache["last save"].split("-"))))
             )
 
             # the second line how many seconds to keep the file around
@@ -88,8 +89,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
             cache_valid_for = float(yaml_cache["cache time"])
 
             # now we will compare it to the current time in UTC
-            current_time = astro_time.Time(
-                datetime.datetime.utcnow(), scale="utc")
+            current_time = astro_time.Time(datetime.datetime.utcnow(), scale="utc")
 
             delta_time = current_time - cached_time
 
@@ -119,8 +119,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         try:
 
-            urllib.request.urlretrieve(
-                heasarc_url, filename=file_name_sanatized)
+            urllib.request.urlretrieve(heasarc_url, filename=file_name_sanatized)
 
         except (IOError):
 
@@ -150,8 +149,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
                 yaml_dict = {}
 
-                current_time = astro_time.Time(
-                    datetime.datetime.utcnow(), scale="utc")
+                current_time = astro_time.Time(datetime.datetime.utcnow(), scale="utc")
 
                 yaml_dict["last save"] = current_time.datetime.strftime(
                     "%Y-%m-%d-%H-%M-%S"

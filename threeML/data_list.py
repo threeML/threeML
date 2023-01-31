@@ -38,7 +38,8 @@ class DataList(object):
         if dataset.name in self.keys():
 
             raise RuntimeError(
-                "You have to use unique names for data sets. %s already exists." % dataset.name
+                "You have to use unique names for data sets. %s already exists."
+                % dataset.name
             )
 
         else:

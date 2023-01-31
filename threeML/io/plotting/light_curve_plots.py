@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from past.utils import old_div
+
 from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.step_plot import step_plot
@@ -30,7 +31,7 @@ def binned_light_curve_plot(
     """
     fig, ax = plt.subplots()
 
-    top      = max(old_div(cnts[width > 0], width[width > 0])) * 1.2
+    top = max(old_div(cnts[width > 0], width[width > 0])) * 1.2
 
     min_cnts = min(old_div(cnts[cnts > 0], width[cnts > 0])) * 0.95
     bottom = min_cnts
@@ -44,9 +45,7 @@ def binned_light_curve_plot(
     light_curve_color = threeML_config.time_series.light_curve_color
     selection_color = threeML_config.time_series.selection_color
     background_color = threeML_config.time_series.background_color
-    background_selection_color = (
-        threeML_config.time_series.background_selection_color
-    )
+    background_selection_color = threeML_config.time_series.background_selection_color
 
     # first plot the full lightcurve
 
@@ -65,9 +64,7 @@ def binned_light_curve_plot(
         np.round(selection, decimals=4, out=selection)
 
         for tmin, tmax in selection:
-            tmp_mask = np.logical_and(
-                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax
-            )
+            tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
 
             all_masks.append(tmp_mask)
 
@@ -101,9 +98,7 @@ def binned_light_curve_plot(
 
         all_masks = []
         for tmin, tmax in bkg_selections:
-            tmp_mask = np.logical_and(
-                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax
-            )
+            tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
 
             all_masks.append(tmp_mask)
 

@@ -8,12 +8,12 @@ from .filter_set import FilterSet
 
 
 class PhotometericObservation(object):
-
-    def __init__(self, band_names: List[str],
-                 ab_magnitudes: Iterable[float],
-                 ab_magnitude_errors: Iterable[float]
-
-                 ) -> None:
+    def __init__(
+        self,
+        band_names: List[str],
+        ab_magnitudes: Iterable[float],
+        ab_magnitude_errors: Iterable[float],
+    ) -> None:
         """
 
         A container for photometric data
@@ -32,16 +32,17 @@ class PhotometericObservation(object):
         d = {}
         self._internal_rep = {}
         for i, name in enumerate(self._band_names):
-            d[name] = (self._ab_magnitudes[i],
-                       self._ab_magnitude_errors[i])
+            d[name] = (self._ab_magnitudes[i], self._ab_magnitude_errors[i])
             self._internal_rep[name] = (
-                self._ab_magnitudes[i], self._ab_magnitude_errors[i])
+                self._ab_magnitudes[i],
+                self._ab_magnitude_errors[i],
+            )
 
         self.__dict__.update(d)
 
-    def is_compatible_with_filter_set(self,
-                                      filter_set: Union[FilterSet, FilterSequence]) -> bool:
-
+    def is_compatible_with_filter_set(
+        self, filter_set: Union[FilterSet, FilterSequence]
+    ) -> bool:
 
         if isinstance(filter_set, FilterSet):
 
@@ -53,20 +54,21 @@ class PhotometericObservation(object):
         else:
 
             names = [fname.split("-")[1] for fname in filter_set.names]
-            
+
             for band in self._band_names:
                 if band not in names:
                     print(f"{band} not in filter set")
                     return False
-            
 
         return True
 
-    def get_mask_from_filter_sequence(self, filter_set: FilterSequence) -> Iterable[bool]:
+    def get_mask_from_filter_sequence(
+        self, filter_set: FilterSequence
+    ) -> Iterable[bool]:
 
         names = [fname.split("-")[1] for fname in filter_set.names]
-        
-        mask = np.zeros(len(filter_set), dtype = bool)
+
+        mask = np.zeros(len(filter_set), dtype=bool)
 
         for name in self._band_names:
 
@@ -74,7 +76,6 @@ class PhotometericObservation(object):
 
         return mask
 
-    
     def to_hdf5(self, file_name: str, overwrite: bool = False) -> None:
         """
         Save the data to an HDF5 file
@@ -93,7 +94,7 @@ class PhotometericObservation(object):
                 grp.attrs["ab_magnitude"] = v[0]
                 grp.attrs["ab_magnitude_err"] = v[1]
 
-    @ classmethod
+    @classmethod
     def from_hdf5(cls, file_name: str):
         # type: (str) -> PhotometericObservation
         """
@@ -106,11 +107,13 @@ class PhotometericObservation(object):
 
             for band in f.keys():
 
-                output[band] = (f[band].attrs["ab_magnitude"],
-                                f[band].attrs["ab_magnitude_err"])
+                output[band] = (
+                    f[band].attrs["ab_magnitude"],
+                    f[band].attrs["ab_magnitude_err"],
+                )
         return cls.from_dict(output)
 
-    @ classmethod
+    @classmethod
     def from_kwargs(cls, **kwargs):
         # type: (dict) -> PhotometericObservation
         """
@@ -120,7 +123,7 @@ class PhotometericObservation(object):
         """
         return cls.from_dict(kwargs)
 
-    @ classmethod
+    @classmethod
     def from_dict(cls, data: dict):
         # type: (dict) -> PhotometericObservation
         """
@@ -147,13 +150,11 @@ class PhotometericObservation(object):
     def __delitem__(self, key):
         raise RuntimeError("Cannot modify data!")
 
-
-#     def __setattr__(self, name, value):
-#         if self._locked:
-#             raise RuntimeError("Cannot modify data!")
-#         else:
-#             self[name] = value
-
+    #     def __setattr__(self, name, value):
+    #         if self._locked:
+    #             raise RuntimeError("Cannot modify data!")
+    #         else:
+    #             self[name] = value
 
     def __delattr__(self, name):
         if name in self:
@@ -177,6 +178,10 @@ class PhotometericObservation(object):
         return self._internal_rep.items()
 
     def __repr__(self):
-        args = [f'{k} = {m} +/- {me}' for (k, m, me) in zip(
-            self._band_names, self._ab_magnitudes, self._ab_magnitude_errors)]
-        return 'PhotometricObservation({})'.format(', '.join(args))
+        args = [
+            f"{k} = {m} +/- {me}"
+            for (k, m, me) in zip(
+                self._band_names, self._ab_magnitudes, self._ab_magnitude_errors
+            )
+        ]
+        return "PhotometricObservation({})".format(", ".join(args))

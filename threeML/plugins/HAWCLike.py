@@ -1,9 +1,5 @@
-from __future__ import division, print_function
-
 import collections
 import os
-
-from builtins import range, str
 from copy import deepcopy
 
 import matplotlib.pyplot as plt
@@ -13,6 +9,7 @@ from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
 from past.utils import old_div
+
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger
@@ -128,7 +125,13 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = galactic
 
     def set_strip_ROI(
-        self, rastart, rastop, decstart, decstop, fixed_ROI=False, galactic=False
+        self,
+        rastart,
+        rastop,
+        decstart,
+        decstop,
+        fixed_ROI=False,
+        galactic=False,
     ):
 
         self._check_fullsky("set_ROI")
@@ -303,14 +306,14 @@ class HAWCLike(PluginPrototype):
                     self._fullsky,
                 )
 
-        except:
+        except Exception:
 
-            print(
+            log.error(
                 "Could not instance the LikeHAWC class from LIFF. "
                 + "Check that HAWC software is working"
             )
 
-            raise
+            raise RuntimeError
 
         else:
 
@@ -321,6 +324,8 @@ class HAWCLike(PluginPrototype):
         if self._fullsky:
 
             if self._roi_ra is None and self._roi_fits is None:
+
+                log.error("You have to define a ROI with the setROI method")
 
                 raise RuntimeError("You have to define a ROI with the setROI method")
 
@@ -352,7 +357,10 @@ class HAWCLike(PluginPrototype):
             elif len(self._roi_ra) > 2:
 
                 self._theLikeHAWC.SetROI(
-                    self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic
+                    self._roi_ra,
+                    self._roi_dec,
+                    self._fixed_ROI,
+                    self._roi_galactic,
                 )
 
             else:
@@ -563,7 +571,7 @@ class HAWCLike(PluginPrototype):
 
         """
         Plot model&data/residuals vs HAWC analysis bins at arbitrary location.
-    
+
         :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
         :param dec: Declination of center of disk.
         :param radius: Radius of disk (in degrees). Default 0.5. Can also be a list with one element per analysis bin.
@@ -720,7 +728,7 @@ class HAWCLike(PluginPrototype):
 
         """
         Calculates radial profiles of data - background & model.
-    
+
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
@@ -729,7 +737,7 @@ class HAWCLike(PluginPrototype):
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
-        
+
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
 
@@ -838,7 +846,13 @@ class HAWCLike(PluginPrototype):
         )
         excess_model = np.average(old_div(model, area), weights=weight, axis=1)
 
-        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
+        return (
+            radii,
+            excess_model,
+            excess_data,
+            excess_error,
+            sorted(list_of_bin_names),
+        )
 
     def plot_radial_profile(
         self,
@@ -853,7 +867,7 @@ class HAWCLike(PluginPrototype):
 
         """
         Plots radial profiles of data - background & model.
-    
+
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
@@ -862,7 +876,7 @@ class HAWCLike(PluginPrototype):
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
-        
+
         :return: plot of data - background vs model radial profiles.
         """
 
@@ -923,8 +937,11 @@ class HAWCLike(PluginPrototype):
         ax.grid(True)
 
         try:
+
             plt.tight_layout()
-        except:
+
+        except Exception:
+
             pass
 
         return fig

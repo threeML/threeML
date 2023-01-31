@@ -1,25 +1,19 @@
-from __future__ import division
-
+import os
+import os.path
 import re
-from builtins import map, str
 
+import astromodels
 import numpy
-from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
-from astropy.stats import circmean
 from astropy import units as u
+from astropy.stats import circmean
 
-from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.logging import setup_logger
-from pkg_resources import resource_filename
-import os.path, os
-
 
 log = setup_logger(__name__)
 
 _trigger_name_match = re.compile("^GRB\d{9}$")
+
 
 def _gbm_and_lle_valid_source_check(source):
     """
@@ -47,7 +41,9 @@ def _gbm_and_lle_valid_source_check(source):
 
     return answer
 
+
 #########
+
 
 def _sanitize_fgl_name(fgl_name):
     swap = (
@@ -75,22 +71,25 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     if spectrum_type == "PowerLaw":
 
-        this_spectrum = Powerlaw()
+        this_spectrum = astromodels.Powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
 
         if "pl_index" in catalog_entry:
             this_spectrum.index = float(catalog_entry["pl_index"]) * -1
             this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-                u.cm ** 2 * u.s * u.MeV
+                u.cm**2 * u.s * u.MeV
             )
         else:
             this_spectrum.index = float(catalog_entry["dnde_index"]) * -1
-            this_spectrum.K = float(catalog_entry["dnde"]) / (
-                u.cm ** 2 * u.s * u.MeV
-            )
+            this_spectrum.K = float(catalog_entry["dnde"]) / (u.cm**2 * u.s * u.MeV)
         this_spectrum.index.fix = fix
+        this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
+            u.cm**2 * u.s * u.MeV
+        )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
@@ -99,25 +98,27 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "LogParabola":
 
-        this_spectrum = Log_parabola()
+        this_spectrum = astromodels.Log_parabola()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        
+
         if "lp_index" in catalog_entry:
             this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
             this_spectrum.beta = float(catalog_entry["lp_beta"])
             this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-                u.cm ** 2 * u.s * u.MeV
+                u.cm**2 * u.s * u.MeV
             )
-        
+
         else:
             K = float(catalog_entry["dnde"])
             this_spectrum.K.bounds = (K / 1000.0, K * 1000)
             this_spectrum.alpha = float(catalog_entry["dnde_index"]) * -1
             this_spectrum.beta = float(catalog_entry["beta"])
-            this_spectrum.K = K / (u.cm ** 2 * u.s * u.MeV)
-        
+            this_spectrum.K = K / (u.cm**2 * u.s * u.MeV)
+
         this_spectrum.alpha.fix = fix
         this_spectrum.beta.fix = fix
         this_spectrum.K.fix = fix
@@ -128,23 +129,23 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "PLExpCutoff":
 
-        this_spectrum = Cutoff_powerlaw()
+        this_spectrum = astromodels.Cutoff_powerlaw()
 
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
 
         if "plec_index" in catalog_entry:
             this_spectrum.index = float(catalog_entry["plec_index"]) * -1
             this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-                u.cm ** 2 * u.s * u.MeV
+                u.cm**2 * u.s * u.MeV
             )
         else:
             this_spectrum.index = float(catalog_entry["dnde_index"]) * -1
-            this_spectrum.K = float(catalog_entry["dnde"]) / (
-                u.cm ** 2 * u.s * u.MeV
-            )
-        
+            this_spectrum.K = float(catalog_entry["dnde"]) / (u.cm**2 * u.s * u.MeV)
+
         this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
 
         this_spectrum.index.fix = fix
@@ -154,14 +155,18 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
-        
-    elif (spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2"] ) and ("plec_exp_factor_s" not in catalog_entry.keys()):
+
+    elif (spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2"]) and (
+        "plec_exp_factor_s" not in catalog_entry.keys()
+    ):
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        
-        this_spectrum = Super_cutoff_powerlaw()
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
 
         if "plec_exp_factor" in catalog_entry:
             # OLD parameterization 4FGL which is in fermipy:
@@ -177,12 +182,12 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             K = float(catalog_entry["dnde"])
             i = float(catalog_entry["spectral_index"])
 
-        conv = numpy.exp(a * E0 ** b)
+        conv = numpy.exp(a * E0**b)
         this_spectrum.index = -i
         this_spectrum.gamma = b
         this_spectrum.piv = E0 * u.MeV
-        this_spectrum.K = ( conv * K / (u.cm ** 2 * u.s * u.MeV))
-        this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
+        this_spectrum.K = conv * K / (u.cm**2 * u.s * u.MeV)
+        this_spectrum.xc = a ** (-1.0 / b) * u.MeV
 
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -193,52 +198,57 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index.fix = fix
         this_spectrum.gamma.fix = fix
 
-    elif (spectrum_type == "PLSuperExpCutoff4") or ((spectrum_type == "PLSuperExpCutoff") and ("plec_index_s" in catalog_entry.keys() ) ):
+    elif (spectrum_type == "PLSuperExpCutoff4") or (
+        (spectrum_type == "PLSuperExpCutoff")
+        and ("plec_index_s" in catalog_entry.keys())
+    ):
         # new parameterization 4FGL-DR3. Still listed as PLSuperExpCutoff in VO.
 
-        this_spectrum = Super_cutoff_powerlaw()
-        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-        
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
+        this_source = astromodels.PointSource(
+            name, ra=ra, dec=dec, spectral_shape=this_spectrum
+        )
+
         if "plec_index_s" in catalog_entry.keys():
-            d  = float(catalog_entry["plec_exp_factor_s"])
-            b  = float(catalog_entry["plec_exp_index"])
+            d = float(catalog_entry["plec_exp_factor_s"])
+            b = float(catalog_entry["plec_exp_index"])
             Gs = float(catalog_entry["plec_index_s"])
-            K  = float(catalog_entry["plec_flux_density"])
+            K = float(catalog_entry["plec_flux_density"])
             E0 = float(catalog_entry["pivot_energy"]) * u.MeV
-            conv = numpy.exp(d/b ** 2)
+            conv = numpy.exp(d / b**2)
 
         elif "plec_expfactors" in catalog_entry.keys():
-            d  = float(catalog_entry["plec_expfactors"])
-            b  = float(catalog_entry["plec_exp_index"])
+            d = float(catalog_entry["plec_expfactors"])
+            b = float(catalog_entry["plec_exp_index"])
             Gs = float(catalog_entry["plec_indexs"])
-            K  = float(catalog_entry["plec_flux_density"])
+            K = float(catalog_entry["plec_flux_density"])
             E0 = float(catalog_entry["pivot_energy"]) * u.MeV
-            conv = numpy.exp(d/b ** 2)
+            conv = numpy.exp(d / b**2)
 
         elif "expfactor" in catalog_entry.keys():
-            d  = float(catalog_entry["expfactor"])
-            b  = float(catalog_entry["exp_index"])
+            d = float(catalog_entry["expfactor"])
+            b = float(catalog_entry["exp_index"])
             Gs = float(catalog_entry["spectral_index"])
-            K  = float(catalog_entry["dnde"])
+            K = float(catalog_entry["dnde"])
             E0 = float(catalog_entry["pivot_energy_catalog"]) * u.MeV
             wrong_E0 = float(catalog_entry["pivot_energy"]) * u.MeV
             conv = 1
-            
+
         else:
             raise NotImplementedError(
                 "Spectrum type %s is not a valid 4FGL type" % spectrum_type
             )
 
-        this_spectrum.index =  d/b - Gs
-        #this_spectrum.gamma = d/b
+        this_spectrum.index = d / b - Gs
+        # this_spectrum.gamma = d/b
         this_spectrum.gamma = b
         this_spectrum.piv = E0
-        this_spectrum.xc =  E0*(b**2/d)**(1/b)
+        this_spectrum.xc = E0 * (b**2 / d) ** (1 / b)
 
         if "expfactor" in catalog_entry.keys():
             conv = 1.0 / this_spectrum(wrong_E0)
 
-        this_spectrum.K = ( conv * K / (u.cm ** 2 * u.s * u.MeV) )
+        this_spectrum.K = conv * K / (u.cm**2 * u.s * u.MeV)
 
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -251,8 +261,10 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     else:
 
+        log.error(f"Spectrum type {spectrum_type} is not a valid 4FGL type")
+
         raise NotImplementedError(
-            "Spectrum type %s is not a valid 4FGL type" % spectrum_type
+            f"Spectrum type {spectrum_type} is not a valid 4FGL type"
         )
 
     return this_source
@@ -270,9 +282,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     dec = float(catalog_entry["dec"])
 
     if catalog_entry["spatial_function"] == "RadialDisk":
-        this_shape = Disk_on_sphere()
+        this_shape = astromodels.Disk_on_sphere()
     elif catalog_entry["spatial_function"] == "RadialGaussian":
-        this_shape = Gaussian_on_sphere()
+        this_shape = astromodels.Gaussian_on_sphere()
     elif catalog_entry["spatial_function"] == "SpatialMap":
         the_file = catalog_entry["spatial_filename"]
         if isinstance(the_file, bytes):
@@ -285,24 +297,29 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
         the_template = os.path.join(the_dir, the_file)
 
-        #this_shape(fits_file=the_template)
+        # this_shape(fits_file=the_template)
 
-        this_shape = SpatialTemplate_2D(fits_file=the_template)
+        this_shape = astromodels.SpatialTemplate_2D(fits_file=the_template)
 
     else:
-        log.error("Spatial_Function {} not implemented yet" % catalog_entry["Spatial_Function"] )
+        log.error(
+            "Spatial_Function {} not implemented yet"
+            % catalog_entry["Spatial_Function"]
+        )
         raise NotImplementedError()
 
     if spectrum_type == "PowerLaw":
 
-        this_spectrum = Powerlaw()
+        this_spectrum = astromodels.Powerlaw()
 
-        this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
+        this_source = astromodels.ExtendedSource(
+            name, spatial_shape=this_shape, spectral_shape=this_spectrum
+        )
 
         this_spectrum.index = float(catalog_entry["pl_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -313,9 +330,11 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "LogParabola":
 
-        this_spectrum = Log_parabola()
+        this_spectrum = astromodels.Log_parabola()
 
-        this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
+        this_source = astromodels.ExtendedSource(
+            name, spatial_shape=this_shape, spectral_shape=this_spectrum
+        )
 
         this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
         this_spectrum.alpha.fix = fix
@@ -323,7 +342,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -333,15 +352,17 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == "PLExpCutoff":
 
-        this_spectrum = Cutoff_powerlaw()
+        this_spectrum = astromodels.Cutoff_powerlaw()
 
-        this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
+        this_source = astromodels.ExtendedSource(
+            name, spatial_shape=this_shape, spectral_shape=this_spectrum
+        )
 
         this_spectrum.index = float(catalog_entry["plec_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
         this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
+            u.cm**2 * u.s * u.MeV
         )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -355,44 +376,49 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         # This is the new definition, from the 4FGL catalog.
         # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
         # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
-        this_spectrum = Super_cutoff_powerlaw()
+        this_spectrum = astromodels.Super_cutoff_powerlaw()
 
-        this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
+        this_source = astromodels.ExtendedSource(
+            name, spatial_shape=this_shape, spectral_shape=this_spectrum
+        )
 
         # new parameterization 4FGLDR3:
-        if ('plec_index_s' in catalog_entry.keys()):
-            d  = float(catalog_entry["plec_exp_factor_s"])
+        if "plec_index_s" in catalog_entry.keys():
+            d = float(catalog_entry["plec_exp_factor_s"])
             E0 = float(catalog_entry["pivot_energy"]) * u.MeV
-            b  = float(catalog_entry["plec_exp_index"])
+            b = float(catalog_entry["plec_exp_index"])
             Gs = float(catalog_entry["plec_index_s"])
 
-            conv = numpy.exp(d/b ** 2)
-            this_spectrum.index =  d/b - Gs
+            conv = numpy.exp(d / b**2)
+            this_spectrum.index = d / b - Gs
             this_spectrum.index.fix = fix
-            this_spectrum.gamma = d/b
+            this_spectrum.gamma = d / b
             this_spectrum.gamma.fix = fix
             this_spectrum.piv = E0
             this_spectrum.K = (
-                conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+                conv
+                * float(catalog_entry["plec_flux_density"])
+                / (u.cm**2 * u.s * u.MeV)
             )
-            this_spectrum.xc =  E0
+            this_spectrum.xc = E0
         else:
             # OLD parameterization 4FGL which is in fermipy:
             a = float(catalog_entry["plec_exp_factor"])
             E0 = float(catalog_entry["pivot_energy"])
             b = float(catalog_entry["plec_exp_index"])
 
-            conv = numpy.exp(a * E0 ** b)
+            conv = numpy.exp(a * E0**b)
             this_spectrum.index = float(catalog_entry["plec_index"]) * -1
             this_spectrum.index.fix = fix
             this_spectrum.gamma = b
             this_spectrum.gamma.fix = fix
             this_spectrum.piv = E0 * u.MeV
             this_spectrum.K = (
-                    conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+                conv
+                * float(catalog_entry["plec_flux_density"])
+                / (u.cm**2 * u.s * u.MeV)
             )
-            this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
-
+            this_spectrum.xc = a ** (-1.0 / b) * u.MeV
 
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
@@ -402,37 +428,42 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.xc.fix = fix
 
     else:
-        log.error(  "Spectrum type %s is not a valid 4FGL type" % spectrum_type )
+        log.error("Spectrum type %s is not a valid 4FGL type" % spectrum_type)
         raise NotImplementedError()
 
-
     if catalog_entry["spatial_function"] == "RadialDisk":
-    
+
         this_shape.lon0 = ra * u.degree
         this_shape.lon0.fix = True
         this_shape.lat0 = dec * u.degree
         this_shape.lat0.fix = True
         this_shape.radius = catalog_entry["Model_SemiMajor"] * u.degree
         this_shape.radius.fix = True
-        this_shape.radius.bounds = (0, catalog_entry["Model_SemiMajor"]) * u.degree
-        
+        this_shape.radius.bounds = (
+            0,
+            catalog_entry["Model_SemiMajor"],
+        ) * u.degree
+
     elif catalog_entry["spatial_function"] == "RadialGaussian":
-        
-        #factor 1/1.36 is the conversion from 68% containment radius to sigma
-        #Max of sigma/radius is used for get_boundaries().
-            
+
+        # factor 1/1.36 is the conversion from 68% containment radius to sigma
+        # Max of sigma/radius is used for get_boundaries().
+
         this_shape.lon0 = ra * u.degree
         this_shape.lon0.fix = True
         this_shape.lat0 = dec * u.degree
         this_shape.lat0.fix = True
         this_shape.sigma = catalog_entry["model_semimajor"] / 1.36 * u.degree
         this_shape.sigma.fix = True
-        this_shape.sigma.bounds = (0, catalog_entry["model_semimajor"] / 1.36) * u.degree
+        this_shape.sigma.bounds = (
+            0,
+            catalog_entry["model_semimajor"] / 1.36,
+        ) * u.degree
 
     return this_source
 
 
-class ModelFromFGL(Model):
+class ModelFromFGL(astromodels.Model):
     def __init__(self, ra_center, dec_center, *sources):
 
         self._ra_center = float(ra_center)
@@ -482,10 +513,10 @@ class ModelFromFGL(Model):
                 else:
 
                     for par in src.spectrum.main.shape.parameters:
-                        
-                        if par == "piv": #don't free pivot energy
+
+                        if par == "piv":  # don't free pivot energy
                             continue
-                        
+
                         src.spectrum.main.shape.parameters[par].free = free
 
     def free_extended_sources_within_radius(self, radius, normalization_only=True):
@@ -513,16 +544,21 @@ class ModelFromFGL(Model):
         for src_name in self.extended_sources:
 
             src = self.extended_sources[src_name]
-            
-            try:
-                ra, dec = src.spatial_shape.lon0.value, src.spatial_shape.lat0.value
-                
-            except:
-            
-                (ra_min, ra_max), (dec_min, dec_max) = src.spatial_shape.get_boundaries()
-                ra = circmean( [ra_min, ra_max]*u.deg ).value
-                dec = circmean( [dec_min, dec_max]*u.deg ).value
 
+            try:
+                ra, dec = (
+                    src.spatial_shape.lon0.value,
+                    src.spatial_shape.lat0.value,
+                )
+
+            except Exception:
+
+                (ra_min, ra_max), (
+                    dec_min,
+                    dec_max,
+                ) = src.spatial_shape.get_boundaries()
+                ra = circmean([ra_min, ra_max] * u.deg).value
+                dec = circmean([dec_min, dec_max] * u.deg).value
 
             this_d = angular_distance(
                 self._ra_center,
@@ -540,9 +576,8 @@ class ModelFromFGL(Model):
                 else:
 
                     for par in src.spectrum.main.shape.parameters:
-                        
-                        if par == "piv": #don't free pivot energy
-                            continue
-                        
-                        src.spectrum.main.shape.parameters[par].free = free
 
+                        if par == "piv":  # don't free pivot energy
+                            continue
+
+                        src.spectrum.main.shape.parameters[par].free = free

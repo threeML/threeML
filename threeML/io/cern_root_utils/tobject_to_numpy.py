@@ -25,7 +25,7 @@ def tgraph_to_arrays(tgraph):
 
 def _get_edges(taxis, n):
 
-    edges = np.zeros(n+1)
+    edges = np.zeros(n + 1)
 
     for i in range(n):
 

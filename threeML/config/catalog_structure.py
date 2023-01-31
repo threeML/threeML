@@ -25,11 +25,27 @@ class InstrumentCatalog:
 
 @dataclass(frozen=True)
 class Catalogs:
-    Fermi: InstrumentCatalog = InstrumentCatalog({"LAT FGL": CatalogServer("https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&"),
-                                                  "GBM burst catalog": CatalogServer("https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigbrst&"),
-                                                  "GBM trigger catalog": CatalogServer("https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigtrig&"),
-                                                  "LLE catalog": CatalogServer("https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermille&")
-                                                  })
+    Fermi: InstrumentCatalog = InstrumentCatalog(
+        {
+            "LAT FGL": CatalogServer(
+                "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&"
+            ),
+            "GBM burst catalog": CatalogServer(
+                "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigbrst&"
+            ),
+            "GBM trigger catalog": CatalogServer(
+                "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigtrig&"
+            ),
+            "LLE catalog": CatalogServer(
+                "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermille&"
+            ),
+        }
+    )
 
-    Swift: InstrumentCatalog = InstrumentCatalog({"Swift GRB catalog": CatalogServer(
-        "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=swiftgrb&")})
+    Swift: InstrumentCatalog = InstrumentCatalog(
+        {
+            "Swift GRB catalog": CatalogServer(
+                "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=swiftgrb&"
+            )
+        }
+    )

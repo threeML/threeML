@@ -4,7 +4,10 @@ import numpy as np
 import pytest
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
+from threeML.utils.time_series.event_list import (
+    EventListWithDeadTime,
+    EventList,
+)
 from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
 from threeML.io.file_utils import within_directory
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
@@ -67,7 +70,7 @@ def test_unbinned_fit(event_time_series):
     arrival_times = event_time_series
 
     print(len(event_time_series))
-    
+
     evt_list = EventListWithDeadTime(
         arrival_times=arrival_times,
         measurement=np.zeros_like(arrival_times),
@@ -84,11 +87,10 @@ def test_unbinned_fit(event_time_series):
     results = evt_list.get_poly_info()["coefficients"]
 
     print(results)
-    
+
     evt_list.set_active_time_intervals("0-10")
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 10])
-
 
     print(evt_list._poly_counts)
 
@@ -98,7 +100,7 @@ def test_unbinned_fit(event_time_series):
 
 
 def test_binned_fit(event_time_series):
-    
+
     start, stop = 0, 50
 
     poly = [1]
@@ -114,20 +116,18 @@ def test_binned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=False
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
     evt_list.set_active_time_intervals("0-1")
 
     results = evt_list.get_poly_info()["coefficients"]
-    
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
     assert evt_list._poly_counts.sum() > 0
 
     evt_list.__repr__()
+
 
 def test_no_poly_fit(event_time_series):
 
@@ -161,12 +161,9 @@ def test_no_poly_fit(event_time_series):
     assert evt_list.bkg_intervals[0].stop_time == stop - 1
 
     # Now with poly fit
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=False
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
     results = evt_list.get_poly_info()["coefficients"]
-
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
@@ -213,7 +210,6 @@ def test_deprecation(event_time_series):
     evt_list.set_active_time_intervals("0-1")
 
     results = evt_list.get_poly_info()["coefficients"]
-
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
@@ -332,29 +328,38 @@ def test_read_gbm_tte():
 
         assert len(nai3.bins) == 5
 
-
-        nai3.view_lightcurve(start=-10, stop=10, dt=1,
-                             use_echans_start=1,
-                             use_echans_stop=4)
-
-        with pytest.raises(AssertionError):
-            nai3.view_lightcurve(start=-10, stop=10, dt=1,
-                                 use_echans_start=1.2,
-                                 use_echans_stop=4)
+        nai3.view_lightcurve(
+            start=-10, stop=10, dt=1, use_echans_start=1, use_echans_stop=4
+        )
 
         with pytest.raises(AssertionError):
-            nai3.view_lightcurve(start=-10, stop=10, dt=1,
-                                 use_echans_start=4,
-                                 use_echans_stop=2)
+            nai3.view_lightcurve(
+                start=-10,
+                stop=10,
+                dt=1,
+                use_echans_start=1.2,
+                use_echans_stop=4,
+            )
 
         with pytest.raises(AssertionError):
-            nai3.view_lightcurve(start=-10, stop=10, dt=1,
-                                 use_echans_start=0,
-                                 use_echans_stop=200)
+            nai3.view_lightcurve(
+                start=-10, stop=10, dt=1, use_echans_start=4, use_echans_stop=2
+            )
+
+        with pytest.raises(AssertionError):
+            nai3.view_lightcurve(
+                start=-10,
+                stop=10,
+                dt=1,
+                use_echans_start=0,
+                use_echans_stop=200,
+            )
 
         nai3.view_lightcurve(use_binner=True)
 
-        nai3.write_pha_from_binner("test_from_nai3", overwrite=True, force_rsp_write=True)
+        nai3.write_pha_from_binner(
+            "test_from_nai3", overwrite=True, force_rsp_write=True
+        )
 
 
 def test_reading_of_written_pha():

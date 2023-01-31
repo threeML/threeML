@@ -4,7 +4,6 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 import astropy.io.fits as fits
 import numpy as np
-from numpy.ma import count
 import six
 from past.utils import old_div
 
@@ -51,8 +50,7 @@ _required_keywords["background"] = (
 
 _might_be_columns = {}
 _might_be_columns["observed"] = (
-    "EXPOSURE,BACKFILE," + "CORRFILE,CORRSCAL," + "RESPFILE,ANCRFILE,"
-    "BACKSCAL"
+    "EXPOSURE,BACKFILE," + "CORRFILE,CORRSCAL," + "RESPFILE,ANCRFILE," "BACKSCAL"
 ).split(",")
 _might_be_columns["background"] = ("EXPOSURE,BACKSCAL").split(",")
 
@@ -111,7 +109,8 @@ def _read_pha_or_pha2_file(
     else:
 
         log.error(
-            f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}")
+            f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}"
+        )
 
         raise RuntimeError()
 
@@ -271,9 +270,7 @@ def _read_pha_or_pha2_file(
 
     if has_tstop and has_telapse:
 
-        log.warning(
-            "Found TSTOP and TELAPSE. This file is invalid. Using TSTOP."
-        )
+        log.warning("Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.")
 
         has_telapse = False
 
@@ -303,7 +300,7 @@ def _read_pha_or_pha2_file(
 
         is_typeII_file = True
 
-        if spectrum_number == None and not treat_as_time_series:
+        if spectrum_number is None and not treat_as_time_series:
 
             log.error(
                 "This is a PHA Type II file. You have to provide a spectrum number"
@@ -332,8 +329,7 @@ def _read_pha_or_pha2_file(
         if keyname in header:
             if (
                 keyname in _required_keyword_types
-                and type(header.get(keyname))
-                is not _required_keyword_types[keyname]
+                and type(header.get(keyname)) is not _required_keyword_types[keyname]
             ):
                 log.warning(
                     "unexpected type of %(keyname)s, expected %(expected_type)s\n found %(found_type)s: %(found_value)s"
@@ -477,9 +473,7 @@ def _read_pha_or_pha2_file(
 
         if not isinstance(rsp_file, InstrumentResponse):
 
-            log.error(
-                "You must supply and OGIPResponse to extract the energy bounds"
-            )
+            log.error("You must supply and OGIPResponse to extract the energy bounds")
 
             raise RuntimeError()
 
@@ -520,9 +514,9 @@ def _read_pha_or_pha2_file(
 
                 # extract the counts
 
-                counts = data.field(data_column_name)[
-                    spectrum_number - 1, :
-                ].astype(np.int64)
+                counts = data.field(data_column_name)[spectrum_number - 1, :].astype(
+                    np.int64
+                )
 
                 # count the rates
 
@@ -844,7 +838,8 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         else:
 
             log.error(
-                f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}")
+                f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}"
+            )
 
             raise RuntimeError()
 
@@ -1172,8 +1167,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
             except KeyError:
 
                 raise RuntimeError(
-                    "The input file %s is not in PHA format"
-                    % (pha_file_or_instance)
+                    "The input file %s is not in PHA format" % (pha_file_or_instance)
                 )
 
             spectrum = f[HDUidx]
@@ -1301,9 +1295,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
             raise RuntimeError()
 
-        time_intervals = TimeIntervalSet.from_starts_and_stops(
-            start_times, stop_times
-        )
+        time_intervals = TimeIntervalSet.from_starts_and_stops(start_times, stop_times)
 
         reference_time = 0
 
@@ -1438,9 +1430,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
         return pha
 
     @classmethod
-    def from_dispersion_spectrum(
-        cls, dispersion_spectrum, file_type="observed"
-    ):
+    def from_dispersion_spectrum(cls, dispersion_spectrum, file_type="observed"):
         # type: (BinnedSpectrumWithDispersion, str) -> PHASpectrum
 
         if dispersion_spectrum.is_poisson:

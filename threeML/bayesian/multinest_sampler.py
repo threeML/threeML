@@ -14,7 +14,7 @@ try:
 
     import pymultinest
 
-except:
+except ImportError:
 
     has_pymultinest = False
 
@@ -38,7 +38,8 @@ try:
     else:
 
         using_mpi = False
-except:
+
+except ImportError:
 
     using_mpi = False
 
@@ -165,8 +166,6 @@ class MultiNestSampler(UnitCubeSampler):
                 log.debug(f"Create {chain_dir} for multinest output")
                 chain_dir.mkdir()
 
-
-
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
@@ -206,8 +205,6 @@ class MultiNestSampler(UnitCubeSampler):
             else:
 
                 process_fit = True
-
-
 
         else:
 

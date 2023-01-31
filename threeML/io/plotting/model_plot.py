@@ -1,12 +1,11 @@
 __author__ = "grburgess"
 
-import warnings
-from typing import List
 
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.visualization import quantity_support
+
 from threeML.config.config import threeML_config
 from threeML.io.calculate_flux import (
     _collect_sums_into_dictionaries,
@@ -27,9 +26,7 @@ log = setup_logger(__name__)
 
 def plot_point_source_spectra(*analysis_results, **kwargs):
 
-    log.error(
-        "plot_point_source_spectra() has been replaced by plot_spectra()."
-    )
+    log.error("plot_point_source_spectra() has been replaced by plot_spectra().")
     return plot_spectra(*analysis_results, **kwargs)
 
 
@@ -146,12 +143,8 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
 
         # scale the units to the defaults
 
-        _defaults["ene_min"] = _defaults["ene_min"] * u.Unit(
-            _defaults["energy_unit"]
-        )
-        _defaults["ene_max"] = _defaults["ene_max"] * u.Unit(
-            _defaults["energy_unit"]
-        )
+        _defaults["ene_min"] = _defaults["ene_min"] * u.Unit(_defaults["energy_unit"])
+        _defaults["ene_max"] = _defaults["ene_max"] * u.Unit(_defaults["energy_unit"])
 
     (
         mle_analyses,
@@ -181,9 +174,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
 
         if _defaults["fit_colors"] is None:
 
-            color_fit = cmap_intervals(
-                num_sources_to_plot + 1, _defaults["fit_cmap"]
-            )
+            color_fit = cmap_intervals(num_sources_to_plot + 1, _defaults["fit_cmap"])
 
         else:
 
@@ -218,15 +209,11 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
             # duck typing
             if isinstance(_defaults["contour_colors"], (str, str)):
 
-                color_contour = [
-                    _defaults["contour_colors"]
-                ] * num_sources_to_plot
+                color_contour = [_defaults["contour_colors"]] * num_sources_to_plot
 
             elif isinstance(_defaults["contour_colors"], list):
 
-                assert (
-                    len(_defaults["contour_colors"]) == num_sources_to_plot
-                ), (
+                assert len(_defaults["contour_colors"]) == num_sources_to_plot, (
                     "list of colors (%d) must be the same length as sources ot plot (%s)"
                     % (len(_defaults["contour_colors"]), num_sources_to_plot)
                 )
@@ -281,15 +268,11 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
 
                     if _defaults["best_fit"] == "average":
 
-                        best_fit = mle_analyses[key]["components"][
-                            component
-                        ].average
+                        best_fit = mle_analyses[key]["components"][component].average
 
                     else:
 
-                        best_fit = mle_analyses[key]["components"][
-                            component
-                        ].median
+                        best_fit = mle_analyses[key]["components"][component].median
 
                     if _defaults["show_contours"]:
                         positive_error = mle_analyses[key]["components"][
@@ -312,9 +295,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
                     if key in duplicate_keys:
                         label = "%s: MLE" % label
 
-                    if mle_analyses[key]["components"][
-                        component
-                    ].is_dimensionless:
+                    if mle_analyses[key]["components"][component].is_dimensionless:
 
                         plotter.add_dimensionless_model(
                             energy_range=energy_range,
@@ -407,9 +388,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
                 ):
                     plot_total = True
 
-                for component in list(
-                    bayesian_analyses[key]["components"].keys()
-                ):
+                for component in list(bayesian_analyses[key]["components"].keys()):
 
                     positive_error = None
                     negative_error = None
@@ -439,9 +418,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
                     if key in duplicate_keys:
                         label = "%s: Bayesian" % label
 
-                    if bayesian_analyses[key]["components"][
-                        component
-                    ].is_dimensionless:
+                    if bayesian_analyses[key]["components"][component].is_dimensionless:
 
                         plotter.add_dimensionless_model(
                             energy_range=energy_range,
@@ -475,15 +452,11 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
 
                 if _defaults["best_fit"] == "average":
 
-                    best_fit = bayesian_analyses[key][
-                        "fitted point source"
-                    ].average
+                    best_fit = bayesian_analyses[key]["fitted point source"].average
 
                 else:
 
-                    best_fit = bayesian_analyses[key][
-                        "fitted point source"
-                    ].median
+                    best_fit = bayesian_analyses[key]["fitted point source"].median
 
                 positive_error = None
                 negative_error = None
@@ -555,9 +528,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
         )
 
         color_fit = cmap_intervals(num_sources_to_plot, _defaults["fit_cmap"])
-        color_contour = cmap_intervals(
-            num_sources_to_plot, _defaults["contour_cmap"]
-        )
+        color_contour = cmap_intervals(num_sources_to_plot, _defaults["contour_cmap"])
         color_itr = 0
 
         if _defaults["use_components"] and list(component_sum_dict_mle.keys()):
@@ -591,10 +562,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
                     negative_error[neg_mask] = min(best_fit) * 0.9
 
                 if np.any(
-                    [
-                        c.is_dimensionless
-                        for c in component_sum_dict_mle[component]
-                    ]
+                    [c.is_dimensionless for c in component_sum_dict_mle[component]]
                 ):
 
                     plotter.add_dimensionless_model(
@@ -662,9 +630,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
 
             color_itr += 1
 
-        if _defaults["use_components"] and list(
-            component_sum_dict_bayes.keys()
-        ):
+        if _defaults["use_components"] and list(component_sum_dict_bayes.keys()):
 
             # we have components to plot
 
@@ -689,10 +655,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
                     negative_error = summed_analysis.lower_error
 
                 if np.any(
-                    [
-                        c.is_dimensionless
-                        for c in component_sum_dict_bayes[component]
-                    ]
+                    [c.is_dimensionless for c in component_sum_dict_bayes[component]]
                 ):
 
                     plotter.add_dimensionless_model(
@@ -892,16 +855,12 @@ class SpectralContourPlot:
         try:
             self._ax.set_xlim(
                 [
-                    self._emin.to(
-                        _defaults["energy_unit"], equivalencies=u.spectral()
-                    ),
-                    self._emax.to(
-                        _defaults["energy_unit"], equivalencies=u.spectral()
-                    ),
+                    self._emin.to(_defaults["energy_unit"], equivalencies=u.spectral()),
+                    self._emax.to(_defaults["energy_unit"], equivalencies=u.spectral()),
                 ]
             )
 
-        except:
+        except Exception:
 
             pass
 

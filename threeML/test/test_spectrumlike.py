@@ -262,7 +262,9 @@ def test_spectrum_like_with_background_model():
     _ = jl_bkg.fit()
 
     plugin_bkg_model = SpectrumLike(
-        "full", spectrum_generator.observed_spectrum, background=background_plugin
+        "full",
+        spectrum_generator.observed_spectrum,
+        background=background_plugin,
     )
 
     pts = PointSource("mysource", 0, 0, spectral_shape=bb)
@@ -283,12 +285,12 @@ def test_spectrum_like_with_background_model():
         np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], rtol=0.5)
     )
 
-
-    ## test with ogiplike 
+    ## test with ogiplike
     with within_directory(__example_dir):
-        ogip = OGIPLike("test_ogip", observation="test.pha{1}", background=background_plugin)
+        ogip = OGIPLike(
+            "test_ogip", observation="test.pha{1}", background=background_plugin
+        )
 
-    
 
 def test_all_statistics():
 

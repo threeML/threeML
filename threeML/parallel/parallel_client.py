@@ -1,19 +1,17 @@
-# Custom warning
 import math
+import shutil
 import signal
 import subprocess
+import sys
 import time
-from typing import Optional
 import warnings
 from contextlib import contextmanager
-import shutil
 from pathlib import Path
+from typing import Optional
 
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.utils.progress_bar import tqdm
-
-import sys
 
 log = setup_logger(__name__)
 
@@ -283,9 +281,7 @@ if has_parallel:
 
                 if chunk_size is None:
 
-                    chunk_size = int(
-                        math.ceil(n_items / float(n_active_engines) / 20)
-                    )
+                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
@@ -321,9 +317,7 @@ if has_parallel:
                 results.append(res)
 
             # Reorder the list according to the id
-            return list(
-                map(lambda x: x[1], sorted(results, key=lambda x: x[0]))
-            )
+            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 
 else:
 

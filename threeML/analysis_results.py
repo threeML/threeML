@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import collections
 import datetime
 import functools
@@ -30,8 +28,10 @@ from threeML.exceptions.custom_exceptions import BadCovariance
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile, fits
-from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
-                                   recursively_save_dict_contents_to_group)
+from threeML.io.hdf5_utils import (
+    recursively_load_dict_contents_from_group,
+    recursively_save_dict_contents_to_group,
+)
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
@@ -52,7 +52,7 @@ try:
 
     import chainconsumer
 
-except:
+except ImportError:
 
     has_chainconsumer = False
 
@@ -1023,7 +1023,9 @@ class BayesianResults(_AnalysisResults):
 
         if threeML_config.bayesian.use_median_fit:
 
-            _rich_console.print("[medium_spring_green bold underline] Median posterior point:")
+            _rich_console.print(
+                "[medium_spring_green bold underline] Median posterior point:"
+            )
 
         else:
 
@@ -1040,7 +1042,9 @@ class BayesianResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
+            _rich_console.print(
+                "[medium_spring_green bold underline]\nCorrelation matrix:\n"
+            )
 
             display(corr_matrix)
 
@@ -1137,7 +1141,8 @@ class BayesianResults(_AnalysisResults):
                 over=corner_style.extremes,
                 bad=corner_style.extremes,
             )
-        except:
+        except Exception:
+
             pass
 
         contourf_kwargs = dict(corner_style.contourf_kwargs)
@@ -1808,15 +1813,21 @@ class MLEResults(_AnalysisResults):
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
+            _rich_console.print(
+                "[medium_spring_green bold underline]\nCorrelation matrix:\n"
+            )
 
             display(corr_matrix)
 
-        _rich_console.print("[medium_spring_green bold underline]\nValues of -log(likelihood) at the minimum:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of -log(likelihood) at the minimum:\n"
+        )
 
         display(self.get_statistic_frame())
 
-        _rich_console.print("[medium_spring_green bold underline]\nValues of statistical measures:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of statistical measures:\n"
+        )
 
         display(self.get_statistic_measure_frame())
 
@@ -1982,7 +1993,7 @@ class AnalysisResultsSet(collections.abc.Sequence):
 
                         sub_grp.create_dataset("DATA", data=value.value)
 
-                    except:
+                    except Exception:
 
                         sub_grp.attrs["UNIT"] = "NONE_TYPE"
 
@@ -2121,7 +2132,7 @@ def _load_one_results(fits_extension):
             # Gather log probability
             log_probability = fits_extension.data.field("LOG_PROB")[0]
 
-        except:
+        except Exception:
 
             log_probability = None
 
@@ -2194,7 +2205,7 @@ def _load_one_results_hdf(hdf_obj):
             # Gather log probabiltiy
             log_probability = hdf_obj["LOG_PROB"][()]
 
-        except:
+        except Exception:
 
             log_probability = None
 

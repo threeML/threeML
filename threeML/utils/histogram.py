@@ -3,9 +3,12 @@ import copy
 import matplotlib.pyplot as plt
 import numpy as np
 
+from threeML.io.logging import setup_logger
 from threeML.io.plotting.step_plot import step_plot
-from threeML.utils.interval import IntervalSet, Interval
+from threeML.utils.interval import Interval, IntervalSet
 from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
+
+log = setup_logger(__name__)
 
 
 class Histogram(IntervalSet):
@@ -38,7 +41,11 @@ class Histogram(IntervalSet):
                 contents
             ), "contents and errors are not the same dimension "
 
-            assert is_poisson == False, "cannot have errors and is_poisson True"
+            if is_poisson:
+
+                log.error("cannot have errors and is_poisson True")
+
+                raise AssertionError("cannot have errors and is_poisson True")
 
             self._errors = np.array(errors)
 

@@ -51,8 +51,9 @@ def get_matrix_set_elements():
     # Fake a count getter
     law = lambda x: 1.23 * x
     # The counts getter is the integral of the law
-    counts_getter = (lambda t1, t2: 1.23 * 0.5 *
-                     (t2**2.0 - t1**2.0) * livetime_fraction)
+    counts_getter = (
+        lambda t1, t2: 1.23 * 0.5 * (t2**2.0 - t1**2.0) * livetime_fraction
+    )
 
     return [rsp_a, rsp_b], exposure_getter, counts_getter
 
@@ -129,12 +130,11 @@ def test_instrument_response_set_function_and_convolve():
 
     # Integral of a constant, so we know easily what the output should be
 
-    #integral_function = lambda e1, e2: e2 - e1
+    # integral_function = lambda e1, e2: e2 - e1
 
     def integral_function():
         return np.array(mc_energies)[1:] - np.array(mc_energies)[:-1]
 
-    
     rsp.set_function(integral_function)
 
     folded_counts = rsp.convolve()

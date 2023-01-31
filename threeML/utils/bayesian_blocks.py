@@ -83,8 +83,6 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
 
-    
-
     for R in tqdm(range(N)):
         br = block_length[R + 1]
         T_k = block_length[: R + 1] - br
@@ -117,8 +115,6 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
         last[R] = i_max
         best[R] = A_R[i_max]
-
-        
 
     numexpr.set_vml_accuracy_mode(oldaccuracy)
 
@@ -212,7 +208,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     last = np.zeros(N, dtype=int)
 
     # eq. 21 from Scargle 2012
-    prior = 4 - np.log(73.53 * p0 * (N ** -0.478))
+    prior = 4 - np.log(73.53 * p0 * (N**-0.478))
 
     logger.debug("Finding blocks...")
 

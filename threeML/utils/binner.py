@@ -1,9 +1,12 @@
 import numba as nb
 import numpy as np
+
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
-from threeML.utils.bayesian_blocks import (bayesian_blocks,
-                                           bayesian_blocks_not_unique)
+from threeML.utils.bayesian_blocks import (
+    bayesian_blocks,
+    bayesian_blocks_not_unique,
+)
 from threeML.utils.numba_utils import VectorFloat64, VectorInt64
 from threeML.utils.progress_bar import tqdm
 from threeML.utils.statistics.stats_tools import Significance
@@ -184,7 +187,11 @@ class Rebinner:
 
                 rebinned_vectors.append(
                     _rebin_vector_int(
-                        vector, self._starts, self._stops, self._mask, self._n_bins
+                        vector,
+                        self._starts,
+                        self._stops,
+                        self._mask,
+                        self._n_bins,
                     )
                 )
 
@@ -192,7 +199,11 @@ class Rebinner:
 
                 rebinned_vectors.append(
                     _rebin_vector_float(
-                        vector, self._starts, self._stops, self._mask, self._n_bins
+                        vector,
+                        self._starts,
+                        self._stops,
+                        self._mask,
+                        self._n_bins,
                     )
                 )
 

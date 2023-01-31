@@ -11,11 +11,25 @@ from past.utils import old_div
 
 from threeML.utils.interval import IntervalSet
 
-_final_convert = (1. * astro_units.cm**2 * astro_units.keV / (astro_units.erg *
-                                                              astro_units.angstrom**2 * astro_units.s * astro_units.cm**2)).to("1/(cm2 s)").value
+_final_convert = (
+    (
+        1.0
+        * astro_units.cm**2
+        * astro_units.keV
+        / (
+            astro_units.erg
+            * astro_units.angstrom**2
+            * astro_units.s
+            * astro_units.cm**2
+        )
+    )
+    .to("1/(cm2 s)")
+    .value
+)
 
-_hc_constant = (constants.h * constants.c).to(
-    astro_units.erg * astro_units.angstrom).value
+_hc_constant = (
+    (constants.h * constants.c).to(astro_units.erg * astro_units.angstrom).value
+)
 
 
 class NotASpeclikeFilter(RuntimeError):
@@ -67,8 +81,7 @@ class FilterSet(object):
                     tmp.append(response)
 
             self._filters = spec_filters.FilterSequence(tmp)
-            self._names = np.array([name.split("-")[1]
-                                    for name in self._filters.names])
+            self._names = np.array([name.split("-")[1] for name in self._filters.names])
             self._long_name = self._filters.names
 
         # haven't set a likelihood model yet
@@ -132,8 +145,7 @@ class FilterSet(object):
 
         """
 
-        conversion_factor = (constants.c ** 2 *
-                             constants.h ** 2).to("keV2 * cm2")
+        conversion_factor = (constants.c**2 * constants.h**2).to("keV2 * cm2")
 
         self._zero_points = np.empty(self._n_filters)
         self._wavelengths = []
@@ -153,10 +165,17 @@ class FilterSet(object):
             # we are going to input things in to the astromodels
             # funtion as keV and convert back later
             self._energies.append(
-                (filter.wavelength * astro_units.angstrom).to("keV", equivalencies=astro_units.spectral()).value)
+                (filter.wavelength * astro_units.angstrom)
+                .to("keV", equivalencies=astro_units.spectral())
+                .value
+            )
 
             self._factors.append(
-                (conversion_factor / ((filter.wavelength * astro_units.angstrom) ** 3)).value)
+                (
+                    conversion_factor
+                    / ((filter.wavelength * astro_units.angstrom) ** 3)
+                ).value
+            )
 
             self._response.append(filter.response)
             self._n_terms.append(len(filter.wavelength))
@@ -181,14 +200,16 @@ class FilterSet(object):
 
         for i in range(self._n_filters):
 
-            out.append(_conolve_and_convert(self._differential_flux(self._energies[i]),
-                                            self._factors[i],
-                                            self._response[i],
-                                            self._wavelengths[i],
-                                            self._zero_points[i],
-                                            self._n_terms[i])
-
-                       )
+            out.append(
+                _conolve_and_convert(
+                    self._differential_flux(self._energies[i]),
+                    self._factors[i],
+                    self._response[i],
+                    self._wavelengths[i],
+                    self._zero_points[i],
+                    self._n_terms[i],
+                )
+            )
 
         return np.array(out)
 

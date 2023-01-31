@@ -9,6 +9,8 @@ from .plugin_structure import Plugins, TimeSeries
 from .point_source_structure import PointSourceDefaults
 
 # logging
+
+
 class LoggingLevel(IntEnum):
     DEBUG = logging.DEBUG
     INFO = logging.INFO
@@ -21,11 +23,11 @@ class LoggingLevel(IntEnum):
 class Logging:
 
     path: str = "~/.threeml/log"
-    developer: bool = 'off'
-    usr: bool = 'on'
-    console: bool = 'on'
+    developer: bool = "off"
+    usr: bool = "on"
+    console: bool = "on"
     level: LoggingLevel = LoggingLevel.INFO
-    startup_warnings: bool = 'on'
+    startup_warnings: bool = "on"
 
 
 @dataclass
@@ -34,10 +36,11 @@ class Parallel:
     use_parallel: bool = False
     use_joblib: bool = False
 
+
 @dataclass
 class Interface:
-    progress_bars: bool = 'on'
-    multi_progress_color: bool = 'on'
+    progress_bars: bool = "on"
+    multi_progress_color: bool = "on"
     multi_progress_cmap: str = "viridis"
     progress_bar_color: str = "#9C04FF"
 
@@ -54,10 +57,14 @@ class Config:
     plotting: GenericPlotting = GenericPlotting()
     model_plot: ModelPlotting = ModelPlotting()
     point_source: PointSourceDefaults = PointSourceDefaults()
-    
-    LAT: PublicDataServer = PublicDataServer(public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
-                                             public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat",
-                                             query_form="https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi")
-    GBM: PublicDataServer = PublicDataServer(public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
-                                             public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm")
+
+    LAT: PublicDataServer = PublicDataServer(
+        public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
+        public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat",
+        query_form="https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi",
+    )
+    GBM: PublicDataServer = PublicDataServer(
+        public_ftp_location="ftp://heasarc.nasa.gov/fermi/data",
+        public_http_location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm",
+    )
     catalogs: Catalogs = Catalogs()

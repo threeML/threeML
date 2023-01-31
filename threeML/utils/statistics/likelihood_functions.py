@@ -2,6 +2,7 @@ from math import log, pi, sqrt
 
 import numpy as np
 from numba import njit
+
 from threeML.utils.statistics.gammaln import logfactorial
 
 _log_pi_2 = log(2 * pi)
@@ -109,7 +110,7 @@ def poisson_observed_poisson_background_xs(
         - (1 + exposure_ratio) * expected_model_counts
     )
     second_term = np.sqrt(
-        first_term ** 2
+        first_term**2
         + 4
         * exposure_ratio
         * (exposure_ratio + 1)
@@ -177,7 +178,7 @@ def poisson_observed_poisson_background(
 
         sqr = np.sqrt(
             4
-            * (alpha + alpha ** 2)
+            * (alpha + alpha**2)
             * background_counts[idx]
             * expected_model_counts[idx]
             + ((alpha + 1) * expected_model_counts[idx] - alpha * (o_plus_b)) ** 2
@@ -193,7 +194,8 @@ def poisson_observed_poisson_background(
 
         loglike[idx] = (
             xlogy_one(
-                observed_counts[idx], alpha * B_mle[idx] + expected_model_counts[idx]
+                observed_counts[idx],
+                alpha * B_mle[idx] + expected_model_counts[idx],
             )
             + xlogy_one(background_counts[idx], B_mle[idx])
             - (alpha + 1) * B_mle[idx]
@@ -276,7 +278,7 @@ def half_chi2(y, yerr, expectation):
 
     log_likes = np.empty(N, dtype=np.float64)
 
-    #yerr[yerr<1]=np.sqrt(0.75)
+    # yerr[yerr<1]=np.sqrt(0.75)
 
     for n in range(N):
 
