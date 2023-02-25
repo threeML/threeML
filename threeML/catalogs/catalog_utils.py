@@ -106,7 +106,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         
         if "lp_index" in catalog_entry:
             this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
-            this_spectrum.beta = float(catalog_entry["lp_beta"]) * np.log10(np.e)
+            this_spectrum.beta = float(catalog_entry["lp_beta"]) * numpy.log10(numpy.e)
             this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
                 u.cm ** 2 * u.s * u.MeV
             )
@@ -114,7 +114,7 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             K = float(catalog_entry["dnde"])
             this_spectrum.K.bounds = (K / 1000.0, K * 1000)
             this_spectrum.alpha = float(catalog_entry["dnde_index"]) * -1
-            this_spectrum.beta = float(catalog_entry["beta"]) * np.log10(np.e)
+            this_spectrum.beta = float(catalog_entry["beta"]) * numpy.log10(numpy.e)
             this_spectrum.K = K / (u.cm ** 2 * u.s * u.MeV)
         
         this_spectrum.alpha.fix = fix
@@ -318,7 +318,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
         this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
         this_spectrum.alpha.fix = fix
-        this_spectrum.beta = float(catalog_entry["lp_beta"]) * np.log10(np.e)
+        this_spectrum.beta = float(catalog_entry["lp_beta"]) * numpy.log10(numpy.e)
             
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
