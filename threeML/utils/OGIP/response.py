@@ -1129,7 +1129,7 @@ class InstrumentResponseSet(object):
         if effective_intervals[0].start_time != interval_of_interest.start_time:
 
             log.error(
-                "The interval of interest (%s) is not covered by %s"
+                "The interval of interest (%s) start is not covered by %s"
                 % (interval_of_interest, effective_intervals[0])
             )
 
@@ -1141,8 +1141,8 @@ class InstrumentResponseSet(object):
         if effective_intervals[-1].stop_time != interval_of_interest.stop_time:
 
             log.error(
-                "The interval of interest (%s) is not covered by %s"
-                % (interval_of_interest, effective_intervals[0])
+                "The interval of interest (%s) end is not covered by %s"
+                % (interval_of_interest, effective_intervals[-1])
             )
 
             raise IntervalOfInterestNotCovered()
