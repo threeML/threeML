@@ -185,7 +185,8 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
             source_names.append(this_name)
 
-            if ( "extended_source_name" in row and row["extended_source_name"] != "" ):
+            if ( "extended_source_name" in row and row["extended_source_name"] != "" ) or \
+                ("sourcetype" in row and row["sourcetype"] == "DiffuseSource" ):
         
                 if "spatial_function" in row:
                     
