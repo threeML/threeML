@@ -11,6 +11,8 @@ log = setup_logger(__name__)
 import copy
 import yaml
 
+import matplotlib.pyplot as plt
+
 from threeML.io.network import internet_connection_is_active
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
@@ -64,20 +66,41 @@ def do_the_test(cat_name):
         name = gta.roi.get_source_by_name(source["name"]).name
 
         if "diff" in name:
+            assert source.diffuse
             continue
 
         astro_name = _sanitize_fgl_name(name)
-    
+
+        if source.extended:
+            assert type(model_fits[astro_name]) == ExtendedSource
+            assert type(model_cat[astro_name]) == ExtendedSource
+            
+            if source["SpatialModel"] == "RadialDisk":
+                assert model_fits[astro_name].spatial_shape.name == "Disk_on_sphere"
+                assert model_cat[astro_name].spatial_shape.name == "Disk_on_sphere"
+            
+            if source["SpatialModel"] == "RadialGaussian":
+                assert model_fits[astro_name].spatial_shape.name == "Gaussian_on_sphere"
+                assert model_cat[astro_name].spatial_shape.name == "Gaussian_on_sphere"
+            
+            if source["SpatialModel"] == "SpatialMap":
+                assert model_fits[astro_name].spatial_shape.name == "SpatialTemplate_2D"
+                assert model_cat[astro_name].spatial_shape.name == "SpatialTemplate_2D"
+            
+        else:
+            assert type(model_fits[astro_name]) == PointSource
+            assert type(model_cat[astro_name]) == PointSource
+            assert source["SpatialModel"] == "PointSource"
+
         e, f_fermipy = gta.get_source_dnde(name)
         e = 10**e
-
 
         fa_fits = (model_fits[astro_name].spectrum.main.shape(e*u.MeV)).to(u.cm**-2 / u.s / u.MeV).value
         fa_cat = (model_cat[astro_name].spectrum.main.shape(e*u.MeV)).to(u.cm**-2 / u.s / u.MeV).value
         
         if cat_name == "4FGL-DR3":
             fa_vo = (model_vo[astro_name](e*u.MeV)).to(u.cm**-2 / u.s / u.MeV).value if astro_name in model_vo.sources else np.nan
-        print ('--------------------------------',name,cat_name)
+        
         assert np.allclose( f_fermipy, fa_fits) and np.allclose(f_fermipy, fa_cat)
         assert cat_name != "4FGL-DR3" or np.allclose(f_fermipy, fa_vo)
             
@@ -106,6 +129,8 @@ def do_the_test(cat_name):
         plt.ylabel("$E^2$ dN/dE (MeV/cm$^2$/s)")
         
         plt.grid()
+        
+        plt.savefig(f"{astro_name}.png")
         plt.show()
  
 
