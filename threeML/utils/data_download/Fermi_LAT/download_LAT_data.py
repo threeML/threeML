@@ -273,6 +273,7 @@ def download_LAT_data(
     # Look if there are FT1 and FT2 files in the output directory matching this unique ID
 
     ft1s = [x for x in destination_directory.glob("*PH??.fits")]
+    ft1s += [x for x in destination_directory.glob("*EV??.fits")]
     ft2s = [x for x in destination_directory.glob("*SC??.fits")]
 
     # Loop over all ft1s and see if there is any matching the uid
