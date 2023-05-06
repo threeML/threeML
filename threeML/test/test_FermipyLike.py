@@ -60,7 +60,7 @@ def test_FermipyLike_fromVO():
     assert len(model.free_parameters) == 4
 
     #fix another weak source
-    model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
+    model.x4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
 
     assert len(model.free_parameters) == 3
 
@@ -170,7 +170,7 @@ def test_FermipyLike_fromDisk():
     assert len(model.free_parameters) == 4
 
     #fix another weak source
-    model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
+    model.x4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
 
     assert len(model.free_parameters) == 3
 

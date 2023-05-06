@@ -55,7 +55,7 @@ def _sanitize_fgl_name(fgl_name):
     )
 
     if swap[0] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-        swap = "_%s" % swap
+        swap = "x%s" % swap
 
     return swap
 
@@ -102,19 +102,21 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum = Log_parabola()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        
+        if "pivot_energy_catalog" in catalog_entry:
+            this_spectrum.piv = float(catalog_entry["pivot_energy_catalog"]) * u.MeV
+        else:
+            this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+
         if "lp_index" in catalog_entry:
             this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
             this_spectrum.beta = float(catalog_entry["lp_beta"])
             this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
                 u.cm ** 2 * u.s * u.MeV
             )
-        
         else:
-            K = float(catalog_entry["dnde"])
+            K = float(catalog_entry["flux_density"])
             this_spectrum.K.bounds = (K / 1000.0, K * 1000)
-            this_spectrum.alpha = float(catalog_entry["dnde_index"]) * -1
+            this_spectrum.alpha = float(catalog_entry["spectral_index"]) * -1
             this_spectrum.beta = float(catalog_entry["beta"])
             this_spectrum.K = K / (u.cm ** 2 * u.s * u.MeV)
         
@@ -269,11 +271,16 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     ra = float(catalog_entry["ra"])
     dec = float(catalog_entry["dec"])
 
-    if catalog_entry["spatial_function"] == "RadialDisk":
+    theShape = catalog_entry["spatial_function"]
+    
+    if theShape == "":
+        theShape = catalog_entry["spatialmodel"]
+
+    if theShape == "RadialDisk":
         this_shape = Disk_on_sphere()
-    elif catalog_entry["spatial_function"] == "RadialGaussian":
+    elif theShape == "RadialGaussian":
         this_shape = Gaussian_on_sphere()
-    elif catalog_entry["spatial_function"] == "SpatialMap":
+    elif theShape == "SpatialMap":
         the_file = catalog_entry["spatial_filename"]
         if isinstance(the_file, bytes):
             the_file = the_file.decode("ascii")
@@ -281,16 +288,20 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         if "FERMIPY_DATA_DIR" not in os.environ:
             os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data")
 
-        the_dir = os.path.join(os.path.expandvars(catalog_entry["extdir"]), "Templates")
+        the_file = os.path.expandvars(the_file)
 
-        the_template = os.path.join(the_dir, the_file)
+        if os.path.exists( the_file ):
+        
+            the_template = the_file
 
-        #this_shape(fits_file=the_template)
+        else:
+            the_dir = os.path.join(os.path.expandvars(catalog_entry["extdir"]), "Templates")
+            the_template = os.path.join(the_dir, the_file)
 
         this_shape = SpatialTemplate_2D(fits_file=the_template)
 
     else:
-        log.error("Spatial_Function {} not implemented yet" % catalog_entry["Spatial_Function"] )
+        log.error(f"Spatial_Function {theShape} not implemented yet"  )
         raise NotImplementedError()
 
     if spectrum_type == "PowerLaw":
@@ -317,19 +328,32 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
 
         this_source = ExtendedSource(name, spatial_shape = this_shape, spectral_shape=this_spectrum)
 
-        this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
+        if "pivot_energy_catalog" in catalog_entry:
+            this_spectrum.piv = float(catalog_entry["pivot_energy_catalog"]) * u.MeV
+        else:
+            this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+
+        if "lp_index" in catalog_entry:
+            this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
+            this_spectrum.beta = float(catalog_entry["lp_beta"])
+            this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
+                u.cm ** 2 * u.s * u.MeV
+            )
+        else:
+            K = float(catalog_entry["flux_density"])
+            this_spectrum.K.bounds = (K / 1000.0, K * 1000)
+            this_spectrum.alpha = float(catalog_entry["spectral_index"]) * -1
+            this_spectrum.beta = float(catalog_entry["beta"])
+            this_spectrum.K = K / (u.cm ** 2 * u.s * u.MeV)
+        
         this_spectrum.alpha.fix = fix
-        this_spectrum.beta = float(catalog_entry["lp_beta"])
         this_spectrum.beta.fix = fix
-        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
-        this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
-            u.cm ** 2 * u.s * u.MeV
-        )
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
+
 
     elif spectrum_type == "PLExpCutoff":
 
@@ -406,17 +430,22 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         raise NotImplementedError()
 
 
-    if catalog_entry["spatial_function"] == "RadialDisk":
+    try:
+        theRadius = catalog_entry["model_semimajor"]
+    except:
+        theRadius = catalog_entry["spatialwidth"]
+
+    if theShape == "RadialDisk":
     
         this_shape.lon0 = ra * u.degree
         this_shape.lon0.fix = True
         this_shape.lat0 = dec * u.degree
         this_shape.lat0.fix = True
-        this_shape.radius = catalog_entry["Model_SemiMajor"] * u.degree
+        this_shape.radius = theRadius * u.degree
         this_shape.radius.fix = True
-        this_shape.radius.bounds = (0, catalog_entry["Model_SemiMajor"]) * u.degree
+        this_shape.radius.bounds = (0, theRadius) * u.degree
         
-    elif catalog_entry["spatial_function"] == "RadialGaussian":
+    elif theShape == "RadialGaussian":
         
         #factor 1/1.36 is the conversion from 68% containment radius to sigma
         #Max of sigma/radius is used for get_boundaries().
@@ -425,9 +454,9 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_shape.lon0.fix = True
         this_shape.lat0 = dec * u.degree
         this_shape.lat0.fix = True
-        this_shape.sigma = catalog_entry["model_semimajor"] / 1.36 * u.degree
+        this_shape.sigma = theRadius / 1.36 * u.degree
         this_shape.sigma.fix = True
-        this_shape.sigma.bounds = (0, catalog_entry["model_semimajor"] / 1.36) * u.degree
+        this_shape.sigma.bounds = (0, theRadius / 1.36) * u.degree
 
     return this_source
 
