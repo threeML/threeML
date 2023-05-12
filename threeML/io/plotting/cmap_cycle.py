@@ -82,5 +82,5 @@ def cmap_intervals(length=50, cmap="YlOrBr", start=None, stop=None):
     if stop is not None:
         crange["stop"] = stop
 
-    idx = np.linspace(crange["start"], crange["stop"], length).astype(np.int)
+    idx = np.linspace(crange["start"], crange["stop"], length).astype(int)
     return cm(idx)
