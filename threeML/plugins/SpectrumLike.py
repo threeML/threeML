@@ -3067,10 +3067,6 @@ class SpectrumLike(PluginPrototype):
 
         return fig
 
-    def __repr__(self):
-
-        return self._output().to_string()
-
     def _output(self):
         # type: () -> pd.Series
 
