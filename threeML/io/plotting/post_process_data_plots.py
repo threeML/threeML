@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import numpy as np
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
@@ -581,7 +582,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         step = bool(kwargs.pop("step"))
 
     if "data_cmap" in kwargs:
-        data_cmap = plt.get_cmap(kwargs.pop("data_cmap"))
+        data_cmap = cm.get_cmap(kwargs.pop("data_cmap"))
         data_colors = cmap_intervals(len(data_keys), data_cmap)
 
     if "model_cmap" in kwargs:
