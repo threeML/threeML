@@ -361,7 +361,7 @@ def test_one_free_parameter_input_output():
     spectrum.index.fix = False
     spectrum.K.fix = False
     cov_matrix = np.diag([0.001] * 2)
-    ar = MLEResults(model, cov_matrix, {})
+    ar = MLEResults(model, cov_matrix, {"1": 1})
 
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
@@ -372,7 +372,7 @@ def test_one_free_parameter_input_output():
     spectrum.index.fix = True
     spectrum.K.fix = False
     cov_matrix = np.diag([0.001] * 1)
-    ar = MLEResults(model, cov_matrix, {})
+    ar = MLEResults(model, cov_matrix, {"1": 1})
 
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
@@ -383,7 +383,7 @@ def test_one_free_parameter_input_output():
     spectrum.index.fix = False
     spectrum.K.fix = True
     cov_matrix = np.diag([0.001] * 1)
-    ar = MLEResults(model, cov_matrix, {})
+    ar = MLEResults(model, cov_matrix, {"1": 1})
 
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
