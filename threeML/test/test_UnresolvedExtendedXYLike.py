@@ -202,7 +202,8 @@ def test_UnresolvedExtendedXYLike_chi2():
 
     # Verify that the fit converged where it should have
     assert np.allclose(
-        res[0]["value"].values,
+        #res[0]["value"].values,
+        res.get_data_frame()["value"].values,
         [40.20269202, 0.82896119,  62.80359114, 5.04080011, 0.27286713],
         rtol=0.05,
     )
@@ -241,7 +242,9 @@ def test_UnresolvedExtendedXYLike_poisson():
 
     # print res[0]['value']
     assert np.allclose(
-        res[0]["value"], [40.344599, 0.783748,  71.560055, 4.989727, 0.330570], rtol=0.05
+        #res[0]["value"],
+        res.get_data_frame()["value"],
+        [40.344599, 0.783748,  71.560055, 4.989727, 0.330570], rtol=0.05
     )
 
 

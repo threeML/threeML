@@ -99,9 +99,9 @@ def Vector(numba_type):
                 self.m = self.n
             return self
 
-        def __array__(self):
-            """Array inteface for Numpy compatibility."""
-            return self.full_arr[: self.n]
+        #def __array__(self):
+        #    """Array inteface for Numpy compatibility."""
+        #    return self.full_arr[: self.n]
 
         def _expand(self):
             """Internal function that handles the resizing of the array."""

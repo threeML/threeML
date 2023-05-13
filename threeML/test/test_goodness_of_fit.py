@@ -29,7 +29,9 @@ def test_goodness_of_fit():
 
     xyl = XYLike("data", x, y, y_err)
 
-    parameters, like_values = xyl.fit(fit_function)
+    result = xyl.fit(fit_function)
+    like_values = result.get_statistic_frame()
+    #parameters, like_values = xyl.fit(fit_function)
 
     gof, all_results, all_like_values = xyl.goodness_of_fit()
 
