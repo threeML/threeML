@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource
 from astromodels.functions.function import Function
+from threeML.analysis_results import _AnalysisResults
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config import threeML_config
@@ -606,7 +607,7 @@ class XYLike(PluginPrototype):
         function: Function,
         minimizer: str = "minuit",
         verbose: bool = False,
-    ) -> JointLikelihood:
+    ) -> _AnalysisResults:
         """
         Fit the data with the provided function (an astromodels function)
 
@@ -630,7 +631,9 @@ class XYLike(PluginPrototype):
 
         self._joint_like_obj.set_minimizer(minimizer)
 
-        return self._joint_like_obj.fit()
+        self._joint_like_obj.fit()
+
+        return self._joint_like_obj.results
 
     def goodness_of_fit(
         self, n_iterations: int = 1000, continue_of_failure: bool = False

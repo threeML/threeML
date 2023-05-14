@@ -134,7 +134,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         else:
 
             new_table = table[
-                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name", "source_type", "short_source_type", "ra", "dec", "assoc_name", "tevcat_assoc"
             ]
 
             return new_table.group_by("name")

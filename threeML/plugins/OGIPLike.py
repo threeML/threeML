@@ -231,7 +231,8 @@ class OGIPLike(DispersionSpectrumLike):
 
         this_df = pd.Series(this_out)
 
-        return this_df.append(superout)
+        #return this_df.append(superout)
+        return pd.concat([this_df, superout])
 
     @classmethod
     def from_general_dispersion_spectrum(cls, dispersion_like):

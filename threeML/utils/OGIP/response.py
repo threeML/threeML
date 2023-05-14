@@ -631,13 +631,13 @@ class OGIPResponse(InstrumentResponse):
         # However, if the columns are variable-length arrays, then they do have ndmin = 1 but have dtype 'object'.
         # In that case we don't want to add a dimension, as they are essentially a list of arrays.
 
-        if n_grp.ndim == 1 and data.field("N_CHAN").dtype != np.object:
+        if n_grp.ndim == 1 and data.field("N_CHAN").dtype != object:
             n_grp = np.expand_dims(n_grp, 1)
 
-        if f_chan.ndim == 1 and data.field("N_CHAN").dtype != np.object:
+        if f_chan.ndim == 1 and data.field("N_CHAN").dtype != object:
             f_chan = np.expand_dims(f_chan, 1)
 
-        if n_chan.ndim == 1 and data.field("N_CHAN").dtype != np.object:
+        if n_chan.ndim == 1 and data.field("N_CHAN").dtype != object:
             n_chan = np.expand_dims(n_chan, 1)
 
         matrix = data.field(column_name)

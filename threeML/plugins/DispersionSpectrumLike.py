@@ -214,7 +214,8 @@ class DispersionSpectrumLike(SpectrumLike):
 
         the_df = pd.Series({"response": self._response.rsp_filename})
 
-        return super_out.append(the_df)
+        #return super_out.append(the_df)
+        return pd.concat([super_out, the_df])
 
     def write_pha(
         self,

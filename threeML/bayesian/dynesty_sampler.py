@@ -290,7 +290,7 @@ class DynestyNestedSampler(UnitCubeSampler):
         positions = (rstate.random() + np.arange(nsamples)) / nsamples
 
         # Resample the data.
-        idx = np.zeros(nsamples, dtype=np.int)
+        idx = np.zeros(nsamples, dtype=int)
 
         cumulative_sum = np.cumsum(weights)
         i, j = 0, 0
@@ -628,7 +628,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         positions = (rstate.random() + np.arange(nsamples)) / nsamples
 
         # Resample the data.
-        idx = np.zeros(nsamples, dtype=np.int)
+        idx = np.zeros(nsamples, dtype=int)
         cumulative_sum = np.cumsum(weights)
         i, j = 0, 0
         while i < nsamples:
