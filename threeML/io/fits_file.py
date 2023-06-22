@@ -182,7 +182,7 @@ class FITSExtension(object):
                     )
 
                 # Make sure we are not dealing with objects
-                assert col_type != np.object and col_type != np.object_
+                assert col_type != object and col_type != np.object_
 
                 try:
 
