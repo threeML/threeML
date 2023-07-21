@@ -96,7 +96,9 @@ class NautilusSampler(UnitCubeSampler):
     ):
         """
 
-        setup the nautilus sampler
+        setup the nautilus sampler.
+
+        See: https://nautilus-sampler.readthedocs.io/en/stable/index.html
 
         :param n_live: Number of so-called live points. New bounds are constructed so that they encompass the live points. Default is 3000.
         :type n_live: int
