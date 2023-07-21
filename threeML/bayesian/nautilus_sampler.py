@@ -94,55 +94,58 @@ class NautilusSampler(UnitCubeSampler):
         discard_exploration: bool = False,
         verbose: bool = False,
     ):
-        """TODO describe function
+        """
 
-        :param n_live:
+        setup the nautilus sampler
+
+        :param n_live: Number of so-called live points. New bounds are constructed so that they encompass the live points. Default is 3000.
         :type n_live: int
-        :param n_update:
+        :param n_update: The maximum number of additions to the live set before a new bound is created. If None, use n_live. Default is None.
         :type n_update: Optional[int]
-        :param enlarge_per_dim:
+        :param enlarge_per_dim: Along each dimension, outer ellipsoidal bounds are enlarged by this factor. Default is 1.1.
         :type enlarge_per_dim: float
-        :param n_points_min:
+        :param n_points_min: The minimum number of points each ellipsoid should have. Effectively, ellipsoids with less than twice that number will not be split further. If None, uses n_points_min = n_dim + 50. Default is None.
         :type n_points_min: Optional[int]
-        :param split_threshold:
+        :param split_threshold: hreshold used for splitting the multi-ellipsoidal bound used for sampling. If the volume of the bound prior enlarging is larger than split_threshold times the target volume, the multi-ellipsiodal bound is split further, if possible. Default is 100.
         :type split_threshold: int
-        :param n_networks:
+        :param n_networks: Number of networks used in the estimator. Default is 4.
         :type n_networks: int
-        :param neural_network_kwargs:
+        :param neural_network_kwargs: Non-default keyword arguments passed to the constructor of MLPRegressor.
         :type neural_network_kwargs: Dict[Any]
-        :param prior_args:
+        :param prior_args: List of extra positional arguments for prior. Only used if prior is a function.
         :type prior_args: List[Any]
-        :param prior_kwargs:
+        :param prior_kwargs: Dictionary of extra keyword arguments for prior. Only used if prior is a function.
         :type prior_kwargs: Dict[Any]
-        :param likelihood_args:
+        :param likelihood_args: List of extra positional arguments for likelihood.
         :type likelihood_args: List[Any]
-        :param likelihood_kwargs:
+        :param likelihood_kwargs: Dictionary of extra keyword arguments for likelihood.
         :type likelihood_kwargs: Dict[Any]
-        :param n_batch:
+        :param n_batch: Number of likelihood evaluations that are performed at each step. If likelihood evaluations are parallelized, should be multiple of the number of parallel processes. Very large numbers can lead to new bounds being created long after n_update additions to the live set have been achieved. This will not cause any bias but could reduce efficiency. Default is 100.
         :type n_batch: int
-        :param n_like_new_bound:
+        :param n_like_new_bound: The maximum number of likelihood calls before a new bounds is created. If None, use 10 times n_live. Default is None.
         :type n_like_new_bound: Optional[int]
-        :param vectorized:
+        :param vectorized: If True, the likelihood function can receive multiple input sets at once. For example, if the likelihood function receives arrays, it should be able to take an array with shape (n_points, n_dim) and return an array with shape (n_points). Similarly, if the likelihood function accepts dictionaries, it should be able to process dictionaries where each value is an array with shape (n_points). Default is False.
         :type vectorized: bool
-        :param pass_dict:
+        :param pass_dict: If True, the likelihood function expects model parameters as dictionaries. If False, it expects regular numpy arrays. Default is to set it to True if prior was a nautilus.Prior instance and False otherwise
         :type pass_dict: Optional[bool]
-        :param pool:
+        :param pool: Pool used for parallelization of likelihood calls and sampler calculations. If None, no parallelization is performed. If an integer, the sampler will use a multiprocessing.Pool object with the specified number of processes. Finally, if specifying a tuple, the first one specifies the pool used for likelihood calls and the second one the pool for sampler calculations. Default is None.
         :type pool: Optional[int]
-        :param seed:
+        :param seed: Seed for random number generation used for reproducible results accross different runs. If None, results are not reproducible. Default is None.
         :type seed: Optional[int]
-        :param filepath:
+        :param filepath: ath to the file where results are saved. Must have a ‘.h5’ or ‘.hdf5’ extension. If None, no results are written. Default is None.
         :type filepath: Optional[str]
-        :param resume:
+        :param resume: If True, resume from previous run if filepath exists. If False, start from scratch and overwrite any previous file. Default is True.
         :type resume: bool
-        :param f_live:
+        :param f_live: Maximum fraction of the evidence contained in the live set before building the initial shells terminates. Default is 0.01.
         :type f_live: float
-        :param n_shell:
+        :param n_shell: Minimum number of points in each shell. The algorithm will sample from the shells until this is reached. Default is the batch size of the sampler which is 100 unless otherwise specified.
         :type n_shell: Optional[int]
-        :param n_eff:
+        :param n_eff: Minimum effective sample size. The algorithm will sample from the shells until this is reached. Default is 10000.
+
         :type n_eff: int
-        :param discard_exploration:
+        :param discard_exploration: Whether to discard points drawn in the exploration phase. This is required for a fully unbiased posterior and evidence estimate. Default is False.
         :type discard_exploration: bool
-        :param verbose:
+        :param verbose: If True, print additional information. Default is False.
         :type verbose: bool
         :returns:
 
@@ -155,7 +158,6 @@ class NautilusSampler(UnitCubeSampler):
 
         self._sampler_dict = dict(list(arg_dict.items())[:-5])
         self._run_dict = dict(list(arg_dict.items())[-5:])
-
 
         self._is_setup: bool = True
 
