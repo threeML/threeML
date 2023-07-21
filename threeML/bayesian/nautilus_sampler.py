@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
@@ -26,20 +26,16 @@ def capture_arguments(func, *args, **kwargs):
 
 
 try:
-
     import nautilus
 
 except:
-
     has_nautilus: bool = False
 
 else:
-
     has_nautilus: bool = True
 
 
 try:
-
     # see if we have mpi and/or are using parallel
 
     from mpi4py import MPI
@@ -51,10 +47,8 @@ try:
         rank = comm.Get_rank()
 
     else:
-
         using_mpi: bool = False
 except:
-
     using_mpi: bool = False
 
 log = setup_logger(__name__)
@@ -62,9 +56,7 @@ log = setup_logger(__name__)
 
 class NautilusSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
-
         if not has_nautilus:
-
             log.error("You must install nautilus to use this sampler")
 
             raise AssertionError(
@@ -83,11 +75,11 @@ class NautilusSampler(UnitCubeSampler):
         n_points_min: Optional[int] = None,
         split_threshold: int = 100,
         n_networks: int = 4,
-        neural_network_kwargs: Dict[Any] = dict(),
+        neural_network_kwargs: Dict[str, Any] = dict(),
         prior_args: List[Any] = [],
-        prior_kwargs: Dict[Any] = dict(),
+        prior_kwargs: Dict[str, Any] = dict(),
         likelihood_args: List[Any] = [],
-        likelihood_kwargs: Dict[Any] = dict(),
+        likelihood_kwargs: Dict[str, Any] = dict(),
         n_batch: int = 100,
         n_like_new_bound: Optional[int] = None,
         vectorized: bool = False,
@@ -102,7 +94,6 @@ class NautilusSampler(UnitCubeSampler):
         discard_exploration: bool = False,
         verbose: bool = False,
     ):
-
         """TODO describe function
 
         :param n_live:
@@ -162,9 +153,9 @@ class NautilusSampler(UnitCubeSampler):
         # Remove the "self" key from the dictionary (if present) as it's not an argument
         arg_dict.pop("self", None)
 
-        self._sampler_dict = dict(list(d.items())[:-5])
-        self._run_dict = dict(list(d.items())[-5:])
-        print(self._run_dict)
+        self._sampler_dict = dict(list(arg_dict.items())[:-5])
+        self._run_dict = dict(list(arg_dict.items())[-5:])
+
 
         self._is_setup: bool = True
 
@@ -177,7 +168,6 @@ class NautilusSampler(UnitCubeSampler):
 
         """
         if not self._is_setup:
-
             log.error("You forgot to setup the sampler!")
 
             return
@@ -188,30 +178,26 @@ class NautilusSampler(UnitCubeSampler):
 
         param_names = list(self._free_parameters.keys())
 
-        chain_name = self._kwargs.pop("log_dir")
+        # chain_name = self._kwargs.pop("log_dir")
 
         loglike, nautilus_prior = self._construct_unitcube_posterior(
             return_copy=True
         )
 
-        # Multinest must be run parallel via an external method
-
-        # see the demo in the examples folder!!
-
         sampler = nautilus.Sampler(
-            nautilus_prior, loglike, **self._sampler_dict
+            nautilus_prior,
+            loglike,
+            n_dim=len(self._free_parameters),
+            **self._sampler_dict
         )
 
         if threeML_config["parallel"]["use_parallel"]:
-
             raise RuntimeError(
                 "If you want to run ultranest in parallel you need to use an ad-hoc method"
             )
 
         else:
-
             with use_astromodels_memoization(False):
-
                 log.debug("Start nautilus run")
 
                 sampler.run(**self._run_dict)
@@ -221,7 +207,6 @@ class NautilusSampler(UnitCubeSampler):
         process_fit = False
 
         if using_mpi:
-
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
@@ -232,15 +217,12 @@ class NautilusSampler(UnitCubeSampler):
                 process_fit = False
 
             else:
-
                 process_fit = True
 
         else:
-
             process_fit = True
 
         if process_fit:
-
             points, log_w, log_likelihood = sampler.posterior(equal_weight=True)
 
             self._sampler = sampler
@@ -263,7 +245,6 @@ class NautilusSampler(UnitCubeSampler):
 
             # Display results
             if loud:
-
                 self._results.display()
 
             # now get the marginal likelihood
