@@ -1445,7 +1445,10 @@ class TimeSeriesBuilder(object):
     def from_polar_spectrum(
         cls,
         name,
-        polar_hdf5_file,
+        polar_events,
+        polar_specrsp,
+        polar_polrsp=None,
+        input_format='fits',
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1463,7 +1466,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polar_data = POLARData(
-            polar_hdf5_file, polar_hdf5_response=None, reference_time=trigger_time
+            polar_events,polar_specrsp, polar_polrsp, input_format, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1496,8 +1499,10 @@ class TimeSeriesBuilder(object):
     def from_polar_polarization(
         cls,
         name,
-        polar_hdf5_file,
-        polar_hdf5_response,
+        polar_events,
+        polar_specrsp,
+        polar_polrsp=None,
+        input_format='fits',
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1515,7 +1520,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polar_data = POLARData(
-            polar_hdf5_file, polar_hdf5_response, trigger_time)
+            polar_events,polar_specrsp, polar_polrsp, input_format, trigger_time)
 
         # Create the the event list
 
@@ -1536,7 +1541,7 @@ class TimeSeriesBuilder(object):
         return cls(
             name,
             event_list,
-            response=polar_hdf5_response,
+            response=polar_polrsp,
             poly_order=poly_order,
             unbinned=unbinned,
             verbose=verbose,
@@ -1575,6 +1580,7 @@ class TimeSeriesBuilder(object):
             assert (
                 self._observed_spectrum is not None
             ), "Must have selected an active time interval"
+
 
             if this_background_spectrum is None:
 
