@@ -613,7 +613,7 @@ class FermiLATLike(PluginPrototype):
             self.like.syncSrcParams()
 
         log_like = self.like.logLike.value()
-
+        if self._exclude_from_fit: log_like*=0
         return log_like - logfactorial(int(self.like.total_nobs()))
 
     #
