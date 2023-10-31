@@ -40,7 +40,7 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
-                  mamba-version: "*"
+                  miniforge-variant: Mambaforge
                   architecture: "x64"
                   #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
@@ -79,7 +79,7 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  conda install -c conda-forge boa -n base
+                  mamba install -c conda-forge boa
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
@@ -127,7 +127,7 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
-                  mamba-version: "*"
+                  miniforge-variant: Mambaforge
                   architecture: "x64"
                   #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
@@ -153,7 +153,7 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  conda install -c conda-forge boa -n base
+                  mamba install -c conda-forge boa
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 

@@ -14,6 +14,7 @@ import astromodels
 import astropy.units as u
 import h5py
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import numpy as np
 import pandas as pd
 import yaml
@@ -1124,7 +1125,7 @@ class BayesianResults(_AnalysisResults):
 
         corner_style = threeML_config.bayesian.corner_style
 
-        cmap = plt.get_cmap(corner_style.cmap.value)
+        cmap = cm.get_cmap(corner_style.cmap.value)
 
         try:
             cmap.with_extremes(

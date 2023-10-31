@@ -15,9 +15,11 @@ from numpy.ma import shape
 from past.utils import old_div
 from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import (file_existing_and_readable,
-                                   fits_file_existing_and_readable,
-                                   sanitize_filename)
+from threeML.io.file_utils import (
+    file_existing_and_readable,
+    fits_file_existing_and_readable,
+    sanitize_filename,
+)
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
@@ -245,6 +247,7 @@ class InstrumentResponse(object):
         if precalc_fluxes is None:
 
             try:
+
                 fluxes = self._integral_function(
                     # self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]
                 )
@@ -256,6 +259,7 @@ class InstrumentResponse(object):
                 )
 
         else:
+
             fluxes = precalc_fluxes
 
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where
@@ -627,13 +631,13 @@ class OGIPResponse(InstrumentResponse):
         # However, if the columns are variable-length arrays, then they do have ndmin = 1 but have dtype 'object'.
         # In that case we don't want to add a dimension, as they are essentially a list of arrays.
 
-        if n_grp.ndim == 1 and data.field("N_CHAN").dtype != np.object:
+        if n_grp.ndim == 1 and data.field("N_CHAN").dtype != object:
             n_grp = np.expand_dims(n_grp, 1)
 
-        if f_chan.ndim == 1 and data.field("N_CHAN").dtype != np.object:
+        if f_chan.ndim == 1 and data.field("N_CHAN").dtype != object:
             f_chan = np.expand_dims(f_chan, 1)
 
-        if n_chan.ndim == 1 and data.field("N_CHAN").dtype != np.object:
+        if n_chan.ndim == 1 and data.field("N_CHAN").dtype != object:
             n_chan = np.expand_dims(n_chan, 1)
 
         matrix = data.field(column_name)
@@ -1129,7 +1133,7 @@ class InstrumentResponseSet(object):
         if effective_intervals[0].start_time != interval_of_interest.start_time:
 
             log.error(
-                "The interval of interest (%s) is not covered by %s"
+                "The interval of interest (%s) start is not covered by %s"
                 % (interval_of_interest, effective_intervals[0])
             )
 
@@ -1141,8 +1145,8 @@ class InstrumentResponseSet(object):
         if effective_intervals[-1].stop_time != interval_of_interest.stop_time:
 
             log.error(
-                "The interval of interest (%s) is not covered by %s"
-                % (interval_of_interest, effective_intervals[0])
+                "The interval of interest (%s) end is not covered by %s"
+                % (interval_of_interest, effective_intervals[-1])
             )
 
             raise IntervalOfInterestNotCovered()

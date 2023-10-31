@@ -134,7 +134,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         else:
 
             new_table = table[
-                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name", "source_type", "short_source_type", "ra", "dec", "assoc_name", "tevcat_assoc"
             ]
 
             return new_table.group_by("name")
@@ -196,7 +196,8 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
             source_names.append(this_name)
 
-            if ( "extended_source_name" in row and row["extended_source_name"] != "" ):
+            if ( "extended_source_name" in row and row["extended_source_name"] != "" ) or \
+                ("sourcetype" in row and row["sourcetype"] == "DiffuseSource" ):
         
                 if "spatial_function" in row:
                     

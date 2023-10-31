@@ -105,6 +105,17 @@ class DispersionSpectrumLike(SpectrumLike):
 
             log.error("SpectrumLike plugins do not support extended sources")
 
+        # check if we set a source name that the source is in the model
+
+        if self._source_name is not None:
+            if self._source_name not in self._like_model.sources:
+                log.error(
+                    "Source %s is not contained in "
+                    "the likelihood model" % self._source_name
+                )
+
+                raise RuntimeError()
+
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
@@ -203,7 +214,8 @@ class DispersionSpectrumLike(SpectrumLike):
 
         the_df = pd.Series({"response": self._response.rsp_filename})
 
-        return super_out.append(the_df)
+        #return super_out.append(the_df)
+        return pd.concat([super_out, the_df])
 
     def write_pha(
         self,
