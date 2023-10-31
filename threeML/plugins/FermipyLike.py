@@ -153,13 +153,11 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
     galactic_template = str(
         sanitize_filename(
-            findGalacticTemplate(irfs, ra_center, dec_center, roi_radius),
-            True,  # noqa: F821
+            findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True,  # noqa: F821
         )
     )
     isotropic_template = str(
-        sanitize_filename(findIsotropicTemplate(irfs), True)
-    )  # noqa: F821
+        sanitize_filename(findIsotropicTemplate(irfs), True))  # noqa: F821
 
     # Add them to the fermipy model
 
