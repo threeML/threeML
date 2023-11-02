@@ -34,12 +34,12 @@ def test_FermipyLike_fromVO():
     assert np.isclose(dec, 22.013, atol=5e-3)
 
     # This gets a 3ML model (a Model instance) from the table above, where every source
-    # in the 3FGL becomes a Source instance. Note that by default all parameters of all
+    # in the 4FGL becomes a Source instance. Note that by default all parameters of all
     # sources are fixed
 
     model = lat_catalog.get_model()
 
-    assert model.get_number_of_point_sources() == 172
+    assert model.get_number_of_point_sources() == 196
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)
