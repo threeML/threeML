@@ -73,7 +73,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
     def _source_is_valid(self, source):
         """
-        checks if source name is valid for the 3FGL catalog
+        checks if source name is valid for the 4FGL catalog
 
         :param source: source name
         :return: bool

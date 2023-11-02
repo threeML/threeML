@@ -235,9 +235,7 @@ jobs:
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
-
-
-          
+    
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
     runs-on: macos-latest
@@ -315,8 +313,7 @@ jobs:
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
-          
-          
+
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -327,6 +324,7 @@ jobs:
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
+  
   multinest_notebooks:
     name: "Build the multinest notebooks"
     runs-on: macos-latest
@@ -511,15 +509,16 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-
           pip3 install cython tempita
-          pip3 install numpy scipy numba astropy
+          pip3 install cython blosc2 h5py
+          pip3 install numpy scipy numba astropy pandas
+          pip3 install wheel pkgconfig numexpr
 
-          python setup.py develop
+          #python setup.py develop
+          pip3 install -e .
 
           brew install sphinx-doc pandoc
 
-          pip3 install wheel
           pip3 install mock recommonmark
           pip3 install sphinx-rtd-dark-mode
           pip3 install -U sphinx
