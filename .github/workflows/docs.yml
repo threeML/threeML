@@ -568,23 +568,28 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-          pip3 install wheel
+          pip3 install wheel pkgconfig
           pip3 install tempita
+          pip3 install cython blosc2 h5py
           pip3 install numpy scipy numba astropy
 
           brew install sphinx-doc pandoc
-
 
           pip3 install mock recommonmark
           pip3 install sphinx-rtd-dark-mode sphinx-math-dollar
           pip3 install -U sphinx
           pip3 install -r docs/requirements.txt
 
-          python3 setup.py develop
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
 
           rm -rf docs/md_docs/*
-
-
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - uses: actions/download-artifact@master
         with:
