@@ -89,7 +89,15 @@ def _setup_analysis_dictionaries(
 
                     except:
 
-                        comps = []
+                        try:
+
+                            comps = [
+                                c for c in source.components
+                            ]
+
+                        except:
+
+                            comps = []
 
                     # duplicate components
                     comps = [
@@ -129,7 +137,15 @@ def _setup_analysis_dictionaries(
 
                     except:
 
-                        comps = []
+                        try:
+
+                            comps = [
+                                c for c in source.components
+                            ]
+
+                        except:
+
+                            comps = []
 
                     # duplicate components
                     comps = [
@@ -157,7 +173,6 @@ def _setup_analysis_dictionaries(
         ):
 
             # if we want to use this source
-
             if (
                 not use_components
                 or ("total" in components_to_use)
@@ -478,7 +493,6 @@ def _compute_output(analyses, _defaults, out):
         if get_total:
             # it ends up that we need to plot the total spectrum
             # which is just a repeat of the process
-
             samples = analyses[key]["fitted point source"]
 
             label = f"{key}: total"

@@ -225,6 +225,7 @@ class JointLikelihood(object):
 
         :param quiet: If True, print the results (default), otherwise do not print anything
         :param compute_covariance:If True (default), compute and display the errors and the correlation matrix.
+        :param n_samples: Number of samples to scan the likelihood.
         :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum
                  for each dataset and the total one.
         """
@@ -1304,6 +1305,8 @@ class JointLikelihood(object):
 
         # Remove this source from the model
         _ = model_clone.remove_source(source_name)
+        #import copy
+        #data_list_clone = copy.deepcopy(self._data_list)
 
         # Fit
         another_jl = JointLikelihood(model_clone, self._data_list)

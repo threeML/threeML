@@ -57,6 +57,7 @@ jobs:
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
                   echo "HOME= ${HOME}"
+                  echo "Conda installation path ${CONDA}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
                   echo "Running on development branch: ${ISDEV} "
@@ -83,13 +84,14 @@ jobs:
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  conda install --use-local -c conda-forge threeml
+                  #conda install --use-local -c conda-forge threeml
+                  conda install -c ${CONDA}/envs/test_env/conda-bld/ threeml
 
             - name: Test conda build
               shell: bash -l {0}
               run: |
-                wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                #python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                 python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
@@ -144,6 +146,7 @@ jobs:
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
                   echo "HOME= ${HOME}"
+                  echo "Conda installation path ${CONDA}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
 
@@ -174,11 +177,11 @@ jobs:
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/linux-64/*.tar.bz2 --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-64/*.tar.bz2 --force $LABEL
 
                   fi
 

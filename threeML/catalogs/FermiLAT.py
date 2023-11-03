@@ -73,7 +73,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
     def _source_is_valid(self, source):
         """
-        checks if source name is valid for the 3FGL catalog
+        checks if source name is valid for the 4FGL catalog
 
         :param source: source name
         :return: bool
@@ -140,7 +140,14 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             return new_table.group_by("name")
 
 
-    def get_model(self, use_association_name=True):
+    def get_model(self, use_association_name=True, exposure=None, npred_min=0):
+        '''
+        Build the model with FGL sources
+        :param use_association_name: use the name of the associated source (stored in assoc_name column)
+        :param exposure: exposure in cm2 * seconds (can be calculated with gtexposure)
+        :param npred_min: minimum number of predicted events.
+        :return: model
+        '''
 
         assert (
             self._last_query_results is not None
@@ -150,7 +157,11 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         sources = []
         source_names = []
         for name, row in self._last_query_results.T.items():
-                
+            if exposure is not None:
+                npred = row['flux_1_100_gev'] * exposure
+                log.debug('Source %s npred= %.1e' % (name, npred) )
+                if npred < npred_min:
+                    continue
             # If there is an association and use_association is True, use that name, otherwise the 3FGL name
             if row["assoc_name"] != "" and use_association_name:
 

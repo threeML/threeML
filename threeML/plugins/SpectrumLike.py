@@ -1898,7 +1898,7 @@ class SpectrumLike(PluginPrototype):
         loglike, _ = self._likelihood_evaluator.get_current_value(
             precalc_fluxes=precalc_fluxes
         )
-
+        if self._exclude_from_fit: loglike*=0
         return loglike
 
     def inner_fit(self) -> float:

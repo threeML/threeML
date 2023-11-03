@@ -113,6 +113,10 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
                 u.cm ** 2 * u.s * u.MeV
             )
+            this_spectrum.K.bounds = (
+                this_spectrum.K.value / 1000.0, 
+                this_spectrum.K.value * 1000,
+            )
         else:
             K = float(catalog_entry["flux_density"])
             this_spectrum.K.bounds = (K / 1000.0, K * 1000)
@@ -183,14 +187,16 @@ def _get_point_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.index = -i
         this_spectrum.gamma = b
         this_spectrum.piv = E0 * u.MeV
-        this_spectrum.K = ( conv * K / (u.cm ** 2 * u.s * u.MeV))
-        this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
 
-        this_spectrum.K.fix = fix
+        this_spectrum.K = ( conv * K / (u.cm ** 2 * u.s * u.MeV))
+
         this_spectrum.K.bounds = (
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
+        this_spectrum.xc = a ** (-1.0 / b ) * u.MeV
+
+        this_spectrum.K.fix = fix
         this_spectrum.xc.fix = fix
         this_spectrum.index.fix = fix
         this_spectrum.gamma.fix = fix

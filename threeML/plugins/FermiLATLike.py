@@ -132,8 +132,8 @@ class LikelihoodModelConverter:
 
         iso = LikelihoodComponent.IsotropicTemplate(self.irfs)
 
-        iso.source.spectrum.Normalization.max = 1.5
-        iso.source.spectrum.Normalization.min = 0.5
+        iso.source.spectrum.Normalization.max = 5.0
+        iso.source.spectrum.Normalization.min = 0.1
         iso.source.spectrum.setAttributes()
 
         all_sources_for_pylike.append(iso)
@@ -324,9 +324,11 @@ class FermiLATLike(PluginPrototype):
         self.n_energies = 200
 
         with fits.open(event_file) as file:
-            self.__observation_duration = (
-                file[0].header["TSTOP"] - file[0].header["TSTART"]
-            )
+            #self.__observation_duration = (
+            #    file[0].header["TSTOP"] - file[0].header["TSTART"]
+            #)
+            self.__observation_duration =  (file['GTI'].data.STOP - file['GTI'].data.START).sum()
+            print('FermiLATLike - GTI SUM = ', self.__observation_duration)
 
         # This is the limit on the effective area correction factor,
         # which is a multiplicative factor in front of the whole model
@@ -482,6 +484,14 @@ class FermiLATLike(PluginPrototype):
 
         self.update_nuisance_parameters(new_nuisance_parameters)
 
+    def get_number_of_data_points(self):
+
+        number_of_data_points = self.like.total_nobs()
+
+        log.debug("Number of events in LAT likelihood fit: %d" % number_of_data_points)
+
+        return number_of_data_points
+
     def clear_source_name(self) -> None:
         if self._source_name is not None:
 
@@ -603,7 +613,7 @@ class FermiLATLike(PluginPrototype):
             self.like.syncSrcParams()
 
         log_like = self.like.logLike.value()
-
+        if self._exclude_from_fit: log_like*=0
         return log_like - logfactorial(int(self.like.total_nobs()))
 
     #
@@ -754,7 +764,7 @@ class FermiLATLike(PluginPrototype):
         :param background_kwargs: plotting kwargs affecting the plotting of the background
         :return:
         """
-
+        debug=False
         # set up the default plotting
 
         _default_model_kwargs = dict(color=model_color, alpha=1)
@@ -877,7 +887,7 @@ class FermiLATLike(PluginPrototype):
 
         e1 = self.like.energies[:-1] * 1000.0  # this has to be in keV
         e2 = self.like.energies[1:] * 1000.0  # this has to be in keV
-
+        if debug: print("ENERGIES [MeV]",self.like.energies)
         ec = (e1 + e2) / 2.0
         de = (e2 - e1) / 2.0
 
@@ -886,13 +896,13 @@ class FermiLATLike(PluginPrototype):
             self.like._srcCnts(self.like.sourceNames()[0])
         )
 
-        sum_backgrounds = numpy.zeros_like(
-            self.like._srcCnts(self.like.sourceNames()[0])
-        )
+        sum_backgrounds = numpy.zeros_like(sum_model)
 
         for source_name in self.like.sourceNames():
 
             source_counts = self.like._srcCnts(source_name)
+
+            if debug: print (source_name,' source_counts=', source_counts)
 
             sum_model = sum_model + source_counts
             if source_name != self._source_name:
@@ -904,6 +914,10 @@ class FermiLATLike(PluginPrototype):
                 label=source_name,  # , **_default_model_kwargs
             )
             # sub.plot(ec, self.like._srcCnts(source_name), label=source_name)
+
+        if debug: print ('sum_model=', sum_model)
+        if debug: print ('sum_backgrounds=',sum_backgrounds)
+
         residual_plot.add_model(
             ec,
             sum_model / conversion_factor,
@@ -916,9 +930,11 @@ class FermiLATLike(PluginPrototype):
         y = self.like.nobs
         y_err = numpy.sqrt(y)
 
+        if debug: print ('counts=', y)
+
         significance_calc = Significance(Non=y, Noff=sum_backgrounds)
 
-        if ratio_residuals:
+        if False:
             resid = old_div((self.like.nobs - sum_model), sum_model)
             resid_err = old_div(y_err, sum_model)
         else:
