@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.time_series.event_list</li>
@@ -160,7 +165,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,</span>
 <span class="sd">        temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected</span>
 <span class="sd">        and/or polynomials are fit, the selections can be extracted via a PHAContainer which is can be read by an OGIPLike</span>
@@ -236,7 +241,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This EventList has no binning specified&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EventList.bin_by_significance"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_significance">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_significance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Interface to the temporal binner&#39;s significance binning model</span>
 
@@ -284,7 +289,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="EventList.bin_by_constant"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_constant">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Interface to the temporal binner&#39;s constant binning mode</span>
 
 <span class="sd">        :param start: start time of the bins</span>
@@ -301,7 +306,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_binner</span> <span class="o">=</span> <span class="n">TemporalBinner</span><span class="o">.</span><span class="n">bin_by_constant</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EventList.bin_by_custom"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.bin_by_custom">[docs]</a>    <span class="k">def</span> <span class="nf">bin_by_custom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Interface to temporal binner&#39;s custom bin mode</span>
 
 
@@ -345,7 +350,7 @@
                         <span class="n">use_echans_stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param start:</span>
 <span class="sd">        :param stop:</span>
 <span class="sd">        :param dt:</span>
@@ -496,7 +501,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="EventList.counts_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.counts_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the number of counts in the selected interval</span>
 <span class="sd">        :param start: start of interval</span>
 <span class="sd">        :param stop:  stop of interval</span>
@@ -526,7 +531,7 @@
         <span class="k">return</span> <span class="n">counts_per_channel</span></div>
 
     <span class="k">def</span> <span class="nf">_select_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return an index of the selected events</span>
 <span class="sd">        :param start: start time</span>
 <span class="sd">        :param stop: stop time</span>
@@ -536,7 +541,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrival_times</span> <span class="o">&lt;=</span> <span class="n">stop</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Binned fit to each channel. Sets the polynomial array that will be used to compute</span>
 <span class="sd">        counts over an interval</span>
@@ -838,7 +843,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span> <span class="o">=</span> <span class="n">polynomials</span>
 
 <div class="viewcode-block" id="EventList.set_active_time_intervals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventList.set_active_time_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the time interval(s) to be used during the analysis.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval(s) to be used during the analysis.</span>
 
 <span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
 
@@ -959,7 +964,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an</span>
 <span class="sd">        interval =&gt; live time = interval - dead time</span>
 
@@ -1014,7 +1019,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="EventListWithDeadTime.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTime.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the exposure over the given interval</span>
 
 <span class="sd">        :param start: start time</span>
@@ -1053,7 +1058,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An EventList where the exposure is calculated via and array dead time fractions per event .</span>
 <span class="sd">        Summing these dead times over an</span>
 <span class="sd">        interval =&gt; live time = interval - dead time</span>
@@ -1109,7 +1114,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_dead_time_fraction</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="EventListWithDeadTimeFraction.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithDeadTimeFraction.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the exposure over the given interval</span>
 
 <span class="sd">        :param start: start time</span>
@@ -1154,7 +1159,7 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An EventList where the exposure is calculated via and array of livetimes per interval.</span>
 
 
@@ -1212,7 +1217,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_live_time_stops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">live_time_stops</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EventListWithLiveTime.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.event_list.EventListWithLiveTime.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param start: start time of interval</span>
 <span class="sd">        :param stop: stop time of interval</span>

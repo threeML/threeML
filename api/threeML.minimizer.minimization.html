@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.minimizer.minimization module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -63,6 +67,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -83,7 +88,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="API.html">API</a></li>
           <li class="breadcrumb-item"><a href="threeML.html">threeML package</a></li>
           <li class="breadcrumb-item"><a href="threeML.minimizer.html">threeML.minimizer package</a></li>
@@ -96,31 +101,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="module-threeML.minimizer.minimization">
+  <section id="module-threeML.minimizer.minimization">
 <span id="threeml-minimizer-minimization-module"></span><h1>threeML.minimizer.minimization module<a class="headerlink" href="#module-threeML.minimizer.minimization" title="Permalink to this heading"></a></h1>
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.minimizer.minimization.BetterMinimumDuringProfiling">
@@ -223,7 +204,7 @@ the given boundaries. Call it specifying only source_1, param_1, param_1_minimum
 generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
 contour of param_1 vs param_2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_1</strong> – name of the first parameter</p></li>
 <li><p><strong>param_1_minimum</strong> – lower bound for the range for the first parameter</p></li>
@@ -245,10 +226,10 @@ are linear for the second parameter. If you are generating the profile for only 
 <div><p>‘log=(True,)’ or ‘log=(False,)’ (optional)</p>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Param</dt>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
 <dd class="field-odd"><p>parallel: whether to use or not parallel computation (default:False)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a : an array corresponding to the steps for the first parameter
 b : an array corresponding to the steps for the second parameter (or None if stepping only in one
 direction)
@@ -284,7 +265,7 @@ an array of size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.get_errors" title="Permalink to this definition"></a></dt>
 <dd><p>Compute asymmetric errors using the profile likelihood method (slow, but accurate).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a dictionary with asymmetric errors for each parameter</p>
 </dd>
 </dl>
@@ -295,10 +276,10 @@ an array of size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_covar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.minimize" title="Permalink to this definition"></a></dt>
 <dd><p>Minimize objective function. This call _minimize, which is implemented by each subclass.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>compute_covar</strong> – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>best fit values (in external reference) and minimum of the objective function</p>
 </dd>
 </dl>
@@ -314,7 +295,7 @@ an array of size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.restore_best_fit" title="Permalink to this definition"></a></dt>
 <dd><p>Reset all the parameters to their best fit value (from the last run fit)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>none</p>
 </dd>
 </dl>
@@ -360,10 +341,10 @@ an array of size param_1_steps.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minimization.</span></span><span class="sig-name descname"><span class="pre">get_minimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#get_minimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.get_minimizer" title="Permalink to this definition"></a></dt>
 <dd><p>Return the requested minimizer <em>class</em> (not instance)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>minimizer_type</strong> – MINUIT, ROOT, PYOPT…</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the class (i.e., the type) for the requested minimizer</p>
 </dd>
 </dl>

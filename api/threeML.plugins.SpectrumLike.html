@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.SpectrumLike module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -63,6 +67,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -83,7 +88,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="API.html">API</a></li>
           <li class="breadcrumb-item"><a href="threeML.html">threeML package</a></li>
           <li class="breadcrumb-item"><a href="threeML.plugins.html">threeML.plugins package</a></li>
@@ -96,31 +101,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="module-threeML.plugins.SpectrumLike">
+  <section id="module-threeML.plugins.SpectrumLike">
 <span id="threeml-plugins-spectrumlike-module"></span><h1>threeML.plugins.SpectrumLike module<a class="headerlink" href="#module-threeML.plugins.SpectrumLike" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.plugins.SpectrumLike.SpectrumLike">
@@ -131,7 +112,7 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">area_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.area_ratio" title="Permalink to this definition"></a></dt>
 <dd><p>ratio between source and background area</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -142,10 +123,10 @@
 <span class="sig-name descname"><span class="pre">assign_to_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/SpectrumLike.html#SpectrumLike.assign_to_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.assign_to_source" title="Permalink to this definition"></a></dt>
 <dd><p>Assign these data to the given source (instead of to the sum of all sources, which is the default)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>source_name</strong> – name of the source (must be contained in the likelihood model)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -156,7 +137,7 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_count_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.background_count_errors" title="Permalink to this definition"></a></dt>
 <dd><p>the observed background count errors</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -167,7 +148,7 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.background_counts" title="Permalink to this definition"></a></dt>
 <dd><p>the observed background counts</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -201,7 +182,7 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_scale_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.background_scale_factor" title="Permalink to this definition"></a></dt>
 <dd><p>The background scale factor</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -251,7 +232,7 @@ a previous axis to ‘model_subplot’.</p>
 <p>fig = data.display_model()</p>
 <p>fig2 = data2.display_model(model_subplot=fig.axes)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_color</strong> – the color of the data</p></li>
 <li><p><strong>model_color</strong> – the color of the model</p></li>
@@ -267,7 +248,7 @@ a previous axis to ‘model_subplot’.</p>
 <li><p><strong>data_kwargs</strong> – plotting kwargs affecting the plotting of the data and residuls</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -278,7 +259,7 @@ a previous axis to ‘model_subplot’.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">energy_boundaries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.energy_boundaries" title="Permalink to this definition"></a></dt>
 <dd><p>Energy boundaries of channels currently in use (rebinned, if a rebinner is active)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>(energy_min, energy_max)</p>
 </dd>
 </dl>
@@ -300,7 +281,7 @@ a previous axis to ‘model_subplot’.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exposure_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.exposure_ratio" title="Permalink to this definition"></a></dt>
 <dd><p>ratio between source and background exposure</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -311,10 +292,10 @@ a previous axis to ‘model_subplot’.</p>
 <span class="sig-name descname"><span class="pre">fix_effective_area_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/SpectrumLike.html#SpectrumLike.fix_effective_area_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.fix_effective_area_correction" title="Permalink to this definition"></a></dt>
 <dd><p>Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> – new value (default: 1, i.e., no correction)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -325,14 +306,14 @@ a previous axis to ‘model_subplot’.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_like</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/SpectrumLike.html#SpectrumLike.from_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.from_background" title="Permalink to this definition"></a></dt>
 <dd><p>Extract a SpectrumLike plugin from the background of another SpectrumLike (or subclass) instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – name of the extracted_plugin</p></li>
 <li><p><strong>spectrum_like</strong> – plugin with background to extract</p></li>
 <li><p><strong>verbose</strong> – if the plugin should be verbose</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>SpectrumLike instance from the background</p>
 </dd>
 </dl>
@@ -343,7 +324,7 @@ a previous axis to ‘model_subplot’.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/SpectrumLike.html#SpectrumLike.from_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.from_function" title="Permalink to this definition"></a></dt>
 <dd><p>Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – simulkated data set name</p></li>
 <li><p><strong>source_function</strong> – astromodels function</p></li>
@@ -358,7 +339,7 @@ a previous axis to ‘model_subplot’.</p>
 <li><p><strong>scale_factor</strong> – the scale factor between source exposure / bkg exposure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>simulated SpectrumLike plugin</p>
 </dd>
 </dl>
@@ -370,7 +351,7 @@ a previous axis to ‘model_subplot’.</p>
 <dd><p>The background model integrated over the energy bins. Note that it only returns the  model for the
 currently active channels/measurements</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array of folded model</p>
 </dd>
 </dl>
@@ -382,7 +363,7 @@ currently active channels/measurements</p>
 <dd><p>Calls the likelihood from the pre-setup likelihood evaluator that “knows” of the currently set
 noise models</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -394,7 +375,7 @@ noise models</p>
 <dd><p>The model integrated over the energy bins. Note that it only returns the  model for the
 currently active channels/measurements</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array of folded model</p>
 </dd>
 </dl>
@@ -418,13 +399,13 @@ currently active channels/measurements</p>
 <dd><p>Returns another Binned instance where data have been obtained by randomizing the current expectation from the
 model, as well as from the background (depending on the respective noise models)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_name</strong> – the base line name</p></li>
 <li><p><strong>store_model</strong> – to store the model configuration used to simulate the data set</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>an BinnedSpectrum or child instance</p>
 </dd>
 </dl>
@@ -474,7 +455,7 @@ logLike value.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observed_count_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.observed_count_errors" title="Permalink to this definition"></a></dt>
 <dd><p>the observed counts errors</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -485,7 +466,7 @@ logLike value.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observed_counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.observed_counts" title="Permalink to this definition"></a></dt>
 <dd><p>the observed counts</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -511,10 +492,10 @@ Gaussian errors.</p>
 <p>The observed spectrum will be rebinned in the same fashion as the background spectrum.</p>
 <p>To neutralize this completely, use “remove_rebinning”</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>min_number_of_counts</strong> – the minimum number of counts in each bin</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -526,10 +507,10 @@ Gaussian errors.</p>
 <dd><p>Rebin the spectrum guaranteeing the provided minimum number of counts in each source bin.</p>
 <p>To neutralize this completely, use “remove_rebinning”</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>min_number_of_counts</strong> – the minimum number of counts in each bin</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -540,7 +521,7 @@ Gaussian errors.</p>
 <span class="sig-name descname"><span class="pre">remove_rebinning</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/SpectrumLike.html#SpectrumLike.remove_rebinning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.remove_rebinning" title="Permalink to this definition"></a></dt>
 <dd><p>Remove the rebinning scheme set with rebin_on_background.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -551,7 +532,7 @@ Gaussian errors.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.scale_factor" title="Permalink to this definition"></a></dt>
 <dd><p>Ratio between the source and the background exposure and area</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -615,14 +596,14 @@ option:</p>
 <p>This translates to including the channels from 0.2 keV - channel 10, exluding channels
 30-50 and any channels flagged BAD in the PHA file will also be excluded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – </p></li>
 <li><p><strong>exclude</strong> – (list) exclude the provided channel/energy ranges</p></li>
 <li><p><strong>use_quality</strong> – (bool) use the native quality on the PHA file (default=False)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -653,7 +634,7 @@ option:</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">significance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.significance" title="Permalink to this definition"></a></dt>
 <dd><p>the significance of the data over background</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -664,7 +645,7 @@ option:</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">significance_per_channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.SpectrumLike.SpectrumLike.significance_per_channel" title="Permalink to this definition"></a></dt>
 <dd><p>the significance of the data over background per channel</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -684,7 +665,7 @@ option:</p>
 the source is background subtracted, but only for visual purposes. If no background is present,
 then, this is just the observed rate.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the source rate</p>
 </dd>
 </dl>
@@ -697,7 +678,7 @@ then, this is just the observed rate.</p>
 the source is background subtracted, but only for visual purposes. If no background is present,
 then, this is just the observed rate.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the source rate error</p>
 </dd>
 </dl>
@@ -723,7 +704,7 @@ degenerate with the normalization of the model.</p>
 <p>NOTE2: always keep at least one multiplicative constant fixed to one (its default value), when using this
 with other OGIPLike-type detectors</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>min_value</strong> – minimum allowed value (default: 0.8, corresponding to a 20% - effect)</p></li>
 <li><p><strong>max_value</strong> – maximum allowed value (default: 1.2, corresponding to a 20% + effect)</p></li>
@@ -732,7 +713,7 @@ with other OGIPLike-type detectors</p>
 <li><p><strong>sigma</strong> – the spread of the gaussian</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>

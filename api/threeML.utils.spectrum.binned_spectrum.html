@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.spectrum.binned_spectrum module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -63,6 +67,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -83,7 +88,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="API.html">API</a></li>
           <li class="breadcrumb-item"><a href="threeML.html">threeML package</a></li>
           <li class="breadcrumb-item"><a href="threeML.utils.html">threeML.utils package</a></li>
@@ -97,31 +102,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="module-threeML.utils.spectrum.binned_spectrum">
+  <section id="module-threeML.utils.spectrum.binned_spectrum">
 <span id="threeml-utils-spectrum-binned-spectrum-module"></span><h1>threeML.utils.spectrum.binned_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.binned_spectrum" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum">
@@ -144,13 +125,13 @@
 <dd><p>make a new spectrum with new counts and errors and all other
 parameters the same</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_counts</strong> – new counts for the spectrum</p></li>
 <li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -161,7 +142,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors" title="Permalink to this definition"></a></dt>
 <dd><p>count error per channel</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -172,7 +153,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts" title="Permalink to this definition"></a></dt>
 <dd><p>counts per channel</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -183,7 +164,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exposure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure" title="Permalink to this definition"></a></dt>
 <dd><p>Exposure in seconds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>exposure</p>
 </dd>
 </dl>
@@ -202,7 +183,7 @@ parameters the same</p>
 ‘sys_errors’: systematic error per channel
 ‘quality’ list of 3ML quality flags ‘good’, ‘warn’, ‘bad’</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pandas_dataframe</strong> – data frame containing information to be read into spectrum</p></li>
 <li><p><strong>exposure</strong> – the exposure  of the spectrum</p></li>
@@ -212,7 +193,7 @@ parameters the same</p>
 <li><p><strong>instrument</strong> – (optional) the instrument name</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -222,13 +203,13 @@ parameters the same</p>
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time_series</strong> – </p></li>
 <li><p><strong>use_poly</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -276,7 +257,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates" title="Permalink to this definition"></a></dt>
 <dd><p>rates per channel</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -292,7 +273,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sys_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors" title="Permalink to this definition"></a></dt>
 <dd><p>Systematic errors per channel. This is nonzero only if the SYS_ERR column is present in the input file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the systematic errors stored in the input spectrum</p>
 </dd>
 </dl>
@@ -303,10 +284,10 @@ parameters the same</p>
 <span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas" title="Permalink to this definition"></a></dt>
 <dd><p>make a pandas table from the spectrum.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>use_rate</strong> – if the table should use rates or counts</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -317,7 +298,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count" title="Permalink to this definition"></a></dt>
 <dd><p>total counts</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -328,7 +309,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_count_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error" title="Permalink to this definition"></a></dt>
 <dd><p>total count error</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -339,7 +320,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate" title="Permalink to this definition"></a></dt>
 <dd><p>total rate</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -350,7 +331,7 @@ parameters the same</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_rate_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error" title="Permalink to this definition"></a></dt>
 <dd><p>total rate error</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -378,7 +359,7 @@ parameters the same</p>
 <dd><p>make a new spectrum with new counts and errors and all other
 parameters the same</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_sys_errors</strong> – </p></li>
 <li><p><strong>new_exposure</strong> – </p></li>
@@ -387,7 +368,7 @@ parameters the same</p>
 <li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -397,13 +378,13 @@ parameters the same</p>
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time_series</strong> – </p></li>
 <li><p><strong>use_poly</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -447,10 +428,10 @@ parameters the same</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_instrument_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#ChannelSet.from_instrument_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response" title="Permalink to this definition"></a></dt>
 <dd><p>Build EBOUNDS interval from an instrument response</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>instrument_response</strong> – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -480,13 +461,13 @@ parameters the same</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ogip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ogip_quality</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.from_ogip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip" title="Permalink to this definition"></a></dt>
 <dd><p>Read in quality from an OGIP file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cls</strong> – </p></li>
 <li><p><strong>ogip_quality</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -515,7 +496,7 @@ parameters the same</p>
 2 = warn
 5 = bad</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>

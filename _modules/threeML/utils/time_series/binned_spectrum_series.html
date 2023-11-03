@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.time_series.binned_spectrum_series</li>
@@ -125,7 +130,7 @@
         <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param binned_spectrum_set:</span>
 <span class="sd">        :param first_channel:</span>
 <span class="sd">        :param rsp_file:</span>
@@ -156,7 +161,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the time bins of the spectrum set</span>
 <span class="sd">        :return: TimeIntervalSet</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -165,7 +170,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">binned_spectrum_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns the spectrum set</span>
 <span class="sd">        :return: binned_spectrum_set</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -182,7 +187,7 @@
                         <span class="n">with_dead_time</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param start:</span>
 <span class="sd">        :param stop:</span>
 <span class="sd">        :param dt:</span>
@@ -314,7 +319,7 @@
         <span class="k">return</span> <span class="n">fig</span></div>
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.counts_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.counts_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the number of counts in the selected interval</span>
 <span class="sd">        :param start: start of interval</span>
 <span class="sd">        :param stop:  stop of interval</span>
@@ -337,7 +342,7 @@
         <span class="k">return</span> <span class="n">total_counts</span></div>
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.count_per_channel_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.count_per_channel_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the number of counts in the selected interval</span>
 <span class="sd">        :param start: start of interval</span>
 <span class="sd">        :param stop:  stop of interval</span>
@@ -359,7 +364,7 @@
         <span class="k">return</span> <span class="n">total_counts</span></div>
 
     <span class="k">def</span> <span class="nf">_select_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return an index of the selected bins</span>
 <span class="sd">        :param start: start time</span>
 <span class="sd">        :param stop: stop time</span>
@@ -371,7 +376,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_adjust_to_true_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_intervals</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        adjusts time selections to those of the Binned spectrum set</span>
 
@@ -419,7 +424,7 @@
         <span class="k">return</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">new_starts</span><span class="p">,</span> <span class="n">new_stops</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        fits a polynomial to all channels over the input time intervals</span>
 
 <span class="sd">        :param fit_intervals: str input intervals</span>
@@ -535,7 +540,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span> <span class="o">=</span> <span class="n">polynomials</span>
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.set_active_time_intervals"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.set_active_time_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the time interval(s) to be used during the analysis.</span>
 <span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
 
@@ -626,7 +631,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_dead_time</span> <span class="o">=</span> <span class="n">total_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure</span></div>
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.dead_time_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.dead_time_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">dead_time_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        computer the dead time over the interval</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_bins</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
@@ -637,7 +642,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">exposure_over_interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the exposure over the given interval</span>
 
 <span class="sd">        :param start: start time</span>

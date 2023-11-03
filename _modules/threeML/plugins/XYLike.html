@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.plugins.XYLike</li>
@@ -102,6 +107,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">PointSource</span>
 <span class="kn">from</span> <span class="nn">astromodels.functions.function</span> <span class="kn">import</span> <span class="n">Function</span>
+<span class="kn">from</span> <span class="nn">threeML.analysis_results</span> <span class="kn">import</span> <span class="n">_AnalysisResults</span>
 <span class="kn">from</span> <span class="nn">threeML.classicMLE.goodness_of_fit</span> <span class="kn">import</span> <span class="n">GoodnessOfFit</span>
 <span class="kn">from</span> <span class="nn">threeML.classicMLE.joint_likelihood</span> <span class="kn">import</span> <span class="n">JointLikelihood</span>
 <span class="kn">from</span> <span class="nn">threeML.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
@@ -135,7 +141,7 @@
         <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A generic plugin for fitting either Poisson or Gaussian</span>
 <span class="sd">        distributed data.</span>
 
@@ -250,7 +256,7 @@
         <span class="n">exposure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate an XYLike plugin from an astromodels function instance</span>
 
 <span class="sd">        :param name: name of plugin</span>
@@ -285,7 +291,7 @@
         <span class="n">err_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;yerr&quot;</span><span class="p">,</span>
         <span class="n">poisson</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a XYLike instance from a Pandas.DataFrame instance</span>
 
 <span class="sd">        :param name: the name for the XYLike instance</span>
@@ -323,7 +329,7 @@
 
 <div class="viewcode-block" id="XYLike.from_text_file"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_text_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_text_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instance the plugin starting from a text file generated with the .to_txt() method. Note that a more general</span>
 <span class="sd">        way of creating a XYLike instance from a text file is to read the file using pandas.DataFrame.from_csv, and</span>
 <span class="sd">        then use the .from_dataframe method of the XYLike plugin:</span>
@@ -341,7 +347,7 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XYLike.to_dataframe"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a pandas.DataFrame instance with the data in the &#39;x&#39;, &#39;y&#39;, and &#39;yerr&#39; column. If the data are Poisson,</span>
 <span class="sd">        the yerr column will be -99 for every entry</span>
 
@@ -368,7 +374,7 @@
         <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="XYLike.to_txt"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_txt">[docs]</a>    <span class="k">def</span> <span class="nf">to_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the dataset in a text file. You can read the content back in a dataframe using:</span>
 
 <span class="sd">        &gt; df = pandas.DataFrame.from_csv(filename, sep=&#39; &#39;)</span>
@@ -386,7 +392,7 @@
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XYLike.to_csv"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the data in a comma-separated-values file (CSV) file. All keywords arguments are passed to the</span>
 <span class="sd">        pandas.DataFrame.to_csv method (see the documentation from pandas for all possibilities). This gives a very</span>
 <span class="sd">        high control on the format of the output</span>
@@ -401,7 +407,7 @@
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XYLike.assign_to_source"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.assign_to_source">[docs]</a>    <span class="k">def</span> <span class="nf">assign_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign these data to the given source (instead of to the sum of all sources, which is the default)</span>
 
 <span class="sd">        :param source_name: name of the source (must be contained in the likelihood model)</span>
@@ -454,7 +460,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_errors</span>
 
 <div class="viewcode-block" id="XYLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
 
 <span class="sd">        :param likelihood_model_instance: instance of Model</span>
@@ -537,7 +543,7 @@
         <span class="k">return</span> <span class="n">expectation</span>
 
 <div class="viewcode-block" id="XYLike.get_log_like"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_log_like">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of the log-likelihood with the current values for the</span>
 <span class="sd">        parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -568,7 +574,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="XYLike.get_simulated_dataset"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_simulated_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a simulated XYLike plugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -616,7 +622,7 @@
         <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">yerr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        construct a new plugin. allows for returning a new plugin</span>
 <span class="sd">        from simulated data set while customizing the constructor</span>
 <span class="sd">        further down the inheritance tree</span>
@@ -682,7 +688,7 @@
         <span class="k">return</span> <span class="n">fig</span></div>
 
 <div class="viewcode-block" id="XYLike.inner_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.inner_fit">[docs]</a>    <span class="k">def</span> <span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is used for the profile likelihood. Keeping fixed all parameters in the</span>
 <span class="sd">        LikelihoodModel, this method minimize the logLike over the remaining nuisance</span>
 <span class="sd">        parameters, i.e., the parameters belonging only to the model for this</span>
@@ -701,8 +707,8 @@
         <span class="n">function</span><span class="p">:</span> <span class="n">Function</span><span class="p">,</span>
         <span class="n">minimizer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;minuit&quot;</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JointLikelihood</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the data with the provided function (an astromodels function)</span>
 
 <span class="sd">        :param function: astromodels function</span>
@@ -725,12 +731,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_joint_like_obj</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="n">minimizer</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_like_obj</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_joint_like_obj</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_like_obj</span><span class="o">.</span><span class="n">results</span></div>
 
 <div class="viewcode-block" id="XYLike.goodness_of_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.goodness_of_fit">[docs]</a>    <span class="k">def</span> <span class="nf">goodness_of_fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">continue_of_failure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the goodness of fit of the performed fit</span>
 
 <span class="sd">        :param n_iterations: number of Monte Carlo simulations to generate</span>
@@ -743,7 +751,7 @@
         <span class="k">return</span> <span class="n">g</span><span class="o">.</span><span class="n">by_mc</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">,</span> <span class="n">continue_of_failure</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XYLike.get_number_of_data_points"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_number_of_data_points">[docs]</a>    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns the number of active data points</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>

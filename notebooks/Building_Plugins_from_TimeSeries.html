@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Constructing plugins from TimeSeries &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Background Modeling" href="Background_modeling.html" />
+    <link rel="prev" title="Plugins" href="../plugins.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../plugins.html">Plugins</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Constructing plugins from TimeSeries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Constructing-time-series-objects-from-different-data-types">Constructing time series objects from different data types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#GBM-Data">GBM Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#LAT-LLE-data">LAT LLE data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Viewing-Lightcurves-and-selecting-source-intervals">Viewing Lightcurves and selecting source intervals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Fitting-a-polynomial-background">Fitting a polynomial background</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#What-occurs-during-a-fit?">What occurs during a fit?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Saving-the-background-fit">Saving the background fit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Creating-a-plugin">Creating a plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Time-resolved-binning-and-plugin-creation">Time-resolved binning and plugin creation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Constant-Cadence">Constant Cadence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Custom">Custom</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Significance">Significance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Bayesian-Blocks">Bayesian Blocks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Working-with-bins">Working with bins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Background_modeling.html">Background Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Photometry_demo.html">Photometric Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hal_example.html">HAL (HAWC Accelerated Likelihood) plugin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Constructing plugins from TimeSeries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Constructing-time-series-objects-from-different-data-types">Constructing time series objects from different data types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#GBM-Data">GBM Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#LAT-LLE-data">LAT LLE data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Viewing-Lightcurves-and-selecting-source-intervals">Viewing Lightcurves and selecting source intervals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Fitting-a-polynomial-background">Fitting a polynomial background</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#What-occurs-during-a-fit?">What occurs during a fit?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Saving-the-background-fit">Saving the background fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Creating-a-plugin">Creating a plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Time-resolved-binning-and-plugin-creation">Time-resolved binning and plugin creation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Constant-Cadence">Constant Cadence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Custom">Custom</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Significance">Significance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Bayesian-Blocks">Bayesian Blocks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Working-with-bins">Working with bins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../plugins.html">Plugins</a></li>
+      <li class="breadcrumb-item active">Constructing plugins from TimeSeries</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">silence_warnings</span><span class="p">()</span>
+
+<span class="n">set_threeML_style</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<section id="Constructing-plugins-from-TimeSeries">
+<h1>Constructing plugins from TimeSeries<a class="headerlink" href="#Constructing-plugins-from-TimeSeries" title="Permalink to this heading"></a></h1>
+<p>Many times we encounter event lists or sets of spectral histograms from which we would like to derive a single or set of plugins. For this purpose, we provide the <strong>TimeSeriesBuilder</strong> which provides a unified interface to time series data. Here we will demonstrate how to construct plugins from different data types.</p>
+<p>These utilities are helpers that allow you to <em>reduce data to pluigns</em> for spectral and temporal fitting. They are not plugins themselves.</p>
+<section id="Constructing-time-series-objects-from-different-data-types">
+<h2>Constructing time series objects from different data types<a class="headerlink" href="#Constructing-time-series-objects-from-different-data-types" title="Permalink to this heading"></a></h2>
+<p>The <strong>TimeSeriesBuilder</strong> currently supports reading of the following data type: * A generic PHAII data file * GBM TTE/CSPEC/CTIME files * LAT LLE files * POLAR spectra and polarization light curves * KONUS GRB data</p>
+<div class="admonition note">
+<p><strong>Note:</strong> If you would like to build a time series from your own custom data, consider creating a <code class="docutils literal notranslate"><span class="pre">TimeSeriesBuilder.from_your_data()</span></code> class method.</p>
+</div>
+<section id="GBM-Data">
+<h3>GBM Data<a class="headerlink" href="#GBM-Data" title="Permalink to this heading"></a></h3>
+<p>Building plugins from GBM is achieved in the following fashion</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cspec_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/glg_cspec_n3_bn080916009_v01.pha&quot;</span><span class="p">)</span>
+<span class="n">tte_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/glg_tte_n3_bn080916009_v01.fit.gz&quot;</span><span class="p">)</span>
+<span class="n">gbm_rsp</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/glg_cspec_n3_bn080916009_v00.rsp2&quot;</span><span class="p">)</span>
+
+
+<span class="n">gbm_cspec</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_cspec_or_ctime</span><span class="p">(</span>
+    <span class="s2">&quot;nai3_cspec&quot;</span><span class="p">,</span> <span class="n">cspec_or_ctime_file</span><span class="o">=</span><span class="n">cspec_file</span><span class="p">,</span> <span class="n">rsp_file</span><span class="o">=</span><span class="n">gbm_rsp</span>
+<span class="p">)</span>
+
+<span class="n">gbm_tte</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_tte</span><span class="p">(</span>
+    <span class="s2">&quot;nai3_tte&quot;</span><span class="p">,</span> <span class="n">tte_file</span><span class="o">=</span><span class="n">tte_file</span><span class="p">,</span> <span class="n">rsp_file</span><span class="o">=</span><span class="n">gbm_rsp</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "11e095617aed4cc0a66f4718183f71ca", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+</section>
+<section id="LAT-LLE-data">
+<h3>LAT LLE data<a class="headerlink" href="#LAT-LLE-data" title="Permalink to this heading"></a></h3>
+<p>LAT LLE data is constructed in a similar fashion</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lle_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/gll_lle_bn080916009_v10.fit&quot;</span><span class="p">)</span>
+<span class="n">ft2_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/gll_pt_bn080916009_v10.fit&quot;</span><span class="p">)</span>
+<span class="n">lle_rsp</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;datasets/gll_cspec_bn080916009_v10.rsp&quot;</span><span class="p">)</span>
+
+<span class="n">lat_lle</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_lat_lle</span><span class="p">(</span>
+    <span class="s2">&quot;lat_lle&quot;</span><span class="p">,</span> <span class="n">lle_file</span><span class="o">=</span><span class="n">lle_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="o">=</span><span class="n">ft2_file</span><span class="p">,</span> <span class="n">rsp_file</span><span class="o">=</span><span class="n">lle_rsp</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Viewing-Lightcurves-and-selecting-source-intervals">
+<h2>Viewing Lightcurves and selecting source intervals<a class="headerlink" href="#Viewing-Lightcurves-and-selecting-source-intervals" title="Permalink to this heading"></a></h2>
+<p>All time series objects share the same commands to get you to a plugin. Let’s have a look at the GBM TTE lightcurve.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Building_Plugins_from_TimeSeries_10_0.png" src="../_images/notebooks_Building_Plugins_from_TimeSeries_10_0.png" />
+</div>
+</div>
+<p>Perhaps we want to fit the time interval from 0-10 seconds. We make a selection like this:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="s2">&quot;0-10&quot;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:00:43 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Interval set to </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">0.0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">-</span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">10.0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> for nai3_tte                                 </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#290" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">290</span></a>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Building_Plugins_from_TimeSeries_12_1.png" src="../_images/notebooks_Building_Plugins_from_TimeSeries_12_1.png" />
+</div>
+</div>
+<p>For event list style data like time tagged events, the selection is <em>exact</em>. However, pre-binned data in the form of e.g. PHAII files will have the selection automatically adjusted to the underlying temporal bins.</p>
+<p>Several discontinuous time selections can be made.</p>
+</section>
+<section id="Fitting-a-polynomial-background">
+<h2>Fitting a polynomial background<a class="headerlink" href="#Fitting-a-polynomial-background" title="Permalink to this heading"></a></h2>
+<p>In order to get to a plugin, we need to model and create an estimated background in each channel (<span class="math notranslate nohighlight">\(B_i\)</span>) for our interval of interest. The process that we have implemented is to fit temporal off-source regions to polynomials (<span class="math notranslate nohighlight">\(P(t;\vec{\theta})\)</span>) in time. First, a polynomial is fit to the total count rate. From this fit we determine the best polynomial order via a likelihood ratio test, unless the user supplies a polynomial order in the constructor or directly via the
+polynomial_order attribute. Then, this order of polynomial is fit to every channel in the data.</p>
+<p>From the polynomial fit, the polynomial is integrated in time over the active source interval to estimate the count rate in each channel. The estimated background and background errors then stored for each channel.</p>
+<div class="math notranslate nohighlight">
+\[B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t\]</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">set_background_interval</span><span class="p">(</span><span class="s2">&quot;-24--5&quot;</span><span class="p">,</span> <span class="s2">&quot;100-200&quot;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "628d15de8def4c34be1ae4f4d5ed8e30", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:00:45 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-determined polynomial order: </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                            </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/event_list.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">event_list.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/event_list.py#538" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">538</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "2b2587b9a55043cb994ee5c5c3e31a4a", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:00:53 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">-order polynomial fit with the mle method                               </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/time_series.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/time_series.py#458" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">458</span></a>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Building_Plugins_from_TimeSeries_14_4.png" src="../_images/notebooks_Building_Plugins_from_TimeSeries_14_4.png" />
+</div>
+</div>
+<section id="What-occurs-during-a-fit?">
+<h3>What occurs during a fit?<a class="headerlink" href="#What-occurs-during-a-fit?" title="Permalink to this heading"></a></h3>
+<p>In the background, the data type of the time series is analyzed (is it Poisson of Gaussian distributed?) and the time series are converted to plugins of counts / measurements vs. time. These plugins are then fit with either MLE or Bayesian methods just any other 3ML analysis. While this happens behinds the scene, it is possible to interface to these low-level operations are create your own custom background routines!</p>
+<p>For event list data, binned or unbinned background fits are possible. For pre-binned data, only a binned fit is possible.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">set_background_interval</span><span class="p">(</span><span class="s2">&quot;-24--5&quot;</span><span class="p">,</span> <span class="s2">&quot;100-200&quot;</span><span class="p">,</span> <span class="n">unbinned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "0fde9d94c9814a359b5019b248121f4e", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:00:54 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-determined polynomial order: </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                            </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/event_list.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">event_list.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/event_list.py#538" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">538</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d1db5e8a993f43e59c61282144444a2c", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:01:01 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">-order polynomial fit with the mle method                               </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/time_series.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/time_series.py#458" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">458</span></a>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="Saving-the-background-fit">
+<h2>Saving the background fit<a class="headerlink" href="#Saving-the-background-fit" title="Permalink to this heading"></a></h2>
+<p>The background polynomial coefficients can be saved to disk for faster manipulation of time series data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">save_background</span><span class="p">(</span><span class="s2">&quot;background_store&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:01:02 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Saved fitted background to background_store.h5                               </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/time_series.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/time_series/time_series.py#1064" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1064</span></a>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Saved background to background_store                                  </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#471" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">471</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte_reloaded</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_tte</span><span class="p">(</span>
+    <span class="s2">&quot;nai3_tte&quot;</span><span class="p">,</span>
+    <span class="n">tte_file</span><span class="o">=</span><span class="n">tte_file</span><span class="p">,</span>
+    <span class="n">rsp_file</span><span class="o">=</span><span class="n">gbm_rsp</span><span class="p">,</span>
+    <span class="n">restore_background</span><span class="o">=</span><span class="s2">&quot;background_store.h5&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Successfully restored fit from background_store.h5                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#171" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">171</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte_reloaded</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Building_Plugins_from_TimeSeries_21_0.png" src="../_images/notebooks_Building_Plugins_from_TimeSeries_21_0.png" />
+</div>
+</div>
+</section>
+<section id="Creating-a-plugin">
+<h2>Creating a plugin<a class="headerlink" href="#Creating-a-plugin" title="Permalink to this heading"></a></h2>
+<p>With our background selections made, we can now create a plugin instance. In the case of GBM data, this results in a <strong>DispersionSpectrumLike</strong> plugin. Please refer to the Plugins documentation for more details.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_plugin</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+</pre></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
+</pre></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: gaussian                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_plugin</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>n. channels</th>
+      <td>128</td>
+    </tr>
+    <tr>
+      <th>total rate</th>
+      <td>2508.771647</td>
+    </tr>
+    <tr>
+      <th>total bkg. rate</th>
+      <td>1253.55087</td>
+    </tr>
+    <tr>
+      <th>total bkg. rate error</th>
+      <td>3.250957</td>
+    </tr>
+    <tr>
+      <th>bkg. exposure</th>
+      <td>9.94112</td>
+    </tr>
+    <tr>
+      <th>bkg. is poisson</th>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>exposure</th>
+      <td>9.94112</td>
+    </tr>
+    <tr>
+      <th>is poisson</th>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>background</th>
+      <td>profiled</td>
+    </tr>
+    <tr>
+      <th>significance</th>
+      <td>93.530927</td>
+    </tr>
+    <tr>
+      <th>src/bkg area ratio</th>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>src/bkg exposure ratio</th>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>src/bkg scale factor</th>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>response</th>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Time-resolved-binning-and-plugin-creation">
+<h2>Time-resolved binning and plugin creation<a class="headerlink" href="#Time-resolved-binning-and-plugin-creation" title="Permalink to this heading"></a></h2>
+<p>It is possible to temporally bin time series. There are up to four methods provided depending on the type of time series being used:</p>
+<ul class="simple">
+<li><p>Constant cadence (all time series)</p></li>
+<li><p>Custom (all time series)</p></li>
+<li><p>Significance (all time series)</p></li>
+<li><p>Bayesian Blocks (event lists)</p></li>
+</ul>
+<section id="Constant-Cadence">
+<h3>Constant Cadence<a class="headerlink" href="#Constant-Cadence" title="Permalink to this heading"></a></h3>
+<p>Constant cadence bins are defined by a start and a stop time along with a time delta.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Created </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">5</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins via constant                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#708" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">708</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>Stop</th>
+      <th>Duration</th>
+      <th>Midpoint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000412</td>
+      <td>2.000412</td>
+      <td>2.0</td>
+      <td>1.000412</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.000412</td>
+      <td>4.000412</td>
+      <td>2.0</td>
+      <td>3.000412</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.000412</td>
+      <td>6.000412</td>
+      <td>2.0</td>
+      <td>5.000412</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6.000412</td>
+      <td>8.000412</td>
+      <td>2.0</td>
+      <td>7.000412</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>8.000412</td>
+      <td>10.000412</td>
+      <td>2.0</td>
+      <td>9.000412</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Custom">
+<h3>Custom<a class="headerlink" href="#Custom" title="Permalink to this heading"></a></h3>
+<p>Custom time bins can be created by providing a contiguous list of start and stop times.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">time_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">])</span>
+
+<span class="n">starts</span> <span class="o">=</span> <span class="n">time_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">stops</span> <span class="o">=</span> <span class="n">time_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">starts</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stops</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;custom&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Created </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">3</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins via custom                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#708" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">708</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>Stop</th>
+      <th>Duration</th>
+      <th>Midpoint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.50</td>
+      <td>0.63</td>
+      <td>0.13</td>
+      <td>0.565</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.63</td>
+      <td>20.00</td>
+      <td>19.37</td>
+      <td>10.315</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>20.00</td>
+      <td>21.00</td>
+      <td>1.00</td>
+      <td>20.500</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Significance">
+<h3>Significance<a class="headerlink" href="#Significance" title="Permalink to this heading"></a></h3>
+<p>Time bins can be created by specifying a significance of signal to background if a background fit has been performed.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;significance&quot;</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "0b39558480604653ac4b25adf6401817", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:01:31 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Created </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">33</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins via significance                                      </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#708" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">708</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>Stop</th>
+      <th>Duration</th>
+      <th>Midpoint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000412</td>
+      <td>1.102108</td>
+      <td>1.101696</td>
+      <td>0.551260</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.102108</td>
+      <td>1.526892</td>
+      <td>0.424784</td>
+      <td>1.314500</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.526892</td>
+      <td>1.975848</td>
+      <td>0.448956</td>
+      <td>1.751370</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.975848</td>
+      <td>2.433242</td>
+      <td>0.457394</td>
+      <td>2.204545</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2.433242</td>
+      <td>2.775556</td>
+      <td>0.342314</td>
+      <td>2.604399</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2.775556</td>
+      <td>3.224600</td>
+      <td>0.449044</td>
+      <td>3.000078</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>3.224600</td>
+      <td>3.788502</td>
+      <td>0.563902</td>
+      <td>3.506551</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>3.788502</td>
+      <td>4.206910</td>
+      <td>0.418408</td>
+      <td>3.997706</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>4.206910</td>
+      <td>4.709384</td>
+      <td>0.502474</td>
+      <td>4.458147</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>4.709384</td>
+      <td>5.282898</td>
+      <td>0.573514</td>
+      <td>4.996141</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>5.282898</td>
+      <td>5.787524</td>
+      <td>0.504626</td>
+      <td>5.535211</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>5.787524</td>
+      <td>6.166124</td>
+      <td>0.378600</td>
+      <td>5.976824</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>6.166124</td>
+      <td>6.715524</td>
+      <td>0.549400</td>
+      <td>6.440824</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>6.715524</td>
+      <td>7.419990</td>
+      <td>0.704466</td>
+      <td>7.067757</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>7.419990</td>
+      <td>8.639396</td>
+      <td>1.219406</td>
+      <td>8.029693</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>8.639396</td>
+      <td>10.278336</td>
+      <td>1.638940</td>
+      <td>9.458866</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>10.278336</td>
+      <td>12.273390</td>
+      <td>1.995054</td>
+      <td>11.275863</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>12.273390</td>
+      <td>14.396536</td>
+      <td>2.123146</td>
+      <td>13.334963</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>14.396536</td>
+      <td>16.656876</td>
+      <td>2.260340</td>
+      <td>15.526706</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>16.656876</td>
+      <td>18.544916</td>
+      <td>1.888040</td>
+      <td>17.600896</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>18.544916</td>
+      <td>20.373686</td>
+      <td>1.828770</td>
+      <td>19.459301</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>20.373686</td>
+      <td>21.979698</td>
+      <td>1.606012</td>
+      <td>21.176692</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>21.979698</td>
+      <td>23.023478</td>
+      <td>1.043780</td>
+      <td>22.501588</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>23.023478</td>
+      <td>24.101980</td>
+      <td>1.078502</td>
+      <td>23.562729</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>24.101980</td>
+      <td>25.360608</td>
+      <td>1.258628</td>
+      <td>24.731294</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>25.360608</td>
+      <td>27.060798</td>
+      <td>1.700190</td>
+      <td>26.210703</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>27.060798</td>
+      <td>29.069756</td>
+      <td>2.008958</td>
+      <td>28.065277</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>29.069756</td>
+      <td>31.011772</td>
+      <td>1.942016</td>
+      <td>30.040764</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>31.011772</td>
+      <td>33.481182</td>
+      <td>2.469410</td>
+      <td>32.246477</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>33.481182</td>
+      <td>36.371024</td>
+      <td>2.889842</td>
+      <td>34.926103</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>36.371024</td>
+      <td>39.143378</td>
+      <td>2.772354</td>
+      <td>37.757201</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>39.143378</td>
+      <td>44.045158</td>
+      <td>4.901780</td>
+      <td>41.594268</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>44.045158</td>
+      <td>48.030536</td>
+      <td>3.985378</td>
+      <td>46.037847</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Bayesian-Blocks">
+<h3>Bayesian Blocks<a class="headerlink" href="#Bayesian-Blocks" title="Permalink to this heading"></a></h3>
+<p>The Bayesian Blocks algorithm (Scargle et al. 2013) can be used to bin event list by looking for significant changes in the rate.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span>
+    <span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bayesblocks&quot;</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">use_background</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:02:25 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Created </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">9</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins via bayesblocks                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#708" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">708</span></a>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>Stop</th>
+      <th>Duration</th>
+      <th>Midpoint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000412</td>
+      <td>0.816854</td>
+      <td>0.816442</td>
+      <td>0.408633</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.816854</td>
+      <td>6.983690</td>
+      <td>6.166836</td>
+      <td>3.900272</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6.983690</td>
+      <td>8.823971</td>
+      <td>1.840281</td>
+      <td>7.903831</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>8.823971</td>
+      <td>21.723166</td>
+      <td>12.899195</td>
+      <td>15.273569</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>21.723166</td>
+      <td>25.502056</td>
+      <td>3.778890</td>
+      <td>23.612611</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>25.502056</td>
+      <td>30.894882</td>
+      <td>5.392826</td>
+      <td>28.198469</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>30.894882</td>
+      <td>38.893854</td>
+      <td>7.998972</td>
+      <td>34.894368</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>38.893854</td>
+      <td>48.517036</td>
+      <td>9.623182</td>
+      <td>43.705445</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>48.517036</td>
+      <td>49.999594</td>
+      <td>1.482558</td>
+      <td>49.258315</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Working-with-bins">
+<h3>Working with bins<a class="headerlink" href="#Working-with-bins" title="Permalink to this heading"></a></h3>
+<p>The light curve can be displayed by supplying the use_binner option to display the time binning</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">use_binner</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Building_Plugins_from_TimeSeries_39_0.png" src="../_images/notebooks_Building_Plugins_from_TimeSeries_39_0.png" />
+</div>
+</div>
+<p>The bins can all be writted to a PHAII file for analysis via OGIPLike.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">write_pha_from_binner</span><span class="p">(</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;out&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>  <span class="c1"># if you need to write the RSP to a file. We try to choose the best option for you.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "6a3f6567d53b48d5aff9f4ff98125d2f", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:02:26 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Selections saved to out                                               </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#443" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">443</span></a>
+</pre></div>
+</div>
+<p>Similarly, we can create a list of plugins directly from the time series.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_plugins</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">(</span><span class="n">from_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "ba3b422a0b754b61b7a55a43c11bba2b", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:02:27 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Interval set to </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">0.0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">-</span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">10.0</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> for nai3_tte                                 </span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time_series_builder.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/utils/data_builders/time_series_builder.py#290" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">290</span></a>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"003e421d331b4585b3f199ede9606e65": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "07dfec9be2404b2489687f17c7395b4a": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "0b39558480604653ac4b25adf6401817": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_b27ad8a84580479eb136be58d822e20c", "IPY_MODEL_d65cd3efb1bc4bc49b42750d3e5ad194", "IPY_MODEL_711acffe59db4b0d9eb119cd3be0a627"], "layout": "IPY_MODEL_876968be5d6d4bffa3cca01d5270fdf8", "tabbable": null, "tooltip": null}}, "0bbf68d5829d4315806f5c1acfb75ce9": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_abdf1d6b51fc4e9991bb5c913e7baf67", "max": 128.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_481dfad24f9f454d9d341b4da898e85f", "tabbable": null, "tooltip": null, "value": 128.0}}, "0fde9d94c9814a359b5019b248121f4e": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_4ffdb5d6f0e14652bb1536bab3b31436", "IPY_MODEL_2cac6db5b163440c81f965f356ee9d37", "IPY_MODEL_7529a967f4634e568ca50ac61e082456"], "layout": "IPY_MODEL_220c40703bf745b5ace256400fee470b", "tabbable": null, "tooltip": null}}, "100be5ecf82e4671975fa7f557888601": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_d7d58476496c4af7888553d11b4270fd", "placeholder": "\u200b", "style": "IPY_MODEL_e76dcddfc3cc406f9761da2a9ed073e4", "tabbable": null, "tooltip": null, "value": " 128/128 [00:07&lt;00:00, 17.04it/s]"}}, "11e095617aed4cc0a66f4718183f71ca": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_2004775d43d64c96a4af60ee881a0fe5", "IPY_MODEL_d589c30dba1c44c59da88c2224555360", "IPY_MODEL_5d3f3363dc724c05902a88a64a45b0f9"], "layout": "IPY_MODEL_85a4e2d5e9ff473d91f560570ccbbb59", "tabbable": null, "tooltip": null}}, "127b6aa2646d436fb871a585ee197796": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_6fcb0f06932040c69bcbeee616a53a3e", "max": 9.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_c345dba25c69426f836aaca33616f8c4", "tabbable": null, "tooltip": null, "value": 9.0}}, "15896f3e737548b088b106e283c0f8c9": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_73638fa6d4784906a960d7a30f5a23c5", "placeholder": "\u200b", "style": "IPY_MODEL_5a40a75adcbf45ef86d4d5384f8237b2", "tabbable": null, "tooltip": null, "value": " 128/128 [00:07&lt;00:00, 16.94it/s]"}}, "18650ae5071d4c4c8b90f9eb7284581a": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "18b650e0d43e4b7fb26a72a7d93a30df": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "2004775d43d64c96a4af60ee881a0fe5": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_53f2211f90174c0485d799a452f52a29", "placeholder": "\u200b", "style": "IPY_MODEL_bf41013b02584b6ca234fe62438b252a", "tabbable": null, "tooltip": null, "value": "Loading PHAII Spectra: 100%"}}, "220c40703bf745b5ace256400fee470b": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "26e2c9087d4843aab454ba57deab83a7": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#365c8d", "description_width": ""}}, "2729b47788f542d1b6c761d85ffdc8a3": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2b2587b9a55043cb994ee5c5c3e31a4a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_d21e0559c4c64062a4511ba7b808d3a3", "IPY_MODEL_f8507c10a1e74f7dbaeafcf28297a4e4", "IPY_MODEL_15896f3e737548b088b106e283c0f8c9"], "layout": "IPY_MODEL_9d8b9b3330f74377ad043c6b2e8d0194", "tabbable": null, "tooltip": null}}, "2c11d12202e946da8ebb05dd0e0c387a": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2cac6db5b163440c81f965f356ee9d37": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_a300c3a401b04ed18d9d138cf4eb596f", "max": 4.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_5d6a757ac64943d9af7176955d50a78c", "tabbable": null, "tooltip": null, "value": 4.0}}, "2dd9a820af8d475eb69697099e4c7817": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "415de1e575574211b08218fd22039e9c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_925452314aee4a4d872ce5b611e46f32", "placeholder": "\u200b", "style": "IPY_MODEL_9f377da2ffb34a99b50dc1521cdd5d21", "tabbable": null, "tooltip": null, "value": "Finding best polynomial Order: 100%"}}, "476ce1234a5d49979c20a00e86db627c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "481dfad24f9f454d9d341b4da898e85f": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#1fa187", "description_width": ""}}, "4a36f10153ce4d328eb99d7f77143a98": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "4b2a6f649d1a437d95352aeaafadbd1d": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#46327e", "description_width": ""}}, "4ffdb5d6f0e14652bb1536bab3b31436": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_d46fb8dc379244ea93ae31b245d7e38b", "placeholder": "\u200b", "style": "IPY_MODEL_c8f53f40253c416c898d659d90c351ff", "tabbable": null, "tooltip": null, "value": "Finding best polynomial Order: 100%"}}, "5103eff50f7e41d1a037be94548ca2d2": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "53f2211f90174c0485d799a452f52a29": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5548849fe47d4ad7ad38608f1ec8d3cf": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5a40a75adcbf45ef86d4d5384f8237b2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "5d3f3363dc724c05902a88a64a45b0f9": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_4a36f10153ce4d328eb99d7f77143a98", "placeholder": "\u200b", "style": "IPY_MODEL_81e70d24a29f40f991abd5b012de9b92", "tabbable": null, "tooltip": null, "value": " 1859/1859 [00:00&lt;00:00, 1820.86it/s]"}}, "5d41b8b317004d519cdcc1ffc3265bc8": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5d6a757ac64943d9af7176955d50a78c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#277f8e", "description_width": ""}}, "60cbd808cab043058f3da674267a0e18": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "60f7c1edf6dc4a7190ae82c785a5eec2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#4ac16d", "description_width": ""}}, "628d15de8def4c34be1ae4f4d5ed8e30": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_415de1e575574211b08218fd22039e9c", "IPY_MODEL_63291baa99724b3c9e9d54483c60e23f", "IPY_MODEL_a3f75418303c45ebbf6fc9d1fd37bbc9"], "layout": "IPY_MODEL_60cbd808cab043058f3da674267a0e18", "tabbable": null, "tooltip": null}}, "63291baa99724b3c9e9d54483c60e23f": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_9d8a971621c642b09df7ba400da6fd83", "max": 4.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_4b2a6f649d1a437d95352aeaafadbd1d", "tabbable": null, "tooltip": null, "value": 4.0}}, "671e93fd3e524cea813a5232d8a74a3c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_68416ce1e91a4b62974c01f3bb546bcd", "placeholder": "\u200b", "style": "IPY_MODEL_9f02da9ff8a3426790cd82d3e50a5a95", "tabbable": null, "tooltip": null, "value": "Fitting GBM_NAI_03 background: 100%"}}, "68416ce1e91a4b62974c01f3bb546bcd": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "69688852637441a0bbc6e1aaf2b1ff44": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "6a3f6567d53b48d5aff9f4ff98125d2f": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_b85604c56deb42f2b1b75aaf50cc2079", "IPY_MODEL_127b6aa2646d436fb871a585ee197796", "IPY_MODEL_fab349b4200947059153e29576cfc73e"], "layout": "IPY_MODEL_92be027878aa4918aaa6115fab966297", "tabbable": null, "tooltip": null}}, "6fcb0f06932040c69bcbeee616a53a3e": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "70f65c8d26644c44ba27d957f3a1acb6": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2dd9a820af8d475eb69697099e4c7817", "placeholder": "\u200b", "style": "IPY_MODEL_18b650e0d43e4b7fb26a72a7d93a30df", "tabbable": null, "tooltip": null, "value": " 9/9 [00:00&lt;00:00, 28.08it/s]"}}, "70f7da4ec91348cc8a2620e22da0b21b": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "711acffe59db4b0d9eb119cd3be0a627": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_f6d6869976fb4cb1961de1b55094b904", "placeholder": "\u200b", "style": "IPY_MODEL_f527228533284f6382233c71ad84c89b", "tabbable": null, "tooltip": null, "value": " 99975/? [01:23&lt;00:00, 2682.09it/s]"}}, "73638fa6d4784906a960d7a30f5a23c5": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "7529a967f4634e568ca50ac61e082456": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_b6ad86271d2d42ccbacc66b2a4b621a1", "placeholder": "\u200b", "style": "IPY_MODEL_70f7da4ec91348cc8a2620e22da0b21b", "tabbable": null, "tooltip": null, "value": " 4/4 [00:00&lt;00:00, 14.72it/s]"}}, "78f926754e07451693554ac4bd044fff": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_d1eb6a6fbcdd4cababe46e5affd1cad4", "max": 9.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_91c33f8ec57f4a0e96a07683e8087908", "tabbable": null, "tooltip": null, "value": 9.0}}, "7c622fdef0a0457891542ad687236779": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "7cc1ec914c114b758729e88ce581a2c7": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_da1edbbd36ab425c8d7734337bd4ad51", "placeholder": "\u200b", "style": "IPY_MODEL_003e421d331b4585b3f199ede9606e65", "tabbable": null, "tooltip": null, "value": "Creating plugins: 100%"}}, "7ebb547274374ab5b753552ffc85635f": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "81e70d24a29f40f991abd5b012de9b92": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "85a4e2d5e9ff473d91f560570ccbbb59": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "876968be5d6d4bffa3cca01d5270fdf8": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "8c58719e17004d0f88e49dcc7a57f717": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "91c33f8ec57f4a0e96a07683e8087908": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#fde725", "description_width": ""}}, "925452314aee4a4d872ce5b611e46f32": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "92be027878aa4918aaa6115fab966297": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "9d8a971621c642b09df7ba400da6fd83": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9d8b9b3330f74377ad043c6b2e8d0194": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "9f02da9ff8a3426790cd82d3e50a5a95": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "9f377da2ffb34a99b50dc1521cdd5d21": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "a025e64e69fc46429824f2cbfa9dc2d7": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "a300c3a401b04ed18d9d138cf4eb596f": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "a3f75418303c45ebbf6fc9d1fd37bbc9": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_7ebb547274374ab5b753552ffc85635f", "placeholder": "\u200b", "style": "IPY_MODEL_cf41cc3b85d942d793a3935484f0d13d", "tabbable": null, "tooltip": null, "value": " 4/4 [00:02&lt;00:00,  1.88it/s]"}}, "abdf1d6b51fc4e9991bb5c913e7baf67": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b27ad8a84580479eb136be58d822e20c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_5d41b8b317004d519cdcc1ffc3265bc8", "placeholder": "\u200b", "style": "IPY_MODEL_c3128404c1bb47c29390a259ab1aff4a", "tabbable": null, "tooltip": null, "value": "Binning by significance: "}}, "b6ad86271d2d42ccbacc66b2a4b621a1": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b85604c56deb42f2b1b75aaf50cc2079": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_18650ae5071d4c4c8b90f9eb7284581a", "placeholder": "\u200b", "style": "IPY_MODEL_a025e64e69fc46429824f2cbfa9dc2d7", "tabbable": null, "tooltip": null, "value": "Creating plugins: 100%"}}, "ba3b422a0b754b61b7a55a43c11bba2b": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_7cc1ec914c114b758729e88ce581a2c7", "IPY_MODEL_78f926754e07451693554ac4bd044fff", "IPY_MODEL_70f65c8d26644c44ba27d957f3a1acb6"], "layout": "IPY_MODEL_5103eff50f7e41d1a037be94548ca2d2", "tabbable": null, "tooltip": null}}, "bf41013b02584b6ca234fe62438b252a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "c3128404c1bb47c29390a259ab1aff4a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "c345dba25c69426f836aaca33616f8c4": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#a0da39", "description_width": ""}}, "c8f53f40253c416c898d659d90c351ff": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "cf41cc3b85d942d793a3935484f0d13d": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "d1db5e8a993f43e59c61282144444a2c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_671e93fd3e524cea813a5232d8a74a3c", "IPY_MODEL_0bbf68d5829d4315806f5c1acfb75ce9", "IPY_MODEL_100be5ecf82e4671975fa7f557888601"], "layout": "IPY_MODEL_7c622fdef0a0457891542ad687236779", "tabbable": null, "tooltip": null}}, "d1eb6a6fbcdd4cababe46e5affd1cad4": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d21e0559c4c64062a4511ba7b808d3a3": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_69688852637441a0bbc6e1aaf2b1ff44", "placeholder": "\u200b", "style": "IPY_MODEL_8c58719e17004d0f88e49dcc7a57f717", "tabbable": null, "tooltip": null, "value": "Fitting GBM_NAI_03 background: 100%"}}, "d46fb8dc379244ea93ae31b245d7e38b": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d589c30dba1c44c59da88c2224555360": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2c11d12202e946da8ebb05dd0e0c387a", "max": 1859.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_f5a8526fe5b740f490f2fa878055e0ba", "tabbable": null, "tooltip": null, "value": 1859.0}}, "d65cd3efb1bc4bc49b42750d3e5ad194": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2729b47788f542d1b6c761d85ffdc8a3", "max": 99942.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_60f7c1edf6dc4a7190ae82c785a5eec2", "tabbable": null, "tooltip": null, "value": 99942.0}}, "d7d58476496c4af7888553d11b4270fd": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "da1edbbd36ab425c8d7734337bd4ad51": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e76dcddfc3cc406f9761da2a9ed073e4": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "f527228533284f6382233c71ad84c89b": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "f5a8526fe5b740f490f2fa878055e0ba": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": "#440154", "description_width": ""}}, "f6d6869976fb4cb1961de1b55094b904": {"model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f8507c10a1e74f7dbaeafcf28297a4e4": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_07dfec9be2404b2489687f17c7395b4a", "max": 128.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_26e2c9087d4843aab454ba57deab83a7", "tabbable": null, "tooltip": null, "value": 128.0}}, "fab349b4200947059153e29576cfc73e": {"model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_5548849fe47d4ad7ad38608f1ec8d3cf", "placeholder": "\u200b", "style": "IPY_MODEL_476ce1234a5d49979c20a00e86db627c", "tabbable": null, "tooltip": null, "value": " 9/9 [00:00&lt;00:00, 28.32it/s]"}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../plugins.html" class="btn btn-neutral float-left" title="Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Background_modeling.html" class="btn btn-neutral float-right" title="Background Modeling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.catalogs.catalog_utils</li>
@@ -117,7 +122,7 @@
 <span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^GRB\d</span><span class="si">{9}</span><span class="s2">$&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    checks if source name is valid for both GBM and LLE data</span>
 
 <span class="sd">    :param source: source name</span>
@@ -150,13 +155,13 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">swap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">,</span> <span class="s2">&quot;9&quot;</span><span class="p">]:</span>
-        <span class="n">swap</span> <span class="o">=</span> <span class="s2">&quot;_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">swap</span>
+        <span class="n">swap</span> <span class="o">=</span> <span class="s2">&quot;x</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">swap</span>
 
     <span class="k">return</span> <span class="n">swap</span>
 
 
 <span class="k">def</span> <span class="nf">_get_point_source_from_fgl</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">,</span> <span class="n">catalog_entry</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Translate a spectrum from the nFGL into an astromodels point source</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">_sanitize_fgl_name</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">)</span>
@@ -197,19 +202,25 @@
         <span class="n">this_spectrum</span> <span class="o">=</span> <span class="n">Log_parabola</span><span class="p">()</span>
 
         <span class="n">this_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">this_spectrum</span><span class="p">)</span>
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
-        
+        <span class="k">if</span> <span class="s2">&quot;pivot_energy_catalog&quot;</span> <span class="ow">in</span> <span class="n">catalog_entry</span><span class="p">:</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy_catalog&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+
         <span class="k">if</span> <span class="s2">&quot;lp_index&quot;</span> <span class="ow">in</span> <span class="n">catalog_entry</span><span class="p">:</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_beta&quot;</span><span class="p">])</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
                 <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
             <span class="p">)</span>
-        
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span> 
+                <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;dnde&quot;</span><span class="p">])</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;flux_density&quot;</span><span class="p">])</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">K</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
-            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;dnde_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spectral_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">])</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">K</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span><span class="p">)</span>
         
@@ -276,14 +287,16 @@
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="n">i</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">b</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="n">E0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">(</span> <span class="n">conv</span> <span class="o">*</span> <span class="n">K</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span><span class="p">))</span>
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">b</span> <span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
 
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">(</span> <span class="n">conv</span> <span class="o">*</span> <span class="n">K</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span><span class="p">))</span>
+
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">b</span> <span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+
+        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">xc</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">gamma</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
@@ -354,7 +367,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_extended_source_from_fgl</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">,</span> <span class="n">catalog_entry</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Translate a spectrum from the nFGL into an astromodels extended source</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -364,11 +377,16 @@
     <span class="n">ra</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">])</span>
     <span class="n">dec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_function&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;RadialDisk&quot;</span><span class="p">:</span>
+    <span class="n">theShape</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_function&quot;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">theShape</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">theShape</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatialmodel&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">theShape</span> <span class="o">==</span> <span class="s2">&quot;RadialDisk&quot;</span><span class="p">:</span>
         <span class="n">this_shape</span> <span class="o">=</span> <span class="n">Disk_on_sphere</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_function&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;RadialGaussian&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">theShape</span> <span class="o">==</span> <span class="s2">&quot;RadialGaussian&quot;</span><span class="p">:</span>
         <span class="n">this_shape</span> <span class="o">=</span> <span class="n">Gaussian_on_sphere</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_function&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;SpatialMap&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">theShape</span> <span class="o">==</span> <span class="s2">&quot;SpatialMap&quot;</span><span class="p">:</span>
         <span class="n">the_file</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_filename&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">the_file</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="n">the_file</span> <span class="o">=</span> <span class="n">the_file</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
@@ -376,16 +394,20 @@
         <span class="k">if</span> <span class="s2">&quot;FERMIPY_DATA_DIR&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;FERMIPY_DATA_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">(</span><span class="s2">&quot;fermipy&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
-        <span class="n">the_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;extdir&quot;</span><span class="p">]),</span> <span class="s2">&quot;Templates&quot;</span><span class="p">)</span>
+        <span class="n">the_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">the_file</span><span class="p">)</span>
 
-        <span class="n">the_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">the_dir</span><span class="p">,</span> <span class="n">the_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span> <span class="n">the_file</span> <span class="p">):</span>
+        
+            <span class="n">the_template</span> <span class="o">=</span> <span class="n">the_file</span>
 
-        <span class="c1">#this_shape(fits_file=the_template)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">the_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;extdir&quot;</span><span class="p">]),</span> <span class="s2">&quot;Templates&quot;</span><span class="p">)</span>
+            <span class="n">the_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">the_dir</span><span class="p">,</span> <span class="n">the_file</span><span class="p">)</span>
 
         <span class="n">this_shape</span> <span class="o">=</span> <span class="n">SpatialTemplate_2D</span><span class="p">(</span><span class="n">fits_file</span><span class="o">=</span><span class="n">the_template</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Spatial_Function </span><span class="si">{}</span><span class="s2"> not implemented yet&quot;</span> <span class="o">%</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;Spatial_Function&quot;</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spatial_Function </span><span class="si">{</span><span class="n">theShape</span><span class="si">}</span><span class="s2"> not implemented yet&quot;</span>  <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">spectrum_type</span> <span class="o">==</span> <span class="s2">&quot;PowerLaw&quot;</span><span class="p">:</span>
@@ -412,19 +434,32 @@
 
         <span class="n">this_source</span> <span class="o">=</span> <span class="n">ExtendedSource</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">spatial_shape</span> <span class="o">=</span> <span class="n">this_shape</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">this_spectrum</span><span class="p">)</span>
 
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="s2">&quot;pivot_energy_catalog&quot;</span> <span class="ow">in</span> <span class="n">catalog_entry</span><span class="p">:</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy_catalog&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+
+        <span class="k">if</span> <span class="s2">&quot;lp_index&quot;</span> <span class="ow">in</span> <span class="n">catalog_entry</span><span class="p">:</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_beta&quot;</span><span class="p">])</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;flux_density&quot;</span><span class="p">])</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">K</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spectral_index&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">])</span>
+            <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">K</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span><span class="p">)</span>
+        
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_beta&quot;</span><span class="p">])</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">piv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;pivot_energy&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
-        <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;lp_flux_density&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
-            <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
-        <span class="p">)</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="n">fix</span>
         <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">,</span>
             <span class="n">this_spectrum</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="p">)</span>
+
 
     <span class="k">elif</span> <span class="n">spectrum_type</span> <span class="o">==</span> <span class="s2">&quot;PLExpCutoff&quot;</span><span class="p">:</span>
 
@@ -501,17 +536,22 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
 
-    <span class="k">if</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_function&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;RadialDisk&quot;</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">theRadius</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;model_semimajor&quot;</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">theRadius</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatialwidth&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">theShape</span> <span class="o">==</span> <span class="s2">&quot;RadialDisk&quot;</span><span class="p">:</span>
     
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lon0</span> <span class="o">=</span> <span class="n">ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lat0</span> <span class="o">=</span> <span class="n">dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">this_shape</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;Model_SemiMajor&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
+        <span class="n">this_shape</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">theRadius</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">this_shape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;Model_SemiMajor&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
+        <span class="n">this_shape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">theRadius</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
         
-    <span class="k">elif</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;spatial_function&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;RadialGaussian&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">theShape</span> <span class="o">==</span> <span class="s2">&quot;RadialGaussian&quot;</span><span class="p">:</span>
         
         <span class="c1">#factor 1/1.36 is the conversion from 68% containment radius to sigma</span>
         <span class="c1">#Max of sigma/radius is used for get_boundaries().</span>
@@ -520,9 +560,9 @@
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lat0</span> <span class="o">=</span> <span class="n">dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">this_shape</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;model_semimajor&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.36</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
+        <span class="n">this_shape</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">theRadius</span> <span class="o">/</span> <span class="mf">1.36</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
         <span class="n">this_shape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">this_shape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">catalog_entry</span><span class="p">[</span><span class="s2">&quot;model_semimajor&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.36</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
+        <span class="n">this_shape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">theRadius</span> <span class="o">/</span> <span class="mf">1.36</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
 
     <span class="k">return</span> <span class="n">this_source</span>
 
@@ -536,7 +576,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">ModelFromFGL</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">sources</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelFromFGL.free_point_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.catalog_utils.ModelFromFGL.free_point_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">free_point_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Free the parameters for the point sources within the given radius of the center of the search cone</span>
 
 <span class="sd">        :param radius: radius in degree</span>
@@ -546,7 +586,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_or_fix_ps</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelFromFGL.fix_point_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.catalog_utils.ModelFromFGL.fix_point_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">fix_point_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fixes the parameters for the point sources within the given radius of the center of the search cone</span>
 
 <span class="sd">        :param radius: radius in degree</span>
@@ -584,7 +624,7 @@
                         <span class="n">src</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">par</span><span class="p">]</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="n">free</span>
 
 <div class="viewcode-block" id="ModelFromFGL.free_extended_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.catalog_utils.ModelFromFGL.free_extended_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">free_extended_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Free the parameters for the point sources within the given radius of the center of the search cone</span>
 
 <span class="sd">        :param radius: radius in degree</span>
@@ -594,7 +634,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_or_fix_ext</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelFromFGL.fix_extended_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.catalog_utils.ModelFromFGL.fix_extended_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">fix_extended_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fixes the parameters for the point sources within the given radius of the center of the search cone</span>
 
 <span class="sd">        :param radius: radius in degree</span>

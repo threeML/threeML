@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.bayesian.dynesty_sampler</li>
@@ -120,7 +125,7 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DynestyPool"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool">[docs]</a><span class="k">class</span> <span class="nc">DynestyPool</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A simple wrapper for `dview`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple wrapper for `dview`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dview</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dview</span> <span class="o">=</span> <span class="n">dview</span>
@@ -178,7 +183,7 @@
         <span class="n">update_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TODO describe function</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO describe function</span>
 
 <span class="sd">        :param n_live_points: </span>
 <span class="sd">        :type n_live_points: </span>
@@ -321,7 +326,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="DynestyNestedSampler.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        sample using the UltraNest numerical integration method</span>
 <span class="sd">        :rtype: </span>
 
@@ -385,7 +390,7 @@
         <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span><span class="n">rstate</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsamples</span><span class="p">))</span> <span class="o">/</span> <span class="n">nsamples</span>
 
         <span class="c1"># Resample the data.</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="n">cumulative_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
@@ -485,7 +490,7 @@
         <span class="n">update_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TODO describe function</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO describe function</span>
 
 <span class="sd">        :param nlive_init: </span>
 <span class="sd">        :type nlive_init: </span>
@@ -661,7 +666,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="DynestyDynamicSampler.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        sample using the UltraNest numerical integration method</span>
 <span class="sd">        :rtype: </span>
 
@@ -723,7 +728,7 @@
         <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span><span class="n">rstate</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsamples</span><span class="p">))</span> <span class="o">/</span> <span class="n">nsamples</span>
 
         <span class="c1"># Resample the data.</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">cumulative_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nsamples</span><span class="p">:</span>

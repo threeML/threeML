@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.plotting package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -34,12 +34,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -81,7 +86,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">threeML.io.plotting package</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -91,31 +96,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="threeml-io-plotting-package">
+  <section id="threeml-io-plotting-package">
 <h1>threeML.io.plotting package<a class="headerlink" href="#threeml-io-plotting-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
@@ -131,7 +112,7 @@ Certain colormaps have pre-specified color ranges in CMAP_RANGE. These module
 variables ensure that colors cycle from light to dark and light colors are
 not too close to white.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>length</strong> – int the number of colors used before cycling back to first color. When</p>
 </dd>
 </dl>
@@ -152,7 +133,7 @@ successive lines because successive colors are very similar.
 <span class="sig-name descname"><span class="pre">add_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residuals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual_yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_data" title="Permalink to this definition"></a></dt>
 <dd><p>Add the data for the this model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – energy of the data</p></li>
 <li><p><strong>y</strong> – value of the data</p></li>
@@ -164,7 +145,7 @@ successive lines because successive colors are very similar.
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -175,7 +156,7 @@ successive lines because successive colors are very similar.
 <span class="sig-name descname"><span class="pre">add_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model" title="Permalink to this definition"></a></dt>
 <dd><p>Add a model and interpolate it across the energy span for the plotting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – the evaluation energies</p></li>
 <li><p><strong>y</strong> – the model values</p></li>
@@ -184,7 +165,7 @@ successive lines because successive colors are very similar.
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -195,7 +176,7 @@ successive lines because successive colors are very similar.
 <span class="sig-name descname"><span class="pre">add_model_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xwidth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_model_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model_step" title="Permalink to this definition"></a></dt>
 <dd><p>Add a model but use discontinuous steps for the plotting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xmin</strong> – the low end boundaries</p></li>
 <li><p><strong>xmax</strong> – the high end boundaries</p></li>
@@ -206,7 +187,7 @@ successive lines because successive colors are very similar.
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -222,7 +203,7 @@ successive lines because successive colors are very similar.
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_axis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Axes</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.data_axis" title="Permalink to this definition"></a></dt>
 <dd><p>the top or data axis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -233,7 +214,7 @@ successive lines because successive colors are very similar.
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">figure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Figure</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.figure" title="Permalink to this definition"></a></dt>
 <dd><p>the figure instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -243,7 +224,7 @@ successive lines because successive colors are very similar.
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.finalize">
 <span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.finalize" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xlabel</strong> – </p></li>
 <li><p><strong>ylabel</strong> – </p></li>
@@ -252,7 +233,7 @@ successive lines because successive colors are very similar.
 <li><p><strong>show_legend</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -268,7 +249,7 @@ successive lines because successive colors are very similar.
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">residual_axis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Axes</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.residual_axis" title="Permalink to this definition"></a></dt>
 <dd><p>the bottom or residual axis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -301,7 +282,7 @@ successive lines because successive colors are very similar.
 <dt class="sig sig-object py" id="threeML.io.plotting.light_curve_plots.binned_light_curve_plot">
 <span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">binned_light_curve_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_selections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#binned_light_curve_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.binned_light_curve_plot" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time_bins</strong> – stacked array of time intervals</p></li>
 <li><p><strong>cnts</strong> – counts per bin</p></li>
@@ -312,7 +293,7 @@ successive lines because successive colors are very similar.
 <li><p><strong>instrument</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -328,7 +309,7 @@ successive lines because successive colors are very similar.
 <span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">disjoint_patch_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#disjoint_patch_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.disjoint_patch_plot" title="Permalink to this definition"></a></dt>
 <dd><p>plots patches that are disjoint given by the mask</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> – matplotlib Axes to plot to</p></li>
 <li><p><strong>bin_min</strong> – bin starts</p></li>
@@ -339,7 +320,7 @@ successive lines because successive colors are very similar.
 <li><p><strong>kwargs</strong> – matplotlib plot keywords</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -360,7 +341,7 @@ successive lines because successive colors are very similar.
 <span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">slice_disjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#slice_disjoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.slice_disjoint" title="Permalink to this definition"></a></dt>
 <dd><p>Returns an array of disjoint indices from a bool array</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>arr</strong> – and array of bools</p>
 </dd>
 </dl>
@@ -400,7 +381,7 @@ successive lines because successive colors are very similar.
 <span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.plot_spectra" title="Permalink to this definition"></a></dt>
 <dd><p>plotting routine for fitted point source spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>analysis_results</strong> – fitted JointLikelihood or BayesianAnalysis objects</p></li>
 <li><p><strong>sources_to_use</strong> – (optional) list of PointSource string names to plot from the analysis</p></li>
@@ -445,7 +426,7 @@ successive lines because successive colors are very similar.
 <p>NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments
 to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – one or more instances of Spectrum plugin</p></li>
 <li><p><strong>min_rate</strong> – (optional) rebin to keep this minimum rate in each channel (if possible). If one number is</p></li>
@@ -471,7 +452,7 @@ with linear interpolation between each bin
 <p>NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments
 to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – one or more instances of Spectrum plugin</p></li>
 <li><p><strong>min_rate</strong> – (optional) rebin to keep this minimum rate in each channel (if possible). If one number is</p></li>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.bayesian.ultranest_sampler module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -63,6 +67,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -83,7 +88,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="API.html">API</a></li>
           <li class="breadcrumb-item"><a href="threeML.html">threeML package</a></li>
           <li class="breadcrumb-item"><a href="threeML.bayesian.html">threeML.bayesian package</a></li>
@@ -96,31 +101,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="module-threeML.bayesian.ultranest_sampler">
+  <section id="module-threeML.bayesian.ultranest_sampler">
 <span id="threeml-bayesian-ultranest-sampler-module"></span><h1>threeML.bayesian.ultranest_sampler module<a class="headerlink" href="#module-threeML.bayesian.ultranest_sampler" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.bayesian.ultranest_sampler.UltraNestSampler">
@@ -132,7 +113,7 @@
 <dd><p>sample using the UltraNest numerical integration method
 :rtype:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -145,24 +126,24 @@
 <div><p>set up the Ultranest sampler. Consult the documentation:</p>
 <p><a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler">https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">param min_num_live_points</dt>
+<dt class="field-odd">param min_num_live_points<span class="colon">:</span></dt>
 <dd class="field-odd"><p>minimum number of live points throughout the run</p>
 </dd>
-<dt class="field-even">type min_num_live_points</dt>
+<dt class="field-even">type min_num_live_points<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
 </dd>
-<dt class="field-odd">param dlogz</dt>
+<dt class="field-odd">param dlogz<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Target evidence uncertainty. This is the std between bootstrapped logz integrators.</p>
 </dd>
-<dt class="field-even">type dlogz</dt>
+<dt class="field-even">type dlogz<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
-<dt class="field-odd">param chain_name</dt>
+<dt class="field-odd">param chain_name<span class="colon">:</span></dt>
 <dd class="field-odd"><p>where to store output files</p>
 </dd>
-<dt class="field-even">type chain_name</dt>
+<dt class="field-even">type chain_name<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
-<dt class="field-odd">param resume</dt>
+<dt class="field-odd">param resume<span class="colon">:</span></dt>
 <dd class="field-odd"><p>(‘resume’, ‘resume-similar’, ‘overwrite’ or ‘subfolder’) –</p>
 </dd>
 </dl>
@@ -173,25 +154,25 @@ if ‘resume’ or True, continue previous run if available. Only works when dim
 if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.</p>
 <blockquote>
 <div><dl class="field-list simple">
-<dt class="field-odd">type resume</dt>
+<dt class="field-odd">type resume<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">param wrapped_params</dt>
+<dt class="field-even">param wrapped_params<span class="colon">:</span></dt>
 <dd class="field-even"><p>(list of bools) – indicating whether this parameter wraps around (circular parameter).</p>
 </dd>
-<dt class="field-odd">type wrapped_params</dt>
+<dt class="field-odd">type wrapped_params<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
-<dt class="field-even">param stepsampler</dt>
+<dt class="field-even">param stepsampler<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
-<dt class="field-odd">type stepsampler</dt>
+<dt class="field-odd">type stepsampler<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
-<dt class="field-even">param use_mlfriends</dt>
+<dt class="field-even">param use_mlfriends<span class="colon">:</span></dt>
 <dd class="field-even"><p>Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</p>
 </dd>
-<dt class="field-odd">type use_mlfriends</dt>
+<dt class="field-odd">type use_mlfriends<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
-<dt class="field-even">returns</dt>
+<dt class="field-even">returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
 </dl>
 </div></blockquote>

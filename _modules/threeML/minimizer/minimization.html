@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.minimizer.minimization</li>
@@ -153,7 +158,7 @@
 
 
 <div class="viewcode-block" id="get_minimizer"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.get_minimizer">[docs]</a><span class="k">def</span> <span class="nf">get_minimizer</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the requested minimizer *class* (not instance)</span>
 
 <span class="sd">    :param minimizer_type: MINUIT, ROOT, PYOPT...</span>
@@ -174,7 +179,7 @@
 
 <div class="viewcode-block" id="FunctionWrapper"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.FunctionWrapper">[docs]</a><span class="k">class</span> <span class="nc">FunctionWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">all_parameters</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param function:</span>
 <span class="sd">        :param all_parameters:</span>
@@ -275,7 +280,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_transform_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If the parameter has a transformation, use it for the steps and return the transformed steps</span>
 
 <span class="sd">        :return: transformed steps</span>
@@ -530,7 +535,7 @@
 
 <div class="viewcode-block" id="Minimizer"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer">[docs]</a><span class="k">class</span> <span class="nc">Minimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param function: function to be minimized</span>
 <span class="sd">        :param parameters: ordered dictionary of the FREE parameters in the fit. The order must be the same as</span>
@@ -558,7 +563,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_update_internal_parameter_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dictionary parameter_name -&gt; (current value, delta, minimum, maximum) in the internal frame</span>
 <span class="sd">        (if the parameter has a transformation set).</span>
 
@@ -713,7 +718,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_algorithm_name</span>
 
 <div class="viewcode-block" id="Minimizer.minimize"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_covar</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Minimize objective function. This call _minimize, which is implemented by each subclass.</span>
 
 <span class="sd">        :param compute_covar:</span>
@@ -880,7 +885,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correlation_matrix</span>
 
 <div class="viewcode-block" id="Minimizer.restore_best_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.restore_best_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset all the parameters to their best fit value (from the last run fit)</span>
 
 <span class="sd">        :return: none</span>
@@ -900,7 +905,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_internal_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_internal_parameter_dictionary</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_compute_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_values</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function compute the approximate covariance matrix as the inverse of the Hessian matrix,</span>
 <span class="sd">        which is the matrix of second derivatives of the likelihood function with respect to</span>
 <span class="sd">        the parameters.</span>
@@ -994,7 +999,7 @@
         <span class="k">return</span> <span class="n">covariance_matrix</span>
 
     <span class="k">def</span> <span class="nf">_get_one_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">target_delta_log_like</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A generic procedure to numerically compute the error for the parameters. You can override this if the</span>
 <span class="sd">        minimizer provides its own method to compute the error of one parameter. If it provides a method to compute</span>
 <span class="sd">        all errors are once, override the _get_errors method instead.</span>
@@ -1182,7 +1187,7 @@
         <span class="k">return</span> <span class="n">error</span>
 
 <div class="viewcode-block" id="Minimizer.get_errors"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.get_errors">[docs]</a>    <span class="k">def</span> <span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute asymmetric errors using the profile likelihood method (slow, but accurate).</span>
 
 <span class="sd">        :return: a dictionary with asymmetric errors for each parameter</span>
@@ -1227,7 +1232,7 @@
         <span class="k">return</span> <span class="n">errors_dict</span></div>
 
     <span class="k">def</span> <span class="nf">_get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this method if the minimizer provide a function to get all errors at once. If instead it provides</span>
 <span class="sd">        a method to get one error at the time, override the _get_one_error method</span>
 
@@ -1273,7 +1278,7 @@
         <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">options</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Generate confidence contours for the given parameters by stepping for the given number of steps between</span>
 <span class="sd">            the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to</span>
 <span class="sd">            generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d</span>

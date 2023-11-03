@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.io.plotting.data_residual_plot</li>
@@ -112,7 +117,7 @@
 
 <div class="viewcode-block" id="ResidualPlot"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot">[docs]</a><span class="k">class</span> <span class="nc">ResidualPlot</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A class that makes data/residual plots</span>
 
 <span class="sd">        :param show_residuals: to show the residuals</span>
@@ -202,7 +207,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the figure instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -211,7 +216,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the top or data axis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -220,7 +225,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">residual_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the bottom or residual axis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -238,7 +243,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio_residuals</span>
 
 <div class="viewcode-block" id="ResidualPlot.add_model_step"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model_step">[docs]</a>    <span class="k">def</span> <span class="nf">add_model_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xwidth</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a model but use discontinuous steps for the plotting.</span>
 
 <span class="sd">        :param xmin: the low end boundaries</span>
@@ -259,7 +264,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ResidualPlot.add_model"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model">[docs]</a>    <span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a model and interpolate it across the energy span for the plotting.</span>
 
 <span class="sd">        :param x: the evaluation energies</span>
@@ -282,7 +287,7 @@
         <span class="n">show_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add the data for the this model</span>
 
 <span class="sd">        :param x: energy of the data</span>
@@ -335,7 +340,7 @@
         <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">invert_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param xlabel:</span>
 <span class="sd">        :param ylabel:</span>

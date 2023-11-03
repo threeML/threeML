@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.data_download.Fermi_LAT.download_LAT_data</li>
@@ -123,7 +128,7 @@
 
 
 <div class="viewcode-block" id="DivParser"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser">[docs]</a><span class="k">class</span> <span class="nc">DivParser</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">HTMLParser</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract data from a &lt;div&gt;&lt;/div&gt; tag</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -237,7 +242,7 @@
     <span class="n">Emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.</span><span class="p">,</span>
     <span class="n">Emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000000.</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download data from the public LAT data server (of course you need a working internet connection). Data are</span>
 <span class="sd">    selected in a circular Region of Interest (cone) centered on the provided coordinates.</span>
 
@@ -368,6 +373,7 @@
     <span class="c1"># Look if there are FT1 and FT2 files in the output directory matching this unique ID</span>
 
     <span class="n">ft1s</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">destination_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*PH??.fits&quot;</span><span class="p">)]</span>
+    <span class="n">ft1s</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">destination_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*EV??.fits&quot;</span><span class="p">)]</span>
     <span class="n">ft2s</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">destination_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*SC??.fits&quot;</span><span class="p">)]</span>
 
     <span class="c1"># Loop over all ft1s and see if there is any matching the uid</span>
@@ -752,7 +758,7 @@
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="LAT_dataset.extract_events"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.extract_events">[docs]</a>    <span class="k">def</span> <span class="nf">extract_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">roi</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="n">thetamax</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="LAT_dataset.extract_events"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.extract_events">[docs]</a>    <span class="k">def</span> <span class="nf">extract_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">roi</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="n">thetamax</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="n">data_quality</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">GtBurst</span> <span class="kn">import</span> <span class="n">dataHandling</span>
         <span class="k">global</span> <span class="n">lastDisplay</span>
 

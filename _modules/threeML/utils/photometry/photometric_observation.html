@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.photometry.photometric_observation</li>
@@ -109,7 +114,7 @@
                  <span class="n">ab_magnitude_errors</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
 
                  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        A container for photometric data</span>
 
@@ -171,7 +176,7 @@
 
     
 <div class="viewcode-block" id="PhotometericObservation.to_hdf5"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.photometric_observation.PhotometericObservation.to_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the data to an HDF5 file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -191,7 +196,7 @@
 <div class="viewcode-block" id="PhotometericObservation.from_hdf5"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.photometric_observation.PhotometericObservation.from_hdf5">[docs]</a>    <span class="o">@</span> <span class="nb">classmethod</span>
     <span class="k">def</span> <span class="nf">from_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="c1"># type: (str) -&gt; PhotometericObservation</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load an observation from an hdf5 file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -208,7 +213,7 @@
 <div class="viewcode-block" id="PhotometericObservation.from_kwargs"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.photometric_observation.PhotometericObservation.from_kwargs">[docs]</a>    <span class="o">@</span> <span class="nb">classmethod</span>
     <span class="k">def</span> <span class="nf">from_kwargs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># type: (dict) -&gt; PhotometericObservation</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create an observation from a kwargs in the form</span>
 <span class="sd">        (a=(mag, mag_err), b=(mag, mag_err))</span>
 
@@ -218,7 +223,7 @@
 <div class="viewcode-block" id="PhotometericObservation.from_dict"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.photometric_observation.PhotometericObservation.from_dict">[docs]</a>    <span class="o">@</span> <span class="nb">classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="c1"># type: (dict) -&gt; PhotometericObservation</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create an observation from a dict in the form</span>
 <span class="sd">        data = dict(a=(mag, mag_err), b=(mag, mag_err))</span>
 

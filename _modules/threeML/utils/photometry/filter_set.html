@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.photometry.filter_set</li>
@@ -119,7 +124,7 @@
 
 <div class="viewcode-block" id="FilterSet"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet">[docs]</a><span class="k">class</span> <span class="nc">FilterSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This class handles the optical filter functionality. It is build around speclite:</span>
 <span class="sd">        http://speclite.readthedocs.io/en/latest/</span>
 
@@ -177,7 +182,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wavelength_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        IntervalSet of FWHM bounds of the filters</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -185,7 +190,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavebounds</span>
 
     <span class="k">def</span> <span class="nf">_calculate_fwhm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the FWHM of the filters</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -219,7 +224,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_wavebounds</span> <span class="o">=</span> <span class="n">IntervalSet</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">wmin</span><span class="p">,</span> <span class="n">wmax</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FilterSet.set_model"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">differential_flux</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        set the model of that will be used during the convolution. Not that speclite</span>
 <span class="sd">        considers a differential flux to be in units of erg/s/cm2/lambda so we must convert</span>
 <span class="sd">        astromodels into the proper units (using astropy units!)</span>
@@ -261,7 +266,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_set</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="FilterSet.ab_magnitudes"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet.ab_magnitudes">[docs]</a>    <span class="k">def</span> <span class="nf">ab_magnitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the effective stimulus of the model and filter for the given</span>
 <span class="sd">        magnitude system</span>
 <span class="sd">        :return: np.ndarray of ab magnitudes</span>
@@ -288,7 +293,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterSet.plot_filters"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.photometry.html#threeML.utils.photometry.filter_set.FilterSet.plot_filters">[docs]</a>    <span class="k">def</span> <span class="nf">plot_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        plot the filter/ transmission curves</span>
 <span class="sd">        :return: fig</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -297,7 +302,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">n_bands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the number of bands</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -306,7 +311,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the filter names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -315,7 +320,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">native_filter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the native filter names</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -324,7 +329,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">speclite_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        exposes the speclite fitlers for simulations</span>
 
 <span class="sd">        :return:</span>
@@ -334,7 +339,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">effective_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the average wave length of the filters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -343,7 +348,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">waveunits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return: the pysynphot wave units</span>
 <span class="sd">        &quot;&quot;&quot;</span>

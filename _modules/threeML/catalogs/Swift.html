@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.catalogs.Swift</li>
@@ -122,7 +127,7 @@
 
 <div class="viewcode-block" id="SwiftGRBCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog">[docs]</a><span class="k">class</span> <span class="nc">SwiftGRBCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Swift GRB catalog. Search for GRBs  by trigger</span>
 <span class="sd">        number, location,  T90, and date range.</span>
 
@@ -188,7 +193,7 @@
         <span class="k">return</span> <span class="n">answer</span>
 
     <span class="k">def</span> <span class="nf">_build_other_obs_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a list of all the other instruments that observed Swift GRBs</span>
 
 <span class="sd">        :return:</span>
@@ -216,7 +221,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.query_other_observing_instruments"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments">[docs]</a>    <span class="k">def</span> <span class="nf">query_other_observing_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">instruments</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        search for observations that were also seen by the requested instrument.</span>
 <span class="sd">        to see what instruments are available, use the .other_observing_instruments call</span>
 
@@ -259,7 +264,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_fermiGBM_trigger_number_from_gcn</span><span class="p">(</span><span class="n">gcn_url</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        this is a custom function that parses GBM GCNs to find the burst number</span>
 <span class="sd">        that can later be used to download GBM data. It contains a lot of regex statements</span>
 <span class="sd">        to handle the variability in the GCNs</span>
@@ -349,7 +354,7 @@
         <span class="k">return</span> <span class="n">trigger_number</span>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.get_other_observation_information"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information">[docs]</a>    <span class="k">def</span> <span class="nf">get_other_observation_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,</span>
 <span class="sd">        their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-LAT-GBM.</span>
 
@@ -414,7 +419,7 @@
         <span class="k">return</span> <span class="n">sources</span></div>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.get_other_instrument_information"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information">[docs]</a>    <span class="k">def</span> <span class="nf">get_other_instrument_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the detectors used for spectral analysis as well as their background</span>
 <span class="sd">        intervals. Peak flux and fluence intervals are also returned as well as best fit models</span>
 
@@ -494,7 +499,7 @@
         <span class="k">return</span> <span class="n">sources</span></div>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.get_redshift"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift">[docs]</a>    <span class="k">def</span> <span class="nf">get_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the redshift and redshift type from the searched sources</span>
 
 

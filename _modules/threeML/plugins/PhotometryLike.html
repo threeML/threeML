@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.plugins.PhotometryLike</li>
@@ -112,7 +117,7 @@
 
 <div class="viewcode-block" id="BandNode"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.PhotometryLike.BandNode">[docs]</a><span class="k">class</span> <span class="nc">BandNode</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Container class that allows for the shutting on and off of bands</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
@@ -170,7 +175,7 @@
         <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">FilterSequence</span><span class="p">,</span> <span class="n">FilterResponse</span><span class="p">],</span>
         <span class="n">observation</span><span class="p">:</span> <span class="n">PhotometericObservation</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The photometry plugin is desinged to fit optical/IR/UV photometric data from a given</span>
 <span class="sd">        filter system. Filters are given in the form a speclite (http://speclite.readthedocs.io)</span>
 <span class="sd">        FitlerResponse or FilterSequence objects. 3ML contains a vast number of filters via the SVO</span>
@@ -286,7 +291,7 @@
 
 <div class="viewcode-block" id="PhotometryLike.from_kwargs"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.PhotometryLike.PhotometryLike.from_kwargs">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_kwargs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Example:</span>
 
 <span class="sd">        grond = PhotometryLike.from_kwargs(&#39;GROND&#39;,</span>
@@ -322,7 +327,7 @@
         <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">FilterResponse</span><span class="p">,</span> <span class="n">FilterSequence</span><span class="p">],</span>
         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create the a PhotometryLike plugin from a saved HDF5 data file</span>
 
 <span class="sd">        :param name: plugin name</span>
@@ -343,7 +348,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_magnitude_errors</span>
 
 <div class="viewcode-block" id="PhotometryLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.PhotometryLike.PhotometryLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        set the likelihood model</span>
 <span class="sd">        :param likelihood_model:</span>
 <span class="sd">        :return:</span>
@@ -377,7 +382,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_set</span><span class="o">.</span><span class="n">ab_magnitudes</span><span class="p">()</span>
 
 <div class="viewcode-block" id="PhotometryLike.display_filters"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.PhotometryLike.PhotometryLike.display_filters">[docs]</a>    <span class="k">def</span> <span class="nf">display_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        display the filter transmission curves</span>
 
 <span class="sd">        :return:</span>
@@ -398,7 +403,7 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResidualPlot</span><span class="p">:</span>
 
-        <span class="sd">&quot;&quot;&quot;TODO describe function</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO describe function</span>
 
 <span class="sd">        :param data_color:</span>
 <span class="sd">        :type data_color: str</span>
@@ -555,7 +560,7 @@
         <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_new_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        construct a new PhotometryLike plugin. allows for returning a new plugin</span>
 <span class="sd">        from simulated data set while customizing the constructor</span>
 <span class="sd">        further down the inheritance tree</span>

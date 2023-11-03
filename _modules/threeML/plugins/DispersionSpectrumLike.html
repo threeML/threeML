@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.plugins.DispersionSpectrumLike</li>
@@ -128,7 +133,7 @@
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,</span>
 <span class="sd">        and a background binned spectrum or plugin with the background data.</span>
 
@@ -184,7 +189,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DispersionSpectrumLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihoodModel</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -229,7 +234,7 @@
     <span class="k">def</span> <span class="nf">_evaluate_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        evaluates the full model over all channels</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -237,7 +242,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DispersionSpectrumLike.set_model_integrate_method"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model_integrate_method">[docs]</a>    <span class="k">def</span> <span class="nf">set_model_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the integrate method for the model integration</span>
 <span class="sd">        :param method: (str) which method should be used (simpson or trapz)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -261,7 +266,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">set_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DispersionSpectrumLike.get_simulated_dataset"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.get_simulated_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns another DispersionSpectrumLike instance where data have been obtained by randomizing the current expectation from the</span>
 <span class="sd">        model, as well as from the background (depending on the respective noise models)</span>
 
@@ -289,7 +294,7 @@
         <span class="k">return</span> <span class="n">info</span></div>
 
 <div class="viewcode-block" id="DispersionSpectrumLike.display_rsp"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.display_rsp">[docs]</a>    <span class="k">def</span> <span class="nf">display_rsp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the currently loaded full response matrix, i.e., RMF and ARF convolved</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -309,7 +314,8 @@
 
         <span class="n">the_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">rsp_filename</span><span class="p">})</span>
 
-        <span class="k">return</span> <span class="n">super_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_df</span><span class="p">)</span>
+        <span class="c1">#return super_out.append(the_df)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">super_out</span><span class="p">,</span> <span class="n">the_df</span><span class="p">])</span>
 
 <div class="viewcode-block" id="DispersionSpectrumLike.write_pha"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.write_pha">[docs]</a>    <span class="k">def</span> <span class="nf">write_pha</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -317,7 +323,7 @@
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes the observation, background and (optional) rsp to PHAII fits files</span>
 
 <span class="sd">        :param filename: base file name to write out</span>
@@ -351,7 +357,7 @@
         <span class="n">scale_factor</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is the fake observation builder for SpectrumLike which builds data</span>
 <span class="sd">        for a binned spectrum without dispersion. It must be overridden in child classes.</span>
 
@@ -405,7 +411,7 @@
         <span class="n">scale_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># type: () -&gt; DispersionSpectrumLike</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.</span>
 

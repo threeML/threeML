@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -34,12 +34,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -81,7 +86,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">threeML package</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -91,31 +96,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="threeml-package">
+  <section id="threeml-package">
 <h1>threeML package<a class="headerlink" href="#threeml-package" title="Permalink to this heading"></a></h1>
 <section id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
@@ -128,6 +109,7 @@
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.dynesty_sampler">threeML.bayesian.dynesty_sampler module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.emcee_sampler">threeML.bayesian.emcee_sampler module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.multinest_sampler">threeML.bayesian.multinest_sampler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.nautilus_sampler">threeML.bayesian.nautilus_sampler module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.sampler_base">threeML.bayesian.sampler_base module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.tutorial_material">threeML.bayesian.tutorial_material module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="threeML.bayesian.html#module-threeML.bayesian.ultranest_sampler">threeML.bayesian.ultranest_sampler module</a></li>
@@ -417,7 +399,7 @@
 <dd><p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSExtension" title="threeML.io.fits_file.FITSExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSExtension</span></code></a></p>
 <p>Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>analysis_results</strong> (<em>_AnalysisResults</em>) – </p>
 </dd>
 </dl>
@@ -459,7 +441,7 @@ set_bins instead.</p>
 <dd><p>Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when
 saving these results to a FITS file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> – a name for these bins (for example, “time” or “energy”). Please use only letters and numbers</p>
 </dd>
 </dl>
@@ -476,7 +458,7 @@ saving these results to a FITS file</p>
 <dd><p>Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when
 saving these results to a FITS file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> – a name for this sequence (for example, “time” or “energy”). Please use only letters and numbers</p>
 </dd>
 </dl>
@@ -491,13 +473,13 @@ saving these results to a FITS file.</p>
 <span class="sig-name descname"><span class="pre">write_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_hdf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#AnalysisResultsSet.write_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.AnalysisResultsSet.write_to" title="Permalink to this definition"></a></dt>
 <dd><p>Write this set of results to a FITS file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> – name for the output file</p></li>
 <li><p><strong>overwrite</strong> – True or False</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -511,7 +493,7 @@ saving these results to a FITS file.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_AnalysisResults</span></code></p>
 <p>Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and “error propagation”</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>optimized_model</strong> – a Model instance with the MAP values of the parameters. A clone will be stored within</p>
 </dd>
 </dl>
@@ -526,7 +508,7 @@ saving these results to a FITS file.</p>
 <span class="sig-name descname"><span class="pre">comparison_corner_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">other_fits</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.comparison_corner_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.comparison_corner_plot" title="Permalink to this definition"></a></dt>
 <dd><p>Create a corner plot from many different fits which allow for co-plotting of parameters marginals.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>other_fits</strong> – other fitted results</p></li>
 <li><p><strong>parameters</strong> – parameters to plot</p></li>
@@ -537,7 +519,7 @@ Useful when e.g. spectral indices in models have different names but you wish to
 <li><p><strong>kwargs</strong> – chain consumer kwargs</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -552,13 +534,13 @@ values if the MCMC has converged to the posterior distribution.</p>
 <p>The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
 is to take random samples from the chain (bootstrap)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_samples_in_each_subset</strong> – number of samples in each subset</p></li>
 <li><p><strong>n_subsets</strong> – number of subsets to take for each strategy</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a matplotlib.figure instance</p>
 </dd>
 </dl>
@@ -569,7 +551,7 @@ is to take random samples from the chain (bootstrap)</p>
 <span class="sig-name descname"><span class="pre">corner_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamed_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.corner_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.corner_plot" title="Permalink to this definition"></a></dt>
 <dd><p>Produce the corner plot showing the marginal distributions in one and two directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>renamed_parameters</strong> – a python dictionary of parameters to rename.
 Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
@@ -578,7 +560,7 @@ Useful when e.g. spectral indices in models have different names but you wish to
 <li><p><strong>kwargs</strong> – arguments to be passed to the corner function</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a matplotlib.figure instance</p>
 </dd>
 </dl>
@@ -598,11 +580,11 @@ for all options
 {‘old label’: ‘new label’}</p>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>**cc_kwargs</strong> – <p>chainconsumer general keyword arguments</p>
 </p>
 </dd>
-<dt class="field-even">Return fig</dt>
+<dt class="field-even">Return fig<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
 </dl>
 </dd></dl>
@@ -617,10 +599,10 @@ for all options
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">freedman_diaconis_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.freedman_diaconis_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.freedman_diaconis_rule" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> – an array of data</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the optimal number of bins</p>
 </dd>
 </dl>
@@ -631,7 +613,7 @@ for all options
 <span class="sig-name descname"><span class="pre">get_correlation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.get_correlation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.get_correlation_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Estimate the covariance matrix from the samples</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the correlation matrix</p>
 </dd>
 </dl>
@@ -642,13 +624,13 @@ for all options
 <span class="sig-name descname"><span class="pre">get_highest_density_posterior_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.get_highest_density_posterior_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval" title="Permalink to this definition"></a></dt>
 <dd><p>returns the highest density posterior interval for that parameter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parameter_path</strong> – path of the parameter or parameter instance</p></li>
 <li><p><strong>cl</strong> – credible interval to obtain</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(low bound, high bound)</p>
 </dd>
 </dl>
@@ -670,7 +652,7 @@ for all options
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_probability</span></span><a class="headerlink" href="#threeML.analysis_results.BayesianResults.log_probability" title="Permalink to this definition"></a></dt>
 <dd><p>The log probability values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -681,10 +663,10 @@ for all options
 <span class="sig-name descname"><span class="pre">plot_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#BayesianResults.plot_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.BayesianResults.plot_chains" title="Permalink to this definition"></a></dt>
 <dd><p>Produce a plot of the series of samples for each parameter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>thin</strong> – use only one sample every ‘thin’ samples</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a list of matplotlib.figure instances</p>
 </dd>
 </dl>
@@ -698,7 +680,7 @@ for all options
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_AnalysisResults</span></code></p>
 <p>Build the _AnalysisResults object starting from a covariance matrix.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>optimized_model</strong> – best fit model</p>
 </dd>
 </dl>
@@ -715,7 +697,7 @@ for all options
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance_matrix</span></span><a class="headerlink" href="#threeML.analysis_results.MLEResults.covariance_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the covariance matrix.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>covariance matrix or None (if the class was built from samples.
 Use estimate_covariance_matrix in that case)</p>
 </dd>
@@ -732,7 +714,7 @@ Use estimate_covariance_matrix in that case)</p>
 <span class="sig-name descname"><span class="pre">get_correlation_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#MLEResults.get_correlation_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.MLEResults.get_correlation_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Compute correlation matrix</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the correlation matrix</p>
 </dd>
 </dl>
@@ -762,10 +744,10 @@ Use estimate_covariance_matrix in that case)</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">load_analysis_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_AnalysisResults</span></span></span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#load_analysis_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.load_analysis_results" title="Permalink to this definition"></a></dt>
 <dd><p>Load the results of one or more analysis from a FITS file produced by 3ML</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fits_file</strong> – path to the FITS file containing the results, as output by MLEResults or BayesianResults</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file</p>
 </dd>
 </dl>
@@ -776,10 +758,10 @@ Use estimate_covariance_matrix in that case)</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.analysis_results.</span></span><span class="sig-name descname"><span class="pre">load_analysis_results_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_AnalysisResults</span></span></span><a class="reference internal" href="../../_modules/threeML/analysis_results.html#load_analysis_results_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.analysis_results.load_analysis_results_hdf" title="Permalink to this definition"></a></dt>
 <dd><p>Load the results of one or more analysis from a FITS file produced by 3ML</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fits_file</strong> – path to the FITS file containing the results, as output by MLEResults or BayesianResults</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file</p>
 </dd>
 </dl>
@@ -820,6 +802,14 @@ with the [key] operator.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.plugin_prototype.</span></span><span class="sig-name descname"><span class="pre">PluginPrototype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuisance_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.exclude_from_fit">
+<span class="sig-name descname"><span class="pre">exclude_from_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.exclude_from_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.exclude_from_fit" title="Permalink to this definition"></a></dt>
+<dd><p>This can be used to explude a plug in from the fit
+:param flag: True or Fase (default)
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="threeML.plugin_prototype.PluginPrototype.get_log_like">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_log_like</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/threeML/plugin_prototype.html#PluginPrototype.get_log_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.get_log_like" title="Permalink to this definition"></a></dt>
 <dd><p>Return the value of the log-likelihood with the current values for the
@@ -855,7 +845,7 @@ logLike value.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.name" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the name of this instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a string (this is enforced to be a valid python identifier)</p>
 </dd>
 </dl>
@@ -866,7 +856,7 @@ logLike value.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuisance_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.plugin_prototype.PluginPrototype.nuisance_parameters" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a dictionary containing the nuisance parameters for this dataset</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a dictionary</p>
 </dd>
 </dl>
@@ -914,10 +904,10 @@ the same probability on the right and on the left of the mean.</p>
 <p>If the distribution of the parameter is Gaussian and cl=0.68, this is equivalent to the 1 sigma confidence
 interval.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cl</strong> – confidence level (0 &lt; cl &lt; 1)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(low_bound, hi_bound)</p>
 </dd>
 </dl>
@@ -930,10 +920,10 @@ interval.</p>
 <p>NOTE: the returned interval is the HPD only if the posterior is not multimodal. If it is multimodal, you should
 probably report the full posterior, not only an interval.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cl</strong> – credibility level (0 &lt; cl &lt; 1)</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(low_bound, hi_bound)</p>
 </dd>
 </dl>
@@ -977,7 +967,7 @@ probably report the full posterior, not only an interval.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">get_available_plugins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML.html#get_available_plugins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.get_available_plugins" title="Permalink to this definition"></a></dt>
 <dd><p>Print a list of available plugins</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -993,10 +983,10 @@ probably report the full posterior, not only an interval.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">is_plugin_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML.html#is_plugin_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.is_plugin_available" title="Permalink to this definition"></a></dt>
 <dd><p>Test whether the plugin for the provided instrument is available</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>plugin</strong> – the name of the plugin class</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True or False</p>
 </dd>
 </dl>

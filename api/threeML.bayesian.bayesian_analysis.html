@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.bayesian.bayesian_analysis module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -63,6 +67,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -83,7 +88,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="API.html">API</a></li>
           <li class="breadcrumb-item"><a href="threeML.html">threeML package</a></li>
           <li class="breadcrumb-item"><a href="threeML.bayesian.html">threeML.bayesian package</a></li>
@@ -96,31 +101,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="module-threeML.bayesian.bayesian_analysis">
+  <section id="module-threeML.bayesian.bayesian_analysis">
 <span id="threeml-bayesian-bayesian-analysis-module"></span><h1>threeML.bayesian.bayesian_analysis module<a class="headerlink" href="#module-threeML.bayesian.bayesian_analysis" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.bayesian.bayesian_analysis.BayesianAnalysis">
@@ -139,13 +120,13 @@ values if the MCMC has converged to the posterior distribution.</p>
 <p>The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
 is to take random samples from the chain (bootstrap)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_samples_in_each_subset</strong> – number of samples in each subset</p></li>
 <li><p><strong>n_subsets</strong> – number of subsets to take for each strategy</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a matplotlib.figure instance</p>
 </dd>
 </dl>
@@ -156,7 +137,7 @@ is to take random samples from the chain (bootstrap)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.data_list" title="Permalink to this definition"></a></dt>
 <dd><p>data list for this analysis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -167,7 +148,7 @@ is to take random samples from the chain (bootstrap)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">likelihood_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Model</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.likelihood_model" title="Permalink to this definition"></a></dt>
 <dd><p>likelihood model (a Model instance)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -181,7 +162,7 @@ you need to find the values of the parameters which generated a given value of t
 that the samples accessible through the property .raw_samples are ordered in the same way as the vector
 returned by this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a vector of log. like values</p>
 </dd>
 </dl>
@@ -194,7 +175,7 @@ returned by this method.</p>
 ) if computed</p>
 <blockquote>
 <div><dl class="field-list simple">
-<dt class="field-odd">return</dt>
+<dt class="field-odd">return<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </div></blockquote>
@@ -208,7 +189,7 @@ you need to find the values of the parameters which generated a given value of t
 that the samples accessible through the property .raw_samples are ordered in the same way as the vector
 returned by this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a vector of log probabilty values</p>
 </dd>
 </dl>
@@ -219,10 +200,10 @@ returned by this method.</p>
 <span class="sig-name descname"><span class="pre">plot_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.plot_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.plot_chains" title="Permalink to this definition"></a></dt>
 <dd><p>Produce a plot of the series of samples for each parameter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>thin</strong> – use only one sample every ‘thin’ samples</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a matplotlib.figure instance</p>
 </dd>
 </dl>
@@ -234,7 +215,7 @@ returned by this method.</p>
 <dd><p>Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,
 in the format returned by the sampler)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the samples as returned by the sampler</p>
 </dd>
 </dl>
@@ -264,10 +245,10 @@ in the format returned by the sampler)</p>
 <p>If no algorithm as been set, then the configured default algorithm
 we default parameters will be run</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>quiet</strong> – if True, then no output is displayed</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -285,7 +266,7 @@ we default parameters will be run</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.samples" title="Permalink to this definition"></a></dt>
 <dd><p>Access the samples from the posterior distribution generated by the selected sampler</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a dictionary with the samples from the posterior distribution for each parameter</p>
 </dd>
 </dl>
@@ -297,7 +278,7 @@ we default parameters will be run</p>
 <dd><p>Set the sampler
 :param sampler_name: (str) Name of sampler</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>share_spectrum</strong> – (optional) Option to share the spectrum calc</p>
 </dd>
 </dl>

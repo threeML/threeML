@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.data_builders.time_series_builder</li>
@@ -180,7 +185,7 @@
         <span class="n">container_type</span><span class="o">=</span><span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class for handling generic time series data including binned and event list</span>
 <span class="sd">        series. Depending on the data, this class builds either a  SpectrumLike or</span>
 <span class="sd">        DisperisonSpectrumLike plugin</span>
@@ -287,21 +292,21 @@
         <span class="c1"># return super_out.append(self._time_series._output())</span>
 
     <span class="k">def</span> <span class="nf">__set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Background poly order setter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Background poly order setter &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_order</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">___set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Indirect poly order setter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect poly order setter &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__set_poly_order</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get poly order &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get poly order &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">poly_order</span>
 
     <span class="k">def</span> <span class="nf">___get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Indirect poly order getter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect poly order getter &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_poly_order</span><span class="p">()</span>
 
@@ -312,7 +317,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.set_active_time_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.set_active_time_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_active_time_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the time interval to be used during the analysis.</span>
 <span class="sd">        For now, only one interval can be selected. This may be</span>
 <span class="sd">        updated in the future to allow for self consistent time</span>
@@ -386,7 +391,7 @@
             <span class="sa">f</span><span class="s2">&quot;Interval set to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.fit_polynomial"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.fit_polynomial">[docs]</a>    <span class="k">def</span> <span class="nf">fit_polynomial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the polynominals to the selected time intervals. Must be called after</span>
 <span class="sd">        set_background_interval.</span>
 <span class="sd">        :param kwargs:</span>
@@ -395,7 +400,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">fit_polynomial</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.set_background_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.set_background_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_background_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the time interval to fit the background.</span>
 <span class="sd">        Multiple intervals can be input as separate arguments</span>
 <span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
@@ -498,7 +503,7 @@
         <span class="n">force_rsp_write</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">extract_measured_background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write PHA fits files from the selected bins. If writing from an event list, the</span>
 <span class="sd">        bins are from create_time_bins. If using a pre-time binned time series, the bins are those</span>
 <span class="sd">        native to the data. Start and stop times can be used to  control which bins are written to files</span>
@@ -538,7 +543,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selections saved to </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.get_background_parameters"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.get_background_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_background_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a pandas DataFrame containing the background polynomial</span>
 <span class="sd">        coefficients for each channel.</span>
 
@@ -547,7 +552,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_series</span><span class="o">.</span><span class="n">get_poly_info</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.save_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.save_background">[docs]</a>    <span class="k">def</span> <span class="nf">save_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        save the background to and HDF5 file. The filename does not need an extension.</span>
 <span class="sd">        The filename will be saved as &lt;filename&gt;_bkg.h5</span>
@@ -575,7 +580,7 @@
         <span class="n">use_echans_stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="c1"># type: (float, float, float, bool) -&gt; None</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        view the binned light curve</span>
 
@@ -593,7 +598,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tstart</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: start time of the active interval</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -601,7 +606,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tstop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: stop time of the active interval</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -670,7 +675,7 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.read_bins"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.read_bins">[docs]</a>    <span class="k">def</span> <span class="nf">read_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_series_builder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Read the temporal bins from another *binned* TimeSeriesBuilder instance</span>
 <span class="sd">        and apply those bins to this instance</span>
@@ -688,7 +693,7 @@
             <span class="n">other_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">other_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;custom&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.create_time_bins"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.create_time_bins">[docs]</a>    <span class="k">def</span> <span class="nf">create_time_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).</span>
 <span class="sd">        Each method has required keywords specified in the parameters. Once created, this can be used as</span>
@@ -810,7 +815,7 @@
         <span class="n">interval_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_interval&quot;</span><span class="p">,</span>
         <span class="n">extract_measured_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create plugin(s) from either the current active selection or the time bins.</span>
 <span class="sd">        If creating from an event list, the</span>
 <span class="sd">        bins are from create_time_bins. If using a pre-time binned time series, the bins are those</span>
@@ -1063,7 +1068,7 @@
         <span class="n">poshist_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">cspec_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A plugin to natively bin, view, and handle Fermi GBM TTE data.</span>
 <span class="sd">        A TTE event file are required as well as the associated response</span>
 
@@ -1261,7 +1266,7 @@
         <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A plugin to natively bin, view, and handle Fermi GBM TTE data.</span>
 <span class="sd">        A TTE event file are required as well as the associated response</span>
 
@@ -1414,7 +1419,7 @@
         <span class="n">unbinned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A plugin to natively bin, view, and handle Fermi LAT LLE data.</span>
 <span class="sd">        An LLE event file and FT2 (1 sec) are required as well as the associated response</span>
 
@@ -1445,7 +1450,7 @@
         <span class="k">if</span> <span class="n">trigger_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">trigger_time</span> <span class="o">=</span> <span class="n">trigger_time</span>
 
-        <span class="c1"># Mark channels less than 50 MeV as bad</span>
+        <span class="c1"># Mark channels less than 30 MeV as bad</span>
 
         <span class="n">channel_30MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span>
             <span class="n">lat_lle_file</span><span class="o">.</span><span class="n">energy_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">30000.0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
@@ -1507,7 +1512,7 @@
         <span class="n">poly_order</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; A plugin to natively bin, view, and handle Konus-Wind PHA data. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; A plugin to natively bin, view, and handle Konus-Wind PHA data. </span>
 <span class="sd">        One can choose a background polynomial order by hand (up to 4th order) or leave it as the default polyorder=-1 to decide by LRT test</span>
 <span class="sd">        :param name: name for your choosing</span>
 <span class="sd">        :param pha_file: Konus-Wind PHAII file</span>

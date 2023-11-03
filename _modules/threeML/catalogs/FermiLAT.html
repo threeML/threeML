@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.catalogs.FermiLAT</li>
@@ -167,8 +172,8 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        checks if source name is valid for the 3FGL catalog</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        checks if source name is valid for the 4FGL catalog</span>
 
 <span class="sd">        :param source: source name</span>
 <span class="sd">        :return: bool</span>
@@ -229,13 +234,20 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;short_source_type&quot;</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;assoc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;tevcat_assoc&quot;</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;short_source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;assoc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;tevcat_assoc&quot;</span>
             <span class="p">]</span>
 
             <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="FermiLATSourceCatalog.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_association_name</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="FermiLATSourceCatalog.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_association_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">npred_min</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Build the model with FGL sources</span>
+<span class="sd">        :param use_association_name: use the name of the associated source (stored in assoc_name column)</span>
+<span class="sd">        :param exposure: exposure in cm2 * seconds (can be calculated with gtexposure)</span>
+<span class="sd">        :param npred_min: minimum number of predicted events.</span>
+<span class="sd">        :return: model</span>
+<span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -245,7 +257,11 @@
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">source_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                
+            <span class="k">if</span> <span class="n">exposure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">npred</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;flux_1_100_gev&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">exposure</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Source </span><span class="si">%s</span><span class="s1"> npred= </span><span class="si">%.1e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">npred</span><span class="p">)</span> <span class="p">)</span>
+                <span class="k">if</span> <span class="n">npred</span> <span class="o">&lt;</span> <span class="n">npred_min</span><span class="p">:</span>
+                    <span class="k">continue</span>
             <span class="c1"># If there is an association and use_association is True, use that name, otherwise the 3FGL name</span>
             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">use_association_name</span><span class="p">:</span>
 
@@ -280,7 +296,8 @@
 
             <span class="n">source_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_name</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="p">(</span> <span class="s2">&quot;extended_source_name&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;extended_source_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="s2">&quot;extended_source_name&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;extended_source_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="p">)</span> <span class="ow">or</span> \
+                <span class="p">(</span><span class="s2">&quot;sourcetype&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;sourcetype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DiffuseSource&quot;</span> <span class="p">):</span>
         
                 <span class="k">if</span> <span class="s2">&quot;spatial_function&quot;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
                     
@@ -406,7 +423,7 @@
 
     <span class="c1">#overwrite cone_search function to use existing table.</span>
 <div class="viewcode-block" id="FermiPySourceCatalog.cone_search"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiPySourceCatalog.cone_search">[docs]</a>    <span class="k">def</span> <span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches for sources in a cone of given radius and center</span>
 
 <span class="sd">        :param ra: decimal degrees, R.A. of the center of the cone</span>

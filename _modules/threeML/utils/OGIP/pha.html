@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.OGIP.pha</li>
@@ -110,7 +115,7 @@
 
 <div class="viewcode-block" id="PHAWrite"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite">[docs]</a><span class="k">class</span> <span class="nc">PHAWrite</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ogiplike</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as</span>
 <span class="sd">        input. While OGIPLike provides a write_pha method, it is only for writing the given instance to disk. The class</span>
 <span class="sd">         in general can be used to save an entire series of OGIPLikes to PHAs which can be used for time-resolved style</span>
@@ -160,7 +165,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span> <span class="o">=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="PHAWrite.write"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines</span>
 <span class="sd">        if BAK files should be generated.</span>
 
@@ -196,7 +201,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_phaII</span><span class="p">(</span><span class="n">overwrite</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_append_ogip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ogip</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add an ogip instance&#39;s data into the data list</span>
 
 <span class="sd">        :param ogip: and OGIPLike instance</span>
@@ -536,7 +541,7 @@
         <span class="n">stat_err</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">is_poisson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Represents the SPECTRUM extension of a PHAII file.</span>
 
 <span class="sd">        :param tstart: array of interval start times</span>
@@ -613,7 +618,7 @@
         <span class="n">stat_err</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_poisson</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        A generic PHAII fits file</span>
 

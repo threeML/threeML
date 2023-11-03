@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.time_series.polynomial</li>
@@ -98,14 +103,15 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">Cubic</span><span class="p">,</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Log_normal</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span>
-                         <span class="n">PointSource</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">)</span>
+                         <span class="n">PointSource</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">,</span> <span class="n">Quartic</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">threeML.bayesian.bayesian_analysis</span> <span class="kn">import</span> <span class="n">BayesianAnalysis</span>
 <span class="kn">from</span> <span class="nn">threeML.classicMLE.joint_likelihood</span> <span class="kn">import</span> <span class="n">JointLikelihood</span>
 <span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span> <span class="nn">threeML.config.config_utils</span> <span class="kn">import</span> <span class="n">get_value</span>
 <span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">BadCovariance</span><span class="p">,</span> <span class="n">FitFailed</span>
+<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">BadCovariance</span><span class="c1">#, FitFailed</span>
+<span class="kn">from</span> <span class="nn">threeML.minimizer.minimization</span> <span class="kn">import</span> <span class="n">FitFailed</span>
 <span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
 <span class="kn">from</span> <span class="nn">threeML.minimizer.grid_minimizer</span> <span class="kn">import</span> <span class="n">AllFitFailed</span>
 <span class="kn">from</span> <span class="nn">threeML.minimizer.minimization</span> <span class="kn">import</span> <span class="p">(</span><span class="n">CannotComputeCovariance</span><span class="p">,</span>
@@ -118,12 +124,12 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># we include the line twice to mimic a constant</span>
-<span class="n">_grade_model_lookup</span> <span class="o">=</span> <span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">,</span> <span class="n">Cubic</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">)</span>
+<span class="n">_grade_model_lookup</span> <span class="o">=</span> <span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">,</span> <span class="n">Cubic</span><span class="p">,</span> <span class="n">Quartic</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Polynomial"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial">[docs]</a><span class="k">class</span> <span class="nc">Polynomial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">is_integral</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A polynomial</span>
 
 <span class="sd">        :param coefficients: array of poly coefficients</span>
@@ -172,7 +178,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the polynomial degree</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -180,24 +186,24 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the error on the polynomial coefficients</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">__get_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; gets the coefficients&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; gets the coefficients&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">___get_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Indirect coefficient getter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect coefficient getter &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_coefficient</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__set_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; sets the coefficients&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; sets the coefficients&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span> <span class="o">=</span> <span class="n">val</span>
 
@@ -214,7 +220,7 @@
             <span class="n">integral_coeff</span><span class="p">,</span> <span class="n">is_integral</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">___set_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Indirect coefficient setter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect coefficient setter &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_coefficient</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
@@ -243,7 +249,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span>
 
 <div class="viewcode-block" id="Polynomial.integral"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral">[docs]</a>    <span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the integral of the polynomial between xmin and xmax</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -255,7 +261,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i_plus_1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i_plus_1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Polynomial.integral_error"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral_error">[docs]</a>    <span class="k">def</span> <span class="nf">integral_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        computes the integral error of an interval</span>
 <span class="sd">        :param xmin: start of the interval</span>
 <span class="sd">        :param xmax: stop of the interval</span>
@@ -271,19 +277,18 @@
 <div class="viewcode-block" id="polyfit"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.polyfit">[docs]</a><span class="k">def</span> <span class="nf">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">exposure</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
             <span class="n">bayes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Polynomial</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    function to fit a polynomial to data. </span>
 <span class="sd">    not a member to allow parallel computation</span>
 
 <span class="sd">    :param x: the x coord of the data</span>
-<span class="sd">    :param y: teh y coord of the data</span>
+<span class="sd">    :param y: the y coord of the data</span>
 <span class="sd">    :param grade: the polynomical order or grade</span>
 <span class="sd">    :param expousure: the exposure of the interval</span>
 <span class="sd">    :param bayes: to do a bayesian fit or not</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># Check that we have enough counts to perform the fit, otherwise</span>
     <span class="c1"># return a &quot;zero polynomial&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;starting polyfit with grade </span><span class="si">{</span><span class="n">grade</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
@@ -324,10 +329,11 @@
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;starting polyfit with avg norm </span><span class="si">{</span><span class="n">avg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">():</span>
-
         <span class="n">xy</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span>
                     <span class="n">poisson_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
+        <span class="c1">#from matplotlib import pyplot as plt</span>
+        <span class="c1">#xy.plot()</span>
+        <span class="c1">#plt.plot(x,exposure)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">bayes</span><span class="p">:</span>
 
             <span class="c1"># make sure the model is positive</span>
@@ -344,6 +350,7 @@
 
                     <span class="n">v</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>
 
+                    <span class="c1">#v.bounds = (-1e-3, 1e-3)</span>
             <span class="c1"># we actually use a line here</span>
             <span class="c1"># because a constant is returns a</span>
             <span class="c1"># single number</span>
@@ -358,31 +365,38 @@
             <span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="s2">&quot;minuit&quot;</span><span class="p">)</span>
 
             <span class="c1"># if the fit falis, retry and then just accept</span>
-
+            <span class="c1">#print(&#39;polynomials grade:&#39;,grade)</span>
+            <span class="c1">#print(&#39;polynomials model:&#39;)</span>
+            <span class="c1">#model.display(complete=True)</span>
             <span class="k">try</span><span class="p">:</span>
+                <span class="c1">#print (&quot;=================&gt;FIRST FIT!!!!&quot;)</span>
 
                 <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="k">except</span><span class="p">(</span><span class="n">FitFailed</span><span class="p">,</span> <span class="n">BadCovariance</span><span class="p">,</span> <span class="n">AllFitFailed</span><span class="p">,</span> <span class="n">CannotComputeCovariance</span><span class="p">):</span>
 
+                <span class="c1">#print (&quot;=================&gt;FIRST FIT FAILED!!!!&quot;)</span>
+
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;1st fit failed&quot;</span><span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
+                <span class="c1">#    print (&quot;=================&gt;SECOND FIT!!!!&quot;)</span>
 
                     <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="k">except</span><span class="p">(</span><span class="n">FitFailed</span><span class="p">,</span> <span class="n">BadCovariance</span><span class="p">,</span> <span class="n">AllFitFailed</span><span class="p">,</span> <span class="n">CannotComputeCovariance</span><span class="p">):</span>
+                <span class="c1">#    print (&quot;=================&gt;SECOND FIT FAILED!!!!&quot;)</span>
 
                     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;all MLE fits failed&quot;</span><span class="p">)</span>
 
                     <span class="k">pass</span>
+            <span class="c1">#plt.plot(x,model._dummy.spectrum.main(x),&#39;k:&#39;)</span>
+            <span class="c1">#plt.show()</span>
 
             <span class="n">coeff</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;got coeff: </span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="n">final_polynomial</span> <span class="o">=</span> <span class="n">Polynomial</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
-
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">final_polynomial</span><span class="o">.</span><span class="n">set_covariace_matrix</span><span class="p">(</span>
                     <span class="n">jl</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">covariance_matrix</span><span class="p">)</span>
@@ -391,7 +405,6 @@
 
                 <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fit failed in channel&quot;</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">()</span>
-
             <span class="n">min_log_likelihood</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -450,7 +463,7 @@
 <div class="viewcode-block" id="unbinned_polyfit"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.unbinned_polyfit">[docs]</a><span class="k">def</span> <span class="nf">unbinned_polyfit</span><span class="p">(</span><span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">t_start</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">t_stop</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
                      <span class="n">exposure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">bayes</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Polynomial</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    function to fit a polynomial to unbinned event data. </span>
 <span class="sd">    not a member to allow parallel computation</span>
 

@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.config.config_utils</li>
@@ -132,7 +137,7 @@
 
 
 <div class="viewcode-block" id="show_configuration"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_utils.show_configuration">[docs]</a><span class="k">def</span> <span class="nf">show_configuration</span><span class="p">(</span><span class="n">sub_menu</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    display the current configuration or a sub menu if</span>
 <span class="sd">    provided</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -169,7 +174,7 @@
 <div class="viewcode-block" id="get_current_configuration_copy"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_utils.get_current_configuration_copy">[docs]</a><span class="k">def</span> <span class="nf">get_current_configuration_copy</span><span class="p">(</span>
     <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;threeML_config.yml&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    write a copy of the CURRENT configuration to the config directory</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -198,7 +203,7 @@
 
 
 <div class="viewcode-block" id="get_value"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_utils.get_value">[docs]</a><span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">user_value</span><span class="p">,</span> <span class="n">par_type</span><span class="p">,</span> <span class="n">config_value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the value for a parameter. If value is None returns the config value.</span>
 <span class="sd">    :param name: Name of parameter</span>
 <span class="sd">    :param user_value: user value (can be None if no value given)</span>
@@ -222,7 +227,7 @@
 
 
 <div class="viewcode-block" id="get_value_kwargs"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_utils.get_value_kwargs">[docs]</a><span class="k">def</span> <span class="nf">get_value_kwargs</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">par_type</span><span class="p">,</span> <span class="n">config_value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read the value of a parameter from the kwargs or the config if it does not exist</span>
 <span class="sd">    in the kwargs.</span>
 <span class="sd">    :param name: Name of parameter in kwargs</span>

@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.test.test_UnresolvedExtendedXYLike</li>
@@ -297,7 +302,8 @@
 
     <span class="c1"># Verify that the fit converged where it should have</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-        <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="c1">#res[0][&quot;value&quot;].values,</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">[</span><span class="mf">40.20269202</span><span class="p">,</span> <span class="mf">0.82896119</span><span class="p">,</span>  <span class="mf">62.80359114</span><span class="p">,</span> <span class="mf">5.04080011</span><span class="p">,</span> <span class="mf">0.27286713</span><span class="p">],</span>
         <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
     <span class="p">)</span>
@@ -336,7 +342,9 @@
 
     <span class="c1"># print res[0][&#39;value&#39;]</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-        <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mf">40.344599</span><span class="p">,</span> <span class="mf">0.783748</span><span class="p">,</span>  <span class="mf">71.560055</span><span class="p">,</span> <span class="mf">4.989727</span><span class="p">,</span> <span class="mf">0.330570</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span>
+        <span class="c1">#res[0][&quot;value&quot;],</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">get_data_frame</span><span class="p">()[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">40.344599</span><span class="p">,</span> <span class="mf">0.783748</span><span class="p">,</span>  <span class="mf">71.560055</span><span class="p">,</span> <span class="mf">4.989727</span><span class="p">,</span> <span class="mf">0.330570</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.05</span>
     <span class="p">)</span></div>
 
 

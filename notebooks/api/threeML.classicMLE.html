@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.classicMLE package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -34,12 +34,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -81,7 +86,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">threeML.classicMLE package</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -91,31 +96,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="threeml-classicmle-package">
+  <section id="threeml-classicmle-package">
 <h1>threeML.classicMLE package<a class="headerlink" href="#threeml-classicmle-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
@@ -133,13 +114,13 @@
 of synthetic datasets which have a value for the likelihood larger or equal to the observed one is a measure
 of the goodness of fit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_iterations</strong> – number of MC iterations to perform (default: 1000)</p></li>
 <li><p><strong>continue_of_failure</strong> – whether to continue in the case a fit fails (False by default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple (goodness of fit, frame with all results, frame with all likelihood values)</p>
 </dd>
 </dl>
@@ -174,13 +155,13 @@ of the goodness of fit</p>
 <span class="sig-name descname"><span class="pre">compute_TS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt_hyp_mlike_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.compute_TS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS" title="Permalink to this definition"></a></dt>
 <dd><p>Computes the Likelihood Ratio Test statistic (TS) for the provided source</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source_name</strong> – name for the source</p></li>
 <li><p><strong>alt_hyp_mlike_df</strong> – likelihood dataframe (it is the second output of the .fit() method)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a DataFrame containing the null hypothesis and the alternative hypothesis -log(likelihood) values and</p>
 </dd>
 </dl>
@@ -192,7 +173,7 @@ of the goodness of fit</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlation_matrix</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.correlation_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>correlation matrix from the last fit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -203,7 +184,7 @@ of the goodness of fit</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance_matrix</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.covariance_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>covariance matrix from the last fit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -214,7 +195,7 @@ of the goodness of fit</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_minimum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.current_minimum" title="Permalink to this definition"></a></dt>
 <dd><p>current minimum of the joint likelihood (available only after the fit() method)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -225,7 +206,7 @@ of the goodness of fit</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.data_list" title="Permalink to this definition"></a></dt>
 <dd><p>data list for this analysis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -236,11 +217,12 @@ of the goodness of fit</p>
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_covariance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Perform a fit of the current likelihood model on the datasets</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>quiet</strong> – If True, print the results (default), otherwise do not print anything</p>
 </dd>
 </dl>
 <p>:param compute_covariance:If True (default), compute and display the errors and the correlation matrix.
+:param n_samples: Number of samples to scan the likelihood.
 :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum</p>
 <blockquote>
 <div><p>for each dataset and the total one.</p>
@@ -263,7 +245,7 @@ contour of param_1 vs param_2.</p>
 engines. If that is not the case, the code will reduce the number of steps to match that requirement, and
 issue a warning</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param_1</strong> – fully qualified name of the first parameter or parameter instance</p></li>
 <li><p><strong>param_1_minimum</strong> – lower bound for the range for the first parameter</p></li>
@@ -281,7 +263,7 @@ while they are linear for the second parameter. If you are generating the profil
 parameter, you can specify ‘log=(True,)’ or ‘log=(False,)’ (optional)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a tuple containing an array corresponding to the steps for the first parameter, an array corresponding
 to the steps for the second parameter (or None if stepping only in one direction), a matrix of size
 param_1_steps x param_2_steps containing the value of the function at the corresponding points in the
@@ -296,7 +278,7 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the errors on the parameters using the profile likelihood method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a dictionary containing the asymmetric errors for each parameter.</p>
 </dd>
 </dl>
@@ -307,7 +289,7 @@ size param_1_steps.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">likelihood_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Model</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.likelihood_model" title="Permalink to this definition"></a></dt>
 <dd><p>likelihood model for this analysis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -318,7 +300,7 @@ size param_1_steps.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimizer</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer" title="Permalink to this definition"></a></dt>
 <dd><p>an instance of the minimizer used in the fit (available only after the fit() method)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -334,10 +316,10 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">minus_log_like_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">trial_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.minus_log_like_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile" title="Permalink to this definition"></a></dt>
 <dd><p>Return the minus log likelihood for a given set of trial values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>trial_values</strong> – the trial values. Must be in the same number as the free parameters in the model</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>minus log likelihood</p>
 </dd>
 </dl>
@@ -353,7 +335,7 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit" title="Permalink to this definition"></a></dt>
 <dd><p>Restore the model to its best fit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>(none)</p>
 </dd>
 </dl>
@@ -369,7 +351,7 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">set_minimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.set_minimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer" title="Permalink to this definition"></a></dt>
 <dd><p>Set the minimizer to be used, among those available.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>minimizer</strong> – the name of the new minimizer or an instance of a LocalMinimization or a GlobalMinimization</p>
 </dd>
 </dl>
@@ -416,7 +398,7 @@ minimization, like the choice of algorithms (if supported by the used minimizer)
 <dd><p>Returns a results set for each model. If there is more than one model, it will return a list of
 AnalysisResultsSet instances, otherwise it will return one AnalysisResultsSet instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -438,13 +420,13 @@ AnalysisResultsSet instances, otherwise it will return one AnalysisResultsSet in
 <dd><p>Write the results to one file per model. If you need more control, get the results using the .results property
 then write each results set by itself.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filenames</strong> – list of filenames, one per model, or filename (if there is only one model per interval)</p></li>
 <li><p><strong>overwrite</strong> – overwrite existing files</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -484,7 +466,7 @@ The fraction of synthetic datasets which have a value for the TS larger or equal
 the null-hypothesis probability (i.e., the probability that the observed TS is obtained by chance from the
 null hypothesis)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_iterations</strong> – number of MC iterations to perform (default: 1000)</p></li>
 <li><p><strong>continue_of_failure</strong> – whether to continue in the case a fit fails (False by default)</p></li>
@@ -492,7 +474,7 @@ null hypothesis)</p>
 Currently only supports OGIP data. This can become slow! (False by default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple (null. hyp. probability, TSs, frame with all results, frame with all likelihood values)</p>
 </dd>
 </dl>
@@ -517,14 +499,14 @@ Currently only supports OGIP data. This can become slow! (False by default)</p><
 <dt class="sig sig-object py" id="threeML.classicMLE.likelihood_ratio_test.LikelihoodRatioTest.plot_TS_distribution">
 <span class="sig-name descname"><span class="pre">plot_TS_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_chi2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">hist_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/classicMLE/likelihood_ratio_test.html#LikelihoodRatioTest.plot_TS_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.likelihood_ratio_test.LikelihoodRatioTest.plot_TS_distribution" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>show_chi2</strong> – </p></li>
 <li><p><strong>scale</strong> – </p></li>
 <li><p><strong>hist_kwargs</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>

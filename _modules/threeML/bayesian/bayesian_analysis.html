@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.bayesian.bayesian_analysis</li>
@@ -128,6 +133,11 @@
         <span class="s2">&quot;from threeML.bayesian.ultranest_sampler import UltraNestSampler&quot;</span><span class="p">,</span>
         <span class="s2">&quot;UltraNestSampler&quot;</span><span class="p">,</span>
     <span class="p">],</span>
+    <span class="s2">&quot;nautilus&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;nautilus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from threeML.bayesian.nautilus_sampler import NautilusSampler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NautilusSampler&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
     <span class="s2">&quot;dynesty_nested&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;dynesty&quot;</span><span class="p">,</span>
         <span class="s2">&quot;from threeML.bayesian.dynesty_sampler import DynestyNestedSampler&quot;</span><span class="p">,</span>
@@ -172,7 +182,7 @@
 
 <div class="viewcode-block" id="BayesianAnalysis"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis">[docs]</a><span class="k">class</span> <span class="nc">BayesianAnalysis</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform Bayesian analysis by passing your model and data.</span>
 <span class="sd">        All free parameters must have priors set.</span>
 
@@ -196,7 +206,7 @@
     <span class="k">def</span> <span class="nf">_register_model_and_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        make sure the model and data list are set up</span>
 
@@ -257,7 +267,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_registered</span> <span class="o">=</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="BayesianAnalysis.set_sampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.set_sampler">[docs]</a>    <span class="k">def</span> <span class="nf">set_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the sampler</span>
 <span class="sd">        :param sampler_name: (str) Name of sampler</span>
 
@@ -303,7 +313,7 @@
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;sampler is setup with default parameters&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BayesianAnalysis.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        sample the posterior of the model with the selected algorithm</span>
 
 <span class="sd">        If no algorithm as been set, then the configured default algorithm</span>
@@ -334,7 +344,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">log_like_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If</span>
 <span class="sd">        you need to find the values of the parameters which generated a given value of the log. likelihood, remember</span>
 <span class="sd">        that the samples accessible through the property .raw_samples are ordered in the same way as the vector</span>
@@ -346,7 +356,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">log_probability_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of the log_probability (posterior) found by the bayesian sampler while sampling from the posterior. If</span>
 <span class="sd">        you need to find the values of the parameters which generated a given value of the log. likelihood, remember</span>
 <span class="sd">        that the samples accessible through the property .raw_samples are ordered in the same way as the vector</span>
@@ -359,7 +369,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">log_marginal_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                Return the log marginal likelihood (evidence</span>
 <span class="sd">        ) if computed</span>
 <span class="sd">                :return:</span>
@@ -369,7 +379,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">raw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,</span>
 <span class="sd">        in the format returned by the sampler)</span>
 
@@ -380,7 +390,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access the samples from the posterior distribution generated by the selected sampler</span>
 
 <span class="sd">        :return: a dictionary with the samples from the posterior distribution for each parameter</span>
@@ -389,7 +399,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerBase</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access the instance of the sampler used to sample the posterior distribution</span>
 <span class="sd">        :return: an instance of the sampler</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -397,7 +407,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span>
 
 <div class="viewcode-block" id="BayesianAnalysis.plot_chains"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.plot_chains">[docs]</a>    <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce a plot of the series of samples for each parameter</span>
 
 <span class="sd">        :parameter thin: use only one sample every &#39;thin&#39; samples</span>
@@ -408,21 +418,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">likelihood_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: likelihood model (a Model instance)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataList</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: data list for this analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span>
 
 <div class="viewcode-block" id="BayesianAnalysis.convergence_plots"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.convergence_plots">[docs]</a>    <span class="k">def</span> <span class="nf">convergence_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same</span>
 <span class="sd">        values if the MCMC has converged to the posterior distribution.</span>
 
@@ -439,14 +449,14 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="BayesianAnalysis.restore_median_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.restore_median_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_median_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the model parameters to the mean of the marginal distributions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">restore_median_fit</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BayesianAnalysis.restore_MAP_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.bayesian_analysis.BayesianAnalysis.restore_MAP_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_MAP_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the model parameters to the MAP of the probability</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 

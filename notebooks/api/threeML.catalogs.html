@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.catalogs package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -34,12 +34,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -81,7 +86,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">threeML.catalogs package</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -91,31 +96,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="threeml-catalogs-package">
+  <section id="threeml-catalogs-package">
 <h1>threeML.catalogs package<a class="headerlink" href="#threeml-catalogs-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
@@ -137,7 +118,7 @@
 <dd><p>Return the detectors used for spectral analysis as well as their background
 intervals. Peak flux and fluence intervals are also returned as well as best fit models</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>detector information dictionary</p>
 </dd>
 </dl>
@@ -151,13 +132,13 @@ You can choose band, comp, plaw, or sbpl models corresponding to the models
 fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 ‘peak’ interval</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> – one of ‘band’ (default), ‘comp’, ‘plaw’, ‘sbpl’</p></li>
 <li><p><strong>interval</strong> – ‘peak’ or ‘fluence’ (default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dictionary of 3ML likelihood models that can be fitted</p>
 </dd>
 </dl>
@@ -212,13 +193,13 @@ fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 <span class="sig-name descname"><span class="pre">fix_point_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/Fermi.html#ModelFrom3FGL.fix_point_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Fermi.ModelFrom3FGL.fix_point_sources_within_radius" title="Permalink to this definition"></a></dt>
 <dd><p>Fixes the parameters for the point sources within the given radius of the center of the search cone</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>radius</strong> – radius in degree</p></li>
 <li><p><strong>normalization_only</strong> – if True, fixes only the normalization of the source (default: True)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -229,13 +210,13 @@ fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 <span class="sig-name descname"><span class="pre">free_point_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/Fermi.html#ModelFrom3FGL.free_point_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Fermi.ModelFrom3FGL.free_point_sources_within_radius" title="Permalink to this definition"></a></dt>
 <dd><p>Free the parameters for the point sources within the given radius of the center of the search cone</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>radius</strong> – radius in degree</p></li>
 <li><p><strong>normalization_only</strong> – if True, frees only the normalization of the source (default: True)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -261,7 +242,7 @@ fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 <dd><p>Return the detectors used for spectral analysis as well as their background
 intervals. Peak flux and fluence intervals are also returned as well as best fit models</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>detector information dictionary</p>
 </dd>
 </dl>
@@ -275,13 +256,13 @@ You can choose band, comp, plaw, or sbpl models corresponding to the models
 fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 ‘peak’ interval</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> – one of ‘band’ (default), ‘comp’, ‘plaw’, ‘sbpl’</p></li>
 <li><p><strong>interval</strong> – ‘peak’ or ‘fluence’ (default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dictionary of 3ML likelihood models that can be fitted</p>
 </dd>
 </dl>
@@ -314,8 +295,13 @@ fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model">
-<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_association_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/FermiLAT.html#FermiLATSourceCatalog.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_association_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npred_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/FermiLAT.html#FermiLATSourceCatalog.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model" title="Permalink to this definition"></a></dt>
+<dd><p>Build the model with FGL sources
+:param use_association_name: use the name of the associated source (stored in assoc_name column)
+:param exposure: exposure in cm2 * seconds (can be calculated with gtexposure)
+:param npred_min: minimum number of predicted events.
+:return: model</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -328,14 +314,14 @@ fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 <span class="sig-name descname"><span class="pre">cone_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/FermiLAT.html#FermiPySourceCatalog.cone_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiPySourceCatalog.cone_search" title="Permalink to this definition"></a></dt>
 <dd><p>Searches for sources in a cone of given radius and center</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ra</strong> – decimal degrees, R.A. of the center of the cone</p></li>
 <li><p><strong>dec</strong> – decimal degrees, Dec. of the center of the cone</p></li>
 <li><p><strong>radius</strong> – radius in degrees</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a table with the list of sources</p>
 </dd>
 </dl>
@@ -375,7 +361,7 @@ fitted in the GBM catalog. The interval for the fit can be the ‘fluence’ or
 <dd><p>Return the detectors used for spectral analysis as well as their background
 intervals. Peak flux and fluence intervals are also returned as well as best fit models</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>observing information dataframe indexed by source</p>
 </dd>
 </dl>
@@ -387,7 +373,7 @@ intervals. Peak flux and fluence intervals are also returned as well as best fit
 <dd><p>returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,
 their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-LAT-GBM.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -398,7 +384,7 @@ their trigger numbers/ data identifiers. Currently, the trigger number is only o
 <span class="sig-name descname"><span class="pre">get_redshift</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog.get_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift" title="Permalink to this definition"></a></dt>
 <dd><p>Get the redshift and redshift type from the searched sources</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -415,10 +401,10 @@ their trigger numbers/ data identifiers. Currently, the trigger number is only o
 <dd><p>search for observations that were also seen by the requested instrument.
 to see what instruments are available, use the .other_observing_instruments call</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>instruments</strong> – other instruments</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -449,14 +435,14 @@ to see what instruments are available, use the .other_observing_instruments call
 <span class="sig-name descname"><span class="pre">cone_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.cone_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search" title="Permalink to this definition"></a></dt>
 <dd><p>Searches for sources in a cone of given radius and center</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ra</strong> – decimal degrees, R.A. of the center of the cone</p></li>
 <li><p><strong>dec</strong> – decimal degrees, Dec. of the center of the cone</p></li>
 <li><p><strong>radius</strong> – radius in degrees</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a table with the list of sources</p>
 </dd>
 </dl>
@@ -479,10 +465,10 @@ to see what instruments are available, use the .other_observing_instruments call
 queries: <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.query.html">http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.query.html</a></p>
 <p>To obtain a preview of the availble columns, try catalog.variables</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>query</strong> – pandas style query string</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -493,10 +479,10 @@ queries: <a class="reference external" href="http://pandas.pydata.org/pandas-doc
 <span class="sig-name descname"><span class="pre">query_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sources</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.query_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources" title="Permalink to this definition"></a></dt>
 <dd><p>query for the specific source names.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>sources</strong> – source(s) to search for</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -520,13 +506,13 @@ queries: <a class="reference external" href="http://pandas.pydata.org/pandas-doc
 <dd><p>Search for sources around the named source. The coordinates of the provided source are resolved using the
 astropy.coordinates.name_resolve facility.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source_name</strong> – name of the source, like “Crab”</p></li>
 <li><p><strong>radius</strong> – radius of the search, in degrees</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(ra, dec, table), where ra,dec are the coordinates of the source as resolved by astropy, and table is</p>
 </dd>
 </dl>
@@ -547,13 +533,13 @@ astropy.coordinates.name_resolve facility.</p>
 <span class="sig-name descname"><span class="pre">fix_extended_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.fix_extended_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.fix_extended_sources_within_radius" title="Permalink to this definition"></a></dt>
 <dd><p>Fixes the parameters for the point sources within the given radius of the center of the search cone</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>radius</strong> – radius in degree</p></li>
 <li><p><strong>normalization_only</strong> – if True, fixes only the normalization of the source (default: True)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -564,13 +550,13 @@ astropy.coordinates.name_resolve facility.</p>
 <span class="sig-name descname"><span class="pre">fix_point_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.fix_point_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.fix_point_sources_within_radius" title="Permalink to this definition"></a></dt>
 <dd><p>Fixes the parameters for the point sources within the given radius of the center of the search cone</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>radius</strong> – radius in degree</p></li>
 <li><p><strong>normalization_only</strong> – if True, fixes only the normalization of the source (default: True)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -581,13 +567,13 @@ astropy.coordinates.name_resolve facility.</p>
 <span class="sig-name descname"><span class="pre">free_extended_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.free_extended_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.free_extended_sources_within_radius" title="Permalink to this definition"></a></dt>
 <dd><p>Free the parameters for the point sources within the given radius of the center of the search cone</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>radius</strong> – radius in degree</p></li>
 <li><p><strong>normalization_only</strong> – if True, frees only the normalization of the source (default: True)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>
@@ -598,13 +584,13 @@ astropy.coordinates.name_resolve facility.</p>
 <span class="sig-name descname"><span class="pre">free_point_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.free_point_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.free_point_sources_within_radius" title="Permalink to this definition"></a></dt>
 <dd><p>Free the parameters for the point sources within the given radius of the center of the search cone</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>radius</strong> – radius in degree</p></li>
 <li><p><strong>normalization_only</strong> – if True, frees only the normalization of the source (default: True)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>none</p>
 </dd>
 </dl>

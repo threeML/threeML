@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.time_series.time_series</li>
@@ -139,7 +144,7 @@
 
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">_OutputContainer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A dummy contaier to extract information from the light curve</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -173,7 +178,7 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The EventList is a container for event data that is tagged in time</span>
 <span class="sd">        and in PHA/energy. It handles event selection,</span>
 <span class="sd">        temporal polynomial fitting, temporal binning, and exposure</span>
@@ -276,14 +281,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns polynomial is they exist&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns polynomial is they exist&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polynomials</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;A polynomial fit has not been made.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TimeSeries.get_poly_info"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_poly_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_poly_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a pandas panel frame with the polynomial coeffcients</span>
 <span class="sd">        and errors</span>
 <span class="sd">        Returns:</span>
@@ -321,7 +326,7 @@
 
 <div class="viewcode-block" id="TimeSeries.get_total_poly_count"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_total_poly_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_poly_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                              <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Get the total poly counts</span>
 
@@ -341,7 +346,7 @@
 
 <div class="viewcode-block" id="TimeSeries.get_total_poly_error"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_total_poly_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_poly_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                              <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Get the total poly error</span>
 
@@ -370,7 +375,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This EventList has no binning specified&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set poly order only in allowed range and redo fit &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Set poly order only in allowed range and redo fit &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;Polynomial order must be integer&quot;</span>
 
@@ -403,17 +408,17 @@
                 <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This is a bug. Should never get here&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">___set_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Indirect poly order setter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect poly order setter &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__set_poly_order</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get the poly order &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; get the poly order &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_polynomial_grade</span>
 
     <span class="k">def</span> <span class="nf">___get_poly_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Indirect poly order getter &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect poly order getter &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_poly_order</span><span class="p">()</span>
 
@@ -425,7 +430,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the time intervals of the events</span>
 
 <span class="sd">        :return:</span>
@@ -433,12 +438,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_intervals</span>
 
 <div class="viewcode-block" id="TimeSeries.exposure_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.exposure_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; calculate the exposure over a given interval  &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; calculate the exposure over a given interval  &quot;&quot;&quot;</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in sub class&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeries.counts_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.counts_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the number of counts in the selected interval</span>
 <span class="sd">        :param start: start of interval</span>
 <span class="sd">        :param stop:  stop of interval</span>
@@ -451,7 +456,7 @@
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in sub class&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeries.count_per_channel_over_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.count_per_channel_over_interval">[docs]</a>    <span class="k">def</span> <span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param start:</span>
 <span class="sd">        :param stop:</span>
@@ -461,7 +466,7 @@
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in sub class&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeries.set_background_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.set_background_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_background_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">time_intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the time interval for the background observation.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval for the background observation.</span>
 <span class="sd">        Multiple intervals can be input as separate arguments</span>
 <span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
 
@@ -499,7 +504,7 @@
                       <span class="s2">&quot;time intervals.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeSeries.fit_polynomial"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.fit_polynomial">[docs]</a>    <span class="k">def</span> <span class="nf">fit_polynomial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the polynominals to the selected time intervals</span>
 <span class="sd">        :param kwargs:</span>
 <span class="sd">        :returns:</span>
@@ -627,7 +632,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_bkg_intervals</span> <span class="o">=</span> <span class="n">bkg_intervals</span>
 
     <span class="k">def</span> <span class="nf">_delete_polynominal_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delte all the information from previous poly fits</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -641,7 +646,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_poly_fit_exists</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="TimeSeries.set_polynomial_fit_interval"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.set_polynomial_fit_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_polynomial_fit_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">time_intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set the time interval to fit the background.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval to fit the background.</span>
 <span class="sd">        Multiple intervals can be input as separate arguments</span>
 <span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
 <span class="sd">        set_polynomial_fit_interval(&quot;-10.0-0.0&quot;,&quot;10.-15.&quot;)</span>
@@ -782,7 +787,7 @@
 <div class="viewcode-block" id="TimeSeries.get_information_dict"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.get_information_dict">[docs]</a>    <span class="k">def</span> <span class="nf">get_information_dict</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">use_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_OutputContainer</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a PHAContainer that can be read by different builders</span>
 
 <span class="sd">        :param use_poly: (bool) choose to build from the polynomial fits</span>
@@ -878,7 +883,7 @@
         <span class="k">return</span> <span class="n">container_dict</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Examine the currently selected info as well other things.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -913,7 +918,7 @@
                                                 <span class="n">bins</span><span class="p">,</span>
                                                 <span class="n">exposure</span><span class="p">,</span>
                                                 <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provides the ability to find the optimum polynomial grade for</span>
 <span class="sd">        *binned* counts by fitting the total (all channels) to 0-4 order</span>
 <span class="sd">        polynomials and then comparing them via a likelihood ratio test.</span>
@@ -927,7 +932,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">min_grade</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">max_grade</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">max_grade</span> <span class="o">=</span> <span class="mi">3</span>
         <span class="n">log_likelihoods</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;attempting to find best poly with binned data&quot;</span><span class="p">)</span>
@@ -989,7 +994,7 @@
                                                          <span class="n">events</span><span class="p">,</span>
                                                          <span class="n">exposure</span><span class="p">,</span>
                                                          <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provides the ability to find the optimum polynomial grade for</span>
 <span class="sd">        *unbinned* events by fitting the total (all channels) to 0-2</span>
 <span class="sd">        order polynomials and then comparing them via a likelihood ratio test.</span>
@@ -1074,7 +1079,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;this must be implemented in a subclass&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TimeSeries.save_background"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.time_series.TimeSeries.save_background">[docs]</a>    <span class="k">def</span> <span class="nf">save_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        save the background to an HD5F</span>
 
 <span class="sd">        :param filename:</span>

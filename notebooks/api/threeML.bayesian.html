@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.bayesian package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
@@ -34,12 +34,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,6 +65,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -81,7 +86,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">threeML.bayesian package</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -91,31 +96,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="threeml-bayesian-package">
+  <section id="threeml-bayesian-package">
 <h1>threeML.bayesian package<a class="headerlink" href="#threeml-bayesian-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
@@ -132,7 +113,7 @@
 <dd><p>sample using the UltraNest numerical integration method
 :rtype:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -196,13 +177,13 @@ values if the MCMC has converged to the posterior distribution.</p>
 <p>The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
 is to take random samples from the chain (bootstrap)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_samples_in_each_subset</strong> – number of samples in each subset</p></li>
 <li><p><strong>n_subsets</strong> – number of subsets to take for each strategy</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a matplotlib.figure instance</p>
 </dd>
 </dl>
@@ -213,7 +194,7 @@ is to take random samples from the chain (bootstrap)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.data_list" title="Permalink to this definition"></a></dt>
 <dd><p>data list for this analysis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -224,7 +205,7 @@ is to take random samples from the chain (bootstrap)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">likelihood_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Model</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.likelihood_model" title="Permalink to this definition"></a></dt>
 <dd><p>likelihood model (a Model instance)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>return</p>
 </dd>
 </dl>
@@ -238,7 +219,7 @@ you need to find the values of the parameters which generated a given value of t
 that the samples accessible through the property .raw_samples are ordered in the same way as the vector
 returned by this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a vector of log. like values</p>
 </dd>
 </dl>
@@ -251,7 +232,7 @@ returned by this method.</p>
 ) if computed</p>
 <blockquote>
 <div><dl class="field-list simple">
-<dt class="field-odd">return</dt>
+<dt class="field-odd">return<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
 </div></blockquote>
@@ -265,7 +246,7 @@ you need to find the values of the parameters which generated a given value of t
 that the samples accessible through the property .raw_samples are ordered in the same way as the vector
 returned by this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a vector of log probabilty values</p>
 </dd>
 </dl>
@@ -276,10 +257,10 @@ returned by this method.</p>
 <span class="sig-name descname"><span class="pre">plot_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.plot_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.plot_chains" title="Permalink to this definition"></a></dt>
 <dd><p>Produce a plot of the series of samples for each parameter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>thin</strong> – use only one sample every ‘thin’ samples</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a matplotlib.figure instance</p>
 </dd>
 </dl>
@@ -291,7 +272,7 @@ returned by this method.</p>
 <dd><p>Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,
 in the format returned by the sampler)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the samples as returned by the sampler</p>
 </dd>
 </dl>
@@ -321,10 +302,10 @@ in the format returned by the sampler)</p>
 <p>If no algorithm as been set, then the configured default algorithm
 we default parameters will be run</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>quiet</strong> – if True, then no output is displayed</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -342,7 +323,7 @@ we default parameters will be run</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.samples" title="Permalink to this definition"></a></dt>
 <dd><p>Access the samples from the posterior distribution generated by the selected sampler</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a dictionary with the samples from the posterior distribution for each parameter</p>
 </dd>
 </dl>
@@ -354,7 +335,7 @@ we default parameters will be run</p>
 <dd><p>Set the sampler
 :param sampler_name: (str) Name of sampler</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>share_spectrum</strong> – (optional) Option to share the spectrum calc</p>
 </dd>
 </dl>
@@ -376,7 +357,7 @@ we default parameters will be run</p>
 <dd><p>sample using the UltraNest numerical integration method
 :rtype:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -387,7 +368,7 @@ we default parameters will be run</p>
 <span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nlive_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcall_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlogz_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logl_max_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_effective_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlive_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcall_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxbatch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_effective</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'multi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflective</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rstate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logl_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logl_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptform_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptform_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_jac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enlarge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bootstrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_move</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/dynesty_sampler.html#DynestyDynamicSampler.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.setup" title="Permalink to this definition"></a></dt>
 <dd><p>TODO describe function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nlive_init</strong> – </p></li>
 <li><p><strong>maxiter_init</strong> – </p></li>
@@ -439,7 +420,7 @@ we default parameters will be run</p>
 <li><p><strong>update_func</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -457,7 +438,7 @@ we default parameters will be run</p>
 <dd><p>sample using the UltraNest numerical integration method
 :rtype:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -468,7 +449,7 @@ we default parameters will be run</p>
 <span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlogz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logl_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_effective</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_live</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'multi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflective</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rstate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logl_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logl_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptform_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptform_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_jac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enlarge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bootstrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_move</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/dynesty_sampler.html#DynestyNestedSampler.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.setup" title="Permalink to this definition"></a></dt>
 <dd><p>TODO describe function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_live_points</strong> – </p></li>
 <li><p><strong>maxiter</strong> – </p></li>
@@ -509,7 +490,7 @@ we default parameters will be run</p>
 <li><p><strong>update_func</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -546,7 +527,7 @@ we default parameters will be run</p>
 <span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_burn_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/emcee_sampler.html#EmceeSampler.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.emcee_sampler.EmceeSampler.setup" title="Permalink to this definition"></a></dt>
 <dd><p>TODO describe function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_iterations</strong> (<em>int</em>) – </p></li>
 <li><p><strong>n_burn_in</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – </p></li>
@@ -554,7 +535,7 @@ we default parameters will be run</p>
 <li><p><strong>seed</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -574,10 +555,10 @@ we default parameters will be run</p>
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/multinest_sampler.html#MultiNestSampler.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.multinest_sampler.MultiNestSampler.sample" title="Permalink to this definition"></a></dt>
 <dd><p>sample using the MultiNest numerical integration method</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -589,7 +570,7 @@ we default parameters will be run</p>
 <dd><p>Setup the MultiNest Sampler. For details see:
 <a class="reference external" href="https://github.com/farhanferoz/MultiNest">https://github.com/farhanferoz/MultiNest</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_live_points</strong> – number of live points for the evaluation</p></li>
 <li><p><strong>chain_name</strong> – the chain name</p></li>
@@ -597,19 +578,85 @@ we default parameters will be run</p>
 <li><p><strong>auto_clean</strong> – automatically remove multinest chains after run</p></li>
 </ul>
 </dd>
-<dt class="field-even">Resume</dt>
+<dt class="field-even">Resume<span class="colon">:</span></dt>
 <dd class="field-even"><p>resume from previous fit</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
+
+</section>
+<section id="module-threeML.bayesian.nautilus_sampler">
+<span id="threeml-bayesian-nautilus-sampler-module"></span><h2>threeML.bayesian.nautilus_sampler module<a class="headerlink" href="#module-threeML.bayesian.nautilus_sampler" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.bayesian.nautilus_sampler.NautilusSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.bayesian.nautilus_sampler.</span></span><span class="sig-name descname"><span class="pre">NautilusSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">likelihood_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/nautilus_sampler.html#NautilusSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.nautilus_sampler.NautilusSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#threeML.bayesian.sampler_base.UnitCubeSampler" title="threeML.bayesian.sampler_base.UnitCubeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnitCubeSampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.bayesian.nautilus_sampler.NautilusSampler.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/nautilus_sampler.html#NautilusSampler.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.nautilus_sampler.NautilusSampler.sample" title="Permalink to this definition"></a></dt>
+<dd><p>sample using the UltraNest numerical integration method
+:rtype:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.bayesian.nautilus_sampler.NautilusSampler.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_live</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enlarge_per_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_networks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neural_network_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">likelihood_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">likelihood_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_like_new_bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_live</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_eff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard_exploration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/nautilus_sampler.html#NautilusSampler.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.nautilus_sampler.NautilusSampler.setup" title="Permalink to this definition"></a></dt>
+<dd><p>setup the nautilus sampler.</p>
+<p>See: <a class="reference external" href="https://nautilus-sampler.readthedocs.io/en/stable/index.html">https://nautilus-sampler.readthedocs.io/en/stable/index.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_live</strong> (<em>int</em>) – Number of so-called live points. New bounds are constructed so that they encompass the live points. Default is 3000.</p></li>
+<li><p><strong>n_update</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The maximum number of additions to the live set before a new bound is created. If None, use n_live. Default is None.</p></li>
+<li><p><strong>enlarge_per_dim</strong> (<em>float</em>) – Along each dimension, outer ellipsoidal bounds are enlarged by this factor. Default is 1.1.</p></li>
+<li><p><strong>n_points_min</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The minimum number of points each ellipsoid should have. Effectively, ellipsoids with less than twice that number will not be split further. If None, uses n_points_min = n_dim + 50. Default is None.</p></li>
+<li><p><strong>split_threshold</strong> (<em>int</em>) – hreshold used for splitting the multi-ellipsoidal bound used for sampling. If the volume of the bound prior enlarging is larger than split_threshold times the target volume, the multi-ellipsiodal bound is split further, if possible. Default is 100.</p></li>
+<li><p><strong>n_networks</strong> (<em>int</em>) – Number of networks used in the estimator. Default is 4.</p></li>
+<li><p><strong>neural_network_kwargs</strong> (<em>Dict</em><em>[</em><em>Any</em><em>]</em>) – Non-default keyword arguments passed to the constructor of MLPRegressor.</p></li>
+<li><p><strong>prior_args</strong> (<em>List</em><em>[</em><em>Any</em><em>]</em>) – List of extra positional arguments for prior. Only used if prior is a function.</p></li>
+<li><p><strong>prior_kwargs</strong> (<em>Dict</em><em>[</em><em>Any</em><em>]</em>) – Dictionary of extra keyword arguments for prior. Only used if prior is a function.</p></li>
+<li><p><strong>likelihood_args</strong> (<em>List</em><em>[</em><em>Any</em><em>]</em>) – List of extra positional arguments for likelihood.</p></li>
+<li><p><strong>likelihood_kwargs</strong> (<em>Dict</em><em>[</em><em>Any</em><em>]</em>) – Dictionary of extra keyword arguments for likelihood.</p></li>
+<li><p><strong>n_batch</strong> (<em>int</em>) – Number of likelihood evaluations that are performed at each step. If likelihood evaluations are parallelized, should be multiple of the number of parallel processes. Very large numbers can lead to new bounds being created long after n_update additions to the live set have been achieved. This will not cause any bias but could reduce efficiency. Default is 100.</p></li>
+<li><p><strong>n_like_new_bound</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The maximum number of likelihood calls before a new bounds is created. If None, use 10 times n_live. Default is None.</p></li>
+<li><p><strong>vectorized</strong> (<em>bool</em>) – If True, the likelihood function can receive multiple input sets at once. For example, if the likelihood function receives arrays, it should be able to take an array with shape (n_points, n_dim) and return an array with shape (n_points). Similarly, if the likelihood function accepts dictionaries, it should be able to process dictionaries where each value is an array with shape (n_points). Default is False.</p></li>
+<li><p><strong>pass_dict</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – If True, the likelihood function expects model parameters as dictionaries. If False, it expects regular numpy arrays. Default is to set it to True if prior was a nautilus.Prior instance and False otherwise</p></li>
+<li><p><strong>pool</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Pool used for parallelization of likelihood calls and sampler calculations. If None, no parallelization is performed. If an integer, the sampler will use a multiprocessing.Pool object with the specified number of processes. Finally, if specifying a tuple, the first one specifies the pool used for likelihood calls and the second one the pool for sampler calculations. Default is None.</p></li>
+<li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Seed for random number generation used for reproducible results accross different runs. If None, results are not reproducible. Default is None.</p></li>
+<li><p><strong>filepath</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – ath to the file where results are saved. Must have a ‘.h5’ or ‘.hdf5’ extension. If None, no results are written. Default is None.</p></li>
+<li><p><strong>resume</strong> (<em>bool</em>) – If True, resume from previous run if filepath exists. If False, start from scratch and overwrite any previous file. Default is True.</p></li>
+<li><p><strong>f_live</strong> (<em>float</em>) – Maximum fraction of the evidence contained in the live set before building the initial shells terminates. Default is 0.01.</p></li>
+<li><p><strong>n_shell</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Minimum number of points in each shell. The algorithm will sample from the shells until this is reached. Default is the batch size of the sampler which is 100 unless otherwise specified.</p></li>
+<li><p><strong>n_eff</strong> (<em>int</em>) – Minimum effective sample size. The algorithm will sample from the shells until this is reached. Default is 10000.</p></li>
+<li><p><strong>discard_exploration</strong> (<em>bool</em>) – Whether to discard points drawn in the exploration phase. This is required for a fully unbiased posterior and evidence estimate. Default is False.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – If True, print additional information. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.bayesian.nautilus_sampler.capture_arguments">
+<span class="sig-prename descclassname"><span class="pre">threeML.bayesian.nautilus_sampler.</span></span><span class="sig-name descname"><span class="pre">capture_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/nautilus_sampler.html#capture_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.nautilus_sampler.capture_arguments" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-threeML.bayesian.sampler_base">
@@ -638,7 +685,7 @@ you need to find the values of the parameters which generated a given value of t
 that the samples accessible through the property .raw_samples are ordered in the same way as the vector
 returned by this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a vector of log. like values</p>
 </dd>
 </dl>
@@ -659,7 +706,7 @@ you need to find the values of the parameters which generated a given value of t
 that the samples accessible through the property .raw_samples are ordered in the same way as the vector
 returned by this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a vector of log probabilty values</p>
 </dd>
 </dl>
@@ -671,7 +718,7 @@ returned by this method.</p>
 <dd><p>Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,
 in the format returned by the sampler)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the samples as returned by the sampler</p>
 </dd>
 </dl>
@@ -704,7 +751,7 @@ in the format returned by the sampler)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.bayesian.sampler_base.SamplerBase.samples" title="Permalink to this definition"></a></dt>
 <dd><p>Access the samples from the posterior distribution generated by the selected sampler</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a dictionary with the samples from the posterior distribution for each parameter</p>
 </dd>
 </dl>
@@ -742,10 +789,10 @@ in the format returned by the sampler)</p>
 <p>If no algorithm as been set, then the configured default algorithm
 we default parameters will be run</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>quiet</strong> – if True, then no output is displayed</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -760,7 +807,7 @@ we default parameters will be run</p>
 to the values in an array. Allows for adding a 3rd dimension
 onto a plot</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>values</strong> – a list a values to map into a cmap</p></li>
 <li><p><strong>cmap</strong> – the mpl colormap to use</p></li>
@@ -789,10 +836,10 @@ onto a plot</p>
 <dt class="sig sig-object py" id="threeML.bayesian.tutorial_material.plot_sample_path">
 <span class="sig-prename descclassname"><span class="pre">threeML.bayesian.tutorial_material.</span></span><span class="sig-name descname"><span class="pre">plot_sample_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bayes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burn_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/tutorial_material.html#plot_sample_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.tutorial_material.plot_sample_path" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>jl</strong> (<a class="reference internal" href="threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood" title="threeML.classicMLE.joint_likelihood.JointLikelihood"><em>JointLikelihood</em></a>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>
@@ -811,7 +858,7 @@ onto a plot</p>
 <dd><p>sample using the UltraNest numerical integration method
 :rtype:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -824,24 +871,24 @@ onto a plot</p>
 <div><p>set up the Ultranest sampler. Consult the documentation:</p>
 <p><a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler">https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">param min_num_live_points</dt>
+<dt class="field-odd">param min_num_live_points<span class="colon">:</span></dt>
 <dd class="field-odd"><p>minimum number of live points throughout the run</p>
 </dd>
-<dt class="field-even">type min_num_live_points</dt>
+<dt class="field-even">type min_num_live_points<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
 </dd>
-<dt class="field-odd">param dlogz</dt>
+<dt class="field-odd">param dlogz<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Target evidence uncertainty. This is the std between bootstrapped logz integrators.</p>
 </dd>
-<dt class="field-even">type dlogz</dt>
+<dt class="field-even">type dlogz<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
-<dt class="field-odd">param chain_name</dt>
+<dt class="field-odd">param chain_name<span class="colon">:</span></dt>
 <dd class="field-odd"><p>where to store output files</p>
 </dd>
-<dt class="field-even">type chain_name</dt>
+<dt class="field-even">type chain_name<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
-<dt class="field-odd">param resume</dt>
+<dt class="field-odd">param resume<span class="colon">:</span></dt>
 <dd class="field-odd"><p>(‘resume’, ‘resume-similar’, ‘overwrite’ or ‘subfolder’) –</p>
 </dd>
 </dl>
@@ -852,25 +899,25 @@ if ‘resume’ or True, continue previous run if available. Only works when dim
 if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.</p>
 <blockquote>
 <div><dl class="field-list simple">
-<dt class="field-odd">type resume</dt>
+<dt class="field-odd">type resume<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">param wrapped_params</dt>
+<dt class="field-even">param wrapped_params<span class="colon">:</span></dt>
 <dd class="field-even"><p>(list of bools) – indicating whether this parameter wraps around (circular parameter).</p>
 </dd>
-<dt class="field-odd">type wrapped_params</dt>
+<dt class="field-odd">type wrapped_params<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
-<dt class="field-even">param stepsampler</dt>
+<dt class="field-even">param stepsampler<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
-<dt class="field-odd">type stepsampler</dt>
+<dt class="field-odd">type stepsampler<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
-<dt class="field-even">param use_mlfriends</dt>
+<dt class="field-even">param use_mlfriends<span class="colon">:</span></dt>
 <dd class="field-even"><p>Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</p>
 </dd>
-<dt class="field-odd">type use_mlfriends</dt>
+<dt class="field-odd">type use_mlfriends<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
-<dt class="field-even">returns</dt>
+<dt class="field-even">returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
 </dl>
 </div></blockquote>
@@ -895,7 +942,7 @@ if ‘resume-similar’, continue previous run if available. Only works when dim
 <span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_iterations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_burn_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_walkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/bayesian/zeus_sampler.html#ZeusSampler.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.zeus_sampler.ZeusSampler.setup" title="Permalink to this definition"></a></dt>
 <dd><p>set up the zeus sampler</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_iterations</strong> – </p></li>
 <li><p><strong>n_burn_in</strong> – </p></li>
@@ -903,7 +950,7 @@ if ‘resume-similar’, continue previous run if available. Only works when dim
 <li><p><strong>seed</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p></p>
 </dd>
 </dl>

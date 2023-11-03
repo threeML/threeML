@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.time_interval</li>
@@ -102,7 +107,7 @@
 
 <div class="viewcode-block" id="TimeInterval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.time_interval.TimeInterval">[docs]</a><span class="k">class</span> <span class="nc">TimeInterval</span><span class="p">(</span><span class="n">Interval</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a new time interval equal to the original time interval shifted to the right by number</span>
 
 <span class="sd">        :param number: a float</span>
@@ -112,7 +117,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">+</span> <span class="n">number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">+</span> <span class="n">number</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a new time interval equal to the original time interval shifted to the left by number</span>
 
 <span class="sd">        :param number: a float</span>
@@ -151,7 +156,7 @@
 
 
 <div class="viewcode-block" id="TimeIntervalSet"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet">[docs]</a><span class="k">class</span> <span class="nc">TimeIntervalSet</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A set of time intervals</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -160,7 +165,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">start_times</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the starts fo the set</span>
 
 <span class="sd">        :return: list of start times</span>
@@ -170,7 +175,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stop_times</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the stops of the set</span>
 
 <span class="sd">        :return:</span>
@@ -180,7 +185,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">absolute_start_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the minimum of the start times</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -189,7 +194,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">absolute_stop_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the maximum of the stop times</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -198,7 +203,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">time_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return an array of time edges if contiguous</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -206,7 +211,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span>
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shift all time intervals to the right by number</span>
 
 <span class="sd">        :param number: a float</span>
@@ -219,7 +224,7 @@
         <span class="k">return</span> <span class="n">new_set</span>
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shift all time intervals to the left by number (in place)</span>
 
 <span class="sd">        :param number: a float</span>
@@ -253,7 +258,7 @@
         <span class="k">return</span> <span class="n">df</span>
 
 <div class="viewcode-block" id="TimeIntervalSet.display"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the time intervals</span>
 
 <span class="sd">        :return: None</span>

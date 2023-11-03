@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.catalogs.Fermi</li>
@@ -119,7 +124,7 @@
 
 
 <span class="k">def</span> <span class="nf">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    checks if source name is valid for both GBM and LLE data</span>
 
 <span class="sd">    :param source: source name</span>
@@ -147,7 +152,7 @@
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiGBMBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Fermi-LAT GBM GRB catalog. Search for GRBs  by trigger</span>
 <span class="sd">        number, location, spectral parameters, T90, and date range.</span>
 
@@ -208,7 +213,7 @@
         <span class="k">return</span> <span class="n">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog.get_detector_information"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.get_detector_information">[docs]</a>    <span class="k">def</span> <span class="nf">get_detector_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the detectors used for spectral analysis as well as their background</span>
 <span class="sd">        intervals. Peak flux and fluence intervals are also returned as well as best fit models</span>
 
@@ -290,7 +295,7 @@
         <span class="k">return</span> <span class="n">DictWithPrettyPrint</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog.get_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;fluence&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model form.</span>
 <span class="sd">        You can choose band, comp, plaw, or sbpl models corresponding to the models</span>
 <span class="sd">        fitted in the GBM catalog. The interval for the fit can be the &#39;fluence&#39; or</span>
@@ -362,7 +367,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_build_band</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a band function from the Fermi-LAT GBM catalog</span>
 
 <span class="sd">        :param name: GRB name</span>
@@ -428,7 +433,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_build_cpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a cpl function from the Fermi-LAT GBM catalog</span>
 
 <span class="sd">        :param name: GRB name</span>
@@ -481,7 +486,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_build_powerlaw</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a pl function from the Fermi-LAT GBM catalog</span>
 
 <span class="sd">        :param name: GRB name</span>
@@ -515,7 +520,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_build_sbpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a sbpl function from the Fermi-LAT GBM catalog</span>
 
 <span class="sd">        :param name: GRB name</span>
@@ -585,7 +590,7 @@
 <span class="c1">######</span>
 <div class="viewcode-block" id="FermiGBMTriggerCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiGBMTriggerCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiGBMTriggerCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Fermi-GBM trigger catalog. </span>
 
 <span class="sd">        :param update: force update the XML VO table</span>
@@ -669,7 +674,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_point_source_from_3fgl</span><span class="p">(</span><span class="n">fgl_name</span><span class="p">,</span> <span class="n">catalog_entry</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Translate a spectrum from the 3FGL into an astromodels spectrum</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -782,7 +787,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">ModelFrom3FGL</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">sources</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelFrom3FGL.free_point_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.ModelFrom3FGL.free_point_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">free_point_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Free the parameters for the point sources within the given radius of the center of the search cone</span>
 
 <span class="sd">        :param radius: radius in degree</span>
@@ -792,7 +797,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_or_fix</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelFrom3FGL.fix_point_sources_within_radius"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.ModelFrom3FGL.fix_point_sources_within_radius">[docs]</a>    <span class="k">def</span> <span class="nf">fix_point_sources_within_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fixes the parameters for the point sources within the given radius of the center of the search cone</span>
 
 <span class="sd">        :param radius: radius in degree</span>
@@ -844,7 +849,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        checks if source name is valid for the 3FGL catalog</span>
 
 <span class="sd">        :param source: source name</span>
@@ -970,7 +975,7 @@
 
 <div class="viewcode-block" id="FermiLLEBurstCatalog"><a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Fermi.FermiLLEBurstCatalog">[docs]</a><span class="k">class</span> <span class="nc">FermiLLEBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger</span>
 <span class="sd">        number, location, trigger type and date range.</span>
 

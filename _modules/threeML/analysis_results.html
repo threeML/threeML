@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.analysis_results</li>
@@ -109,6 +114,7 @@
 <span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
@@ -185,7 +191,7 @@
 
 
 <div class="viewcode-block" id="SEQUENCE"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.SEQUENCE">[docs]</a><span class="k">class</span> <span class="nc">SEQUENCE</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -386,7 +392,7 @@
 
 
 <div class="viewcode-block" id="ANALYSIS_RESULTS"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS">[docs]</a><span class="k">class</span> <span class="nc">ANALYSIS_RESULTS</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis</span>
 
 <span class="sd">    :param analysis_results:</span>
@@ -530,7 +536,7 @@
 
 
 <div class="viewcode-block" id="AnalysisResultsFITS"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsFITS">[docs]</a><span class="k">class</span> <span class="nc">AnalysisResultsFITS</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A FITS file for storing one or more results from 3ML analysis</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -576,7 +582,7 @@
 
 
 <span class="k">class</span> <span class="nc">_AnalysisResults</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A unified class to store results from a maximum likelihood or a Bayesian analysis, which provides a unique interface</span>
 <span class="sd">    and allows for &quot;error propagation&quot; (which means different things in the two contexts) in arbitrary expressions.</span>
 
@@ -639,7 +645,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the matrix of the samples</span>
 
 <span class="sd">        :return:</span>
@@ -653,7 +659,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span>
 
     <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">as_hdf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write results to a FITS or HDF5 file</span>
 
 <span class="sd">        :param filename: the file name</span>
@@ -696,7 +702,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allow for propagation of uncertainties on arbitrary functions. It returns a function which is a wrapper around</span>
 <span class="sd">        the provided input function. Using the wrapper with RandomVariates instances as arguments will return a</span>
 <span class="sd">        RandomVariates result, with the errors propagated.</span>
@@ -749,7 +755,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">optimized_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a copy of the optimized model</span>
 
 <span class="sd">        :return: a copy of the optimized model</span>
@@ -758,7 +764,7 @@
         <span class="k">return</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">estimate_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the covariance matrix from the samples</span>
 
 <span class="sd">        :return: a covariance matrix estimated from the samples</span>
@@ -781,7 +787,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_measures</span>
 
     <span class="k">def</span> <span class="nf">_get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covariance</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the correlation matrix</span>
 
 <span class="sd">        :return: correlation matrix</span>
@@ -842,7 +848,7 @@
         <span class="k">return</span> <span class="n">loglike_dataframe</span>
 
     <span class="k">def</span> <span class="nf">get_statistic_measure_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a panadas DataFrame with additional statistical information including</span>
 <span class="sd">        point and posterior based information criteria as well as their effective number</span>
 <span class="sd">        of free parameters. To use these properly, it is vital you consult the statsitical</span>
@@ -936,7 +942,7 @@
         <span class="k">return</span> <span class="n">results_table</span>
 
     <span class="k">def</span> <span class="nf">get_data_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;equal tail&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a pandas DataFrame with the parameters and their errors, computed as specified in &quot;error_type&quot; and</span>
 <span class="sd">        with the confidence/credibility level specified in cl.</span>
 
@@ -970,7 +976,7 @@
         <span class="n">include_extended</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can also use a frequency, like</span>
 <span class="sd">        1 * u.Hz)</span>
@@ -1041,7 +1047,7 @@
             <span class="k">return</span> <span class="n">bayes_results</span>
 
     <span class="k">def</span> <span class="nf">get_equal_tailed_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        returns the equal tailed interval for the parameter</span>
 
@@ -1064,7 +1070,7 @@
 
 
 <div class="viewcode-block" id="BayesianResults"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults">[docs]</a><span class="k">class</span> <span class="nc">BayesianResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and &quot;error propagation&quot;</span>
 
 <span class="sd">    :param optimized_model: a Model instance with the MAP values of the parameters. A clone will be stored within</span>
@@ -1096,7 +1102,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span> <span class="o">=</span> <span class="n">log_probabilty</span>
 
 <div class="viewcode-block" id="BayesianResults.get_correlation_matrix"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_correlation_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the covariance matrix from the samples</span>
 
 <span class="sd">        :return: the correlation matrix</span>
@@ -1157,7 +1163,7 @@
         <span class="n">components</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce the corner plot showing the marginal distributions in one and two directions.</span>
 
 <span class="sd">        :param renamed_parameters: a python dictionary of parameters to rename.</span>
@@ -1219,7 +1225,7 @@
 
         <span class="n">corner_style</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="o">.</span><span class="n">corner_style</span>
 
-        <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">corner_style</span><span class="o">.</span><span class="n">cmap</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">corner_style</span><span class="o">.</span><span class="n">cmap</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">cmap</span><span class="o">.</span><span class="n">with_extremes</span><span class="p">(</span>
@@ -1261,7 +1267,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">log_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The log probability values</span>
 
 <span class="sd">        :returns:</span>
@@ -1270,7 +1276,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span>
 
 <div class="viewcode-block" id="BayesianResults.corner_plot_cc"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.corner_plot_cc">[docs]</a>    <span class="k">def</span> <span class="nf">corner_plot_cc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">renamed_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">cc_kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Corner plots using chainconsumer which allows for nicer plotting of</span>
 <span class="sd">        marginals</span>
 <span class="sd">        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure</span>
@@ -1347,7 +1353,7 @@
         <span class="k">return</span> <span class="n">fig</span></div>
 
 <div class="viewcode-block" id="BayesianResults.comparison_corner_plot"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.comparison_corner_plot">[docs]</a>    <span class="k">def</span> <span class="nf">comparison_corner_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">other_fits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a corner plot from many different fits which allow for co-plotting of parameters marginals.</span>
 
 <span class="sd">        :param other_fits: other fitted results</span>
@@ -1516,7 +1522,7 @@
         <span class="k">return</span> <span class="n">fig</span></div>
 
 <div class="viewcode-block" id="BayesianResults.plot_chains"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.plot_chains">[docs]</a>    <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce a plot of the series of samples for each parameter</span>
 
 <span class="sd">        :parameter thin: use only one sample every &#39;thin&#39; samples</span>
@@ -1553,7 +1559,7 @@
         <span class="k">return</span> <span class="n">figures</span></div>
 
 <div class="viewcode-block" id="BayesianResults.convergence_plots"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.convergence_plots">[docs]</a>    <span class="k">def</span> <span class="nf">convergence_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same</span>
 <span class="sd">        values if the MCMC has converged to the posterior distribution.</span>
 
@@ -1658,7 +1664,7 @@
 
 <div class="viewcode-block" id="BayesianResults.freedman_diaconis_rule"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.freedman_diaconis_rule">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">freedman_diaconis_rule</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data</span>
 
 <span class="sd">        :param data: an array of data</span>
@@ -1675,7 +1681,7 @@
         <span class="k">return</span> <span class="n">nbins</span></div>
 
 <div class="viewcode-block" id="BayesianResults.get_highest_density_posterior_interval"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval">[docs]</a>    <span class="k">def</span> <span class="nf">get_highest_density_posterior_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        returns the highest density posterior interval for that parameter</span>
 
@@ -1697,7 +1703,7 @@
         <span class="k">return</span> <span class="n">variates</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BayesianResults.get_median_fit_model"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_median_fit_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_median_fit_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the model parameters to the mean of the marginal distributions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1725,7 +1731,7 @@
 
 
 <div class="viewcode-block" id="MLEResults"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults">[docs]</a><span class="k">class</span> <span class="nc">MLEResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build the _AnalysisResults object starting from a covariance matrix.</span>
 
 
@@ -1864,7 +1870,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the covariance matrix.</span>
 
 <span class="sd">        :return: covariance matrix or None (if the class was built from samples.</span>
@@ -1874,7 +1880,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covariance_matrix</span>
 
 <div class="viewcode-block" id="MLEResults.get_correlation_matrix"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_correlation_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute correlation matrix</span>
 
 <span class="sd">        :return: the correlation matrix</span>
@@ -1917,7 +1923,7 @@
 
 
 <div class="viewcode-block" id="AnalysisResultsSet"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet">[docs]</a><span class="k">class</span> <span class="nc">AnalysisResultsSet</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A container for results which behaves like a list (but you cannot add/remove elements).</span>
 
 <span class="sd">    You can index (analysis_set[0]), iterate (for item in analysis_set) and measure with len()</span>
@@ -1936,7 +1942,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AnalysisResultsSet.set_x"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_x">[docs]</a>    <span class="k">def</span> <span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when</span>
 <span class="sd">        saving these results to a FITS file.</span>
 
@@ -1965,7 +1971,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">characterize_sequence</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AnalysisResultsSet.set_bins"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_bins">[docs]</a>    <span class="k">def</span> <span class="nf">set_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when</span>
 <span class="sd">        saving these results to a FITS file</span>
 
@@ -2007,7 +2013,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">characterize_sequence</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AnalysisResultsSet.characterize_sequence"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.characterize_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">characterize_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Characterize the sequence of these results. The provided data frame will be saved along with the results</span>
 <span class="sd">        in the &quot;SEQUENCE&quot; extension to allow the interpretation of the results.</span>
 
@@ -2033,7 +2039,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_tuple</span> <span class="o">=</span> <span class="n">data_tuple</span></div>
 
 <div class="viewcode-block" id="AnalysisResultsSet.write_to"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write this set of results to a FITS file.</span>
 
 <span class="sd">        :param filename: name for the output file</span>
@@ -2091,7 +2097,7 @@
 
 
 <div class="viewcode-block" id="load_analysis_results"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results">[docs]</a><span class="k">def</span> <span class="nf">load_analysis_results</span><span class="p">(</span><span class="n">fits_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load the results of one or more analysis from a FITS file produced by 3ML</span>
 
 <span class="sd">    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults</span>
@@ -2118,7 +2124,7 @@
 
 
 <div class="viewcode-block" id="load_analysis_results_hdf"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results_hdf">[docs]</a><span class="k">def</span> <span class="nf">load_analysis_results_hdf</span><span class="p">(</span><span class="n">hdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load the results of one or more analysis from a FITS file produced by 3ML</span>
 
 <span class="sd">    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults</span>

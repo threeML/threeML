@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.io.plotting.post_process_data_plots</li>
@@ -94,6 +99,7 @@
              
   <h1>Source code for threeML.io.plotting.post_process_data_plots</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">threeML.plugins.PhotometryLike</span> <span class="k">as</span> <span class="nn">photolike</span>
 <span class="kn">import</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="k">as</span> <span class="nn">speclike</span>
@@ -101,9 +107,16 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">threeML.plugins.FermiLATLike</span> <span class="kn">import</span> <span class="n">FermiLATLike</span>
 
-    <span class="n">LATLike</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">FermiLATLike_flag</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">LATLike</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">FermiLATLike_flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">threeML.plugins.FermipyLike</span> <span class="kn">import</span> <span class="n">FermipyLike</span>
+
+    <span class="n">FermipyLike_flag</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">FermipyLike_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span> <span class="nn">threeML.config.plotting_structure</span> <span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
@@ -127,7 +140,7 @@
 
 
 <div class="viewcode-block" id="display_spectrum_model_counts"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.post_process_data_plots.display_spectrum_model_counts">[docs]</a><span class="k">def</span> <span class="nf">display_spectrum_model_counts</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Display the fitted model count spectrum of one or more Spectrum plugins</span>
 
@@ -181,11 +194,13 @@
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">speclike</span><span class="o">.</span><span class="n">SpectrumLike</span><span class="p">):</span>
                 <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">LATLike</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">FermiLATLike</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">FermiLATLike_flag</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">FermiLATLike</span><span class="p">):</span>
+                <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">FermipyLike_flag</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">data_list</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">FermipyLike</span><span class="p">):</span>
                 <span class="n">new_data_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Dataset </span><span class="si">%s</span><span class="s2"> is not of the SpectrumLike or FermiLATLike  kind. Cannot be plotted by display_spectrum_model_counts&quot;</span>
+                    <span class="s2">&quot;Dataset </span><span class="si">%s</span><span class="s2"> is not of the SpectrumLike, FermiLATLike or FermipyLATLike kind. Cannot be plotted by display_spectrum_model_counts&quot;</span>
                     <span class="o">%</span> <span class="n">key</span>
                 <span class="p">)</span>
 
@@ -568,7 +583,7 @@
 
 
 <div class="viewcode-block" id="display_photometry_model_magnitudes"><a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.post_process_data_plots.display_photometry_model_magnitudes">[docs]</a><span class="k">def</span> <span class="nf">display_photometry_model_magnitudes</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Display the fitted model count spectrum of one or more Spectrum plugins</span>
 
@@ -677,7 +692,7 @@
         <span class="n">step</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="s2">&quot;data_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">data_cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_cmap&quot;</span><span class="p">))</span>
+        <span class="n">data_cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;data_cmap&quot;</span><span class="p">))</span>
         <span class="n">data_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_keys</span><span class="p">),</span> <span class="n">data_cmap</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s2">&quot;model_cmap&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>

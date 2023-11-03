@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.plugins.FermipyLike</li>
@@ -94,32 +99,39 @@
              
   <h1>Source code for threeML.plugins.FermipyLike</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
-<span class="kn">import</span> <span class="nn">astromodels</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">fits</span>
-<span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">circmean</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">import</span> <span class="nn">collections</span>
 
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">astromodels</span>
+<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">fits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">astromodels.core</span> <span class="kn">import</span> <span class="n">parameter_transformation</span>
-
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">circmean</span>
+<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span> <span class="nn">threeML.config.plotting_structure</span> <span class="kn">import</span> <span class="n">FermiSpectrumPlot</span>
 <span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">sanitize_filename</span>
-<span class="kn">from</span> <span class="nn">threeML.plugin_prototype</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.gammaln</span> <span class="kn">import</span> <span class="n">logfactorial</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.unique_deterministic_tag</span> <span class="kn">import</span> <span class="n">get_unique_deterministic_tag</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.power_of_two_utils</span> <span class="kn">import</span> <span class="n">is_power_of_2</span>
-<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
 <span class="kn">from</span> <span class="nn">threeML.io.dict_with_pretty_print</span> <span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">sanitize_filename</span>
 <span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span> <span class="nn">threeML.io.plotting.cmap_cycle</span> <span class="kn">import</span> <span class="n">cmap_intervals</span>
+<span class="kn">from</span> <span class="nn">threeML.io.plotting.data_residual_plot</span> <span class="kn">import</span> <span class="n">ResidualPlot</span>
+<span class="kn">from</span> <span class="nn">threeML.plugin_prototype</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.power_of_two_utils</span> <span class="kn">import</span> <span class="n">is_power_of_2</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.statistics.gammaln</span> <span class="kn">import</span> <span class="n">logfactorial</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">Significance</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.unique_deterministic_tag</span> <span class="kn">import</span> <span class="n">get_unique_deterministic_tag</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;Fermi LAT (with fermipy)&quot;</span>
@@ -153,7 +165,16 @@
         <span class="p">(</span><span class="s2">&quot;binning&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;roiwidth&quot;</span><span class="p">,</span> <span class="s2">&quot;binsz&quot;</span><span class="p">,</span> <span class="s2">&quot;binsperdec&quot;</span><span class="p">)),</span>
         <span class="p">(</span>
             <span class="s2">&quot;selection&quot;</span><span class="p">,</span>
-            <span class="p">(</span><span class="s2">&quot;emin&quot;</span><span class="p">,</span> <span class="s2">&quot;emax&quot;</span><span class="p">,</span> <span class="s2">&quot;zmax&quot;</span><span class="p">,</span> <span class="s2">&quot;evclass&quot;</span><span class="p">,</span> <span class="s2">&quot;evtype&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;emin&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;emax&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;zmax&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;evclass&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;evtype&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;filter&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
@@ -170,7 +191,8 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">configuration</span><span class="p">[</span><span class="n">section</span><span class="p">]:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
-                    <span class="s2">&quot;Section </span><span class="si">%s</span><span class="s2"> in configuration lacks key </span><span class="si">%s</span><span class="s2">, which is required&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                    <span class="s2">&quot;Section </span><span class="si">%s</span><span class="s2"> in configuration lacks key </span><span class="si">%s</span><span class="s2">, which is required&quot;</span>
+                    <span class="o">%</span> <span class="n">key</span>
                 <span class="p">)</span>
 
             <span class="n">string_to_hash</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">configuration</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
@@ -179,7 +201,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_fermipy_instance</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a &#39;model&#39; configuration section for fermipy starting from a likelihood model from astromodels</span>
 
 <span class="sd">    :param configuration: a dictionary containing the configuration for fermipy</span>
@@ -229,10 +251,13 @@
     <span class="c1"># analysis a lot)</span>
     <span class="c1"># NOTE: these are going to be absolute paths</span>
 
-    <span class="n">galactic_template</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span> <span class="n">sanitize_filename</span><span class="p">(</span>
-        <span class="n">findGalacticTemplate</span><span class="p">(</span><span class="n">irfs</span><span class="p">,</span> <span class="n">ra_center</span><span class="p">,</span> <span class="n">dec_center</span><span class="p">,</span> <span class="n">roi_radius</span><span class="p">),</span> <span class="kc">True</span>  <span class="c1"># noqa: F821</span>
-    <span class="p">)</span> <span class="p">)</span>
-    <span class="n">isotropic_template</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">findIsotropicTemplate</span><span class="p">(</span><span class="n">irfs</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># noqa: F821</span>
+    <span class="n">galactic_template</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">sanitize_filename</span><span class="p">(</span>
+            <span class="n">findGalacticTemplate</span><span class="p">(</span><span class="n">irfs</span><span class="p">,</span> <span class="n">ra_center</span><span class="p">,</span> <span class="n">dec_center</span><span class="p">,</span> <span class="n">roi_radius</span><span class="p">),</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa: F821</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">isotropic_template</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">findIsotropicTemplate</span><span class="p">(</span><span class="n">irfs</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>  <span class="c1"># noqa: F821</span>
 
     <span class="c1"># Add them to the fermipy model</span>
 
@@ -247,7 +272,11 @@
         <span class="n">likelihood_model</span><span class="o">.</span><span class="n">point_sources</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
     <span class="p">):</span>  <span class="c1"># type: astromodels.PointSource</span>
 
-        <span class="n">this_source</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Index&quot;</span><span class="p">:</span> <span class="mf">2.56233</span><span class="p">,</span> <span class="s2">&quot;Scale&quot;</span><span class="p">:</span> <span class="mf">572.78</span><span class="p">,</span> <span class="s2">&quot;Prefactor&quot;</span><span class="p">:</span> <span class="mf">2.4090e-12</span><span class="p">}</span>
+        <span class="n">this_source</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Index&quot;</span><span class="p">:</span> <span class="mf">2.56233</span><span class="p">,</span>
+            <span class="s2">&quot;Scale&quot;</span><span class="p">:</span> <span class="mf">572.78</span><span class="p">,</span>
+            <span class="s2">&quot;Prefactor&quot;</span><span class="p">:</span> <span class="mf">2.4090e-12</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_source</span><span class="o">.</span><span class="n">name</span>
         <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">value</span>
         <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">value</span>
@@ -263,14 +292,18 @@
         <span class="n">likelihood_model</span><span class="o">.</span><span class="n">extended_sources</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
     <span class="p">):</span>  <span class="c1"># type: astromodels.ExtendedSource</span>
 
-        <span class="n">this_source</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Index&quot;</span><span class="p">:</span> <span class="mf">2.56233</span><span class="p">,</span> <span class="s2">&quot;Scale&quot;</span><span class="p">:</span> <span class="mf">572.78</span><span class="p">,</span> <span class="s2">&quot;Prefactor&quot;</span><span class="p">:</span> <span class="mf">2.4090e-12</span><span class="p">}</span>
+        <span class="n">this_source</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Index&quot;</span><span class="p">:</span> <span class="mf">2.56233</span><span class="p">,</span>
+            <span class="s2">&quot;Scale&quot;</span><span class="p">:</span> <span class="mf">572.78</span><span class="p">,</span>
+            <span class="s2">&quot;Prefactor&quot;</span><span class="p">:</span> <span class="mf">2.4090e-12</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span>
         <span class="c1"># The spectrum used here is unconsequential, as it will be substituted by a FileFunction</span>
         <span class="c1"># later on. So I will just use PowerLaw for everything</span>
         <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;SpectrumType&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;PowerLaw&quot;</span>
-        
+
         <span class="n">theShape</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">spatial_shape</span>
-        
+
         <span class="k">if</span> <span class="n">theShape</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Disk_on_sphere&quot;</span><span class="p">:</span>
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;SpatialModel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RadialDisk&quot;</span>
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span>
@@ -281,28 +314,31 @@
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;SpatialModel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RadialGaussian&quot;</span>
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span>
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span>
-            <span class="c1">#fermipy/fermi tools expect 68% containment radius = 1.36 sigma</span>
+            <span class="c1"># fermipy/fermi tools expect 68% containment radius = 1.36 sigma</span>
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;SpatialWidth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.36</span> <span class="o">*</span> <span class="n">theShape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">value</span>
 
         <span class="k">elif</span> <span class="n">theShape</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;SpatialTemplate_2D&quot;</span><span class="p">:</span>
-            
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="p">(</span><span class="n">ra_min</span><span class="p">,</span> <span class="n">ra_max</span><span class="p">),</span> <span class="p">(</span><span class="n">dec_min</span><span class="p">,</span> <span class="n">dec_max</span><span class="p">)</span> <span class="o">=</span> <span class="n">theShape</span><span class="o">.</span><span class="n">get_boundaries</span><span class="p">()</span>
-                <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">circmean</span><span class="p">(</span> <span class="p">[</span><span class="n">ra_min</span><span class="p">,</span> <span class="n">ra_max</span><span class="p">]</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="p">)</span><span class="o">.</span><span class="n">value</span>
-                <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">circmean</span><span class="p">(</span> <span class="p">[</span><span class="n">dec_min</span><span class="p">,</span> <span class="n">dec_max</span><span class="p">]</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="p">)</span><span class="o">.</span><span class="n">value</span>
-                
+                <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">circmean</span><span class="p">([</span><span class="n">ra_min</span><span class="p">,</span> <span class="n">ra_max</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">circmean</span><span class="p">([</span><span class="n">dec_min</span><span class="p">,</span> <span class="n">dec_max</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
             <span class="k">except</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="sa">f</span><span class="s2">&quot;Source </span><span class="si">{</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not have a template file set; must call read_file first()&quot;</span>  <span class="p">)</span>
-                
+                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Source </span><span class="si">{</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not have a template file set; must call read_file first()&quot;</span>
+                <span class="p">)</span>
+
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;SpatialModel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;SpatialMap&quot;</span>
             <span class="n">this_source</span><span class="p">[</span><span class="s2">&quot;Spatial_Filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">theShape</span><span class="o">.</span><span class="n">_fitsfile</span>
 
         <span class="k">else</span><span class="p">:</span>
-        
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extended source </span><span class="si">{</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: shape </span><span class="si">{</span><span class="n">theShape</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not yet implemented for FermipyLike&quot;</span><span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Extended source </span><span class="si">{</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: shape </span><span class="si">{</span><span class="n">theShape</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not yet implemented for FermipyLike&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_source</span><span class="p">)</span>
-
 
     <span class="c1"># Add all sources to the model</span>
     <span class="n">fermipy_model</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sources</span>
@@ -325,12 +361,14 @@
     <span class="p">):</span>  <span class="c1"># type: astromodels.PointSource</span>
 
         <span class="c1"># This will substitute the current spectrum with a FileFunction with the same shape and flux</span>
-        <span class="n">gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span>
+            <span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
         <span class="c1"># Get the energies at which to evaluate this source</span>
         <span class="n">this_log_energies</span><span class="p">,</span> <span class="n">_flux</span> <span class="o">=</span> <span class="n">gta</span><span class="o">.</span><span class="n">get_source_dnde</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">this_energies_keV</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">10</span> <span class="o">**</span> <span class="n">this_log_energies</span> <span class="o">*</span> <span class="mf">1e3</span>
+            <span class="mi">10</span><span class="o">**</span><span class="n">this_log_energies</span> <span class="o">*</span> <span class="mf">1e3</span>
         <span class="p">)</span>  <span class="c1"># fermipy energies are in GeV, we need keV</span>
 
         <span class="k">if</span> <span class="n">energies_keV</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -342,10 +380,12 @@
             <span class="c1"># This is to make sure that all sources are evaluated at the same energies</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">energies_keV</span> <span class="o">==</span> <span class="n">this_energies_keV</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;All sources should be evaluated at the same energies.&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                    <span class="s2">&quot;All sources should be evaluated at the same energies.&quot;</span>
+                <span class="p">)</span>
 
         <span class="n">dnde</span> <span class="o">=</span> <span class="n">point_source</span><span class="p">(</span><span class="n">energies_keV</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s keV)</span>
-        <span class="n">dnde_per_MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dnde</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">)</span> <span class="c1"># ph / (cm2 s MeV)</span>
+        <span class="n">dnde_per_MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dnde</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s MeV)</span>
         <span class="n">gta</span><span class="o">.</span><span class="n">set_source_dnde</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dnde_per_MeV</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Same for extended source</span>
@@ -354,12 +394,14 @@
     <span class="p">):</span>  <span class="c1"># type: astromodels.ExtendedSource</span>
 
         <span class="c1"># This will substitute the current spectrum with a FileFunction with the same shape and flux</span>
-        <span class="n">gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span>
+            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
         <span class="c1"># Get the energies at which to evaluate this source</span>
         <span class="n">this_log_energies</span><span class="p">,</span> <span class="n">_flux</span> <span class="o">=</span> <span class="n">gta</span><span class="o">.</span><span class="n">get_source_dnde</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">this_energies_keV</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">10</span> <span class="o">**</span> <span class="n">this_log_energies</span> <span class="o">*</span> <span class="mf">1e3</span>
+            <span class="mi">10</span><span class="o">**</span><span class="n">this_log_energies</span> <span class="o">*</span> <span class="mf">1e3</span>
         <span class="p">)</span>  <span class="c1"># fermipy energies are in GeV, we need keV</span>
 
         <span class="k">if</span> <span class="n">energies_keV</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -371,10 +413,14 @@
             <span class="c1"># This is to make sure that all sources are evaluated at the same energies</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">energies_keV</span> <span class="o">==</span> <span class="n">this_energies_keV</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;All sources should be evaluated at the same energies.&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                    <span class="s2">&quot;All sources should be evaluated at the same energies.&quot;</span>
+                <span class="p">)</span>
 
-        <span class="n">dnde</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">get_spatially_integrated_flux</span><span class="p">(</span><span class="n">energies_keV</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s keV)</span>
-        <span class="n">dnde_per_MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dnde</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">)</span> <span class="c1"># ph / (cm2 s MeV)</span>
+        <span class="n">dnde</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">get_spatially_integrated_flux</span><span class="p">(</span>
+            <span class="n">energies_keV</span>
+        <span class="p">)</span>  <span class="c1"># ph / (cm2 s keV)</span>
+        <span class="n">dnde_per_MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dnde</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s MeV)</span>
         <span class="n">gta</span><span class="o">.</span><span class="n">set_source_dnde</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dnde_per_MeV</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">gta</span><span class="p">,</span> <span class="n">energies_keV</span>
@@ -383,7 +429,10 @@
 <span class="k">def</span> <span class="nf">_expensive_imports_hook</span><span class="p">():</span>
 
     <span class="kn">from</span> <span class="nn">fermipy.gtanalysis</span> <span class="kn">import</span> <span class="n">GTAnalysis</span>
-    <span class="kn">from</span> <span class="nn">GtBurst.LikelihoodComponent</span> <span class="kn">import</span> <span class="n">findGalacticTemplate</span><span class="p">,</span> <span class="n">findIsotropicTemplate</span>
+    <span class="kn">from</span> <span class="nn">GtBurst.LikelihoodComponent</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">findGalacticTemplate</span><span class="p">,</span>
+        <span class="n">findIsotropicTemplate</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;GTAnalysis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GTAnalysis</span>
     <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;findGalacticTemplate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">findGalacticTemplate</span>
@@ -391,7 +440,7 @@
 
 
 <div class="viewcode-block" id="FermipyLike"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike">[docs]</a><span class="k">class</span> <span class="nc">FermipyLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plugin for the data of the Fermi Large Area Telescope, based on fermipy (http://fermipy.readthedocs.io/)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -406,7 +455,7 @@
         <span class="k">return</span> <span class="n">instance</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fermipy_config</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param name: a name for this instance</span>
 <span class="sd">        :param fermipy_config: either a path to a YAML configuration file or a dictionary containing the configuration</span>
 <span class="sd">        (see http://fermipy.readthedocs.io/)</span>
@@ -416,7 +465,9 @@
 
         <span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">FermipyLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">nuisance_parameters</span><span class="o">=</span><span class="n">nuisance_parameters</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FermipyLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">nuisance_parameters</span><span class="o">=</span><span class="n">nuisance_parameters</span>
+        <span class="p">)</span>
 
         <span class="c1"># Check whether the provided configuration is a file</span>
 
@@ -465,20 +516,22 @@
 
         <span class="c1"># As minimum there must be a evfile and a scfile</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s2">&quot;evfile&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="s2">&quot;You must provide a evfile in the data section&quot;</span> <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;You must provide a evfile in the data section&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s2">&quot;scfile&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="s2">&quot;You must provide a scfile in the data section&quot;</span> <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;You must provide a scfile in the data section&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">datum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
 
             <span class="c1"># Sanitize file name, as fermipy is not very good at handling relative paths or env. variables</span>
 
-            <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">datum</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span> <span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">sanitize_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">datum</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">datum</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">datum</span><span class="p">]</span> <span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="s2">&quot;File </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">) not found&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">datum</span><span class="p">)</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="n">datum</span><span class="p">]):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">) not found&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">datum</span><span class="p">))</span>
 
         <span class="c1"># Prepare the &#39;fileio&#39; part</span>
         <span class="c1"># Save all output in a directory with a unique name which depends on the configuration,</span>
@@ -492,7 +545,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;fileio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;outdir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_id</span><span class="p">}</span>
 
         <span class="c1"># Ensure that there is a complete definition of a Region Of Interest (ROI)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="s2">&quot;ra&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;dec&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;ra&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;dec&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">])</span>
+        <span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                 <span class="s2">&quot;You have to provide &#39;ra&#39; and &#39;dec&#39; in the &#39;selection&#39; section of the configuration. Source name &quot;</span>
                 <span class="s2">&quot;resolution, as well as Galactic coordinates, are not currently supported&quot;</span>
@@ -500,9 +556,8 @@
 
         <span class="c1"># This is empty at the beginning, will be instanced in the set_model method</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span> <span class="o">=</span> <span class="kc">None</span>
- 
+        <span class="c1"># observation_duration = self._configuration[&quot;selection&quot;][&quot;tmax&quot;] - self._configuration[&quot;selection&quot;][&quot;tmin&quot;]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_inner_minimization</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-
 
 <div class="viewcode-block" id="FermipyLike.get_basic_config"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_basic_config">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_basic_config</span><span class="p">(</span>
@@ -516,8 +571,8 @@
         <span class="n">evclass</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
         <span class="n">evtype</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
         <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;DATA_QUAL&gt;0 &amp;&amp; LAT_CONFIG==1&quot;</span><span class="p">,</span>
-        <span class="n">fermipy_verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="n">fermitools_chatter</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">fermipy_verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">fermitools_chatter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="kn">from</span> <span class="nn">fermipy.config</span> <span class="kn">import</span> <span class="n">ConfigManager</span>
@@ -527,13 +582,13 @@
             <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;fermipy_basic_config.yml&quot;</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># type: dict</span>
 
-        <span class="n">evfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">evfile</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">scfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">scfile</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">evfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">evfile</span><span class="p">))</span>
+        <span class="n">scfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">scfile</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">evfile</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="s2">&quot;The provided evfile </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span> <span class="n">evfile</span> <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;The provided evfile </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span> <span class="n">evfile</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">scfile</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="s2">&quot;The provided scfile </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span> <span class="n">scfile</span> <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;The provided scfile </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span> <span class="n">scfile</span><span class="p">)</span>
 
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;evfile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">evfile</span>
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;scfile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scfile</span>
@@ -541,13 +596,15 @@
         <span class="n">ra</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ra</span><span class="p">)</span>
         <span class="n">dec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ra</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">ra</span> <span class="o">&lt;=</span> <span class="mi">360</span> <span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ra</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ra</span> <span class="o">&lt;=</span> <span class="mi">360</span><span class="p">)):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
-                <span class="s2">&quot;The provided R.A. (</span><span class="si">%s</span><span class="s2">) is not valid. Should be 0 &lt;= ra &lt;= 360.0&quot;</span> <span class="o">%</span> <span class="n">ra</span>
+                <span class="s2">&quot;The provided R.A. (</span><span class="si">%s</span><span class="s2">) is not valid. Should be 0 &lt;= ra &lt;= 360.0&quot;</span>
+                <span class="o">%</span> <span class="n">ra</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="o">-</span><span class="mi">90</span> <span class="o">&lt;=</span> <span class="n">dec</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dec</span> <span class="o">&lt;=</span> <span class="mi">90</span><span class="p">)):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span> <span class="p">(</span>
-                <span class="s2">&quot;The provided Dec (</span><span class="si">%s</span><span class="s2">) is not valid. Should be -90 &lt;= dec &lt;= 90.0&quot;</span> <span class="o">%</span> <span class="n">dec</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s2">&quot;The provided Dec (</span><span class="si">%s</span><span class="s2">) is not valid. Should be -90 &lt;= dec &lt;= 90.0&quot;</span>
+                <span class="o">%</span> <span class="n">dec</span>
             <span class="p">)</span>
 
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ra</span>
@@ -560,7 +617,7 @@
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;emax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">emax</span>
 
         <span class="n">zmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">zmax</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">zmax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">zmax</span> <span class="o">&lt;=</span> <span class="mf">180.0</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">zmax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">zmax</span> <span class="o">&lt;=</span> <span class="mf">180.0</span><span class="p">)):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                 <span class="s2">&quot;The provided Zenith angle cut (zmax = </span><span class="si">%s</span><span class="s2">) is not valid. &quot;</span>
                 <span class="s2">&quot;Should be 0 &lt;= zmax &lt;= 180.0&quot;</span> <span class="o">%</span> <span class="n">zmax</span>
@@ -571,13 +628,13 @@
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">scfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">ft2_</span><span class="p">:</span>
             <span class="n">tmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ft2_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTART&quot;</span><span class="p">])</span>
             <span class="n">tmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ft2_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;TSTOP&quot;</span><span class="p">])</span>
-        
+
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;tmin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmin</span>
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;tmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmax</span>
 
         <span class="n">evclass</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">evclass</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_power_of_2</span><span class="p">(</span><span class="n">evclass</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span> <span class="s2">&quot;The provided evclass is not a power of 2.&quot;</span> <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;The provided evclass is not a power of 2.&quot;</span><span class="p">)</span>
 
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;evclass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">evclass</span>
 
@@ -588,15 +645,16 @@
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;filter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">filter</span>
 
         <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">][</span><span class="s2">&quot;verbosity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fermipy_verbosity</span>
-        <span class="c1">#(In fermipy convention, 0 = critical only, 1 also errors, 2 also warnings, 3 also info, 4 also debug)</span>
-        <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">][</span><span class="s2">&quot;chatter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fermitools_chatter</span> <span class="c1">#0 = no screen output. 2 = some output, 4 = lot of output.</span>
-
+        <span class="c1"># (In fermipy convention, 0 = critical only, 1 also errors, 2 also warnings, 3 also info, 4 also debug)</span>
+        <span class="n">basic_config</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">][</span>
+            <span class="s2">&quot;chatter&quot;</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">fermitools_chatter</span>  <span class="c1"># 0 = no screen output. 2 = some output, 4 = lot of output.</span>
 
         <span class="k">return</span> <span class="n">DictWithPrettyPrint</span><span class="p">(</span><span class="n">basic_config</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the loaded configuration</span>
 
 <span class="sd">        :return: a dictionary containing the active configuration</span>
@@ -614,8 +672,29 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span>
 
+<div class="viewcode-block" id="FermipyLike.get_observation_duration"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_observation_duration">[docs]</a>    <span class="k">def</span> <span class="nf">get_observation_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">event_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;evfile&quot;</span><span class="p">]</span>
+        <span class="n">tmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;tmin&quot;</span><span class="p">]</span>
+        <span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;tmax&quot;</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">event_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">gti_start</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;GTI&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">START</span>
+            <span class="n">gti_stop</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;GTI&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">STOP</span>
+
+        <span class="n">myfilter</span> <span class="o">=</span> <span class="p">(</span><span class="n">gti_stop</span> <span class="o">&gt;</span> <span class="n">tmin</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">gti_start</span> <span class="o">&lt;</span> <span class="n">tmax</span><span class="p">)</span>
+
+        <span class="n">gti_sum</span> <span class="o">=</span> <span class="p">(</span><span class="n">gti_stop</span><span class="p">[</span><span class="n">myfilter</span><span class="p">]</span> <span class="o">-</span> <span class="n">gti_start</span><span class="p">[</span><span class="n">myfilter</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">observation_duration</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gti_sum</span>
+            <span class="o">-</span> <span class="p">(</span><span class="n">tmin</span> <span class="o">-</span> <span class="n">gti_start</span><span class="p">[</span><span class="n">myfilter</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="o">-</span> <span class="p">(</span><span class="n">gti_stop</span><span class="p">[</span><span class="n">myfilter</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tmax</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FermipyLike - GTI SUM...:</span><span class="si">{</span><span class="n">observation_duration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">observation_duration</span></div>
+
 <div class="viewcode-block" id="FermipyLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -627,14 +706,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pts_energies</span> <span class="o">=</span> <span class="n">_get_fermipy_instance</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">,</span> <span class="n">likelihood_model_instance</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_model_in_fermipy</span><span class="p">(</span> <span class="n">update_dictionary</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_update</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-            
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_model_in_fermipy</span><span class="p">(</span><span class="n">update_dictionary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="c1"># Build the list of the nuisance parameters</span>
         <span class="n">new_nuisance_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_nuisance_parameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_nuisance_parameters</span><span class="p">(</span><span class="n">new_nuisance_parameters</span><span class="p">)</span></div>
 
-
-    <span class="k">def</span> <span class="nf">_update_model_in_fermipy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_dictionary</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">force_update</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_update_model_in_fermipy</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">update_dictionary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
 
         <span class="c1"># Substitute all spectra for point sources with FileSpectrum, so that we will be able to control</span>
         <span class="c1"># them from 3ML</span>
@@ -642,25 +722,34 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">point_sources</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="p">):</span>  <span class="c1"># type: astromodels.PointSource</span>
 
-  
-            <span class="c1">#Update this source only if it has free parameters (to gain time)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">point_source</span><span class="o">.</span><span class="n">has_free_parameters</span> <span class="ow">or</span> <span class="n">force_update</span><span class="p">):</span>
+            <span class="c1"># Update this source only if it has free parameters (to gain time)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">has_free_parameters</span> <span class="ow">or</span> <span class="n">force_update</span><span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="c1">#Update source position if free</span>
-            <span class="k">if</span> <span class="n">force_update</span> <span class="ow">or</span> <span class="p">(</span> <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">free</span> <span class="ow">or</span> <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">free</span> <span class="p">):</span>
- 
+            <span class="c1"># Update source position if free</span>
+            <span class="k">if</span> <span class="n">force_update</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">free</span> <span class="ow">or</span> <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">free</span>
+            <span class="p">):</span>
+
                 <span class="n">model_pos</span> <span class="o">=</span> <span class="n">point_source</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">sky_coord</span>
-                <span class="n">fermipy_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_source_by_name</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">skydir</span>
-                
-                <span class="k">if</span>  <span class="n">model_pos</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span> <span class="n">fermipy_pos</span> <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;degree&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="n">delta</span> <span class="p">:</span>
-                    <span class="c1">#modeled after how this is done in fermipy</span>
-                    <span class="c1">#(cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)</span>
+                <span class="n">fermipy_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_source_by_name</span><span class="p">(</span>
+                    <span class="n">point_source</span><span class="o">.</span><span class="n">name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">skydir</span>
+
+                <span class="k">if</span> <span class="n">model_pos</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">fermipy_pos</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;degree&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="n">delta</span><span class="p">:</span>
+                    <span class="c1"># modeled after how this is done in fermipy</span>
+                    <span class="c1"># (cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)</span>
                     <span class="n">temp_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">delete_source</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                    <span class="n">temp_source</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span> <span class="n">model_pos</span> <span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">temp_source</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">temp_source</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">model_pos</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span>
+                        <span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">temp_source</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">free_source</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span>
+                        <span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span>
+                        <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span><span class="p">,</span>
+                    <span class="p">)</span>
 
             <span class="c1"># Now set the spectrum of this source to the right one</span>
             <span class="n">dnde</span> <span class="o">=</span> <span class="n">point_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_energies</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s keV)</span>
@@ -669,68 +758,115 @@
             <span class="c1"># it does not change the result.</span>
             <span class="c1"># (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_dnde</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dnde_MeV</span><span class="p">,</span> <span class="n">update_source</span> <span class="o">=</span> <span class="n">update_dictionary</span><span class="p">)</span>
-                
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_dnde</span><span class="p">(</span>
+                <span class="n">point_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dnde_MeV</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span>
+            <span class="p">)</span>
+
         <span class="c1"># Same for extended source</span>
         <span class="k">for</span> <span class="n">extended_source</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">extended_sources</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="p">):</span>  <span class="c1"># type: astromodels.ExtendedSource</span>
 
-            <span class="c1">#Update this source only if it has free parameters (to gain time)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">has_free_parameters</span> <span class="ow">or</span> <span class="n">force_update</span><span class="p">):</span>
+            <span class="c1"># Update this source only if it has free parameters (to gain time)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">has_free_parameters</span> <span class="ow">or</span> <span class="n">force_update</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="n">theShape</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">spatial_shape</span>
             <span class="k">if</span> <span class="n">theShape</span><span class="o">.</span><span class="n">has_free_parameters</span> <span class="ow">or</span> <span class="n">force_update</span><span class="p">:</span>
-        
-                <span class="n">fermipySource</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_source_by_name</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                <span class="n">fermipyPars</span> <span class="o">=</span> <span class="p">[</span><span class="n">fermipySource</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span> <span class="n">fermipySource</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span> <span class="n">fermipySource</span><span class="p">[</span><span class="s2">&quot;SpatialWidth&quot;</span><span class="p">]</span> <span class="p">]</span>
+
+                <span class="n">fermipySource</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_source_by_name</span><span class="p">(</span>
+                    <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span>
+                <span class="p">)</span>
+                <span class="n">fermipyPars</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">fermipySource</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span>
+                    <span class="n">fermipySource</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span>
+                    <span class="n">fermipySource</span><span class="p">[</span><span class="s2">&quot;SpatialWidth&quot;</span><span class="p">],</span>
+                <span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">theShape</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Disk_on_sphere&quot;</span><span class="p">:</span>
-                
-                    <span class="n">amPars</span> <span class="o">=</span> <span class="p">[</span><span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">theShape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span> <span class="n">fermipyPars</span><span class="p">,</span> <span class="n">amPars</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">):</span>
-                
-                        <span class="n">temp_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">delete_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                        <span class="n">temp_source</span><span class="o">.</span><span class="n">set_spatial_model</span><span class="p">(</span><span class="s2">&quot;RadialDisk&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                            <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;SpatialWidth&#39;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
-                        <span class="c1"># from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">temp_source</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">free_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span><span class="p">)</span>
 
+                    <span class="n">amPars</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">theShape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fermipyPars</span><span class="p">,</span> <span class="n">amPars</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">):</span>
+
+                        <span class="n">temp_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">delete_source</span><span class="p">(</span>
+                            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span>
+                        <span class="p">)</span>
+                        <span class="n">temp_source</span><span class="o">.</span><span class="n">set_spatial_model</span><span class="p">(</span>
+                            <span class="s2">&quot;RadialDisk&quot;</span><span class="p">,</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="s2">&quot;SpatialWidth&quot;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                            <span class="p">},</span>
+                        <span class="p">)</span>
+                        <span class="c1"># from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span>
+                            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">temp_source</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">True</span>
+                        <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">free_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span>
+                            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span>
+                            <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span><span class="p">,</span>
+                        <span class="p">)</span>
 
                 <span class="k">elif</span> <span class="n">theShape</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Gaussian_on_sphere&quot;</span><span class="p">:</span>
 
-                    <span class="n">amPars</span> <span class="o">=</span> <span class="p">[</span><span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mf">1.36</span><span class="o">*</span><span class="n">theShape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span> <span class="n">fermipyPars</span><span class="p">,</span> <span class="n">amPars</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">):</span>
-                
-                        <span class="n">temp_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">delete_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                        <span class="n">temp_source</span><span class="o">.</span><span class="n">set_spatial_model</span><span class="p">(</span><span class="s2">&quot;RadialGaussian&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                            <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;SpatialWidth&#39;</span><span class="p">:</span> <span class="mf">1.36</span><span class="o">*</span><span class="n">theShape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
+                    <span class="n">amPars</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="mf">1.36</span> <span class="o">*</span> <span class="n">theShape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fermipyPars</span><span class="p">,</span> <span class="n">amPars</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">):</span>
+
+                        <span class="n">temp_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">delete_source</span><span class="p">(</span>
+                            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span>
+                        <span class="p">)</span>
+                        <span class="n">temp_source</span><span class="o">.</span><span class="n">set_spatial_model</span><span class="p">(</span>
+                            <span class="s2">&quot;RadialGaussian&quot;</span><span class="p">,</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lon0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="n">theShape</span><span class="o">.</span><span class="n">lat0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="s2">&quot;SpatialWidth&quot;</span><span class="p">:</span> <span class="mf">1.36</span> <span class="o">*</span> <span class="n">theShape</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                            <span class="p">},</span>
+                        <span class="p">)</span>
                         <span class="c1"># from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">temp_source</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span>
+                            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">temp_source</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">True</span>
+                        <span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">free_source</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">free</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_spectrum</span><span class="p">(</span>
+                            <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="s2">&quot;FileFunction&quot;</span><span class="p">,</span>
+                            <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span><span class="p">,</span>
+                        <span class="p">)</span>
 
                 <span class="k">elif</span> <span class="n">theShape</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;SpatialTemplate_2D&quot;</span><span class="p">:</span>
-                    <span class="c1">#for now, assume we&#39;re not updating the fits file</span>
+                    <span class="c1"># for now, assume we&#39;re not updating the fits file</span>
                     <span class="k">pass</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1">#eventually, implement other shapes here.</span>
+                    <span class="c1"># eventually, implement other shapes here.</span>
                     <span class="k">pass</span>
 
             <span class="c1"># Now set the spectrum of this source to the right one</span>
-            <span class="n">dnde</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">get_spatially_integrated_flux</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pts_energies</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s keV)</span>
+            <span class="n">dnde</span> <span class="o">=</span> <span class="n">extended_source</span><span class="o">.</span><span class="n">get_spatially_integrated_flux</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pts_energies</span>
+            <span class="p">)</span>  <span class="c1"># ph / (cm2 s keV)</span>
             <span class="n">dnde_MeV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dnde</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">)</span>  <span class="c1"># ph / (cm2 s MeV)</span>
             <span class="c1"># NOTE: I use update_source=False because it makes things 100x faster and I verified that</span>
             <span class="c1"># it does not change the result.</span>
             <span class="c1"># (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_dnde</span><span class="p">(</span><span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dnde_MeV</span><span class="p">,</span> <span class="n">update_source</span> <span class="o">=</span> <span class="n">update_dictionary</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">set_source_dnde</span><span class="p">(</span>
+                <span class="n">extended_source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dnde_MeV</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="n">update_dictionary</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="FermipyLike.get_log_like"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_log_like">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of the log-likelihood with the current values for the</span>
 <span class="sd">        parameters stored in the ModelManager instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -738,14 +874,15 @@
         <span class="c1"># Update all sources on the fermipy side</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_model_in_fermipy</span><span class="p">()</span>
 
-        <span class="c1">#update nuisance parameters</span>
+        <span class="c1"># update nuisance parameters</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_nuisance_params</span><span class="p">:</span>
 
             <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">set_nuisance_parameter_value</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_nuisance_parameter_value</span><span class="p">(</span>
+                    <span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                <span class="p">)</span>
 
-            <span class="c1">#self.like.syncSrcParams()</span>
-
+            <span class="c1"># self.like.syncSrcParams()</span>
 
         <span class="c1"># Get value of the log likelihood</span>
         <span class="k">try</span><span class="p">:</span>
@@ -759,19 +896,19 @@
         <span class="k">return</span> <span class="n">value</span> <span class="o">-</span> <span class="n">logfactorial</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">like</span><span class="o">.</span><span class="n">total_nobs</span><span class="p">()))</span></div>
 
 <div class="viewcode-block" id="FermipyLike.inner_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.inner_fit">[docs]</a>    <span class="k">def</span> <span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is used for the profile likelihood. Keeping fixed all parameters in the</span>
 <span class="sd">        LikelihoodModel, this method minimize the logLike over the remaining nuisance</span>
 <span class="sd">        parameters, i.e., the parameters belonging only to the model for this</span>
 <span class="sd">        particular detector. If there are no nuisance parameters, simply return the</span>
 <span class="sd">        logLike value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FermipyLike.set_inner_minimization"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.set_inner_minimization">[docs]</a>    <span class="k">def</span> <span class="nf">set_inner_minimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Turn on the minimization of the internal Fermi</span>
 <span class="sd">        parameters</span>
 
@@ -786,32 +923,35 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_nuisance_params</span></div>
 
-
 <div class="viewcode-block" id="FermipyLike.get_number_of_data_points"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_number_of_data_points">[docs]</a>    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the number of spatial/energy bins</span>
 
 <span class="sd">        :return: number of bins</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">projtype</span> <span class="o">==</span> <span class="s2">&quot;WCS&quot;</span><span class="p">:</span>
 
-            <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">_enumbins</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">npix</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">npix</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">num</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">_enumbins</span>
+                <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">npix</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">npix</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">projtype</span> <span class="o">==</span> <span class="s2">&quot;HPX&quot;</span><span class="p">:</span>
-        
+
             <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">npix</span><span class="p">)</span>
-            
+
         <span class="k">return</span> <span class="n">num</span></div>
 
     <span class="k">def</span> <span class="nf">_set_nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># Get the list of the sources</span>
-        <span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_sources</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_sources</span><span class="p">())</span>
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span> <span class="k">if</span> <span class="s2">&quot;diff&quot;</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-        
 
         <span class="n">bg_param_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
@@ -820,15 +960,15 @@
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_nuisance_params</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">free_norm</span><span class="p">(</span><span class="n">src_name</span><span class="p">)</span>
-    
+
             <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">get_free_source_params</span><span class="p">(</span><span class="n">src_name</span><span class="p">)</span>
-                        
+
             <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">pars</span><span class="p">:</span>
-            
+
                 <span class="n">thisName</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">src_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">par</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">bg_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thisName</span><span class="p">)</span>
 
-                <span class="n">thePar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">_get_param</span><span class="p">(</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+                <span class="n">thePar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">_get_param</span><span class="p">(</span><span class="n">src_name</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
 
                 <span class="n">value</span> <span class="o">=</span> <span class="n">thePar</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">thePar</span><span class="p">[</span><span class="s2">&quot;scale&quot;</span><span class="p">]</span>
 
@@ -837,13 +977,17 @@
                     <span class="n">value</span><span class="p">,</span>
                     <span class="n">min_value</span><span class="o">=</span><span class="n">thePar</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span>
                     <span class="n">max_value</span><span class="o">=</span><span class="n">thePar</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">],</span>
-                    <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="o">*</span><span class="n">value</span><span class="p">,</span>
-                    <span class="n">transformation</span><span class="o">=</span><span class="n">parameter_transformation</span><span class="o">.</span><span class="n">get_transformation</span><span class="p">(</span><span class="s2">&quot;log10&quot;</span><span class="p">)</span>
+                    <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">value</span><span class="p">,</span>
+                    <span class="n">transformation</span><span class="o">=</span><span class="n">parameter_transformation</span><span class="o">.</span><span class="n">get_transformation</span><span class="p">(</span>
+                        <span class="s2">&quot;log10&quot;</span>
+                    <span class="p">),</span>
                 <span class="p">)</span>
 
                 <span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">thisName</span><span class="p">]</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_nuisance_params</span>
-                
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added nuisance parameter </span><span class="si">{</span><span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">thisName</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Added nuisance parameter </span><span class="si">{</span><span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">thisName</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">nuisance_parameters</span>
 
@@ -852,14 +996,453 @@
         <span class="n">tokens</span> <span class="o">=</span> <span class="n">param_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
         <span class="n">pname</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">src_name</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        
+
         <span class="k">return</span> <span class="n">src_name</span><span class="p">,</span> <span class="n">pname</span>
-        
+
 <div class="viewcode-block" id="FermipyLike.set_nuisance_parameter_value"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.set_nuisance_parameter_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_nuisance_parameter_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 
         <span class="n">srcName</span><span class="p">,</span> <span class="n">parName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_nuisance_parameter</span><span class="p">(</span><span class="n">paramName</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">srcName</span><span class="p">,</span> <span class="n">parName</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span>
+            <span class="n">srcName</span><span class="p">,</span> <span class="n">parName</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">update_source</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span></div>
 
+<div class="viewcode-block" id="FermipyLike.display_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.display_model">[docs]</a>    <span class="k">def</span> <span class="nf">display_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">model_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">model_cmap</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="n">model_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">model_color</span><span class="p">,</span>
+        <span class="n">total_model_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">total_model_color</span><span class="p">,</span>
+        <span class="n">background_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span>
+        <span class="n">show_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">primary_sources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">show_background_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">show_background_sources</span><span class="p">,</span>
+        <span class="n">shade_fixed_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">shade_fixed_sources</span><span class="p">,</span>
+        <span class="n">shade_secondary_source</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">shade_secondary_sources</span><span class="p">,</span>
+        <span class="n">fixed_sources_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">fixed_sources_color</span><span class="p">,</span>
+        <span class="n">secondary_sources_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">secondary_sources_color</span><span class="p">,</span>
+        <span class="n">show_residuals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">ratio_residuals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">model_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResidualPlot</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying</span>
+<span class="sd">        a previous axis to &#39;model_subplot&#39;.</span>
+
+<span class="sd">        Example usage:</span>
+
+<span class="sd">        fig = data.display_model()</span>
+
+<span class="sd">        fig2 = data2.display_model(model_subplot=fig.axes)</span>
+
+
+<span class="sd">        :param data_color: the color of the data</span>
+<span class="sd">        :param model_color: the color of the model</span>
+<span class="sd">        :param show_data: (bool) show_the data with the model</span>
+<span class="sd">        :param show_residuals: (bool) shoe the residuals</span>
+<span class="sd">        :param ratio_residuals: (bool) use model ratio instead of residuals</span>
+<span class="sd">        :param show_legend: (bool) show legend</span>
+<span class="sd">        :param model_label: (optional) the label to use for the model default is plugin name</span>
+<span class="sd">        :param model_kwargs: plotting kwargs affecting the plotting of the model</span>
+<span class="sd">        :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls</span>
+<span class="sd">        :param background_kwargs: plotting kwargs affecting the plotting of the background</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The model color is set to red by default...</span>
+        <span class="c1"># It should be set to none or all the free sources will have the same color</span>
+        <span class="n">model_color</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;model_color : </span><span class="si">{</span><span class="n">model_color</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># set up the default plotting</span>
+
+        <span class="n">_default_model_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">_default_background_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">background_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">_sub_menu</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">residual_plot</span>
+
+        <span class="n">_default_data_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">data_color</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">fmt</span><span class="o">=</span><span class="n">_sub_menu</span><span class="o">.</span><span class="n">marker</span><span class="p">,</span>
+            <span class="n">markersize</span><span class="o">=</span><span class="n">_sub_menu</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">elinewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># _sub_menu.linewidth,</span>
+            <span class="n">capsize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># overwrite if these are in the confif</span>
+
+        <span class="n">_kwargs_menu</span><span class="p">:</span> <span class="n">FermiSpectrumPlot</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">_kwargs_menu</span><span class="o">.</span><span class="n">model_mpl_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_kwargs_menu</span><span class="o">.</span><span class="n">model_mpl_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="n">_default_model_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">_kwargs_menu</span><span class="o">.</span><span class="n">data_mpl_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_kwargs_menu</span><span class="o">.</span><span class="n">data_mpl_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="n">_default_data_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">_kwargs_menu</span><span class="o">.</span><span class="n">background_mpl_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_kwargs_menu</span><span class="o">.</span><span class="n">background_mpl_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="n">_default_background_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">model_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">model_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">,</span> <span class="s2">&quot;model_kwargs must be a dict&quot;</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">model_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span><span class="p">:</span>
+
+                    <span class="n">_default_model_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">_default_model_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">data_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">data_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">,</span> <span class="s2">&quot;data_kwargs must be a dict&quot;</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span><span class="p">:</span>
+
+                    <span class="n">_default_data_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">_default_data_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">background_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">background_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span>
+            <span class="p">),</span> <span class="s2">&quot;background_kwargs must be a dict&quot;</span>
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">background_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_default_background_kwargs</span><span class="p">:</span>
+
+                    <span class="n">_default_background_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">_default_background_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="c1"># since we define some defualts, lets not overwrite</span>
+        <span class="c1"># the users</span>
+
+        <span class="n">_duplicates</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="s2">&quot;linestyle&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;lw&quot;</span><span class="p">,</span> <span class="s2">&quot;linewidth&quot;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">_duplicates</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_model_kwargs</span>
+            <span class="p">):</span>
+
+                <span class="n">_default_model_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_data_kwargs</span>
+            <span class="p">):</span>
+
+                <span class="n">_default_data_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_background_kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_default_background_kwargs</span>
+            <span class="p">):</span>
+
+                <span class="n">_default_background_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">model_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> Model&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+        <span class="n">residual_plot</span> <span class="o">=</span> <span class="n">ResidualPlot</span><span class="p">(</span>
+            <span class="n">show_residuals</span><span class="o">=</span><span class="n">show_residuals</span><span class="p">,</span>
+            <span class="n">ratio_residuals</span><span class="o">=</span><span class="n">ratio_residuals</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">energies</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># this has to be in keV</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># this has to be in keV</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ENERGIES [MeV]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">energies</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">ec</span> <span class="o">=</span> <span class="p">(</span><span class="n">e1</span> <span class="o">+</span> <span class="n">e2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">de</span> <span class="o">=</span> <span class="p">(</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="n">observation_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_observation_duration</span><span class="p">()</span>
+
+        <span class="n">conversion_factor</span> <span class="o">=</span> <span class="n">de</span> <span class="o">*</span> <span class="n">observation_duration</span>
+
+        <span class="c1"># now lets figure out the free and fixed sources</span>
+
+        <span class="n">primary_source_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">primary_sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">primary_source_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">primary_sources</span><span class="p">)</span>
+            <span class="n">primary_sources</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">fixed_sources</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">free_sources</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">like</span><span class="o">.</span><span class="n">sourceNames</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">primary_source_names</span><span class="p">:</span>
+
+                <span class="n">primary_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+
+                    <span class="n">this_source</span><span class="p">:</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">Source</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">this_source</span><span class="o">.</span><span class="n">has_free_parameters</span><span class="p">:</span>
+
+                        <span class="n">free_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="n">fixed_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;galdiff&quot;</span><span class="p">:</span>
+                    <span class="c1"># Diffuse emission models should be always displayed with the other sources</span>
+                    <span class="c1"># if self._nuisance_parameters[&quot;LAT_galdiff_Prefactor&quot;].free:</span>
+
+                    <span class="n">free_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="c1">#else:</span>
+
+                    <span class="c1">#    fixed_sources.append(name)</span>
+
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;isodiff&quot;</span><span class="p">:</span>
+                    <span class="c1"># Diffuse emission models should be always displayed with the other sources</span>
+                    <span class="c1">#if self._nuisance_parameters[&quot;LAT_isodiff_Normalization&quot;].free:</span>
+
+                    <span class="n">free_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="c1">#else:</span>
+
+                    <span class="c1">#    fixed_sources.append(name)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fixed_sources: </span><span class="si">{</span><span class="n">fixed_sources</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;free_sources: </span><span class="si">{</span><span class="n">free_sources</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;primary_sources: </span><span class="si">{</span><span class="n">primary_sources</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_background_sources</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">primary_sources</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no primary_sources set! Cannot compute net rate&quot;</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">n_model_colors</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">shade_fixed_sources</span> <span class="ow">and</span> <span class="n">show_background_sources</span><span class="p">:</span>
+            <span class="n">n_model_colors</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fixed_sources</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">shade_secondary_source</span> <span class="ow">and</span> <span class="n">show_background_sources</span><span class="p">:</span>
+            <span class="n">n_model_colors</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_sources</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">primary_sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_model_colors</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_sources</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;there are </span><span class="si">{</span><span class="n">n_model_colors</span><span class="si">}</span><span class="s2"> colors to be used&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">model_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">model_color</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_model_colors</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">model_colors</span> <span class="o">=</span> <span class="n">cmap_intervals</span><span class="p">(</span><span class="n">n_model_colors</span><span class="p">,</span> <span class="n">model_cmap</span><span class="p">)</span>
+
+        <span class="n">sum_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">model_counts_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">like</span><span class="o">.</span><span class="n">sourceNames</span><span class="p">()[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">sum_backgrounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sum_model</span><span class="p">)</span>
+
+        <span class="n">color_itr</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="n">fixed_sources</span><span class="p">:</span>
+
+            <span class="n">source_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">model_counts_spectrum</span><span class="p">(</span><span class="n">source_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2">: source_counts= </span><span class="si">{</span><span class="n">source_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">sum_model</span> <span class="o">+=</span> <span class="n">source_counts</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">show_background_sources</span><span class="p">:</span>
+
+                <span class="n">sum_backgrounds</span> <span class="o">=</span> <span class="n">sum_backgrounds</span> <span class="o">+</span> <span class="n">source_counts</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">shade_fixed_sources</span><span class="p">:</span>
+
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">fixed_sources_color</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">model_colors</span><span class="p">[</span><span class="n">color_itr</span><span class="p">]</span>
+
+                    <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">source_name</span>
+
+                <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
+                    <span class="n">ec</span><span class="p">,</span>
+                    <span class="n">source_counts</span> <span class="o">/</span> <span class="n">conversion_factor</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">_default_model_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="n">free_sources</span><span class="p">:</span>
+
+            <span class="n">source_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">model_counts_spectrum</span><span class="p">(</span><span class="n">source_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2">: source_counts= </span><span class="si">{</span><span class="n">source_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">sum_model</span> <span class="o">+=</span> <span class="n">source_counts</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">show_background_sources</span><span class="p">:</span>
+
+                <span class="n">sum_backgrounds</span> <span class="o">=</span> <span class="n">sum_backgrounds</span> <span class="o">+</span> <span class="n">source_counts</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">shade_secondary_source</span><span class="p">:</span>
+
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">secondary_sources_color</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">model_colors</span><span class="p">[</span><span class="n">color_itr</span><span class="p">]</span>
+
+                    <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">source_name</span>
+
+
+                <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
+                    <span class="n">ec</span><span class="p">,</span>
+                    <span class="n">source_counts</span> <span class="o">/</span> <span class="n">conversion_factor</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">_default_model_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">primary_sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="n">primary_sources</span><span class="p">:</span>
+
+                <span class="n">source_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">model_counts_spectrum</span><span class="p">(</span><span class="n">source_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2">: source_counts= </span><span class="si">{</span><span class="n">source_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">sum_model</span> <span class="o">+=</span> <span class="n">source_counts</span>
+                <span class="c1"># sum_backgrounds = sum_backgrounds + source_counts</span>
+
+                <span class="n">color</span> <span class="o">=</span> <span class="n">model_colors</span><span class="p">[</span><span class="n">color_itr</span><span class="p">]</span>
+
+                <span class="n">color_itr</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">source_name</span>
+
+                <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
+                    <span class="n">ec</span><span class="p">,</span>
+                    <span class="n">source_counts</span> <span class="o">/</span> <span class="n">conversion_factor</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">_default_model_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># sub.plot(ec, self._gta.like._srcCnts(source_name), label=source_name)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sum_model=</span><span class="si">{</span><span class="n">sum_model</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sum_backgrounds=</span><span class="si">{</span><span class="n">sum_backgrounds</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span>
+            <span class="n">ec</span><span class="p">,</span>
+            <span class="n">sum_model</span> <span class="o">/</span> <span class="n">conversion_factor</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Total Model&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">total_model_color</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">_default_model_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># sub.plot(ec, sum_model, label=&quot;Total Model&quot;)</span>
+
+        <span class="c1"># now get the counts</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span><span class="o">.</span><span class="n">_roi_data</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span>
+        <span class="n">y_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;counts=</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">significance_calc</span> <span class="o">=</span> <span class="n">Significance</span><span class="p">(</span><span class="n">Non</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">Noff</span><span class="o">=</span><span class="n">sum_model</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ratio_residuals</span><span class="p">:</span>
+            <span class="n">resid</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">sum_model</span><span class="p">),</span> <span class="n">sum_model</span><span class="p">)</span>
+            <span class="n">resid_err</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span><span class="n">y_err</span><span class="p">,</span> <span class="n">sum_model</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># resid     = significance_calc.li_and_ma()</span>
+            <span class="n">resid</span> <span class="o">=</span> <span class="n">significance_calc</span><span class="o">.</span><span class="n">known_background</span><span class="p">()</span>
+            <span class="n">resid_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">conversion_factor</span>
+        <span class="n">y_err</span> <span class="o">=</span> <span class="n">y_err</span> <span class="o">/</span> <span class="n">conversion_factor</span>
+
+        <span class="n">residual_plot</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span>
+            <span class="n">ec</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">resid</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">residual_yerr</span><span class="o">=</span><span class="n">resid_err</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="n">y_err</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">xerr</span><span class="o">=</span><span class="n">de</span><span class="p">[</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="n">show_data</span><span class="o">=</span><span class="n">show_data</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">_default_data_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_background_sources</span><span class="p">:</span>
+
+            <span class="n">y_label</span> <span class="o">=</span> <span class="s2">&quot;Rate</span><span class="se">\n</span><span class="s2">(counts s$^{-1}$ keV$^{-1}$)&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">y_label</span> <span class="o">=</span> <span class="s2">&quot;Net Rate</span><span class="se">\n</span><span class="s2">(counts s$^{-1}$ keV$^{-1}$)&quot;</span>
+
+        <span class="k">return</span> <span class="n">residual_plot</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span>
+            <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy</span><span class="se">\n</span><span class="s2">(keV)&quot;</span><span class="p">,</span>
+            <span class="n">ylabel</span><span class="o">=</span><span class="n">y_label</span><span class="p">,</span>
+            <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
+            <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
+            <span class="n">show_legend</span><span class="o">=</span><span class="n">show_legend</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
 </pre></div>
 
            </div>

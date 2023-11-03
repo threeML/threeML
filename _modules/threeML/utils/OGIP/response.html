@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.OGIP.response</li>
@@ -110,9 +115,11 @@
 <span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
 <span class="kn">from</span> <span class="nn">threeML.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">file_existing_and_readable</span><span class="p">,</span>
-                                   <span class="n">fits_file_existing_and_readable</span><span class="p">,</span>
-                                   <span class="n">sanitize_filename</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">file_existing_and_readable</span><span class="p">,</span>
+    <span class="n">fits_file_existing_and_readable</span><span class="p">,</span>
+    <span class="n">sanitize_filename</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">threeML.io.fits_file</span> <span class="kn">import</span> <span class="n">FITSExtension</span><span class="p">,</span> <span class="n">FITSFile</span>
 <span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
@@ -153,7 +160,7 @@
         <span class="n">monte_carlo_energies</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">coverage_interval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TimeInterval</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Generic response class that accepts a full matrix, detector energy boundaries (ebounds) and monte carlo energies,</span>
 <span class="sd">        and an optional coverage interval which indicates which time interval the matrix applies to.</span>
@@ -214,7 +221,7 @@
         <span class="p">):</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Matrix has the wrong shape. Got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, expecting </span><span class="si">{</span>   <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ebounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monte_carlo_energies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Matrix has the wrong shape. Got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, expecting </span><span class="si">{</span><span class="w">   </span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ebounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_monte_carlo_energies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -240,7 +247,7 @@
     <span class="c1"># This will be overridden by subclasses</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rsp_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of the RSP/RMF file from which the response has been loaded</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -249,7 +256,7 @@
     <span class="c1"># This will be overridden by subclasses</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">arf_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of the ARF file (or None if there is none)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -265,7 +272,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">coverage_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimeInterval</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the time interval that this matrix is applicable to. None if it wasn&#39;t defined and the matrix is</span>
 <span class="sd">        applicable everywhere</span>
 
@@ -277,7 +284,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the matrix representing the response</span>
 
 <span class="sd">        :return matrix: response matrix</span>
@@ -286,7 +293,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span>
 
 <div class="viewcode-block" id="InstrumentResponse.replace_matrix"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse.replace_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">replace_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace the read matrix with a new one of the same shape</span>
 
 <span class="sd">        :return: none</span>
@@ -303,7 +310,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ebounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns the ebounds of the RSP.</span>
 
@@ -313,7 +320,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">monte_carlo_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the boundaries of the Monte Carlo bins (true energy bins)</span>
 
 <span class="sd">        :return: array</span>
@@ -322,7 +329,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monte_carlo_energies</span>
 
 <div class="viewcode-block" id="InstrumentResponse.set_function"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse.set_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">integral_function</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the function to be used for the convolution</span>
 
 <span class="sd">        :param integral_function: a function f = f(e1,e2) which returns the integral of the model between e1 and e2</span>
@@ -332,7 +339,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_integral_function</span> <span class="o">=</span> <span class="n">integral_function</span></div>
 
 <div class="viewcode-block" id="InstrumentResponse.convolve"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse.convolve">[docs]</a>    <span class="k">def</span> <span class="nf">convolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convolve the source flux with the response</span>
 <span class="sd">        :param precalc_fluxes: The precalulated flux. If this is None, the</span>
 <span class="sd">        flux gets calculated here.</span>
@@ -340,6 +347,7 @@
         <span class="k">if</span> <span class="n">precalc_fluxes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
             <span class="k">try</span><span class="p">:</span>
+
                 <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_function</span><span class="p">(</span>
                     <span class="c1"># self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]</span>
                 <span class="p">)</span>
@@ -351,6 +359,7 @@
                 <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
+
             <span class="n">fluxes</span> <span class="o">=</span> <span class="n">precalc_fluxes</span>
 
         <span class="c1"># Sometimes some channels have 0 lenths, or maybe they start at 0, where</span>
@@ -367,7 +376,7 @@
         <span class="k">return</span> <span class="n">folded_counts</span></div>
 
 <div class="viewcode-block" id="InstrumentResponse.energy_to_channel"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse.energy_to_channel">[docs]</a>    <span class="k">def</span> <span class="nf">energy_to_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Finds the channel containing the provided energy.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the channel containing the provided energy.</span>
 <span class="sd">        NOTE: returns the channel index (starting at zero),</span>
 <span class="sd">        not the channel number (likely starting from 1).</span>
 
@@ -385,7 +394,7 @@
         <span class="k">return</span> <span class="n">idx</span></div>
 
 <div class="viewcode-block" id="InstrumentResponse.plot_matrix"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse.plot_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">plot_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
@@ -447,7 +456,7 @@
         <span class="n">instrument_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the current matrix into a OGIP FITS file</span>
 
 <span class="sd">        :param filename : the name of the FITS file to be created</span>
@@ -474,7 +483,7 @@
     <span class="k">def</span> <span class="nf">create_dummy_response</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">ebounds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">monte_carlo_energies</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InstrumentResponse&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a dummy identity response of the shape of the ebounds and mc energies</span>
 
 <span class="sd">        :param ebounds: the energy boundaries of the detector channels (size n_channels + 1)</span>
@@ -491,7 +500,7 @@
         <span class="k">return</span> <span class="n">InstrumentResponse</span><span class="p">(</span><span class="n">dummy_matrix</span><span class="p">,</span> <span class="n">ebounds</span><span class="p">,</span> <span class="n">monte_carlo_energies</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="InstrumentResponse.clone"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InstrumentResponse&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a new response with the contents of this response</span>
 
 <span class="sd">        :returns:</span>
@@ -508,7 +517,7 @@
 
 <div class="viewcode-block" id="OGIPResponse"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.OGIPResponse">[docs]</a><span class="k">class</span> <span class="nc">OGIPResponse</span><span class="p">(</span><span class="n">InstrumentResponse</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rsp_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arf_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param rsp_file:</span>
 <span class="sd">        :param arf_file:</span>
@@ -623,7 +632,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">arr1</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">arr2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_read_ebounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ebounds_extension</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        reads the ebounds from an OGIP response</span>
 
 <span class="sd">        :param ebounds_extension: an RSP ebounds extension</span>
@@ -646,7 +655,7 @@
         <span class="k">return</span> <span class="n">ebounds</span>
 
     <span class="k">def</span> <span class="nf">_read_mc_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        reads the mc_channels from an OGIP response</span>
 
 <span class="sd">        :param data: data from a RSP MATRIX</span>
@@ -670,7 +679,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">first_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The first channel of the channel array. Corresponds to</span>
 <span class="sd">        TLMIN keyword in FITS files</span>
 
@@ -722,13 +731,13 @@
         <span class="c1"># However, if the columns are variable-length arrays, then they do have ndmin = 1 but have dtype &#39;object&#39;.</span>
         <span class="c1"># In that case we don&#39;t want to add a dimension, as they are essentially a list of arrays.</span>
 
-        <span class="k">if</span> <span class="n">n_grp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;N_CHAN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n_grp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;N_CHAN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
             <span class="n">n_grp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">n_grp</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">f_chan</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;N_CHAN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">f_chan</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;N_CHAN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
             <span class="n">f_chan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">f_chan</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">n_chan</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;N_CHAN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n_chan</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;N_CHAN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
             <span class="n">n_chan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">n_chan</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="n">matrix</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
@@ -754,7 +763,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rsp_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of the RSP/RMF file from which the response has been loaded</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -762,14 +771,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">arf_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of the ARF file (or None if there is none)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arf_file</span>
 
     <span class="k">def</span> <span class="nf">_read_arf_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        read an arf file and apply it to the current_matrix</span>
 
 <span class="sd">        :param arf_file:</span>
@@ -844,7 +853,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">arf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The area response function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -852,7 +861,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rmf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The redistribution matrix function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -860,7 +869,7 @@
 
 
 <div class="viewcode-block" id="InstrumentResponseSet"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponseSet">[docs]</a><span class="k">class</span> <span class="nc">InstrumentResponseSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A set of responses</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -872,7 +881,7 @@
         <span class="n">counts_getter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">reference_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param matrix_list:</span>
 <span class="sd">        :type matrix_list : list[InstrumentResponse]</span>
@@ -1125,7 +1134,7 @@
     <span class="k">def</span> <span class="nf">_weight_response</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">interval_of_interest</span><span class="p">:</span> <span class="n">TimeInterval</span><span class="p">,</span> <span class="n">switch</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param interval_start : start time of the interval</span>
 <span class="sd">        :param interval_stop : stop time of the interval</span>
@@ -1224,7 +1233,7 @@
         <span class="k">if</span> <span class="n">effective_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span> <span class="o">!=</span> <span class="n">interval_of_interest</span><span class="o">.</span><span class="n">start_time</span><span class="p">:</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;The interval of interest (</span><span class="si">%s</span><span class="s2">) is not covered by </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;The interval of interest (</span><span class="si">%s</span><span class="s2">) start is not covered by </span><span class="si">%s</span><span class="s2">&quot;</span>
                 <span class="o">%</span> <span class="p">(</span><span class="n">interval_of_interest</span><span class="p">,</span> <span class="n">effective_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="p">)</span>
 
@@ -1236,8 +1245,8 @@
         <span class="k">if</span> <span class="n">effective_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">stop_time</span> <span class="o">!=</span> <span class="n">interval_of_interest</span><span class="o">.</span><span class="n">stop_time</span><span class="p">:</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;The interval of interest (</span><span class="si">%s</span><span class="s2">) is not covered by </span><span class="si">%s</span><span class="s2">&quot;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="n">interval_of_interest</span><span class="p">,</span> <span class="n">effective_intervals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="s2">&quot;The interval of interest (</span><span class="si">%s</span><span class="s2">) end is not covered by </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">interval_of_interest</span><span class="p">,</span> <span class="n">effective_intervals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="n">IntervalOfInterestNotCovered</span><span class="p">()</span>
@@ -1303,7 +1312,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy_boundaries</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Represents the EBOUNDS extension of a response matrix FITS file</span>
 
 <span class="sd">        :param energy_boundaries: lower bound of channel energies (in keV)</span>
@@ -1321,7 +1330,7 @@
 
 
 <div class="viewcode-block" id="MATRIX"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.MATRIX">[docs]</a><span class="k">class</span> <span class="nc">MATRIX</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the MATRIX extension of a response FITS file following the OGIP format</span>
 
 <span class="sd">    :param mc_energies_lo: lower bound of MC energies (in keV)</span>
@@ -1398,7 +1407,7 @@
 
 
 <div class="viewcode-block" id="SPECRESP_MATRIX"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.SPECRESP_MATRIX">[docs]</a><span class="k">class</span> <span class="nc">SPECRESP_MATRIX</span><span class="p">(</span><span class="n">MATRIX</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the SPECRESP_MATRIX extension of a response FITS file following the OGIP format</span>
 
 <span class="sd">    :param mc_energies_lo: lower bound of MC energies (in keV)</span>
@@ -1422,7 +1431,7 @@
 
 
 <div class="viewcode-block" id="RMF"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.RMF">[docs]</a><span class="k">class</span> <span class="nc">RMF</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A RMF file, the OGIP format for a matrix representing energy dispersion effects.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1452,7 +1461,7 @@
 
 
 <div class="viewcode-block" id="RSP"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.RSP">[docs]</a><span class="k">class</span> <span class="nc">RSP</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A response file, the OGIP format for a matrix representing both energy dispersion effects and effective area,</span>
 <span class="sd">    in the same matrix.</span>
 

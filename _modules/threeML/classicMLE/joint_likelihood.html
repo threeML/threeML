@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.classicMLE.joint_likelihood</li>
@@ -100,6 +105,7 @@
 <span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 
 <span class="kn">import</span> <span class="nn">astromodels.core.model</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -150,7 +156,7 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Implement a joint likelihood analysis.</span>
 
 <span class="sd">        :param likelihood_model: the model for the likelihood analysis</span>
@@ -240,7 +246,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">likelihood_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: likelihood model for this analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -248,7 +254,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataList</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: data list for this analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -256,21 +262,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: current minimum of the joint likelihood (available only after the fit() method)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: an instance of the minimizer used in the fit (available only after the fit() method)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: covariance matrix from the last fit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -285,7 +291,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: correlation matrix from the last fit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -304,7 +310,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span>
 
     <span class="k">def</span> <span class="nf">_update_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the dictionary of free parameters&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the dictionary of free parameters&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span>
 
@@ -314,11 +320,12 @@
         <span class="n">compute_covariance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform a fit of the current likelihood model on the datasets</span>
 
 <span class="sd">        :param quiet: If True, print the results (default), otherwise do not print anything</span>
 <span class="sd">        :param compute_covariance:If True (default), compute and display the errors and the correlation matrix.</span>
+<span class="sd">        :param n_samples: Number of samples to scan the likelihood.</span>
 <span class="sd">        :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum</span>
 <span class="sd">                 for each dataset and the total one.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -511,7 +518,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span>
 
 <div class="viewcode-block" id="JointLikelihood.get_errors"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors">[docs]</a>    <span class="k">def</span> <span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the errors on the parameters using the profile likelihood method.</span>
 
 <span class="sd">        :return: a dictionary containing the asymmetric errors for each parameter.</span>
@@ -562,7 +569,7 @@
         <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">options</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate confidence contours for the given parameters by stepping for the given number of steps between</span>
 <span class="sd">        the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to</span>
 <span class="sd">        generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d</span>
@@ -1027,7 +1034,7 @@
         <span class="k">return</span> <span class="n">figs</span><span class="p">,</span> <span class="n">names</span></div>
 
 <div class="viewcode-block" id="JointLikelihood.minus_log_like_profile"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile">[docs]</a>    <span class="k">def</span> <span class="nf">minus_log_like_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the minus log likelihood for a given set of trial values</span>
 
 <span class="sd">        :param trial_values: the trial values. Must be in the same number as the free parameters in the model</span>
@@ -1122,7 +1129,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_record_calls</span><span class="p">)</span>
 
 <div class="viewcode-block" id="JointLikelihood.set_minimizer"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer">[docs]</a>    <span class="k">def</span> <span class="nf">set_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the minimizer to be used, among those available.</span>
 
 <span class="sd">        :param minimizer: the name of the new minimizer or an instance of a LocalMinimization or a GlobalMinimization</span>
@@ -1175,7 +1182,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span>
 
 <div class="viewcode-block" id="JointLikelihood.restore_best_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Restore the model to its best fit</span>
 
 <span class="sd">        :return: (none)</span>
@@ -1213,7 +1220,7 @@
         <span class="k">return</span> <span class="n">table</span>
 
     <span class="k">def</span> <span class="nf">_plot_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the likelihood profile.</span>
 
 <span class="sd">        :param name1: Name of parameter</span>
@@ -1296,7 +1303,7 @@
         <span class="k">return</span> <span class="n">fig</span>
 
     <span class="k">def</span> <span class="nf">_plot_contours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a contour plot.</span>
 
 <span class="sd">        :param name1: Name of the first parameter</span>
@@ -1348,7 +1355,7 @@
         <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
         <span class="c1"># Define the color palette</span>
-        <span class="n">palette</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span>
+        <span class="n">palette</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span>
             <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_cmap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># cm.Pastel1</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">set_over</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_background&quot;</span><span class="p">])</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;mle&quot;</span><span class="p">][</span><span class="s2">&quot;contour_background&quot;</span><span class="p">])</span>
@@ -1380,7 +1387,7 @@
         <span class="k">return</span> <span class="n">fig</span>
 
 <div class="viewcode-block" id="JointLikelihood.compute_TS"><a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS">[docs]</a>    <span class="k">def</span> <span class="nf">compute_TS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">alt_hyp_mlike_df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the Likelihood Ratio Test statistic (TS) for the provided source</span>
 
 <span class="sd">        :param source_name: name for the source</span>
@@ -1398,6 +1405,8 @@
 
         <span class="c1"># Remove this source from the model</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">model_clone</span><span class="o">.</span><span class="n">remove_source</span><span class="p">(</span><span class="n">source_name</span><span class="p">)</span>
+        <span class="c1">#import copy</span>
+        <span class="c1">#data_list_clone = copy.deepcopy(self._data_list)</span>
 
         <span class="c1"># Fit</span>
         <span class="n">another_jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model_clone</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="p">)</span>

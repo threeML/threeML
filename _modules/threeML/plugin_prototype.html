@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.plugin_prototype</li>
@@ -162,6 +167,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_from_fit</span> <span class="o">=</span> <span class="kc">False</span>
+
 <div class="viewcode-block" id="PluginPrototype.get_name"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.get_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;Do not use get_name() for plugins, use the .name property&quot;</span><span class="p">,</span>
@@ -171,7 +178,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of this instance</span>
 
 <span class="sd">        :return: a string (this is enforced to be a valid python identifier)</span>
@@ -180,7 +187,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dictionary containing the nuisance parameters for this dataset</span>
 
 <span class="sd">        :return: a dictionary</span>
@@ -213,7 +220,7 @@
     <span class="c1">#     self._external_properties.append((property, value))</span>
 
 <div class="viewcode-block" id="PluginPrototype.get_number_of_data_points"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.get_number_of_data_points">[docs]</a>    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This returns the number of data points that are used to evaluate the likelihood.</span>
 <span class="sd">        For binned measurements, this is the number of active bins used in the fit. For</span>
 <span class="sd">        unbinned measurements, this would be the number of photons/particles that are</span>
@@ -232,7 +239,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
 
     <span class="k">def</span> <span class="nf">_set_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Tag this plugin with the provided independent variable and a start and end value.</span>
 
 <span class="sd">        This can be used for example to fit a time-varying model. In this case the independent variable will be the</span>
@@ -280,20 +287,28 @@
         <span class="s2">&quot;[end])&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
+<div class="viewcode-block" id="PluginPrototype.exclude_from_fit"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.exclude_from_fit">[docs]</a>    <span class="k">def</span> <span class="nf">exclude_from_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This can be used to explude a plug in from the fit</span>
+<span class="sd">        :param flag: True or Fase (default)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plug in </span><span class="si">%s</span><span class="s2"> had beed expluded from the fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_from_fit</span> <span class="o">=</span> <span class="n">flag</span></div>
     <span class="c1">######################################################################</span>
     <span class="c1"># The following methods must be implemented by each plugin</span>
     <span class="c1">######################################################################</span>
 
 <div class="viewcode-block" id="PluginPrototype.set_model"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.set_model">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="PluginPrototype.get_log_like"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.get_log_like">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of the log-likelihood with the current values for the</span>
 <span class="sd">        parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -301,7 +316,7 @@
 
 <div class="viewcode-block" id="PluginPrototype.inner_fit"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.inner_fit">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is used for the profile likelihood. Keeping fixed all parameters in the</span>
 <span class="sd">        LikelihoodModel, this method minimize the logLike over the remaining nuisance</span>
 <span class="sd">        parameters, i.e., the parameters belonging only to the model for this</span>

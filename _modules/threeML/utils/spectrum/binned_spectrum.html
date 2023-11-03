@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
-            <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -60,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
@@ -80,7 +85,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../threeML.html">threeML</a></li>
       <li class="breadcrumb-item active">threeML.utils.spectrum.binned_spectrum</li>
@@ -120,7 +125,7 @@
 
 <div class="viewcode-block" id="ChannelSet.from_instrument_response"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_instrument_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instrument_response</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build EBOUNDS interval from an instrument response</span>
 
 
@@ -140,7 +145,7 @@
 
 <div class="viewcode-block" id="Quality"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality">[docs]</a><span class="k">class</span> <span class="nc">Quality</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quality</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        simple class to formalize the quality flags used in spectra</span>
 <span class="sd">        :param quality: a quality array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -196,7 +201,7 @@
 
 <div class="viewcode-block" id="Quality.from_ogip"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_ogip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ogip_quality</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read in quality from an OGIP file</span>
 
 <span class="sd">        :param cls: </span>
@@ -222,7 +227,7 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Quality.to_ogip"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip">[docs]</a>    <span class="k">def</span> <span class="nf">to_ogip</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        makes a quality array following the OGIP standards:</span>
 <span class="sd">        0 = good</span>
 <span class="sd">        2 = warn</span>
@@ -240,7 +245,7 @@
 
 <div class="viewcode-block" id="Quality.create_all_good"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_all_good</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        construct a quality object with all good channels</span>
 <span class="sd">        :param n_channels:</span>
 <span class="sd">        :return:</span>
@@ -270,7 +275,7 @@
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work</span>
 <span class="sd">        in rates, so this class uses the exposure to construct the rates from the counts.</span>
 
@@ -386,14 +391,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: rates per channel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: total rate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -401,7 +406,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_rate_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: total rate error</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -414,7 +419,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: counts per channel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -422,7 +427,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">count_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: count error per channel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -435,7 +440,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: total counts</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -443,7 +448,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_count_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: total count error</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -472,7 +477,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rate_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If the spectrum has no Poisson error (POISSER is False in the header), this will return the STAT_ERR column</span>
 <span class="sd">        :return: errors on the rates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -489,7 +494,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sys_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Systematic errors per channel. This is nonzero only if the SYS_ERR column is present in the input file.</span>
 
 <span class="sd">        :return: the systematic errors stored in the input spectrum</span>
@@ -498,7 +503,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exposure in seconds</span>
 
 <span class="sd">        :return: exposure</span>
@@ -531,7 +536,7 @@
         <span class="n">new_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same</span>
 
@@ -575,7 +580,7 @@
         <span class="n">mission</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build a spectrum from data contained within a pandas data frame.</span>
 
 <span class="sd">        The required columns are:</span>
@@ -639,7 +644,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="BinnedSpectrum.to_pandas"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_rate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        make a pandas table from the spectrum.</span>
 
 <span class="sd">        :param use_rate: if the table should use rates or counts</span>
@@ -685,7 +690,7 @@
                          <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                          <span class="n">from_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                          <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param time_series:</span>
 <span class="sd">        :param use_poly:</span>
@@ -866,7 +871,7 @@
         <span class="n">tstart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tstop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A binned spectrum that must be deconvolved via a dispersion or response matrix</span>
 
 
@@ -917,7 +922,7 @@
     <span class="k">def</span> <span class="nf">from_time_series</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param time_series:</span>
 <span class="sd">        :param use_poly:</span>
@@ -959,7 +964,7 @@
         <span class="n">new_exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        make a new spectrum with new counts and errors and all other</span>
 <span class="sd">        parameters the same</span>
 
