@@ -39,7 +39,14 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
           pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -68,7 +75,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -116,12 +123,16 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-
-          pip install -e .
-
           pip install black
           pip install git+https://github.com/threeml/hawc_hal.git
-
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -189,16 +200,20 @@ jobs:
           #sudo apt-get install texlive
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-
-
+          
       - name: Install the package
         shell: bash -l {0}
         run: |
-
-          pip install -e .
-
           pip install black
           pip install fermipy
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -235,9 +250,7 @@ jobs:
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
-
-
-          
+    
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
     runs-on: macos-latest
@@ -283,24 +296,21 @@ jobs:
           #sudo apt-get install texlive
 
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-          
-          if [[ "${ISDEV}" == "true" ]]; then
-
-          mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-          
-          fi
-        env:
-          ISDEV: ${{contains(github.ref, 'dev')}}
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-
-          pip install -e .
-
+          pip install zeus_mcmc dynesty
           pip install black
           pip install git+https://github.com/desihub/speclite.git
-
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -315,8 +325,7 @@ jobs:
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
-          
-          
+
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -327,9 +336,10 @@ jobs:
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
+  
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -373,18 +383,21 @@ jobs:
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
 
-          # temporary fix for fermi tools
-
-
       - name: Install the package
         shell: bash -l {0}
         run: |
-
-          pip install -e .
           pip install zeus_mcmc dynesty
           pip install black
           #pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -424,7 +437,7 @@ jobs:
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-10.15
+    runs-on: macos-latest
     
     steps:
       - name: Checkout
@@ -461,22 +474,16 @@ jobs:
         run: |
 
           ls docs/notebooks
-
-          
           
       - uses: actions/upload-artifact@v2
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
           
-
-      - name: Sleep for 5 min
+      - name: Sleep for 10 min
         uses: juliangruber/sleep-action@v1
         with:
-          time: 5m
-
-
-
+          time: 10m
           
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
@@ -506,15 +513,16 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-
           pip3 install cython tempita
-          pip3 install numpy scipy numba astropy
+          pip3 install cython blosc2 h5py
+          pip3 install numpy scipy numba astropy pandas
+          pip3 install wheel pkgconfig numexpr
 
-          python setup.py develop
+          #python setup.py develop
+          pip3 install -e .
 
           brew install sphinx-doc pandoc
 
-          pip3 install wheel
           pip3 install mock recommonmark
           pip3 install sphinx-rtd-dark-mode
           pip3 install -U sphinx
@@ -554,23 +562,28 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-          pip3 install wheel
+          pip3 install wheel pkgconfig
           pip3 install tempita
+          pip3 install cython blosc2 h5py
           pip3 install numpy scipy numba astropy
 
           brew install sphinx-doc pandoc
-
 
           pip3 install mock recommonmark
           pip3 install sphinx-rtd-dark-mode sphinx-math-dollar
           pip3 install -U sphinx
           pip3 install -r docs/requirements.txt
 
-          python3 setup.py develop
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
 
           rm -rf docs/md_docs/*
-
-
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - uses: actions/download-artifact@master
         with:

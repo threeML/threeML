@@ -33,6 +33,11 @@ _possible_samplers = {
         "from threeML.bayesian.ultranest_sampler import UltraNestSampler",
         "UltraNestSampler",
     ],
+    "nautilus": [
+        "nautilus",
+        "from threeML.bayesian.nautilus_sampler import NautilusSampler",
+        "NautilusSampler",
+    ],
     "dynesty_nested": [
         "dynesty",
         "from threeML.bayesian.dynesty_sampler import DynestyNestedSampler",
