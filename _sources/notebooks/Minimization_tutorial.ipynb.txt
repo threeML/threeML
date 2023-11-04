@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "0b3cd2ad",
+   "id": "7437f43a",
    "metadata": {},
    "source": [
     "# Minimization\n",
@@ -16,7 +16,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "0f0674e8",
+   "id": "eabdbba3",
    "metadata": {},
    "source": [
     "## Local minimizers\n",
@@ -29,7 +29,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "491f83f7",
+   "id": "bb7aa5a8",
    "metadata": {},
    "source": [
     "Let's start by importing what we need in the following:\n"
@@ -38,13 +38,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "1acfe036",
+   "id": "0f2c12bf",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:43.971890Z",
-     "iopub.status.busy": "2023-11-04T05:00:43.971366Z",
-     "iopub.status.idle": "2023-11-04T05:00:43.987067Z",
-     "shell.execute_reply": "2023-11-04T05:00:43.984243Z"
+     "iopub.execute_input": "2023-11-04T17:16:51.363773Z",
+     "iopub.status.busy": "2023-11-04T17:16:51.363418Z",
+     "iopub.status.idle": "2023-11-04T17:16:51.378866Z",
+     "shell.execute_reply": "2023-11-04T17:16:51.376992Z"
     }
    },
    "outputs": [],
@@ -56,7 +56,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "142215e8",
+   "id": "aa83ebe9",
    "metadata": {},
    "source": [
     "\n"
@@ -65,13 +65,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "f3130623",
+   "id": "7c9fda06",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:43.994430Z",
-     "iopub.status.busy": "2023-11-04T05:00:43.993346Z",
-     "iopub.status.idle": "2023-11-04T05:00:47.435083Z",
-     "shell.execute_reply": "2023-11-04T05:00:47.433264Z"
+     "iopub.execute_input": "2023-11-04T17:16:51.385805Z",
+     "iopub.status.busy": "2023-11-04T17:16:51.385286Z",
+     "iopub.status.idle": "2023-11-04T17:16:55.023463Z",
+     "shell.execute_reply": "2023-11-04T17:16:55.021436Z"
     },
     "lines_to_next_cell": 2
    },
@@ -85,13 +85,13 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "65e71e26",
+   "id": "d06c6ac4",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:47.441407Z",
-     "iopub.status.busy": "2023-11-04T05:00:47.440948Z",
-     "iopub.status.idle": "2023-11-04T05:00:47.481441Z",
-     "shell.execute_reply": "2023-11-04T05:00:47.480262Z"
+     "iopub.execute_input": "2023-11-04T17:16:55.029425Z",
+     "iopub.status.busy": "2023-11-04T17:16:55.028924Z",
+     "iopub.status.idle": "2023-11-04T17:16:55.070798Z",
+     "shell.execute_reply": "2023-11-04T17:16:55.069287Z"
     },
     "lines_to_next_cell": 2
    },
@@ -109,7 +109,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "cb21a37c",
+   "id": "3a7f8ffb",
    "metadata": {},
    "source": [
     "Let's get a JointLikelihood object like the one we would have in a normal 3ML analysis. We use a custom function, prepared for this tutorial, which gives a JointLikelihood object having a very simple model with one free parameter ($\\mu$), and with a likelihood having a very simple shape:"
@@ -118,24 +118,24 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "caeaf776",
+   "id": "f0cb1496",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:47.487038Z",
-     "iopub.status.busy": "2023-11-04T05:00:47.486749Z",
-     "iopub.status.idle": "2023-11-04T05:00:48.442639Z",
-     "shell.execute_reply": "2023-11-04T05:00:48.441171Z"
+     "iopub.execute_input": "2023-11-04T17:16:55.076076Z",
+     "iopub.status.busy": "2023-11-04T17:16:55.075791Z",
+     "iopub.status.idle": "2023-11-04T17:16:55.828225Z",
+     "shell.execute_reply": "2023-11-04T17:16:55.826411Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">05:00:47 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to minuit                                             </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">17:16:55 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to minuit                                             </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m05:00:47\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=453949;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=222693;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m17:16:55\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=50595;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=248386;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -166,7 +166,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "172f57d0",
+   "id": "e30dc1ae",
    "metadata": {},
    "source": [
     "Now let's set up the Minuit minimizer and minimize the -log(L), starting from $\\mu = 1$:"
@@ -175,13 +175,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "cedcba45",
+   "id": "6a52192d",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:48.448196Z",
-     "iopub.status.busy": "2023-11-04T05:00:48.447903Z",
-     "iopub.status.idle": "2023-11-04T05:00:49.033272Z",
-     "shell.execute_reply": "2023-11-04T05:00:49.030441Z"
+     "iopub.execute_input": "2023-11-04T17:16:55.833833Z",
+     "iopub.status.busy": "2023-11-04T17:16:55.833552Z",
+     "iopub.status.idle": "2023-11-04T17:16:56.412088Z",
+     "shell.execute_reply": "2023-11-04T17:16:56.410384Z"
     }
    },
    "outputs": [
@@ -212,7 +212,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "7dc47c52",
+   "id": "e1856154",
    "metadata": {},
    "source": [
     "Now let's do the same, but starting from $\\mu=80$:"
@@ -221,13 +221,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "18762734",
+   "id": "9e16f57c",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:49.039463Z",
-     "iopub.status.busy": "2023-11-04T05:00:49.039069Z",
-     "iopub.status.idle": "2023-11-04T05:00:49.766599Z",
-     "shell.execute_reply": "2023-11-04T05:00:49.764800Z"
+     "iopub.execute_input": "2023-11-04T17:16:56.417843Z",
+     "iopub.status.busy": "2023-11-04T17:16:56.417347Z",
+     "iopub.status.idle": "2023-11-04T17:16:57.172206Z",
+     "shell.execute_reply": "2023-11-04T17:16:57.170025Z"
     }
    },
    "outputs": [
@@ -250,7 +250,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "4121c074",
+   "id": "10a6e715",
    "metadata": {},
    "source": [
     "and from $\\mu=20$:"
@@ -259,13 +259,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "d041574f",
+   "id": "f287943a",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:49.772767Z",
-     "iopub.status.busy": "2023-11-04T05:00:49.772221Z",
-     "iopub.status.idle": "2023-11-04T05:00:50.360678Z",
-     "shell.execute_reply": "2023-11-04T05:00:50.359317Z"
+     "iopub.execute_input": "2023-11-04T17:16:57.177957Z",
+     "iopub.status.busy": "2023-11-04T17:16:57.177661Z",
+     "iopub.status.idle": "2023-11-04T17:16:57.766703Z",
+     "shell.execute_reply": "2023-11-04T17:16:57.765644Z"
     }
    },
    "outputs": [
@@ -288,7 +288,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "7d05d043",
+   "id": "931c6eb1",
    "metadata": {},
    "source": [
     "It is clear that, depending on the starting point, minuit makes different steps trying to reach the minimum. In this last case, at one point Minuit overshoots the minimum jumping all the way from $\\sim 30$ to $\\sim 80$, then realizes the mistake and goes back.\n",
@@ -298,7 +298,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "604a8869",
+   "id": "24ccdb39",
    "metadata": {},
    "source": [
     "## Global minimization\n",
@@ -309,24 +309,24 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "c8dcdf78",
+   "id": "8f0d8992",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:50.366521Z",
-     "iopub.status.busy": "2023-11-04T05:00:50.366207Z",
-     "iopub.status.idle": "2023-11-04T05:00:51.559627Z",
-     "shell.execute_reply": "2023-11-04T05:00:51.558354Z"
+     "iopub.execute_input": "2023-11-04T17:16:57.772179Z",
+     "iopub.status.busy": "2023-11-04T17:16:57.771882Z",
+     "iopub.status.idle": "2023-11-04T17:16:58.993568Z",
+     "shell.execute_reply": "2023-11-04T17:16:58.992148Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">05:00:50 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to minuit                                             </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">17:16:57 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to minuit                                             </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m05:00:50\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=724467;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=972515;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m17:16:57\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=403877;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=984674;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -351,7 +351,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "fdd517c2",
+   "id": "a3eac66f",
    "metadata": {},
    "source": [
     "This likelihood function has 3 minima: 2 are local and one (at $\\mu = 60$) is the global minimum. Let's see how Minuit performs in this case. First we start from 1.0:"
@@ -360,13 +360,13 @@
   {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "20305f40",
+   "id": "d8c25912",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:51.565243Z",
-     "iopub.status.busy": "2023-11-04T05:00:51.564954Z",
-     "iopub.status.idle": "2023-11-04T05:00:52.609827Z",
-     "shell.execute_reply": "2023-11-04T05:00:52.608683Z"
+     "iopub.execute_input": "2023-11-04T17:16:58.999195Z",
+     "iopub.status.busy": "2023-11-04T17:16:58.998901Z",
+     "iopub.status.idle": "2023-11-04T17:17:00.113108Z",
+     "shell.execute_reply": "2023-11-04T17:17:00.111911Z"
     }
    },
    "outputs": [
@@ -391,7 +391,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "5b47a231",
+   "id": "6572bfc8",
    "metadata": {},
    "source": [
     "Minuit has found the local minimum, not the global one. Now we start from 80:"
@@ -400,13 +400,13 @@
   {
    "cell_type": "code",
    "execution_count": 10,
-   "id": "5c004896",
+   "id": "00525568",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:52.615183Z",
-     "iopub.status.busy": "2023-11-04T05:00:52.614814Z",
-     "iopub.status.idle": "2023-11-04T05:00:53.652287Z",
-     "shell.execute_reply": "2023-11-04T05:00:53.651054Z"
+     "iopub.execute_input": "2023-11-04T17:17:00.119618Z",
+     "iopub.status.busy": "2023-11-04T17:17:00.119228Z",
+     "iopub.status.idle": "2023-11-04T17:17:01.469928Z",
+     "shell.execute_reply": "2023-11-04T17:17:01.467806Z"
     }
    },
    "outputs": [
@@ -431,7 +431,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "601692d9",
+   "id": "b6783a41",
    "metadata": {},
    "source": [
     "Now we found the global minimum. This is a simple example to show that the solution find by a local minimizers can depend on the starting point, and might not be the global minimum. In practice, one can rarely be guaranteed that the likelihood function has only one minimum. This is especially true in many dimensions and in cases of data with poor statistic.\n",
@@ -450,24 +450,24 @@
   {
    "cell_type": "code",
    "execution_count": 11,
-   "id": "f0e28539",
+   "id": "c99f0b17",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:53.657870Z",
-     "iopub.status.busy": "2023-11-04T05:00:53.657579Z",
-     "iopub.status.idle": "2023-11-04T05:00:55.167660Z",
-     "shell.execute_reply": "2023-11-04T05:00:55.166461Z"
+     "iopub.execute_input": "2023-11-04T17:17:01.475919Z",
+     "iopub.status.busy": "2023-11-04T17:17:01.475616Z",
+     "iopub.status.idle": "2023-11-04T17:17:03.007299Z",
+     "shell.execute_reply": "2023-11-04T17:17:03.005344Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">05:00:53 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to grid                                               </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">17:17:01 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to grid                                               </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m05:00:53\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to grid                                              \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=246938;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=662158;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m17:17:01\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to grid                                              \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=673584;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=69177;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -476,7 +476,7 @@
     {
      "data": {
       "application/vnd.jupyter.widget-view+json": {
-       "model_id": "a7aee764baf649eb8f82b3bac36317e7",
+       "model_id": "2d85592ec067475a85a773ff6f3d5028",
        "version_major": 2,
        "version_minor": 0
       },
@@ -496,7 +496,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=121177;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=145570;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#297\u001b\\\u001b[2m297\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=831735;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=37921;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#297\u001b\\\u001b[2m297\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mResults after global minimizer \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mbefore secondary optimization\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m:          \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n"
       ]
@@ -574,7 +574,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=999827;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=358692;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#303\u001b\\\u001b[2m303\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=442424;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=39426;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#303\u001b\\\u001b[2m303\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mTotal log-likelihood minimum: \u001b[0m\u001b[1;37m-13.838\u001b[0m\u001b[1;38;5;251m                                    \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n"
       ]
@@ -666,7 +666,7 @@
     {
      "data": {
       "text/html": [
-       "<div><table id=\"table5320214464\">\n",
+       "<div><table id=\"table5333160384\">\n",
        "<tr><td>1.00</td></tr>\n",
        "</table></div>"
       ],
@@ -843,7 +843,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "590ce17e",
+   "id": "21499fe5",
    "metadata": {},
    "source": [
     "The GRID minimizer has found the global minimum.\n",
@@ -853,7 +853,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "d066ed7d",
+   "id": "7d789fcd",
    "metadata": {},
    "source": [
     "### PAGMO minimizer\n",
@@ -876,24 +876,24 @@
   {
    "cell_type": "code",
    "execution_count": 12,
-   "id": "bb99c4b2",
+   "id": "26177af8",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2023-11-04T05:00:55.173166Z",
-     "iopub.status.busy": "2023-11-04T05:00:55.172856Z",
-     "iopub.status.idle": "2023-11-04T05:00:56.507588Z",
-     "shell.execute_reply": "2023-11-04T05:00:56.505465Z"
+     "iopub.execute_input": "2023-11-04T17:17:03.013331Z",
+     "iopub.status.busy": "2023-11-04T17:17:03.013021Z",
+     "iopub.status.idle": "2023-11-04T17:17:04.418784Z",
+     "shell.execute_reply": "2023-11-04T17:17:04.416871Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">05:00:55 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to minuit                                             </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">17:17:03 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> set the minimizer to minuit                                             </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">1045</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m05:00:55\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=306326;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=438225;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m17:17:03\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=712023;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=478928;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -906,7 +906,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to pagmo                                             \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=881917;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=926988;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to pagmo                                             \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=106097;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=303529;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -928,7 +928,7 @@
     {
      "data": {
       "application/vnd.jupyter.widget-view+json": {
-       "model_id": "15d8fe7b901c47c291b343f4a5f876e1",
+       "model_id": "246aa47514a44b0199ebcd8dc2f4d86f",
        "version_major": 2,
        "version_minor": 0
       },
@@ -947,20 +947,20 @@
       "Summary of evolution:\n",
       "---------------------\n",
       "Best population has minimum -13.838\n",
-      "Worst population has minimum -13.491\n",
+      "Worst population has minimum -13.500\n",
       "\n"
      ]
     },
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">05:00:56 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">                                                                          </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#297\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">297</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">17:17:04 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">                                                                          </span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">joint_likelihood.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#297\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">297</span></a>\n",
        "<span style=\"color: #00ff00; text-decoration-color: #00ff00\">         </span>         <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">                                                                          </span><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">                       </span>\n",
        "<span style=\"color: #00ff00; text-decoration-color: #00ff00\">         </span>         <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">Results after global minimizer (before secondary optimization):           </span><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">                       </span>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m05:00:56\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=864211;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=505383;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#297\u001b\\\u001b[2m297\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m17:17:04\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=825511;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=94804;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#297\u001b\\\u001b[2m297\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mResults after global minimizer \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mbefore secondary optimization\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m:          \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n"
       ]
@@ -1013,7 +1013,7 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>test.spectrum.main.Complex.mu</th>\n",
-       "      <td>(5.998381353020312 +/- 0) x 10</td>\n",
+       "      <td>(5.9996976669340665 +/- 0) x 10</td>\n",
        "      <td>keV</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
@@ -1021,9 +1021,9 @@
        "</div>"
       ],
       "text/plain": [
-       "                                                       result unit\n",
-       "parameter                                                         \n",
-       "test.spectrum.main.Complex.mu  (5.998381353020312 +/- 0) x 10  keV"
+       "                                                        result unit\n",
+       "parameter                                                          \n",
+       "test.spectrum.main.Complex.mu  (5.9996976669340665 +/- 0) x 10  keV"
       ]
      },
      "metadata": {},
@@ -1038,7 +1038,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=291455;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=797948;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#303\u001b\\\u001b[2m303\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=828785;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=606213;file:///Users/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#303\u001b\\\u001b[2m303\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mTotal log-likelihood minimum: \u001b[0m\u001b[1;37m-13.838\u001b[0m\u001b[1;38;5;251m                                    \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251m                                                                         \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                       \u001b[0m\n"
       ]
@@ -1130,7 +1130,7 @@
     {
      "data": {
       "text/html": [
-       "<div><table id=\"table5322535984\">\n",
+       "<div><table id=\"table5338372224\">\n",
        "<tr><td>1.00</td></tr>\n",
        "</table></div>"
       ],
@@ -1333,7 +1333,177 @@
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {
     "state": {
-     "01002ac05e0b45f284e6aef68a6d95b9": {
+     "02cc8227cbc94f2abbfbfa6bf6321aff": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "HTMLModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "HTMLModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "HTMLView",
+       "description": "",
+       "description_allow_html": false,
+       "layout": "IPY_MODEL_656de5a645424cf3a31b7eedebeb119e",
+       "placeholder": "​",
+       "style": "IPY_MODEL_c7f01e2eeaa346158dcc0928eb16798a",
+       "tabbable": null,
+       "tooltip": null,
+       "value": "Grid Minimization: 100%"
+      }
+     },
+     "041ff68ff73a4a569217825b4e4ec8cd": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "HTMLModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "HTMLModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "HTMLView",
+       "description": "",
+       "description_allow_html": false,
+       "layout": "IPY_MODEL_4238913420a344089ddc274f897b0c83",
+       "placeholder": "​",
+       "style": "IPY_MODEL_91df96fa0e0a4a0d805614f61c679bd1",
+       "tabbable": null,
+       "tooltip": null,
+       "value": " 10/10 [00:01&lt;00:00,  9.11it/s]"
+      }
+     },
+     "0f9bbbb7b04c4e298c964171fa4631d9": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "HTMLModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "HTMLModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "HTMLView",
+       "description": "",
+       "description_allow_html": false,
+       "layout": "IPY_MODEL_8ed876a929e04857aaaeaf665556d046",
+       "placeholder": "​",
+       "style": "IPY_MODEL_76822bb1f7fd407cba9138fe052e670c",
+       "tabbable": null,
+       "tooltip": null,
+       "value": "pygmo minimization: 100%"
+      }
+     },
+     "22955e97b4384cd480a0c87a17056dd4": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {
+       "_model_module": "@jupyter-widgets/base",
+       "_model_module_version": "2.0.0",
+       "_model_name": "LayoutModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/base",
+       "_view_module_version": "2.0.0",
+       "_view_name": "LayoutView",
+       "align_content": null,
+       "align_items": null,
+       "align_self": null,
+       "border_bottom": null,
+       "border_left": null,
+       "border_right": null,
+       "border_top": null,
+       "bottom": null,
+       "display": null,
+       "flex": "2",
+       "flex_flow": null,
+       "grid_area": null,
+       "grid_auto_columns": null,
+       "grid_auto_flow": null,
+       "grid_auto_rows": null,
+       "grid_column": null,
+       "grid_gap": null,
+       "grid_row": null,
+       "grid_template_areas": null,
+       "grid_template_columns": null,
+       "grid_template_rows": null,
+       "height": null,
+       "justify_content": null,
+       "justify_items": null,
+       "left": null,
+       "margin": null,
+       "max_height": null,
+       "max_width": null,
+       "min_height": null,
+       "min_width": null,
+       "object_fit": null,
+       "object_position": null,
+       "order": null,
+       "overflow": null,
+       "padding": null,
+       "right": null,
+       "top": null,
+       "visibility": null,
+       "width": null
+      }
+     },
+     "246aa47514a44b0199ebcd8dc2f4d86f": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "HBoxModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "HBoxModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "HBoxView",
+       "box_style": "",
+       "children": [
+        "IPY_MODEL_0f9bbbb7b04c4e298c964171fa4631d9",
+        "IPY_MODEL_6f2f9e983b054bb79db1a01cf689dc81",
+        "IPY_MODEL_041ff68ff73a4a569217825b4e4ec8cd"
+       ],
+       "layout": "IPY_MODEL_e01e36906684407caea3c325d372f535",
+       "tabbable": null,
+       "tooltip": null
+      }
+     },
+     "2d85592ec067475a85a773ff6f3d5028": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "HBoxModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "HBoxModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "HBoxView",
+       "box_style": "",
+       "children": [
+        "IPY_MODEL_02cc8227cbc94f2abbfbfa6bf6321aff",
+        "IPY_MODEL_820aaed965a144f8bd72b891dc33157f",
+        "IPY_MODEL_e87ffd297bf6447cbf2998e0124b1f6b"
+       ],
+       "layout": "IPY_MODEL_9840a310ffc44d0ea970b2f71ec4dbf4",
+       "tabbable": null,
+       "tooltip": null
+      }
+     },
+     "4238913420a344089ddc274f897b0c83": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "2.0.0",
       "model_name": "LayoutModel",
@@ -1386,7 +1556,192 @@
        "width": null
       }
      },
-     "0859de97d6154bd491b12e19fac36b68": {
+     "5005cf2a5321488fbe9d690882eb6c90": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {
+       "_model_module": "@jupyter-widgets/base",
+       "_model_module_version": "2.0.0",
+       "_model_name": "LayoutModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/base",
+       "_view_module_version": "2.0.0",
+       "_view_name": "LayoutView",
+       "align_content": null,
+       "align_items": null,
+       "align_self": null,
+       "border_bottom": null,
+       "border_left": null,
+       "border_right": null,
+       "border_top": null,
+       "bottom": null,
+       "display": null,
+       "flex": "2",
+       "flex_flow": null,
+       "grid_area": null,
+       "grid_auto_columns": null,
+       "grid_auto_flow": null,
+       "grid_auto_rows": null,
+       "grid_column": null,
+       "grid_gap": null,
+       "grid_row": null,
+       "grid_template_areas": null,
+       "grid_template_columns": null,
+       "grid_template_rows": null,
+       "height": null,
+       "justify_content": null,
+       "justify_items": null,
+       "left": null,
+       "margin": null,
+       "max_height": null,
+       "max_width": null,
+       "min_height": null,
+       "min_width": null,
+       "object_fit": null,
+       "object_position": null,
+       "order": null,
+       "overflow": null,
+       "padding": null,
+       "right": null,
+       "top": null,
+       "visibility": null,
+       "width": null
+      }
+     },
+     "656de5a645424cf3a31b7eedebeb119e": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {
+       "_model_module": "@jupyter-widgets/base",
+       "_model_module_version": "2.0.0",
+       "_model_name": "LayoutModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/base",
+       "_view_module_version": "2.0.0",
+       "_view_name": "LayoutView",
+       "align_content": null,
+       "align_items": null,
+       "align_self": null,
+       "border_bottom": null,
+       "border_left": null,
+       "border_right": null,
+       "border_top": null,
+       "bottom": null,
+       "display": null,
+       "flex": null,
+       "flex_flow": null,
+       "grid_area": null,
+       "grid_auto_columns": null,
+       "grid_auto_flow": null,
+       "grid_auto_rows": null,
+       "grid_column": null,
+       "grid_gap": null,
+       "grid_row": null,
+       "grid_template_areas": null,
+       "grid_template_columns": null,
+       "grid_template_rows": null,
+       "height": null,
+       "justify_content": null,
+       "justify_items": null,
+       "left": null,
+       "margin": null,
+       "max_height": null,
+       "max_width": null,
+       "min_height": null,
+       "min_width": null,
+       "object_fit": null,
+       "object_position": null,
+       "order": null,
+       "overflow": null,
+       "padding": null,
+       "right": null,
+       "top": null,
+       "visibility": null,
+       "width": null
+      }
+     },
+     "6a970a7a509c4f20ace867b2361d8c2d": {
+      "model_module": "@jupyter-widgets/base",
+      "model_module_version": "2.0.0",
+      "model_name": "LayoutModel",
+      "state": {
+       "_model_module": "@jupyter-widgets/base",
+       "_model_module_version": "2.0.0",
+       "_model_name": "LayoutModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/base",
+       "_view_module_version": "2.0.0",
+       "_view_name": "LayoutView",
+       "align_content": null,
+       "align_items": null,
+       "align_self": null,
+       "border_bottom": null,
+       "border_left": null,
+       "border_right": null,
+       "border_top": null,
+       "bottom": null,
+       "display": null,
+       "flex": null,
+       "flex_flow": null,
+       "grid_area": null,
+       "grid_auto_columns": null,
+       "grid_auto_flow": null,
+       "grid_auto_rows": null,
+       "grid_column": null,
+       "grid_gap": null,
+       "grid_row": null,
+       "grid_template_areas": null,
+       "grid_template_columns": null,
+       "grid_template_rows": null,
+       "height": null,
+       "justify_content": null,
+       "justify_items": null,
+       "left": null,
+       "margin": null,
+       "max_height": null,
+       "max_width": null,
+       "min_height": null,
+       "min_width": null,
+       "object_fit": null,
+       "object_position": null,
+       "order": null,
+       "overflow": null,
+       "padding": null,
+       "right": null,
+       "top": null,
+       "visibility": null,
+       "width": null
+      }
+     },
+     "6f2f9e983b054bb79db1a01cf689dc81": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "FloatProgressModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "FloatProgressModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "ProgressView",
+       "bar_style": "success",
+       "description": "",
+       "description_allow_html": false,
+       "layout": "IPY_MODEL_22955e97b4384cd480a0c87a17056dd4",
+       "max": 10.0,
+       "min": 0.0,
+       "orientation": "horizontal",
+       "style": "IPY_MODEL_852d09e8ec0547e4a5ac18fa240103ae",
+       "tabbable": null,
+       "tooltip": null,
+       "value": 10.0
+      }
+     },
+     "76822bb1f7fd407cba9138fe052e670c": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
       "model_name": "HTMLStyleModel",
@@ -1404,47 +1759,33 @@
        "text_color": null
       }
      },
-     "15a9bceb825b4bcbb63f55038a97037b": {
+     "820aaed965a144f8bd72b891dc33157f": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
-      "model_name": "ProgressStyleModel",
-      "state": {
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "ProgressStyleModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/base",
-       "_view_module_version": "2.0.0",
-       "_view_name": "StyleView",
-       "bar_color": "#440154",
-       "description_width": ""
-      }
-     },
-     "15d8fe7b901c47c291b343f4a5f876e1": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "HBoxModel",
+      "model_name": "FloatProgressModel",
       "state": {
        "_dom_classes": [],
        "_model_module": "@jupyter-widgets/controls",
        "_model_module_version": "2.0.0",
-       "_model_name": "HBoxModel",
+       "_model_name": "FloatProgressModel",
        "_view_count": null,
        "_view_module": "@jupyter-widgets/controls",
        "_view_module_version": "2.0.0",
-       "_view_name": "HBoxView",
-       "box_style": "",
-       "children": [
-        "IPY_MODEL_336afc288a944105bd735c2098ba5bf4",
-        "IPY_MODEL_a369773ef0e9422c8404ca8ea288015d",
-        "IPY_MODEL_6f85b7ff92024330bd4cfb31d4ade304"
-       ],
-       "layout": "IPY_MODEL_844b02b872d24845a487f731a95fd47b",
+       "_view_name": "ProgressView",
+       "bar_style": "success",
+       "description": "",
+       "description_allow_html": false,
+       "layout": "IPY_MODEL_5005cf2a5321488fbe9d690882eb6c90",
+       "max": 10.0,
+       "min": 0.0,
+       "orientation": "horizontal",
+       "style": "IPY_MODEL_d9cb126955ac44999fb2c6774782f358",
        "tabbable": null,
-       "tooltip": null
+       "tooltip": null,
+       "value": 10.0
       }
      },
-     "17b0377948a44a218bf1c8bd2f717b21": {
+     "852d09e8ec0547e4a5ac18fa240103ae": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
       "model_name": "ProgressStyleModel",
@@ -1460,48 +1801,7 @@
        "description_width": ""
       }
      },
-     "336afc288a944105bd735c2098ba5bf4": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "HTMLModel",
-      "state": {
-       "_dom_classes": [],
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "HTMLModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
-       "_view_module_version": "2.0.0",
-       "_view_name": "HTMLView",
-       "description": "",
-       "description_allow_html": false,
-       "layout": "IPY_MODEL_acce7e450d9f4cb78dbd979efdd8bb69",
-       "placeholder": "​",
-       "style": "IPY_MODEL_511cb6755e4845aa900156b202cbff5d",
-       "tabbable": null,
-       "tooltip": null,
-       "value": "pygmo minimization: 100%"
-      }
-     },
-     "511cb6755e4845aa900156b202cbff5d": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "HTMLStyleModel",
-      "state": {
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "HTMLStyleModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/base",
-       "_view_module_version": "2.0.0",
-       "_view_name": "StyleView",
-       "background": null,
-       "description_width": "",
-       "font_size": null,
-       "text_color": null
-      }
-     },
-     "5d05789ca759430d8cddda3e89d35c1a": {
+     "8ed876a929e04857aaaeaf665556d046": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "2.0.0",
       "model_name": "LayoutModel",
@@ -1522,7 +1822,7 @@
        "border_top": null,
        "bottom": null,
        "display": null,
-       "flex": "2",
+       "flex": null,
        "flex_flow": null,
        "grid_area": null,
        "grid_auto_columns": null,
@@ -1554,53 +1854,25 @@
        "width": null
       }
      },
-     "6f85b7ff92024330bd4cfb31d4ade304": {
+     "91df96fa0e0a4a0d805614f61c679bd1": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
-      "model_name": "HTMLModel",
+      "model_name": "HTMLStyleModel",
       "state": {
-       "_dom_classes": [],
        "_model_module": "@jupyter-widgets/controls",
        "_model_module_version": "2.0.0",
-       "_model_name": "HTMLModel",
+       "_model_name": "HTMLStyleModel",
        "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
+       "_view_module": "@jupyter-widgets/base",
        "_view_module_version": "2.0.0",
-       "_view_name": "HTMLView",
-       "description": "",
-       "description_allow_html": false,
-       "layout": "IPY_MODEL_01002ac05e0b45f284e6aef68a6d95b9",
-       "placeholder": "​",
-       "style": "IPY_MODEL_bc3d027e00eb4df0ac7522c2a4a01733",
-       "tabbable": null,
-       "tooltip": null,
-       "value": " 10/10 [00:01&lt;00:00,  9.51it/s]"
+       "_view_name": "StyleView",
+       "background": null,
+       "description_width": "",
+       "font_size": null,
+       "text_color": null
       }
      },
-     "72212335a3994e1babdbec36482a4bde": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "HTMLModel",
-      "state": {
-       "_dom_classes": [],
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "HTMLModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
-       "_view_module_version": "2.0.0",
-       "_view_name": "HTMLView",
-       "description": "",
-       "description_allow_html": false,
-       "layout": "IPY_MODEL_a90782b9658c4f4f87dd6032b77e9d3e",
-       "placeholder": "​",
-       "style": "IPY_MODEL_0859de97d6154bd491b12e19fac36b68",
-       "tabbable": null,
-       "tooltip": null,
-       "value": "Grid Minimization: 100%"
-      }
-     },
-     "844b02b872d24845a487f731a95fd47b": {
+     "9840a310ffc44d0ea970b2f71ec4dbf4": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "2.0.0",
       "model_name": "LayoutModel",
@@ -1653,86 +1925,7 @@
        "width": "100%"
       }
      },
-     "863d45d0657844b890937dc8671bc84e": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "FloatProgressModel",
-      "state": {
-       "_dom_classes": [],
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "FloatProgressModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
-       "_view_module_version": "2.0.0",
-       "_view_name": "ProgressView",
-       "bar_style": "success",
-       "description": "",
-       "description_allow_html": false,
-       "layout": "IPY_MODEL_b34d7398134a47e7a5317358f4bd0ead",
-       "max": 10.0,
-       "min": 0.0,
-       "orientation": "horizontal",
-       "style": "IPY_MODEL_15a9bceb825b4bcbb63f55038a97037b",
-       "tabbable": null,
-       "tooltip": null,
-       "value": 10.0
-      }
-     },
-     "988479e01aa0453883fafc9a4d41916c": {
-      "model_module": "@jupyter-widgets/base",
-      "model_module_version": "2.0.0",
-      "model_name": "LayoutModel",
-      "state": {
-       "_model_module": "@jupyter-widgets/base",
-       "_model_module_version": "2.0.0",
-       "_model_name": "LayoutModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/base",
-       "_view_module_version": "2.0.0",
-       "_view_name": "LayoutView",
-       "align_content": null,
-       "align_items": null,
-       "align_self": null,
-       "border_bottom": null,
-       "border_left": null,
-       "border_right": null,
-       "border_top": null,
-       "bottom": null,
-       "display": null,
-       "flex": null,
-       "flex_flow": null,
-       "grid_area": null,
-       "grid_auto_columns": null,
-       "grid_auto_flow": null,
-       "grid_auto_rows": null,
-       "grid_column": null,
-       "grid_gap": null,
-       "grid_row": null,
-       "grid_template_areas": null,
-       "grid_template_columns": null,
-       "grid_template_rows": null,
-       "height": null,
-       "justify_content": null,
-       "justify_items": null,
-       "left": null,
-       "margin": null,
-       "max_height": null,
-       "max_width": null,
-       "min_height": null,
-       "min_width": null,
-       "object_fit": null,
-       "object_position": null,
-       "order": null,
-       "overflow": null,
-       "padding": null,
-       "right": null,
-       "top": null,
-       "visibility": null,
-       "width": null
-      }
-     },
-     "a20e34c4b31c4b938c597c3d9ef96f70": {
+     "c7f01e2eeaa346158dcc0928eb16798a": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
       "model_name": "HTMLStyleModel",
@@ -1750,216 +1943,7 @@
        "text_color": null
       }
      },
-     "a369773ef0e9422c8404ca8ea288015d": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "FloatProgressModel",
-      "state": {
-       "_dom_classes": [],
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "FloatProgressModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
-       "_view_module_version": "2.0.0",
-       "_view_name": "ProgressView",
-       "bar_style": "success",
-       "description": "",
-       "description_allow_html": false,
-       "layout": "IPY_MODEL_5d05789ca759430d8cddda3e89d35c1a",
-       "max": 10.0,
-       "min": 0.0,
-       "orientation": "horizontal",
-       "style": "IPY_MODEL_17b0377948a44a218bf1c8bd2f717b21",
-       "tabbable": null,
-       "tooltip": null,
-       "value": 10.0
-      }
-     },
-     "a7aee764baf649eb8f82b3bac36317e7": {
-      "model_module": "@jupyter-widgets/controls",
-      "model_module_version": "2.0.0",
-      "model_name": "HBoxModel",
-      "state": {
-       "_dom_classes": [],
-       "_model_module": "@jupyter-widgets/controls",
-       "_model_module_version": "2.0.0",
-       "_model_name": "HBoxModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
-       "_view_module_version": "2.0.0",
-       "_view_name": "HBoxView",
-       "box_style": "",
-       "children": [
-        "IPY_MODEL_72212335a3994e1babdbec36482a4bde",
-        "IPY_MODEL_863d45d0657844b890937dc8671bc84e",
-        "IPY_MODEL_c96bed73259446a9b9160c0b40df4f23"
-       ],
-       "layout": "IPY_MODEL_fcbda2d1684842c3bb8b80306cf28f4c",
-       "tabbable": null,
-       "tooltip": null
-      }
-     },
-     "a90782b9658c4f4f87dd6032b77e9d3e": {
-      "model_module": "@jupyter-widgets/base",
-      "model_module_version": "2.0.0",
-      "model_name": "LayoutModel",
-      "state": {
-       "_model_module": "@jupyter-widgets/base",
-       "_model_module_version": "2.0.0",
-       "_model_name": "LayoutModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/base",
-       "_view_module_version": "2.0.0",
-       "_view_name": "LayoutView",
-       "align_content": null,
-       "align_items": null,
-       "align_self": null,
-       "border_bottom": null,
-       "border_left": null,
-       "border_right": null,
-       "border_top": null,
-       "bottom": null,
-       "display": null,
-       "flex": null,
-       "flex_flow": null,
-       "grid_area": null,
-       "grid_auto_columns": null,
-       "grid_auto_flow": null,
-       "grid_auto_rows": null,
-       "grid_column": null,
-       "grid_gap": null,
-       "grid_row": null,
-       "grid_template_areas": null,
-       "grid_template_columns": null,
-       "grid_template_rows": null,
-       "height": null,
-       "justify_content": null,
-       "justify_items": null,
-       "left": null,
-       "margin": null,
-       "max_height": null,
-       "max_width": null,
-       "min_height": null,
-       "min_width": null,
-       "object_fit": null,
-       "object_position": null,
-       "order": null,
-       "overflow": null,
-       "padding": null,
-       "right": null,
-       "top": null,
-       "visibility": null,
-       "width": null
-      }
-     },
-     "acce7e450d9f4cb78dbd979efdd8bb69": {
-      "model_module": "@jupyter-widgets/base",
-      "model_module_version": "2.0.0",
-      "model_name": "LayoutModel",
-      "state": {
-       "_model_module": "@jupyter-widgets/base",
-       "_model_module_version": "2.0.0",
-       "_model_name": "LayoutModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/base",
-       "_view_module_version": "2.0.0",
-       "_view_name": "LayoutView",
-       "align_content": null,
-       "align_items": null,
-       "align_self": null,
-       "border_bottom": null,
-       "border_left": null,
-       "border_right": null,
-       "border_top": null,
-       "bottom": null,
-       "display": null,
-       "flex": null,
-       "flex_flow": null,
-       "grid_area": null,
-       "grid_auto_columns": null,
-       "grid_auto_flow": null,
-       "grid_auto_rows": null,
-       "grid_column": null,
-       "grid_gap": null,
-       "grid_row": null,
-       "grid_template_areas": null,
-       "grid_template_columns": null,
-       "grid_template_rows": null,
-       "height": null,
-       "justify_content": null,
-       "justify_items": null,
-       "left": null,
-       "margin": null,
-       "max_height": null,
-       "max_width": null,
-       "min_height": null,
-       "min_width": null,
-       "object_fit": null,
-       "object_position": null,
-       "order": null,
-       "overflow": null,
-       "padding": null,
-       "right": null,
-       "top": null,
-       "visibility": null,
-       "width": null
-      }
-     },
-     "b34d7398134a47e7a5317358f4bd0ead": {
-      "model_module": "@jupyter-widgets/base",
-      "model_module_version": "2.0.0",
-      "model_name": "LayoutModel",
-      "state": {
-       "_model_module": "@jupyter-widgets/base",
-       "_model_module_version": "2.0.0",
-       "_model_name": "LayoutModel",
-       "_view_count": null,
-       "_view_module": "@jupyter-widgets/base",
-       "_view_module_version": "2.0.0",
-       "_view_name": "LayoutView",
-       "align_content": null,
-       "align_items": null,
-       "align_self": null,
-       "border_bottom": null,
-       "border_left": null,
-       "border_right": null,
-       "border_top": null,
-       "bottom": null,
-       "display": null,
-       "flex": "2",
-       "flex_flow": null,
-       "grid_area": null,
-       "grid_auto_columns": null,
-       "grid_auto_flow": null,
-       "grid_auto_rows": null,
-       "grid_column": null,
-       "grid_gap": null,
-       "grid_row": null,
-       "grid_template_areas": null,
-       "grid_template_columns": null,
-       "grid_template_rows": null,
-       "height": null,
-       "justify_content": null,
-       "justify_items": null,
-       "left": null,
-       "margin": null,
-       "max_height": null,
-       "max_width": null,
-       "min_height": null,
-       "min_width": null,
-       "object_fit": null,
-       "object_position": null,
-       "order": null,
-       "overflow": null,
-       "padding": null,
-       "right": null,
-       "top": null,
-       "visibility": null,
-       "width": null
-      }
-     },
-     "bc3d027e00eb4df0ac7522c2a4a01733": {
+     "d76693df85d549ddb0d55f38fb14f922": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
       "model_name": "HTMLStyleModel",
@@ -1977,30 +1961,23 @@
        "text_color": null
       }
      },
-     "c96bed73259446a9b9160c0b40df4f23": {
+     "d9cb126955ac44999fb2c6774782f358": {
       "model_module": "@jupyter-widgets/controls",
       "model_module_version": "2.0.0",
-      "model_name": "HTMLModel",
+      "model_name": "ProgressStyleModel",
       "state": {
-       "_dom_classes": [],
        "_model_module": "@jupyter-widgets/controls",
        "_model_module_version": "2.0.0",
-       "_model_name": "HTMLModel",
+       "_model_name": "ProgressStyleModel",
        "_view_count": null,
-       "_view_module": "@jupyter-widgets/controls",
+       "_view_module": "@jupyter-widgets/base",
        "_view_module_version": "2.0.0",
-       "_view_name": "HTMLView",
-       "description": "",
-       "description_allow_html": false,
-       "layout": "IPY_MODEL_988479e01aa0453883fafc9a4d41916c",
-       "placeholder": "​",
-       "style": "IPY_MODEL_a20e34c4b31c4b938c597c3d9ef96f70",
-       "tabbable": null,
-       "tooltip": null,
-       "value": " 10/10 [00:00&lt;00:00, 107.38it/s]"
+       "_view_name": "StyleView",
+       "bar_color": "#440154",
+       "description_width": ""
       }
      },
-     "fcbda2d1684842c3bb8b80306cf28f4c": {
+     "e01e36906684407caea3c325d372f535": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "2.0.0",
       "model_name": "LayoutModel",
@@ -2051,6 +2028,29 @@
        "top": null,
        "visibility": null,
        "width": "100%"
+      }
+     },
+     "e87ffd297bf6447cbf2998e0124b1f6b": {
+      "model_module": "@jupyter-widgets/controls",
+      "model_module_version": "2.0.0",
+      "model_name": "HTMLModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "@jupyter-widgets/controls",
+       "_model_module_version": "2.0.0",
+       "_model_name": "HTMLModel",
+       "_view_count": null,
+       "_view_module": "@jupyter-widgets/controls",
+       "_view_module_version": "2.0.0",
+       "_view_name": "HTMLView",
+       "description": "",
+       "description_allow_html": false,
+       "layout": "IPY_MODEL_6a970a7a509c4f20ace867b2361d8c2d",
+       "placeholder": "​",
+       "style": "IPY_MODEL_d76693df85d549ddb0d55f38fb14f922",
+       "tabbable": null,
+       "tooltip": null,
+       "value": " 10/10 [00:00&lt;00:00, 110.12it/s]"
       }
      }
     },
