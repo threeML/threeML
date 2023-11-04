@@ -474,22 +474,16 @@ jobs:
         run: |
 
           ls docs/notebooks
-
-          
           
       - uses: actions/upload-artifact@v2
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
           
-
-      - name: Sleep for 5 min
+      - name: Sleep for 10 min
         uses: juliangruber/sleep-action@v1
         with:
-          time: 5m
-
-
-
+          time: 10m
           
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
