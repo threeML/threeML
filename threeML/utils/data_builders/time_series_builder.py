@@ -1533,8 +1533,8 @@ class TimeSeriesBuilder(object):
             dead_time_fraction=polar_data.scattering_angle_dead_time_fraction,
             verbose=verbose,
             first_channel=1,
-            mission="Tiangong-2",
-            instrument="POLAR",
+            mission=polar_data.mission,
+            instrument=polar_data.instrument,
             edges=polar_data.scattering_edges,
         )
 
