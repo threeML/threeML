@@ -95,6 +95,8 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
         "include_extended": False,
     }
 
+    outfile=kwargs["outfile"]
+
     for key, value in kwargs.items():
 
         if key in _defaults:
@@ -320,6 +322,7 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
                             upper_error=positive_error,
                             lower_error=negative_error,
                             contour_color=color_contour[color_itr],
+                            out_file=outfile,
                             label=label,
                         )
 
@@ -771,6 +774,7 @@ class SpectralContourPlot(object):
         upper_error=None,
         lower_error=None,
         contour_color=None,
+        out_file:str=None,
         label="model",
     ):
 
@@ -787,6 +791,9 @@ class SpectralContourPlot(object):
                 **self._contour_kwargs
             )
 
+            with open(out_file, 'w') as f:
+                print(f"{energy_range} {lower_error} {upper_error}", file=f)
+
     def add_dimensionless_model(
         self,
         energy_range,
@@ -795,6 +802,7 @@ class SpectralContourPlot(object):
         upper_error=None,
         lower_error=None,
         contour_color=None,
+        out_file:str=None,
         label="model",
     ):
 
@@ -815,6 +823,9 @@ class SpectralContourPlot(object):
                     facecolor=contour_color,
                     **self._contour_kwargs
                 )
+
+                with open(out_file, 'w') as f:
+                    print(f"{energy_range} {lower_error} {upper_error}", file=f)
 
         else:
 
