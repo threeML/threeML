@@ -28,6 +28,29 @@ class BinnedSpectrumPlot:
 
 
 @dataclass
+class FermiSpectrumPlot:
+    total_model_color: str = "k"
+    show_background_sources: bool = True
+    shade_fixed_sources: bool = True
+    shade_secondary_sources: bool = False
+    fixed_sources_color: str = "grey"
+    secondary_sources_color: str = "k"
+    data_cmap: MPLCmap = MPLCmap.Set1
+    model_cmap: MPLCmap = MPLCmap.Set1
+    background_cmap: MPLCmap = MPLCmap.Set1
+    step: bool = False
+    show_legend: bool = True
+    show_residuals: bool = True
+    data_color: Optional[str] = None
+    model_color: Optional[str] = None
+    background_color: Optional[str] = None
+    data_mpl_kwargs: Optional[Dict[str, Any]] = None
+    model_mpl_kwargs: Optional[Dict[str, Any]] = None
+    background_mpl_kwargs: Optional[Dict[str, Any]] = None
+
+
+
+@dataclass
 class DataHistPlot:
     counts_color: str = "#500472"
     background_color: str = "#79cbb8"
@@ -38,7 +61,7 @@ class DataHistPlot:
 
 @dataclass
 class PlotStyle:
-    linestyle: Optional[str] = '-'
+    linestyle: Optional[str] = "-"
     linewidth: Optional[float] = 1.7
 
 
@@ -53,15 +76,16 @@ class CornerStyle:
     smooth: float = 0.9
     title_fmt: str = ".2g"
     bins: int = 25
-    quantiles: List[float] =  field(default_factory= lambda:[0.16, 0.50, 0.84])
+    quantiles: List[float] = field(default_factory=lambda: [0.16, 0.50, 0.84])
     fill_contours: bool = True
     cmap: MPLCmap = MPLCmap.viridis
     extremes: str = "white"
-    contourf_kwargs:  Dict[str, Any] = field(
-        default_factory=lambda: {"colors": None, "extend": "both"})
-    levels: List[float] = field(default_factory= lambda:[0.99, 0.865,0.393])
+    contourf_kwargs: Dict[str, Any] = field(
+        default_factory=lambda: {"colors": None, "extend": "both"}
+    )
+    levels: List[float] = field(default_factory=lambda: [0.99, 0.865, 0.393])
 
-    
+
 # class LegendLoc(Enum):
 #     best = 'best'
 #     lower_left = 'lower left'
@@ -88,7 +112,7 @@ class PointSourcePlot:
     show_legend: bool = True
     legend_style: LegendStyle = LegendStyle()
     flux_unit: str = "1/(keV s cm2)"
-    emin: float = 10.
+    emin: float = 10.0
     emax: float = 1e4
     num_ene: int = 100
     ene_unit: str = "keV"
@@ -101,9 +125,10 @@ class ResidualPlot:
     size: float = 3
     legend_font_size: float = 6.94
 
+
 @dataclass
 class GenericPlotting:
-
+    use_threeml_style: bool = True
     mplstyle: str = "threeml.mplstyle"
     residual_plot: ResidualPlot = ResidualPlot()
 

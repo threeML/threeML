@@ -294,11 +294,11 @@ fi
 
 if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root=6.22"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root"
 
 
 fi
-
+INSTALL_FERMIPY_WITH_PIP="no"
 if [[ "${INSTALL_FERMI}" == "yes" ]]; then
 
     if [[ $PYTHON_VERSION == "2.7" ]]; then
@@ -306,9 +306,11 @@ if [[ "${INSTALL_FERMI}" == "yes" ]]; then
         PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
     elif [[ $PYTHON_VERSION == "3.7" ]]; then
         conda config --add channels fermi
-        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1 astroquery==0.4.3"
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy==1.0.1 clhep=2.4.4.1 astroquery==0.4.3"
     else
-        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools fermipy"
+        INSTALL_FERMIPY_WITH_PIP="yes"
+        conda config --add channels fermi
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools"
     fi
 
 fi
@@ -500,7 +502,9 @@ python --version
 EOM
 
 conda activate ${ENV_NAME}
-
+if [[ "${INSTALL_FERMIPY_WITH_PIP}" == "yes" ]]; then
+  pip install "fermipy>=1.2"
+fi
 # Fix needed to solve the "readinto" AttributeError due to older future package
 #conda install --yes -c conda-forge future
 

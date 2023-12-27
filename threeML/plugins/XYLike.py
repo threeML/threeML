@@ -10,6 +10,7 @@ from astromodels.functions.function import Function
 from threeML.analysis_results import _AnalysisResults
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
@@ -17,7 +18,9 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
     half_chi2, poisson_log_likelihood_ideal_bkg)
 
-plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+if threeML_config.plotting.use_threeml_style:
+
+    plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)

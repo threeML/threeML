@@ -10,6 +10,7 @@ from past.utils import old_div
 
 from threeML.io.logging import setup_logger
 from threeML.utils.OGIP.pha import PHAII
+from threeML.io.fits_file import FITSFile
 from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
 from threeML.utils.progress_bar import trange
 from threeML.utils.spectrum.binned_spectrum import (
@@ -56,7 +57,7 @@ _might_be_columns["observed"] = (
 _might_be_columns["background"] = ("EXPOSURE,BACKSCAL").split(",")
 
 
-_valid_input_types = (str, Path, PHAII)
+_valid_input_types = (str, Path, PHAII, FITSFile)
 
 
 @dataclass(frozen=True)
@@ -81,7 +82,7 @@ class _PHAInfo:
 
 
 def _read_pha_or_pha2_file(
-    pha_file_or_instance: Union[str, Path, PHAII],
+    pha_file_or_instance: Union[str, Path, PHAII, FITSFile],
     spectrum_number: Optional[int] = None,
     file_type: str = "observed",
     rsp_file: Optional[Union[str, InstrumentResponse]] = None,
@@ -110,12 +111,11 @@ def _read_pha_or_pha2_file(
     else:
 
         log.error(
-            f"Must provide a FITS file name or PHAII instance. Got {type(pha_file_or_instance)}"
-        )
+            f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}")
 
         raise RuntimeError()
 
-    if not isinstance(pha_file_or_instance, PHAII):
+    if not isinstance(pha_file_or_instance, (PHAII, FITSFile)):
 
         pha_file_or_instance: Path = Path(pha_file_or_instance)
 
@@ -136,7 +136,7 @@ def _read_pha_or_pha2_file(
 
     # If this is already a FITS_FILE instance,
 
-    elif isinstance(pha_file_or_instance, PHAII):
+    elif isinstance(pha_file_or_instance, (PHAII, FITSFile)):
 
         # we simply create a dummy filename
 
@@ -382,11 +382,16 @@ def _read_pha_or_pha2_file(
                     gathered_keywords[internal_name] = data[keyname]
 
                 # Fix "NONE" in None
-                if (
-                    gathered_keywords[internal_name] == "NONE"
-                    or gathered_keywords[internal_name] == "none"
-                ):
-                    gathered_keywords[internal_name] = None
+                if isinstance(gathered_keywords[internal_name], np.ndarray):
+                    idx = np.where((gathered_keywords[internal_name] == "NONE") 
+                        | (gathered_keywords[internal_name] == "none"))
+                    gathered_keywords[internal_name][idx] = None
+                else:
+                    if (
+                        gathered_keywords[internal_name] == "NONE"
+                        or gathered_keywords[internal_name] == "none"
+                    ):
+                        gathered_keywords[internal_name] = None
 
                 key_has_been_collected = True
 
@@ -814,7 +819,7 @@ def _read_pha_or_pha2_file(
 class PHASpectrum(BinnedSpectrumWithDispersion):
     def __init__(
         self,
-        pha_file_or_instance: Union[str, Path, PHAII],
+        pha_file_or_instance: Union[str, Path, PHAII, FITSFile],
         spectrum_number: Optional[int] = None,
         file_type: str = "observed",
         rsp_file: Optional[Union[str, InstrumentResponse]] = None,
@@ -844,8 +849,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         else:
 
             log.error(
-                f"Must provide a FITS file name or PHAII instance. Got {type(pha_file_or_instance)}"
-            )
+                f"Must provide a FITS file name or PHAII/FITSFile instance. Got {type(pha_file_or_instance)}")
 
             raise RuntimeError()
 

@@ -67,6 +67,8 @@ class PluginPrototype(metaclass=abc.ABCMeta):
 
         self._tag = None
 
+        self._exclude_from_fit = False
+
     def get_name(self) -> str:
         log.warning(
             "Do not use get_name() for plugins, use the .name property",
@@ -185,6 +187,14 @@ class PluginPrototype(metaclass=abc.ABCMeta):
         "[end])",
     )
 
+    def exclude_from_fit(self,flag=False):
+        """
+        This can be used to explude a plug in from the fit
+        :param flag: True or Fase (default)
+        :return:
+        """
+        log.info("Plug in %s had beed expluded from the fit" % self.name)
+        self._exclude_from_fit = flag
     ######################################################################
     # The following methods must be implemented by each plugin
     ######################################################################

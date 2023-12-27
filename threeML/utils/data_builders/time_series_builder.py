@@ -1350,7 +1350,7 @@ class TimeSeriesBuilder(object):
         if trigger_time is not None:
             lat_lle_file.trigger_time = trigger_time
 
-        # Mark channels less than 50 MeV as bad
+        # Mark channels less than 30 MeV as bad
 
         channel_30MeV = np.searchsorted(
             lat_lle_file.energy_edges[0], 30000.0) - 1

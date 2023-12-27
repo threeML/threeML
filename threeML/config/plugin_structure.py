@@ -5,7 +5,12 @@ from typing import Any, Dict, List, Optional
 import matplotlib.pyplot as plt
 from omegaconf import II, MISSING, SI, OmegaConf
 
-from .plotting_structure import BinnedSpectrumPlot, DataHistPlot, MPLCmap
+from .plotting_structure import (
+    BinnedSpectrumPlot,
+    DataHistPlot,
+    FermiSpectrumPlot,
+    MPLCmap,
+)
 
 
 @dataclass
@@ -17,6 +22,12 @@ class OGIP:
 
 
 @dataclass
+class Fermipy:
+    fit_plot: FermiSpectrumPlot = FermiSpectrumPlot()
+#    data_plot: DataHistPlot = DataHistPlot()
+
+
+@dataclass
 class Photo:
     fit_plot: BinnedSpectrumPlot = BinnedSpectrumPlot()
 
@@ -25,7 +36,7 @@ class Photo:
 class Plugins:
     ogip: OGIP = OGIP()
     photo: Photo = Photo()
-
+    fermipy: Fermipy =Fermipy()
 
 @dataclass
 class TimeSeriesFit:
