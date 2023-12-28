@@ -1,9 +1,7 @@
-from dataclasses import dataclass, field
-from enum import Enum, Flag
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
+from typing import Dict, Optional
 
-import matplotlib.pyplot as plt
-from omegaconf import II, MISSING, SI, OmegaConf
+from omegaconf import MISSING
 
 
 @dataclass(frozen=True)
@@ -18,7 +16,7 @@ class CatalogServer:
     url: str = MISSING
 
 
-@dataclass
+@dataclass(frozen=True)
 class InstrumentCatalog:
     catalogs: Dict[str, CatalogServer] = MISSING
 
