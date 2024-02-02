@@ -34,9 +34,11 @@ jobs:
         needs: skip_duplicate
         if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
         strategy:
+            fail-fast: false
             matrix:
-                python-version: [3.8, 3.9]
-        runs-on: ubuntu-latest
+                python-version: ["3.9","3.10","3.11"]
+                os: ["ubuntu-latest", "macos-latest"]
+        runs-on:  ${{ matrix.os }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -54,8 +56,9 @@ jobs:
                   
                   pip install --upgrade flake8 coverage pytest-cov cython
 
-                  # temp fix for speclite
-                  pip install git+https://github.com/desihub/speclite.git
+                  # temp fixes
+                  #pip install git+https://github.com/desihub/speclite.git
+                  pip install git+https://github.com/EconForge/interpolation.py.git
                   
                   pip install -e .
               env:
@@ -82,9 +85,11 @@ jobs:
         needs: skip_duplicate
         if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
         strategy:
+            fail-fast: false
             matrix:
-                python-version: [ 3.8, 3.9]
-        runs-on: ubuntu-latest
+                python-version: ["3.9","3.10","3.11"]
+                os: [ "ubuntu-latest", "macos-latest" ]
+        runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -106,8 +111,9 @@ jobs:
 
                   pip install --upgrade flake8 coverage pytest-cov cython
 
-                  # temp fix for speclite
-                  pip install git+https://github.com/desihub/speclite.git
+                  # temp fixes
+                  #pip install git+https://github.com/desihub/speclite.git
+                  pip install git+https://github.com/EconForge/interpolation.py.git
 
                   pip install -e .
             - name: Lint with flake8
