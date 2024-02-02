@@ -31,7 +31,7 @@ jobs:
           
           pip install zeus-mcmc
           pip install git+https://github.com/desihub/speclite.git
-          pip install black
+          pip install "black<24"
           
           pip install astromodels
           
@@ -123,7 +123,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install black
+          pip install "black<24"
           pip install git+https://github.com/threeml/hawc_hal.git
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -204,7 +204,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install black
+          pip install "black<24"
           pip install fermipy
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -301,7 +301,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install zeus_mcmc dynesty
-          pip install black
+          pip install "black<24"
           pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -387,7 +387,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install zeus_mcmc dynesty
-          pip install black
+          pip install "black<24"
           #pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
