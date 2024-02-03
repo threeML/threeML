@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.config.config_structure &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css" />
+
+  
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -99,7 +101,7 @@
              
   <h1>Source code for threeML.config.config_structure</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
 
 <span class="kn">from</span> <span class="nn">.catalog_structure</span> <span class="kn">import</span> <span class="n">Catalogs</span><span class="p">,</span> <span class="n">PublicDataServer</span>
@@ -144,23 +146,23 @@
 
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_structure.Config">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="n">logging</span><span class="p">:</span> <span class="n">Logging</span> <span class="o">=</span> <span class="n">Logging</span><span class="p">()</span>
-    <span class="n">parallel</span><span class="p">:</span> <span class="n">Parallel</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">()</span>
-    <span class="n">interface</span><span class="p">:</span> <span class="n">Interface</span> <span class="o">=</span> <span class="n">Interface</span><span class="p">()</span>
-    <span class="n">plugins</span><span class="p">:</span> <span class="n">Plugins</span> <span class="o">=</span> <span class="n">Plugins</span><span class="p">()</span>
-    <span class="n">time_series</span><span class="p">:</span> <span class="n">TimeSeries</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">()</span>
-    <span class="n">mle</span><span class="p">:</span> <span class="n">MLEDefault</span> <span class="o">=</span> <span class="n">MLEDefault</span><span class="p">()</span>
-    <span class="n">bayesian</span><span class="p">:</span> <span class="n">BayesianDefault</span> <span class="o">=</span> <span class="n">BayesianDefault</span><span class="p">()</span>
-    <span class="n">plotting</span><span class="p">:</span> <span class="n">GenericPlotting</span> <span class="o">=</span> <span class="n">GenericPlotting</span><span class="p">()</span>
-    <span class="n">model_plot</span><span class="p">:</span> <span class="n">ModelPlotting</span> <span class="o">=</span> <span class="n">ModelPlotting</span><span class="p">()</span>
-    <span class="n">point_source</span><span class="p">:</span> <span class="n">PointSourceDefaults</span> <span class="o">=</span> <span class="n">PointSourceDefaults</span><span class="p">()</span>
+    <span class="n">logging</span><span class="p">:</span> <span class="n">Logging</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Logging</span><span class="p">())</span>
+    <span class="n">parallel</span><span class="p">:</span> <span class="n">Parallel</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Parallel</span><span class="p">())</span>
+    <span class="n">interface</span><span class="p">:</span> <span class="n">Interface</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Interface</span><span class="p">())</span>
+    <span class="n">plugins</span><span class="p">:</span> <span class="n">Plugins</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Plugins</span><span class="p">())</span>
+    <span class="n">time_series</span><span class="p">:</span> <span class="n">TimeSeries</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">TimeSeries</span><span class="p">())</span>
+    <span class="n">mle</span><span class="p">:</span> <span class="n">MLEDefault</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">MLEDefault</span><span class="p">())</span>
+    <span class="n">bayesian</span><span class="p">:</span> <span class="n">BayesianDefault</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">BayesianDefault</span><span class="p">())</span>
+    <span class="n">plotting</span><span class="p">:</span> <span class="n">GenericPlotting</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">GenericPlotting</span><span class="p">())</span>
+    <span class="n">model_plot</span><span class="p">:</span> <span class="n">ModelPlotting</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ModelPlotting</span><span class="p">())</span>
+    <span class="n">point_source</span><span class="p">:</span> <span class="n">PointSourceDefaults</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PointSourceDefaults</span><span class="p">())</span>
     
-    <span class="n">LAT</span><span class="p">:</span> <span class="n">PublicDataServer</span> <span class="o">=</span> <span class="n">PublicDataServer</span><span class="p">(</span><span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">&quot;ftp://heasarc.nasa.gov/fermi/data&quot;</span><span class="p">,</span>
+    <span class="n">LAT</span><span class="p">:</span> <span class="n">PublicDataServer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PublicDataServer</span><span class="p">(</span><span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">&quot;ftp://heasarc.nasa.gov/fermi/data&quot;</span><span class="p">,</span>
                                              <span class="n">public_http_location</span><span class="o">=</span><span class="s2">&quot;https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat&quot;</span><span class="p">,</span>
-                                             <span class="n">query_form</span><span class="o">=</span><span class="s2">&quot;https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi&quot;</span><span class="p">)</span>
-    <span class="n">GBM</span><span class="p">:</span> <span class="n">PublicDataServer</span> <span class="o">=</span> <span class="n">PublicDataServer</span><span class="p">(</span><span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">&quot;ftp://heasarc.nasa.gov/fermi/data&quot;</span><span class="p">,</span>
-                                             <span class="n">public_http_location</span><span class="o">=</span><span class="s2">&quot;https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm&quot;</span><span class="p">)</span>
-    <span class="n">catalogs</span><span class="p">:</span> <span class="n">Catalogs</span> <span class="o">=</span> <span class="n">Catalogs</span><span class="p">()</span></div>
+                                             <span class="n">query_form</span><span class="o">=</span><span class="s2">&quot;https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi&quot;</span><span class="p">))</span>
+    <span class="n">GBM</span><span class="p">:</span> <span class="n">PublicDataServer</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PublicDataServer</span><span class="p">(</span><span class="n">public_ftp_location</span><span class="o">=</span><span class="s2">&quot;ftp://heasarc.nasa.gov/fermi/data&quot;</span><span class="p">,</span>
+                                             <span class="n">public_http_location</span><span class="o">=</span><span class="s2">&quot;https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm&quot;</span><span class="p">))</span>
+    <span class="n">catalogs</span><span class="p">:</span> <span class="n">Catalogs</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Catalogs</span><span class="p">())</span></div>
 </pre></div>
 
            </div>
