@@ -67,7 +67,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
@@ -150,7 +150,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
@@ -246,7 +246,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
@@ -332,7 +332,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
@@ -427,7 +427,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -475,7 +475,7 @@ jobs:
 
           ls docs/notebooks
           
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
@@ -531,7 +531,7 @@ jobs:
           sphinx-apidoc -f -o docs/api/ threeML
 
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: api-stubs-for-${{ github.sha }}
           path: docs/api
