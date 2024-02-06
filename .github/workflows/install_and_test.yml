@@ -16,14 +16,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: XCode
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest
       if: runner.os == 'macOS'
     - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
         auto-activate-base: true
@@ -53,14 +53,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: XCode
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest
       if: runner.os == 'macOS'
     - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
         auto-activate-base: true

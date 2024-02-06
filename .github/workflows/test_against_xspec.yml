@@ -11,12 +11,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Set up Python 3.9
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v5
             with:
               python-version: 3.9
        
           - name: Cache XPSEC
-            uses: actions/cache@v2
+            uses: actions/cache@v4
             id: cache-xspec
             with:
               path: ~/xspec_home
@@ -80,7 +80,7 @@ jobs:
               fi
                  
           - name: Checkout
-            uses: actions/checkout@v2
+            uses: actions/checkout@v4
           - name: Install dependencies
             run: |
               export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
@@ -108,12 +108,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Set up Python 3.9
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v5
             with:
               python-version: 3.9
 
           - name: Cache XPSEC
-            uses: actions/cache@v2
+            uses: actions/cache@v4
             id: cache-xspec
             with:
               path: ~/xspec_home
@@ -177,7 +177,7 @@ jobs:
               fi
 
           - name: Checkout
-            uses: actions/checkout@v2
+            uses: actions/checkout@v4
           - name: Install dependencies
             run: |
               export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
@@ -213,12 +213,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Set up Python 3.9
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v5
             with:
               python-version: 3.9
 
           - name: Cache XPSEC
-            uses: actions/cache@v2
+            uses: actions/cache@v4
             id: cache-xspec
             with:
               path: ~/xspec_home
@@ -282,7 +282,7 @@ jobs:
               fi
 
           - name: Checkout
-            uses: actions/checkout@v2
+            uses: actions/checkout@v4
           - name: Install dependencies
             run: |
               export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
@@ -318,11 +318,11 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Set up Python 3.9
-            uses: actions/setup-python@v2
+            uses: actions/setup-python@v5
             with:
               python-version: 3.9
           - name: Add conda ${{ matrix.python-version }} to system path
-            uses: conda-incubator/setup-miniconda@v2
+            uses: conda-incubator/setup-miniconda@v3
             with:
                   activate-environment: "test_env"
                   auto-activate-base: false
@@ -335,7 +335,7 @@ jobs:
                   use-only-tar-bz2: true
 
           - name: Cache XPSEC
-            uses: actions/cache@v2
+            uses: actions/cache@v4
             id: cache-xspec
             with:
               path: ~/xspec_home
@@ -398,7 +398,7 @@ jobs:
               rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
               fi
           - name: Checkout
-            uses: actions/checkout@v2
+            uses: actions/checkout@v4
           - name: Install dependencies
             shell: bash -l {0}
             run: |
