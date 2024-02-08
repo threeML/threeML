@@ -1,9 +1,4 @@
 from dataclasses import dataclass, field
-from enum import Enum, Flag
-from typing import Any, Dict, List, Optional
-
-import matplotlib.pyplot as plt
-from omegaconf import II, MISSING, SI, OmegaConf
 
 from .plotting_structure import (
     BinnedSpectrumPlot,
@@ -15,28 +10,28 @@ from .plotting_structure import (
 
 @dataclass
 class OGIP:
-    fit_plot: BinnedSpectrumPlot = BinnedSpectrumPlot()
-    data_plot: DataHistPlot = DataHistPlot()
+    fit_plot: BinnedSpectrumPlot = field(default_factory=lambda: BinnedSpectrumPlot())
+    data_plot: DataHistPlot = field(default_factory=lambda: DataHistPlot())
     response_cmap: MPLCmap = MPLCmap.viridis
     response_zero_color: str = "k"
 
 
 @dataclass
 class Fermipy:
-    fit_plot: FermiSpectrumPlot = FermiSpectrumPlot()
+    fit_plot: FermiSpectrumPlot = field(default_factory=lambda: FermiSpectrumPlot())
 #    data_plot: DataHistPlot = DataHistPlot()
 
 
 @dataclass
 class Photo:
-    fit_plot: BinnedSpectrumPlot = BinnedSpectrumPlot()
+    fit_plot: BinnedSpectrumPlot = field(default_factory=lambda: BinnedSpectrumPlot())
 
 
 @dataclass
 class Plugins:
-    ogip: OGIP = OGIP()
-    photo: Photo = Photo()
-    fermipy: Fermipy =Fermipy()
+    ogip: OGIP = field(default_factory=lambda: OGIP())
+    photo: Photo = field(default_factory=lambda: Photo())
+    fermipy: Fermipy = field(default_factory=lambda: Fermipy())
 
 @dataclass
 class TimeSeriesFit:
@@ -51,4 +46,4 @@ class TimeSeries:
     selection_color: str = "#1fbfb8"
     background_color: str = "#C0392B"
     background_selection_color: str = "#E74C3C"
-    fit: TimeSeriesFit = TimeSeriesFit()
+    fit: TimeSeriesFit = field(default_factory=lambda: TimeSeriesFit())

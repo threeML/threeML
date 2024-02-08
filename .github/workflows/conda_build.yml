@@ -18,7 +18,7 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
             - name: XCode
@@ -27,16 +27,16 @@ jobs:
                   xcode-version: latest
               if: runner.os == 'macOS'
             - name: Set up Python
-              uses: actions/setup-python@v2
+              uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-version }}
-            - name: Cache conda
-              uses: actions/cache@v2
-              with:
-                  path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
+              #- name: Cache conda
+              #uses: actions/cache@v4
+              #with:
+              #    path: ~/conda_pkgs_dir
+              #    key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
-              uses: conda-incubator/setup-miniconda@v2
+              uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
@@ -112,20 +112,20 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
             #- name: Set up Python
-            #  uses: actions/setup-python@v2
+            #  uses: actions/setup-python@v5
             #  with:
             #      python-version: ${{ matrix.python-version }}
             #- name: Cache conda
-            #  uses: actions/cache@v2
+            #  uses: actions/cache@v4
             #  with:
             #      path: ~/conda_pkgs_dir
             #      key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
-              uses: conda-incubator/setup-miniconda@v2
+              uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false

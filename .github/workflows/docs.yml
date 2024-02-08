@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: install latex
@@ -31,7 +31,7 @@ jobs:
           
           pip install zeus-mcmc
           pip install git+https://github.com/desihub/speclite.git
-          pip install black
+          pip install "black<24"
           
           pip install astromodels
           
@@ -67,7 +67,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
@@ -78,9 +78,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -89,7 +89,7 @@ jobs:
           key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -123,7 +123,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install black
+          pip install "black<24"
           pip install git+https://github.com/threeml/hawc_hal.git
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -150,7 +150,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
@@ -160,9 +160,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -171,7 +171,7 @@ jobs:
           key: conda-fermi_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -204,7 +204,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install black
+          pip install "black<24"
           pip install fermipy
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -246,7 +246,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
@@ -256,9 +256,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -267,7 +267,7 @@ jobs:
           key: conda-xspec_notebooks-python-3.9-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -301,7 +301,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install zeus_mcmc dynesty
-          pip install black
+          pip install "black<24"
           pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -332,7 +332,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
@@ -342,9 +342,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -353,7 +353,7 @@ jobs:
           key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -387,7 +387,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install zeus_mcmc dynesty
-          pip install black
+          pip install "black<24"
           #pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
@@ -427,7 +427,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -441,7 +441,7 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
 
       - uses: actions/download-artifact@master
@@ -475,7 +475,7 @@ jobs:
 
           ls docs/notebooks
           
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
@@ -497,13 +497,13 @@ jobs:
     name: "Create the API stubs"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
@@ -531,7 +531,7 @@ jobs:
           sphinx-apidoc -f -o docs/api/ threeML
 
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: api-stubs-for-${{ github.sha }}
           path: docs/api
@@ -546,13 +546,13 @@ jobs:
     steps:
 
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
