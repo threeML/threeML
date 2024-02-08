@@ -110,6 +110,7 @@
 <span class="kn">from</span> <span class="nn">.plugin_structure</span> <span class="kn">import</span> <span class="n">Plugins</span><span class="p">,</span> <span class="n">TimeSeries</span>
 <span class="kn">from</span> <span class="nn">.point_source_structure</span> <span class="kn">import</span> <span class="n">PointSourceDefaults</span>
 
+
 <span class="c1"># logging</span>
 <div class="viewcode-block" id="LoggingLevel"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_structure.LoggingLevel">[docs]</a><span class="k">class</span> <span class="nc">LoggingLevel</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
     <span class="n">DEBUG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
@@ -121,13 +122,12 @@
 
 <div class="viewcode-block" id="Logging"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_structure.Logging">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Logging</span><span class="p">:</span>
-
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;~/.threeml/log&quot;</span>
-    <span class="n">developer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s1">&#39;off&#39;</span>
-    <span class="n">usr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span>
-    <span class="n">console</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span>
+    <span class="n">developer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;off&quot;</span>
+    <span class="n">usr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
+    <span class="n">console</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
     <span class="n">level</span><span class="p">:</span> <span class="n">LoggingLevel</span> <span class="o">=</span> <span class="n">LoggingLevel</span><span class="o">.</span><span class="n">INFO</span>
-    <span class="n">startup_warnings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span></div>
+    <span class="n">startup_warnings</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span></div>
 
 
 <div class="viewcode-block" id="Parallel"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_structure.Parallel">[docs]</a><span class="nd">@dataclass</span>
@@ -136,10 +136,11 @@
     <span class="n">use_parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">use_joblib</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
 
+
 <div class="viewcode-block" id="Interface"><a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.config_structure.Interface">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Interface</span><span class="p">:</span>
-    <span class="n">progress_bars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span>
-    <span class="n">multi_progress_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span>
+    <span class="n">progress_bars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
+    <span class="n">multi_progress_color</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span>
     <span class="n">multi_progress_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span>
     <span class="n">progress_bar_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#9C04FF&quot;</span></div>
 
