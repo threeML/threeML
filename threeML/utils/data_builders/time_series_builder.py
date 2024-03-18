@@ -1500,7 +1500,7 @@ class TimeSeriesBuilder(object):
         cls,
         name,
         polar_events,
-        polar_specrsp,
+        polar_specrsp=None,
         polar_polrsp=None,
         input_format='fits',
         restore_background=None,
