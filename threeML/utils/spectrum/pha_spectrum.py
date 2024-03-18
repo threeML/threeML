@@ -382,11 +382,16 @@ def _read_pha_or_pha2_file(
                     gathered_keywords[internal_name] = data[keyname]
 
                 # Fix "NONE" in None
-                if (
-                    gathered_keywords[internal_name] == "NONE"
-                    or gathered_keywords[internal_name] == "none"
-                ):
-                    gathered_keywords[internal_name] = None
+                if isinstance(gathered_keywords[internal_name], np.ndarray):
+                    idx = np.where((gathered_keywords[internal_name] == "NONE") 
+                        | (gathered_keywords[internal_name] == "none"))
+                    gathered_keywords[internal_name][idx] = None
+                else:
+                    if (
+                        gathered_keywords[internal_name] == "NONE"
+                        or gathered_keywords[internal_name] == "none"
+                    ):
+                        gathered_keywords[internal_name] = None
 
                 key_has_been_collected = True
 
