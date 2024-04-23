@@ -1520,7 +1520,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polar_data = POLARData(
-            polar_events,polar_specrsp, polar_polrsp, input_format, trigger_time)
+            polar_events,polar_specrsp, polar_polrsp, trigger_time)
 
         # Create the the event list
 
