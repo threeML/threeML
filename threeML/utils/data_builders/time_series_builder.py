@@ -1466,7 +1466,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polar_data = POLARData(
-            polar_events,polar_specrsp, polar_polrsp, input_format, reference_time=trigger_time
+            polar_events,polar_specrsp, polar_polrsp, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1480,8 +1480,8 @@ class TimeSeriesBuilder(object):
             dead_time_fraction=polar_data.dead_time_fraction,
             verbose=verbose,
             first_channel=1,
-            mission="Tiangong-2",
-            instrument="POLAR",
+            mission=polar_data.mission,
+            instrument=polar_data.instrument,
         )
 
         return cls(
