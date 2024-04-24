@@ -39,9 +39,9 @@ log = setup_logger(__name__)
 
 try:
 
-    from polarpy.polar_data import POLARData
-    from polarpy.polar_response import PolarResponse
-    from polarpy.polarlike import PolarLike
+    from polarpy.poldata import PolData
+    from polarpy.polresponse import PolResponse
+    from polarpy.polarizationlike import PolarizationLike
 
     log.debug("POLAR plugins are available")
 
@@ -1442,13 +1442,12 @@ class TimeSeriesBuilder(object):
                )
 
     @classmethod
-    def from_polar_spectrum(
+    def from_pol_spectrum(
         cls,
         name,
-        polar_events,
-        polar_specrsp,
-        polar_polrsp=None,
-        input_format='fits',
+        polevents,
+        specrsp,
+        polrsp=None,
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1465,8 +1464,8 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(
-            polar_events,polar_specrsp, polar_polrsp, reference_time=trigger_time
+        polar_data = PolData(
+            polevents,specrsp, polrsp, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1496,13 +1495,12 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
-    def from_polar_polarization(
+    def from_polarization(
         cls,
         name,
-        polar_events,
-        polar_specrsp=None,
-        polar_polrsp=None,
-        input_format='fits',
+        polevents,
+        specrsp=None,
+        polrsp=None,
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1519,8 +1517,8 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(
-            polar_events,polar_specrsp, polar_polrsp, input_format, trigger_time)
+        polar_data = PolData(
+            polevents, specrsp, polrsp, trigger_time)
 
         # Create the the event list
 
@@ -1541,7 +1539,7 @@ class TimeSeriesBuilder(object):
         return cls(
             name,
             event_list,
-            response=polar_polrsp,
+            response=polrsp,
             poly_order=poly_order,
             unbinned=unbinned,
             verbose=verbose,
@@ -1549,7 +1547,7 @@ class TimeSeriesBuilder(object):
             container_type=BinnedModulationCurve,
         )
 
-    def to_polarlike(
+    def to_polarizationlike(
         self,
         from_bins=False,
         start=None,
@@ -1573,7 +1571,7 @@ class TimeSeriesBuilder(object):
             this_background_spectrum = self._background_spectrum
 
         if isinstance(self._response, str):
-            self._response = PolarResponse(self._response)
+            self._response = PolResponse(self._response)
 
         if not from_bins:
 
@@ -1588,7 +1586,7 @@ class TimeSeriesBuilder(object):
                     "No background selection has been made. This plugin will contain no background!"
                 )
 
-            return PolarLike(
+            return PolarizationLike(
                 name=self._name,
                 observation=self._observed_spectrum,
                 background=this_background_spectrum,
@@ -1654,7 +1652,7 @@ class TimeSeriesBuilder(object):
 
                 try:
 
-                    pl = PolarLike(
+                    pl = PolarizationLike(
                         name="%s%s%d" % (self._name, interval_name, i),
                         observation=self._observed_spectrum,
                         background=this_background_spectrum,
