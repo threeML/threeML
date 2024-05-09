@@ -60,7 +60,13 @@ jobs:
                   if [[ "${ISDEV}" == "true" ]]; then
                     #pip install --upgrade --pre --no-deps astromodels
                     # temp fix!
-                    pip install git+https://github.com/threeML/astromodels.git@dev
+                    git clone https://github.com/threeML/astromodels
+                    cd astromodels
+                    git checkout dev
+  
+                    python -m pip install -e .
+  
+                    cd ..
                   else
                     pip install --upgrade astromodels
                   fi
