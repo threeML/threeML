@@ -30,7 +30,7 @@ jobs:
           
           
           pip install zeus-mcmc
-          pip install git+https://github.com/desihub/speclite.git
+          #pip install git+https://github.com/desihub/speclite.git
           pip install "black<24"
           
           pip install astromodels
@@ -40,7 +40,8 @@ jobs:
         shell: bash -l {0}
         run: |
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
+            #pip install --upgrade --pre astromodels
+            pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
@@ -75,7 +76,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -126,7 +127,8 @@ jobs:
           pip install "black<24"
           pip install git+https://github.com/threeml/hawc_hal.git
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
+            #pip install --upgrade --pre astromodels
+            pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
@@ -157,7 +159,7 @@ jobs:
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -207,7 +209,8 @@ jobs:
           pip install "black<24"
           pip install fermipy
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
+            #pip install --upgrade --pre astromodels
+            pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
@@ -253,7 +256,7 @@ jobs:
     
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -302,9 +305,10 @@ jobs:
         run: |
           pip install zeus_mcmc dynesty
           pip install "black<24"
-          pip install git+https://github.com/desihub/speclite.git
+          #pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
+            #pip install --upgrade --pre astromodels
+            pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
@@ -339,7 +343,7 @@ jobs:
   
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -389,9 +393,11 @@ jobs:
           pip install zeus_mcmc dynesty
           pip install "black<24"
           #pip install --no-binary :all: root_numpy
-          pip install git+https://github.com/desihub/speclite.git
+          #pip install git+https://github.com/desihub/speclite.git
+          
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
+            #pip install --upgrade --pre astromodels
+            pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
@@ -437,7 +443,7 @@ jobs:
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout
@@ -495,7 +501,7 @@ jobs:
 
   api_doc:
     name: "Create the API stubs"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -541,7 +547,7 @@ jobs:
 
   build_docs:
     name: "Build the Documentation"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: [upload_notebooks, api_doc]
     steps:
 
@@ -575,7 +581,8 @@ jobs:
           pip3 install -r docs/requirements.txt
 
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
+            #pip install --upgrade --pre astromodels
+            pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
