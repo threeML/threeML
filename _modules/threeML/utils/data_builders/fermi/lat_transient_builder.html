@@ -731,9 +731,13 @@
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s1">&#39;gtltcube_mp.py&#39;</span><span class="p">),</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gtapp_mp_dir</span><span class="p">,</span> <span class="s1">&#39;gttsmap_mp.py&#39;</span><span class="p">),</span>
         <span class="p">]</span>
-        <span class="k">for</span> <span class="n">_e</span> <span class="ow">in</span> <span class="n">executables</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Changing permission to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_e</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">_e</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_e</span> <span class="ow">in</span> <span class="n">executables</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Changing permission to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">_e</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">_e</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+            <span class="k">pass</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;About to run the following command:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cmd</span><span class="p">)</span>
 
