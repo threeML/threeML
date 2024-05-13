@@ -56,17 +56,8 @@ jobs:
                     brew install hdf5
                   fi
 
-                  #pip install --upgrade astromodels
                   if [[ "${ISDEV}" == "true" ]]; then
-                    #pip install --upgrade --pre --no-deps astromodels
-                    # temp fix!
-                    git clone https://github.com/threeML/astromodels
-                    cd astromodels
-                    git checkout dev
-  
-                    python -m pip install -e .
-  
-                    cd ..
+                    pip install --upgrade --pre astromodels
                   else
                     pip install --upgrade astromodels
                   fi
@@ -249,6 +240,9 @@ jobs:
         name: Publish to PyPi
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         runs-on: ubuntu-latest
+        permissions:
+            # IMPORTANT: this permission is mandatory for trusted publishing
+            id-token: write
         steps:
             - name: Checkout source
               uses: actions/checkout@v4
@@ -261,10 +255,8 @@ jobs:
                   pip install wheel setuptools -U
                   python setup.py sdist bdist_wheel
             - name: Publish
-              uses: pypa/gh-action-pypi-publish@v1.1.0
+              uses: pypa/gh-action-pypi-publish@release/v1
               with:
-                  user: __token__
-                  password: ${{ secrets.PYPI_TOKEN }}
                   skip-existing: true
 
     test-publish-pypi:
