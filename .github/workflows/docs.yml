@@ -52,6 +52,8 @@ jobs:
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -104,8 +106,8 @@ jobs:
       - name: Init Environment
         shell: bash -l {0}
         run: |
-          set -e
           # Make sure we fail in case of error
+          set -e
 
           # miniconda_os=Linux
           # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
@@ -138,7 +140,8 @@ jobs:
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -221,7 +224,8 @@ jobs:
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -318,7 +322,8 @@ jobs:
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -408,7 +413,8 @@ jobs:
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
