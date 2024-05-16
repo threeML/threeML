@@ -49,6 +49,9 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel setuptools numpy
+                  
+                  # Temp fix due to speclite not supporting the latest version
+                  pip install "matplotlib<3.9"
 
                   if [[ ${{matrix.os}} == macos-latest ]];
                   then
@@ -104,6 +107,9 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel
+
+                  # Temp fix due to speclite not supporting the latest version
+                  pip install "matplotlib<3.9"
 
                   if [[ ${{matrix.os}} == macos-latest ]];
                   then
