@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building Custom Plugins &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/dark_mode_js/default_dark.js"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Spectrum Plugins" href="spectrum_tutorial.html" />
+    <link rel="prev" title="Plugins" href="../plugins.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../plugins.html">Plugins</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Building Custom Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#The-PluginPrototype-class">The PluginPrototype class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Basic-Properties">Basic Properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Unique-Properties">Unique Properties</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Making-a-custom-plugin">Making a custom plugin</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum_tutorial.html">Spectrum Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Background_modeling.html">Background Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Photometry_demo.html">Photometric Plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hal_example.html">HAL (HAWC Accelerated Likelihood) plugin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../plugins.html">Plugins</a></li>
+      <li class="breadcrumb-item active">Building Custom Plugins</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Building-Custom-Plugins">
+<h1>Building Custom Plugins<a class="headerlink" href="#Building-Custom-Plugins" title="Permalink to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;divide&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;, &#39;invalid&#39;: &#39;warn&#39;}
+</pre></div></div>
+</div>
+<p>The 3ML instrument/data philosophy focuses on the abstraction of the data to likelihood interface. Rather than placing square pegs in round holes by enforcing a common, restrictive data format, 3ML provides an interface that takes a model and returns the likelhood value of that model with its current parameter values.</p>
+<p><img alt="framework" src="../_images/plugin.png" /></p>
+<p>This way, the data format, likelihood formula, internal computations, etc. that are required for the given instrument can be utilized in thier native, most sensitve, and expertly handled form.</p>
+<p>While many general and instrument specific plugins are already provided in 3ML, the ability to build a custom plugin from scratch allows for the quick interface of a new instrument, experiment, or idea into the power 3ML framework on the fly. Let’s take a look at the basic components of a plugin and construct one for ourselves.</p>
+<section id="The-PluginPrototype-class">
+<h2>The PluginPrototype class<a class="headerlink" href="#The-PluginPrototype-class" title="Permalink to this heading"></a></h2>
+<p>The basic functionality of any plugin is prototyped in the PluginPrototype class. This is under the main directory in the 3ML source code, but let’s examine it here:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>class PluginPrototype(object):
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, name, nuisance_parameters):
+        assert is_valid_variable_name(name), &quot;The name %s cannot be used as a name. You need to use a valid &quot; \
+                                             &quot;python identifier: no spaces, cannot start with numbers, cannot contain &quot; \
+                                             &quot;operators symbols such as -, +, *, /&quot; % name
+
+        # Make sure total is not used as a name (need to use it for other things, like the total value of the statistic)
+        assert name.lower() != &quot;total&quot;, &quot;Sorry, you cannot use &#39;total&#39; as name for a plugin.&quot;
+
+        self._name = name
+
+        # This is just to make sure that the plugin is legal
+
+        assert isinstance(nuisance_parameters, dict)
+
+        self._nuisance_parameters = nuisance_parameters
+
+        # These are the external properties (time, polarization, etc.)
+        # self._external_properties = []
+
+        self._tag = None
+
+    def get_name(self):
+        warnings.warn(&quot;Do not use get_name() for plugins, use the .name property&quot;, DeprecationWarning)
+
+        return self.name
+
+    @property
+    def name(self):
+        &quot;&quot;&quot;
+        Returns the name of this instance
+        :return: a string (this is enforced to be a valid python identifier)
+        &quot;&quot;&quot;
+        return self._name
+
+    @property
+    def nuisance_parameters(self):
+        &quot;&quot;&quot;
+        Returns a dictionary containing the nuisance parameters for this dataset
+        :return: a dictionary
+        &quot;&quot;&quot;
+
+        return self._nuisance_parameters
+
+    def update_nuisance_parameters(self, new_nuisance_parameters):
+        assert isinstance(new_nuisance_parameters, dict)
+
+        self._nuisance_parameters = new_nuisance_parameters
+
+
+    def get_number_of_data_points(self):
+        &quot;&quot;&quot;
+        This returns the number of data points that are used to evaluate the likelihood.
+        For binned measurements, this is the number of active bins used in the fit. For
+        unbinned measurements, this would be the number of photons/particles that are
+        evaluated on the likelihood
+        &quot;&quot;&quot;
+
+        warnings.warn(
+            &quot;get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are &quot;
+            &quot;unreliable&quot;, )
+
+        return 1.
+
+    def _get_tag(self):
+
+        return self._tag
+
+    def _set_tag(self, spec):
+        &quot;&quot;&quot;
+        Tag this plugin with the provided independent variable and a start and end value.
+        This can be used for example to fit a time-varying model. In this case the independent variable will be the
+        time and the start and end will be the start and stop time of the exposure for this plugin. These values will
+        be used to average the model over the provided time interval when fitting.
+        :param independent_variable: an IndependentVariable instance
+        :param start: start value for this plugin
+        :param end: end value for this plugin. If this is not provided, instead of integrating the model between
+        start and end, the model will be evaluate at start. Default: None (i.e., not provided)
+        :return: none
+        &quot;&quot;&quot;
+
+        if len(spec) == 2:
+
+            independent_variable, start = spec
+            end = None
+
+        elif len(spec) == 3:
+
+            independent_variable, start, end = spec
+
+        else:
+
+            raise ValueError(&quot;Tag specification should be (independent_variable, start[, end])&quot;)
+
+        # Let&#39;s do a lazy check
+
+        if not isinstance(independent_variable, IndependentVariable):
+
+            warnings.warn(&quot;When tagging a plugin, you should use an IndependentVariable instance. You used instead &quot;
+                          &quot;an instance of a %s object. This might lead to crashes or &quot;
+                          &quot;other problems.&quot; % type(independent_variable))
+
+        self._tag = (independent_variable, start, end)
+
+    tag = property(_get_tag, _set_tag, doc=&quot;Gets/sets the tag for this instance, as (independent variable, start, &quot;
+                                           &quot;[end])&quot;)
+
+    ######################################################################
+    # The following methods must be implemented by each plugin
+    ######################################################################
+
+    @abc.abstractmethod
+    def set_model(self, likelihood_model_instance):
+        &quot;&quot;&quot;
+        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
+        &quot;&quot;&quot;
+        pass
+
+    @abc.abstractmethod
+    def get_log_like(self):
+        &quot;&quot;&quot;
+        Return the value of the log-likelihood with the current values for the
+        parameters
+        &quot;&quot;&quot;
+        pass
+
+    @abc.abstractmethod
+    def inner_fit(self):
+        &quot;&quot;&quot;
+        This is used for the profile likelihood. Keeping fixed all parameters in the
+        LikelihoodModel, this method minimizes the logLike over the remaining nuisance
+        parameters, i.e., the parameters belonging only to the model for this
+        particular detector. If there are no nuisance parameters, simply return the
+        logLike value.
+        &quot;&quot;&quot;
+        pass
+</pre></div>
+</div>
+<section id="Basic-Properties">
+<h3>Basic Properties<a class="headerlink" href="#Basic-Properties" title="Permalink to this heading"></a></h3>
+<p>The basic properties of a plugin are its name and nuisance parameters. These are mostly handled by 3ML natively, but can be manipulated internally as needed.</p>
+<section id="name">
+<h4>name<a class="headerlink" href="#name" title="Permalink to this heading"></a></h4>
+<p>All plugins must be given an <strong>instance</strong> name. Since it is possible that many instances of a particular plugin may be used in an analysis (many different x-ray instruments with FITS PHA data?), 3ML must be able to distinguish them from one another.</p>
+</section>
+<section id="nuisance-parameters">
+<h4>nuisance parameters<a class="headerlink" href="#nuisance-parameters" title="Permalink to this heading"></a></h4>
+<p>Nuisance parameters are parameters that are plugin instance dependent and not part of the inter-plugin shared likelihood model. An effective area correction for a given detector that scales its internal effective area or an internal parameter in an instrument’s software-dependent inner fit are examples of nuisance parameters.</p>
+</section>
+</section>
+<section id="Unique-Properties">
+<h3>Unique Properties<a class="headerlink" href="#Unique-Properties" title="Permalink to this heading"></a></h3>
+<p>The properties that abstract the model-data-likelihood interface are the set_model, get_log_like, and inner_fit members of the plugin. These <strong>must</strong> be implemented or an error will be returned when trying to define the class.</p>
+<section id="set_model">
+<h4>set_model<a class="headerlink" href="#set_model" title="Permalink to this heading"></a></h4>
+<p>This member is responsible for translating the astromodels <strong>Model</strong> object shared by all the plugins during an analysis to this plugin’s data. For example, the DispersionSpectrumLike plugin translates the likelihood model by setting up the convolution of the model through its energy dispersion matrix. There are no restrictions on how this interface occurs allowing for freedom in the data format and/or software that are used to calculate the model.</p>
+</section>
+<section id="get_log_like">
+<h4>get_log_like<a class="headerlink" href="#get_log_like" title="Permalink to this heading"></a></h4>
+<p>This is the member that is called by 3ML when performing parameter estimation to assess the likelihood of the plugin. It simply returns a number, the log likelihood. No restrictions are placed on how this number is calculated allowing for it to be the product of complex instrument software, mathematical formulas, etc.</p>
+</section>
+<section id="inner_fit">
+<h4>inner_fit<a class="headerlink" href="#inner_fit" title="Permalink to this heading"></a></h4>
+<p>This is used for the profile likelihood. Keeping fixed all parameters in the LikelihoodModel, this method minimizes the log likelihood over the remaining nuisance parameters, i.e., the parameters belonging only to the model for this particular detector. If there are no nuisance parameters, simply return the logLike value.</p>
+</section>
+</section>
+</section>
+<section id="Making-a-custom-plugin">
+<h2>Making a custom plugin<a class="headerlink" href="#Making-a-custom-plugin" title="Permalink to this heading"></a></h2>
+<p>Let’s build a simple (and useless) plugin to see how the process works. First, we import the PluginPrototype class from 3ML.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
+</pre></div>
+</div>
+</div>
+<p>If we try to create a plugin without implementing all the needed memebers, we will run into an error.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BadPlugin</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">bad_plugin</span> <span class="o">=</span> <span class="n">BadPlugin</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+<span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Can&#39;t instantiate abstract class BadPlugin with abstract methods get_log_like, inner_fit, set_model
+</pre></div></div>
+</div>
+<p>So, let’s instead build a proper plugin</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Parameter</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+
+
+<span class="k">class</span> <span class="nc">GoodPlugin</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># create the hash for the nuisance parameters</span>
+        <span class="n">nuisance_parameters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># create a dummy parameter</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
+            <span class="s2">&quot;dummy_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">min_value</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+            <span class="n">max_value</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+            <span class="n">free</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;A dummy parameter for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">nuisance_parameters</span><span class="p">[</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span>
+
+        <span class="c1"># call the prototype constructor</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GoodPlugin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">nuisance_parameters</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># attach the model to the object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># this isn&#39;t going to be very useful</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">99.0</span>
+
+    <span class="k">def</span> <span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_plugin</span> <span class="o">=</span> <span class="n">GoodPlugin</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_plugin</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;name&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_plugin</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-99.0
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_plugin</span><span class="o">.</span><span class="n">nuisance_parameters</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OrderedDict([(&#39;dummy_name&#39;,
+              Parameter dummy_name = 1.0 []
+              (min_value = 0.8, max_value = 1.2, delta = 0.05, free = False))])
+</pre></div></div>
+</div>
+<p>While our plugin is not very useful, we can now see how to build a plugin. Examine the source code of other plugins that are provided. Figure out how to interface your instrument’s model evaluation and likelihood computation to python and place these methods inside your plugin class. We have taken care of the rest.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../plugins.html" class="btn btn-neutral float-left" title="Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spectrum_tutorial.html" class="btn btn-neutral float-right" title="Spectrum Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

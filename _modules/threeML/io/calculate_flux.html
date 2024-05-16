@@ -51,7 +51,10 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
@@ -66,12 +69,18 @@
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
 </ul>
 
         </div>
@@ -278,7 +287,7 @@
             <span class="k">if</span> <span class="p">(</span>
                 <span class="ow">not</span> <span class="n">use_components</span>
                 <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">])</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;main&#39;</span> <span class="ow">in</span> <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">])</span>
             <span class="p">):</span>
                 <span class="n">mle_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
                     <span class="s2">&quot;fitted point source&quot;</span>
@@ -376,7 +385,7 @@
             <span class="k">if</span> <span class="p">(</span>
                 <span class="ow">not</span> <span class="n">use_components</span>
                 <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">])</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;main&#39;</span> <span class="ow">in</span> <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;component_names&quot;</span><span class="p">])</span>
             <span class="p">):</span>
                 <span class="n">bayesian_analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span>
                     <span class="s2">&quot;fitted point source&quot;</span>
@@ -502,11 +511,17 @@
                 <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">components_to_use</span>
             <span class="p">):</span>
                 <span class="n">use_total</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="k">if</span> <span class="s1">&#39;main&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="n">use_total</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="n">component_sum_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">component_sum_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
+                    <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
 
@@ -570,23 +585,29 @@
                 <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">]</span>
             <span class="p">):</span>
                 <span class="n">get_total</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="k">if</span> <span class="s1">&#39;main&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="n">get_total</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="c1"># extract the information and plot it</span>
+            <span class="k">else</span><span class="p">:</span>
 
-                <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="c1"># extract the information and plot it</span>
+                    
+                    <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;components&quot;</span><span class="p">][</span><span class="n">component</span><span class="p">]</span>
 
-                <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">component</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">component</span><span class="si">}</span><span class="s2">&quot;</span>
 
-                <span class="n">_append_best_fit_and_errors</span><span class="p">(</span>
-                    <span class="n">samples</span><span class="p">,</span>
-                    <span class="n">_defaults</span><span class="p">,</span>
-                    <span class="n">label</span><span class="p">,</span>
-                    <span class="n">fluxes</span><span class="p">,</span>
-                    <span class="n">p_errors</span><span class="p">,</span>
-                    <span class="n">n_errors</span><span class="p">,</span>
-                    <span class="n">labels</span><span class="p">,</span>
-                <span class="p">)</span>
+                    <span class="n">_append_best_fit_and_errors</span><span class="p">(</span>
+                        <span class="n">samples</span><span class="p">,</span>
+                        <span class="n">_defaults</span><span class="p">,</span>
+                        <span class="n">label</span><span class="p">,</span>
+                        <span class="n">fluxes</span><span class="p">,</span>
+                        <span class="n">p_errors</span><span class="p">,</span>
+                        <span class="n">n_errors</span><span class="p">,</span>
+                        <span class="n">labels</span><span class="p">,</span>
+                    <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
 
@@ -595,13 +616,18 @@
         <span class="k">if</span> <span class="n">get_total</span><span class="p">:</span>
             <span class="c1"># it ends up that we need to plot the total spectrum</span>
             <span class="c1"># which is just a repeat of the process</span>
-            <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span>
+            
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">samples</span> <span class="o">=</span> <span class="n">analyses</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;fitted point source&quot;</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> component(s) not available in source </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>\
+                         <span class="p">(</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;components_to_use&quot;</span><span class="p">],</span> <span class="n">key</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: total&quot;</span>
 
-            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: total&quot;</span>
-
-            <span class="n">_append_best_fit_and_errors</span><span class="p">(</span>
-                <span class="n">samples</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">fluxes</span><span class="p">,</span> <span class="n">p_errors</span><span class="p">,</span> <span class="n">n_errors</span><span class="p">,</span> <span class="n">labels</span>
-            <span class="p">)</span>
+                <span class="n">_append_best_fit_and_errors</span><span class="p">(</span>
+                    <span class="n">samples</span><span class="p">,</span> <span class="n">_defaults</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">fluxes</span><span class="p">,</span> <span class="n">p_errors</span><span class="p">,</span> <span class="n">n_errors</span><span class="p">,</span> <span class="n">labels</span>
+                <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">fluxes</span><span class="p">:</span>
         <span class="c1"># now make a data frame</span>
@@ -702,7 +728,7 @@
     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
         <span class="s2">&quot;The use of calculate_point_source_flux is deprecated. Please use the .get_point_source_flux()&quot;</span>
         <span class="s2">&quot; method of the JointLikelihood.results or the BayesianAnalysis.results member. For example:&quot;</span>
-        <span class="s2">&quot; jl.results.get_point_source_flux().&quot;</span>
+        <span class="s2">&quot; jl.results.get_flux().&quot;</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_calculate_point_source_flux</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
