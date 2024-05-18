@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "96795e5f",
+   "id": "743a35c2",
    "metadata": {},
    "source": [
     "## What happens to the model/function during a fit?\n",
@@ -13,13 +13,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "0bc6e200",
+   "id": "278d62ff",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-05-16T18:58:48.757517Z",
-     "iopub.status.busy": "2024-05-16T18:58:48.757042Z",
-     "iopub.status.idle": "2024-05-16T18:58:51.755421Z",
-     "shell.execute_reply": "2024-05-16T18:58:51.754782Z"
+     "iopub.execute_input": "2024-05-17T23:24:59.339853Z",
+     "iopub.status.busy": "2024-05-17T23:24:59.339508Z",
+     "iopub.status.idle": "2024-05-17T23:25:02.502785Z",
+     "shell.execute_reply": "2024-05-17T23:25:02.502045Z"
     },
     "lines_to_next_cell": 2
    },
@@ -49,24 +49,24 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "bb1520ea",
+   "id": "716801ba",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-05-16T18:58:51.758393Z",
-     "iopub.status.busy": "2024-05-16T18:58:51.757846Z",
-     "iopub.status.idle": "2024-05-16T18:58:54.530212Z",
-     "shell.execute_reply": "2024-05-16T18:58:54.529622Z"
+     "iopub.execute_input": "2024-05-17T23:25:02.505560Z",
+     "iopub.status.busy": "2024-05-17T23:25:02.505240Z",
+     "iopub.status.idle": "2024-05-17T23:25:05.378765Z",
+     "shell.execute_reply": "2024-05-17T23:25:05.378185Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">18:58:52 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Using Gaussian statistic (equivalent to chi^</span><span style=\"color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold\">2</span><span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">) with the provided errors.            </span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">XYLike.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">93</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">23:25:02 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Using Gaussian statistic (equivalent to chi^</span><span style=\"color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold\">2</span><span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">) with the provided errors.            </span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">XYLike.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">93</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m18:58:52\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=524970;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=489663;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\u001b\\\u001b[2m93\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m23:25:02\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=998381;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=647149;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\u001b\\\u001b[2m93\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -75,11 +75,11 @@
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">18:58:53 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Using Gaussian statistic (equivalent to chi^</span><span style=\"color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold\">2</span><span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">) with the provided errors.            </span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">XYLike.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">93</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">23:25:04 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Using Gaussian statistic (equivalent to chi^</span><span style=\"color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold\">2</span><span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">) with the provided errors.            </span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">XYLike.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">93</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m18:58:53\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=859784;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=155427;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\u001b\\\u001b[2m93\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m23:25:04\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=963606;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=674137;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\u001b\\\u001b[2m93\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -101,7 +101,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=11508;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=479921;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\u001b\\\u001b[2m93\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=175648;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=185319;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#93\u001b\\\u001b[2m93\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -114,7 +114,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=247966;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=522942;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=979497;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=158305;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045\u001b\\\u001b[2m1045\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -127,7 +127,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to MINUIT                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=778568;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=257101;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1062\u001b\\\u001b[2m1062\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to MINUIT                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=875748;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=5029;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1062\u001b\\\u001b[2m1062\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -181,12 +181,12 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>source.spectrum.main.Powerlaw.K</th>\n",
-       "      <td>(9.86 -0.27 +0.28) x 10^-1</td>\n",
+       "      <td>1.047 -0.028 +0.029</td>\n",
        "      <td>1 / (keV s cm2)</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>source.spectrum.main.Powerlaw.index</th>\n",
-       "      <td>-1.497 +/- 0.011</td>\n",
+       "      <td>-1.515 +/- 0.010</td>\n",
        "      <td></td>\n",
        "    </tr>\n",
        "  </tbody>\n",
@@ -194,15 +194,10 @@
        "</div>"
       ],
       "text/plain": [
-       "                                                         result  \\\n",
-       "parameter                                                         \n",
-       "source.spectrum.main.Powerlaw.K      (9.86 -0.27 +0.28) x 10^-1   \n",
-       "source.spectrum.main.Powerlaw.index            -1.497 +/- 0.011   \n",
-       "\n",
-       "                                                unit  \n",
-       "parameter                                             \n",
-       "source.spectrum.main.Powerlaw.K      1 / (keV s cm2)  \n",
-       "source.spectrum.main.Powerlaw.index                   "
+       "                                                  result             unit\n",
+       "parameter                                                                \n",
+       "source.spectrum.main.Powerlaw.K      1.047 -0.028 +0.029  1 / (keV s cm2)\n",
+       "source.spectrum.main.Powerlaw.index     -1.515 +/- 0.010                 "
       ]
      },
      "metadata": {},
@@ -228,7 +223,7 @@
     {
      "data": {
       "text/html": [
-       "<div><table id=\"table140275451328304\">\n",
+       "<div><table id=\"table140417159891840\">\n",
        "<tr><td>1.00</td><td>-0.86</td></tr>\n",
        "<tr><td>-0.86</td><td>1.00</td></tr>\n",
        "</table></div>"
@@ -285,11 +280,11 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>data</th>\n",
-       "      <td>21.335809</td>\n",
+       "      <td>17.855553</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>total</th>\n",
-       "      <td>21.335809</td>\n",
+       "      <td>17.855553</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
        "</table>\n",
@@ -297,8 +292,8 @@
       ],
       "text/plain": [
        "       -log(likelihood)\n",
-       "data          21.335809\n",
-       "total         21.335809"
+       "data          17.855553\n",
+       "total         17.855553"
       ]
      },
      "metadata": {},
@@ -348,11 +343,11 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>AIC</th>\n",
-       "      <td>46.926936</td>\n",
+       "      <td>39.966426</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>BIC</th>\n",
-       "      <td>50.495663</td>\n",
+       "      <td>43.535152</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
        "</table>\n",
@@ -360,8 +355,8 @@
       ],
       "text/plain": [
        "     statistical measures\n",
-       "AIC             46.926936\n",
-       "BIC             50.495663"
+       "AIC             39.966426\n",
+       "BIC             43.535152"
       ]
      },
      "metadata": {},
@@ -372,7 +367,7 @@
      "output_type": "stream",
      "text": [
       "power law index after fit:\n",
-      "Parameter index = -1.4969519133560127 []\n",
+      "Parameter index = -1.5149503527808048 []\n",
       "(min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)\n"
      ]
     }
@@ -405,7 +400,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "8834abb8",
+   "id": "57981b46",
    "metadata": {},
    "source": [
     "After a fit, the fitted result are stored in an AnalysisResults object so that if the fit function's values are further modified, the best fit parameters can still be recovered."
@@ -413,7 +408,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "5b2a352c",
+   "id": "d7d296cc",
    "metadata": {},
    "source": [
     "## Why does my plugin not return a get_log_like()?\n",
@@ -423,7 +418,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "ad0a5ddb",
+   "id": "1437dd74",
    "metadata": {},
    "source": [
     "## Why did my plugin lose its model?\n",
