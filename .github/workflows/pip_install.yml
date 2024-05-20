@@ -32,6 +32,9 @@ jobs:
         then
           brew update
           brew install hdf5
+          # This installation of numpy is currently needed to avoid an issue
+          # while running pip install of astromodels
+          pip install numpy
         fi
         python -m pip install astromodels
 
@@ -64,9 +67,84 @@ jobs:
         then
           brew update
           brew install hdf5
+          # This installation of numpy is currently needed to avoid an issue
+          # while running pip install of astromodels
+          pip install numpy 
         fi
         python -m pip install astromodels
 
     - name: Install 3ML
       run: |
         pip install threeML
+
+  test-install-conda:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
+        python-version: [3.9]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: XCode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest
+      if: runner.os == 'macOS'
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: "test_env"
+        auto-activate-base: false
+        miniforge-variant: Mambaforge
+        architecture: "x64"
+        python-version: ${{ matrix.python-version }}
+        auto-update-conda: true
+        channels:  threeml, xspecmodels, fermi, conda-forge
+    - name: Install packages
+      run: |
+        mamba install threeML astromodels xspec-modelsonly fermitools #fermipy
+    - name: Test threeML and astromodels
+      run: |
+        pytest -vv --pyargs astromodels
+        pytest -vv --pyargs threeML
+      env:
+        OMP_NUM_THREADS: 1
+        MKL_NUM_THREADS: 1
+        NUMEXPR_NUM_THREADS: 1
+        MPLBACKEND: "Agg"
+
+  test-install-conda-dev:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
+        python-version: [3.9]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: XCode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest
+      if: runner.os == 'macOS'
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: "test_env"
+        auto-activate-base: false
+        miniforge-variant: Mambaforge
+        architecture: "x64"
+        python-version: ${{ matrix.python-version }}
+        auto-update-conda: true
+        channels:  threeml/label/dev, xspecmodels, fermi, conda-forge
+    - name: Install packages
+      run: |
+        mamba install threeML astromodels xspec-modelsonly fermitools #fermipy
+    - name: Test threeML and astromodels
+      run: |
+        pytest -vv --pyargs astromodels
+        pytest -vv --pyargs threeML
+      env:
+        OMP_NUM_THREADS: 1
+        MKL_NUM_THREADS: 1
+        NUMEXPR_NUM_THREADS: 1
+        MPLBACKEND: "Agg"
