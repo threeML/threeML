@@ -5,7 +5,7 @@ import sys
 from builtins import object, range, zip
 
 import astromodels.core.model
-import matplotlib.cm as cm
+from matplotlib import colormaps
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -1255,8 +1255,7 @@ class JointLikelihood(object):
         bounds.append(cc.max())
 
         # Define the color palette
-        palette = cm.get_cmap(
-            threeML_config["mle"]["contour_cmap"].value)  # cm.Pastel1
+        palette = colormaps[threeML_config["mle"]["contour_cmap"].value] # cm.Pastel1
         palette.set_over(threeML_config["mle"]["contour_background"])
         palette.set_under(threeML_config["mle"]["contour_background"])
         palette.set_bad(threeML_config["mle"]["contour_background"])

@@ -178,7 +178,7 @@ def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     bayes.set_sampler("dynesty_nested")
 
-    bayes.sampler.setup(n_live_points=100, n_effective=10)
+    bayes.sampler.setup(n_live_points=200, n_effective=10)
 
     bayes.sample()
 

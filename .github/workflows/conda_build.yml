@@ -13,7 +13,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-latest"]
+                os: ["ubuntu-latest", "macos-latest", "macos-12"]
                 python-version: [3.9]
 
         steps:
@@ -67,7 +67,8 @@ jobs:
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
-                  pip install fermipy
+                  pip install --upgrade speclite
+                  pip install fermipy "matplotlib<3.9"
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
