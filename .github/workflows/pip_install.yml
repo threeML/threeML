@@ -102,6 +102,7 @@ jobs:
         channels:  threeml, xspecmodels, fermi, conda-forge
     - name: Install packages
       run: |
+        mamba activate test_env
         mamba install threeML astromodels xspec-modelsonly fermitools #fermipy
     - name: Test threeML and astromodels
       run: |
@@ -138,6 +139,7 @@ jobs:
         channels:  threeml/label/dev, xspecmodels, fermi, conda-forge
     - name: Install packages
       run: |
+        mamba activate test_env
         mamba install threeML astromodels xspec-modelsonly fermitools #fermipy
     - name: Test threeML and astromodels
       run: |
