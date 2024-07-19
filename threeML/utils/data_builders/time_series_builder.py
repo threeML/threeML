@@ -1448,7 +1448,6 @@ class TimeSeriesBuilder(object):
         polevents,
         specrsp,
         polrsp=None,
-        input_format='fits',
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1466,7 +1465,7 @@ class TimeSeriesBuilder(object):
         # extract the polarization variables
 
         polarization_data = PolData(
-            polevents,specrsp, polrsp, input_format, reference_time=trigger_time
+            polevents,specrsp, polrsp, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1502,7 +1501,6 @@ class TimeSeriesBuilder(object):
         polevents,
         specrsp=None,
         polrsp=None,
-        input_format='fits',
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1520,7 +1518,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polarization_data = PolData(
-            polevents,specrsp, polrsp, input_format, trigger_time)
+            polevents,specrsp, polrsp, trigger_time)
 
         # Create the the event list
 
