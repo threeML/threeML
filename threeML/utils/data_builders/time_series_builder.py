@@ -1465,7 +1465,7 @@ class TimeSeriesBuilder(object):
         # extract the polarization variables
 
         polarization_data = PolData(
-            polevents,specrsp, polrsp, reference_time=trigger_time
+            polevents, polrsp, specrsp, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1495,12 +1495,12 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
-    def from_pol_polarization(
+    def from_polarization(
         cls,
         name,
         polevents,
+        polrsp,
         specrsp=None,
-        polrsp=None,
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1518,7 +1518,10 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polarization_data = PolData(
-            polevents,specrsp, polrsp, trigger_time)
+            polevents, polrsp, specrsp, trigger_time)
+        
+        # get the pa offset
+        cls._pa_offset = polarization_data.get_pa_offset()
 
         # Create the the event list
 
@@ -1571,7 +1574,7 @@ class TimeSeriesBuilder(object):
             this_background_spectrum = self._background_spectrum
 
         if isinstance(self._response, str):
-            self._response = PolResponse(self._response)
+            self._response = PolResponse(self._response, self._pa_offset)
 
         if not from_bins:
 
