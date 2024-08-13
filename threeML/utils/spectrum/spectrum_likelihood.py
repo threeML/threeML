@@ -406,7 +406,7 @@ class NotAvailableStatistic(object):
         raise RuntimeError()
 
 try:
-    from ixpe.likelihood import GaussianObservedGaussianBackgroundStatistic
+    from ixpepy.likelihood import GaussianObservedGaussianBackgroundStatistic
     log.info('IXPE plugin found. Enabling Gaussian source with Gaussian background.')
 except:
     GaussianObservedGaussianBackgroundStatistic = NotAvailableStatistic
