@@ -78,7 +78,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -346,9 +345,8 @@
 
         <span class="n">hdf_obj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
             <span class="s2">&quot;UNIT&quot;</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unicode_</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-                <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">()</span>
-            <span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">()),</span>
             <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span>
             <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -507,7 +505,7 @@
             <span class="p">(</span><span class="s2">&quot;NEGATIVE_ERROR&quot;</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;POSITIVE_ERROR&quot;</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;positive_error&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;UNIT&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">unicode_</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">&quot;UNIT&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)),</span>
             <span class="p">(</span><span class="s2">&quot;COVARIANCE&quot;</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;LOG_PROB&quot;</span><span class="p">,</span> <span class="n">dummy</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="n">samples</span><span class="p">),</span>
