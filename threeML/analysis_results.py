@@ -235,8 +235,7 @@ class ANALYSIS_RESULTS_HDF(object):
         hdf_obj.create_dataset(
             "UNIT",
             data=np.array(data_frame["unit"].values, dtype=np.str_).astype(
-                h5py.string_dtype()
-            ),
+                h5py.string_dtype()),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
