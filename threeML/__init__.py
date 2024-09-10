@@ -22,6 +22,10 @@ except ImportError:
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
+
+# Import everything from astromodels
+from astromodels import *
+
 from .config import (
     threeML_config,
     show_configuration,
@@ -61,10 +65,6 @@ del get_versions
 
 import traceback
 from importlib.machinery import SourceFileLoader
-
-# Import everything from astromodels
-from astromodels import *
-
 
 # Finally import the serialization machinery
 from .io.serialization import *

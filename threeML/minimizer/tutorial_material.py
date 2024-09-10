@@ -3,6 +3,7 @@ from __future__ import division
 from builtins import map, range, zip
 
 import matplotlib.pyplot as plt
+from matplotlib import colormaps
 import numpy as np
 from astromodels import (Function1D, FunctionMeta, Gaussian, Model,
                          PointSource, use_astromodels_memoization)
@@ -138,7 +139,7 @@ def plot_minimizer_path(jl, points=False):
 
         # Color map
         N = len(qx_sets)
-        cmap = plt.cm.get_cmap("gist_earth", N + 1)
+        cmap = colormaps["gist_earth"].resampled(N + 1)
 
         for i, (qx, qy) in enumerate(zip(qx_sets, qy_sets)):
 

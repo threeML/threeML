@@ -37,7 +37,7 @@ jobs:
             fail-fast: false
             matrix:
                 python-version: ["3.9","3.10","3.11"]
-                os: ["ubuntu-latest", "macos-latest"]
+                os: ["ubuntu-latest", "macos-latest", "macos-12"]
         runs-on:  ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -48,20 +48,25 @@ jobs:
                   python-version: ${{ matrix.python-version }}
             - name: Install dependencies
               run: |
-                  python -m pip install --upgrade pip wheel
-                  pip install tables==3.8.0
-                  pip install git+https://github.com/EconForge/interpolation.py.git
+                  python -m pip install --upgrade pip wheel setuptools numpy
+                  
+                  # Temp fix due to speclite not supporting the latest version
+                  pip install "matplotlib<3.9"
 
-                  pip install --upgrade astromodels
+                  if [[ ${{matrix.os}} == macos-latest ]];
+                  then
+                    brew update
+                    brew install hdf5
+                  fi
+
                   if [[ "${ISDEV}" == "true" ]]; then
-                    pip install --upgrade --pre --no-deps astromodels
+                    pip install --upgrade --pre astromodels
+                  else
+                    pip install --upgrade astromodels
                   fi
                   
                   pip install --upgrade flake8 coverage pytest-cov cython
 
-                  # temp fixes
-                  #pip install git+https://github.com/desihub/speclite.git
-                  
                   pip install -e .
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
@@ -90,7 +95,7 @@ jobs:
             fail-fast: false
             matrix:
                 python-version: ["3.9","3.10","3.11"]
-                os: [ "ubuntu-latest", "macos-latest" ]
+                os: [ "ubuntu-latest", "macos-latest", "macos-12"]
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -102,9 +107,15 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel
-                  python -m pip install cython extension_helpers astropy numpy numba tempita h5py
-                  pip install tables==3.8.0
-                  pip install git+https://github.com/EconForge/interpolation.py.git
+
+                  # Temp fix due to speclite not supporting the latest version
+                  pip install "matplotlib<3.9"
+
+                  if [[ ${{matrix.os}} == macos-latest ]];
+                  then
+                    brew update
+                    brew install hdf5
+                  fi
 
                   git clone https://github.com/threeML/astromodels
                   cd astromodels
@@ -115,9 +126,6 @@ jobs:
                   cd ..
 
                   pip install --upgrade flake8 coverage pytest-cov cython
-
-                  # temp fixes
-                  #pip install git+https://github.com/desihub/speclite.git
 
                   pip install -e .
             - name: Lint with flake8
@@ -146,7 +154,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-latest"]
+                os: ["ubuntu-latest", "macos-12"]
                 python-version: [3.9]
         runs-on: ${{ matrix.os }}
         steps:
@@ -194,7 +202,8 @@ jobs:
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
-                  pip install fermipy
+                  pip install --upgrade speclite
+                  pip install fermipy "matplotlib<3.9"
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -238,6 +247,9 @@ jobs:
         name: Publish to PyPi
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         runs-on: ubuntu-latest
+        permissions:
+            # IMPORTANT: this permission is mandatory for trusted publishing
+            id-token: write
         steps:
             - name: Checkout source
               uses: actions/checkout@v4
@@ -250,10 +262,8 @@ jobs:
                   pip install wheel setuptools -U
                   python setup.py sdist bdist_wheel
             - name: Publish
-              uses: pypa/gh-action-pypi-publish@v1.1.0
+              uses: pypa/gh-action-pypi-publish@release/v1
               with:
-                  user: __token__
-                  password: ${{ secrets.PYPI_TOKEN }}
                   skip-existing: true
 
     test-publish-pypi:

@@ -1,9 +1,8 @@
 from dataclasses import dataclass, field
-from enum import Enum, Flag
+from enum import Enum
 from typing import Any, Dict, List, Optional
-import numpy as np
+
 import matplotlib.pyplot as plt
-from omegaconf import II, MISSING, SI, OmegaConf
 
 # type checking matplotlib colormaps
 MPLCmap = Enum("MPLCmap", zip(plt.colormaps(), plt.colormaps()))
@@ -47,7 +46,6 @@ class FermiSpectrumPlot:
     data_mpl_kwargs: Optional[Dict[str, Any]] = None
     model_mpl_kwargs: Optional[Dict[str, Any]] = None
     background_mpl_kwargs: Optional[Dict[str, Any]] = None
-
 
 
 @dataclass
@@ -102,7 +100,6 @@ class LegendStyle:
 
 @dataclass
 class PointSourcePlot:
-
     fit_cmap: MPLCmap = MPLCmap.Set1
     contour_cmap: MPLCmap = MPLCmap.Set1
     bayes_cmap: MPLCmap = MPLCmap.Set1

@@ -1,4 +1,4 @@
-from matplotlib import cm
+from matplotlib import colormaps
 from matplotlib.colors import to_hex
 import numpy as np
 
@@ -21,8 +21,7 @@ class _Get_Color(object):
 
     def __init__(self, n_colors=5):
 
-        cmap = cm.get_cmap(
-            threeML_config.interface.multi_progress_cmap)
+        cmap = colormaps[threeML_config.interface.multi_progress_cmap]
 
         self._colors = [to_hex(c) for c in cmap(np.linspace(0,1,n_colors))]
 

@@ -5,10 +5,10 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.15.2
   kernelspec:
-    display_name: Python 3
+    display_name: Python 3 (ipykernel)
     language: python
     name: python3
 ---
@@ -59,7 +59,7 @@ print(fit_function.index)
 
 xyl = XYLike("data", x, y, y_err)
 
-parameters, like_values = xyl.fit(fit_function)
+results = xyl.fit(fit_function)
 
 
 print("power law index after fit:")
@@ -77,7 +77,3 @@ When a plugin is created, it does not have a likelihood model set initially. Thi
 ## Why did my plugin lose its model?
 
 If you use the same plugin with different models bvy passing it to successive JointLikelihood or BayesianAnalysis constructors, the plugin will have the last model with which it was used set as its model. 
-
-```python
-
-```

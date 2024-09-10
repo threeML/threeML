@@ -6,9 +6,9 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.13.1
+      jupytext_version: 1.15.2
   kernelspec:
-    display_name: Python 3
+    display_name: Python 3 (ipykernel)
     language: python
     name: python3
 ---
@@ -26,10 +26,6 @@ Let's explore the possibilites.
 
 
 <!-- #endregion -->
-
-```python
-
-```
 
 ```python
 import warnings
@@ -221,7 +217,6 @@ threeML_config.point_source.integrate_flux_method = "quad"
 
 result.get_flux(ene_min=1*u.keV, 
                 ene_max = 1*u.MeV,
-                
                 flux_unit="erg/cm2/s")
 ```
 
@@ -246,15 +241,15 @@ result.get_flux(ene_min=10*u.keV,
                 flux_unit="1/(cm2 s)")
 ```
 
-As well as choose which component to compute
+As well as choose which source and component to compute
 
 ```python
 result.get_flux(ene_min=10*u.keV, 
                 ene_max = 0.5*u.MeV,
+                sources=["src2"],
                 use_components=True,
                 components_to_use =["Blackbody"],
-                
-                flux_unit="erg2/(cm2 s)")
+                flux_unit="1/(cm2 s)")
 ```
 
 Finally, the returned flux object is a pandas table and can be manipulated as such:
