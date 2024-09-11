@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["ubuntu-latest", "macos-latest", "macos-12"]
         python-version: [3.9]
     runs-on: ${{ matrix.os }}
     steps:
@@ -96,7 +96,6 @@ jobs:
         activate-environment: "test_env"
         auto-activate-base: false
         miniforge-variant: Mambaforge
-        architecture: "x64"
         python-version: ${{ matrix.python-version }}
         auto-update-conda: true
         channels:  threeml, xspecmodels, fermi, conda-forge
@@ -118,7 +117,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["ubuntu-latest", "macos-latest", "macos-12"]
         python-version: [3.9]
     runs-on: ${{ matrix.os }}
     steps:
@@ -133,7 +132,6 @@ jobs:
         activate-environment: "test_env"
         auto-activate-base: false
         miniforge-variant: Mambaforge
-        architecture: "x64"
         python-version: ${{ matrix.python-version }}
         auto-update-conda: true
         channels:  threeml/label/dev, xspecmodels, fermi, conda-forge
