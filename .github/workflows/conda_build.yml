@@ -13,9 +13,14 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-latest", "macos-12"]
+                os: [ubuntu-latest, macos-latest, macos-12]
                 python-version: [3.9]
-
+                include:
+                  - environment: ci/environment.yml
+                    channel: threeml
+                  - environment:  ci/environment_noxspec.yml
+                    channel: threeml/label/dev
+                    os: macos-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -30,25 +35,17 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-version }}
-              #- name: Cache conda
-              #uses: actions/cache@v4
-              #with:
-              #    path: ~/conda_pkgs_dir
-              #    key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
               uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   miniforge-variant: Mambaforge
-                  #architecture: "x64"
-                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
-                  environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
+                  environment-file: ${{ matrix.environment }}
+                  channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
                   use-only-tar-bz2: true
-                  
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -108,35 +105,29 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-latest, macos-12]
                 python-version: [3.9]
-
+                include:
+                  - environment: ci/environment.yml
+                    channel: threeml
+                  - environment:  ci/environment_noxspec.yml
+                    channel: threeml/label/dev
+                    os: macos-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            #- name: Set up Python
-            #  uses: actions/setup-python@v5
-            #  with:
-            #      python-version: ${{ matrix.python-version }}
-            #- name: Cache conda
-            #  uses: actions/cache@v4
-            #  with:
-            #      path: ~/conda_pkgs_dir
-            #      key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
               uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   miniforge-variant: Mambaforge
-                  #architecture: "x64"
-                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
-                  environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
+                  environment-file: ${{ matrix.environment }}
+                  channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
                   use-only-tar-bz2: true
                   
             - name: Init Env
@@ -179,6 +170,10 @@ jobs:
 
 
                   anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+
+                  elif [[ ${{matrix.os}} == macos-latest ]]; then
+
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
 
                   else
 

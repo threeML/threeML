@@ -154,8 +154,14 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-12"]
+                os: ["ubuntu-latest", "macos-12", "macos-latest"]
                 python-version: [3.9]
+                include:
+                  - environment: ci/environment.yml
+                    channel: threeml
+                  - environment:  ci/environment_noxspec.yml
+                    channel: threeml/label/dev
+                    os: macos-latest
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -165,27 +171,17 @@ jobs:
               with:
                   xcode-version: latest
               if: runner.os == 'macOS'
-            #- name: Cache conda
-            #  uses: actions/cache@v2
-            #  env:
-                # Increase this value to reset cache if etc/example-environment.yml has not changed
-            #    CACHE_NUMBER: 0
-            #  with:
-            #      path: ~/conda_pkgs_dir
-            #      key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Setup Miniconda
               uses: conda-incubator/setup-miniconda@v3
               with:
                   auto-update-conda: true
                   auto-activate-base: false
-                  #miniforge-variant: Mambaforge
                   miniforge-version: latest
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
-                  environment-file: ci/environment.yml
+                  channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
+                  environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: true
-
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -225,8 +221,8 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
-                  wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                  python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                  #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                  #python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
