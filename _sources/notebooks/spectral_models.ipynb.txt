@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "ab7d541c",
+   "id": "6570c041",
    "metadata": {},
    "source": [
     "# Spectral Models\n",
@@ -15,7 +15,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "0d33d674",
+   "id": "94c1ece0",
    "metadata": {},
    "source": [
     "## Building Custom Models\n",
@@ -28,13 +28,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "b9928fe3",
+   "id": "58015fae",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:00.271825Z",
-     "iopub.status.busy": "2024-09-11T20:23:00.271628Z",
-     "iopub.status.idle": "2024-09-11T20:23:02.519055Z",
-     "shell.execute_reply": "2024-09-11T20:23:02.518362Z"
+     "iopub.execute_input": "2024-09-11T21:02:50.190934Z",
+     "iopub.status.busy": "2024-09-11T21:02:50.190374Z",
+     "iopub.status.idle": "2024-09-11T21:02:52.501537Z",
+     "shell.execute_reply": "2024-09-11T21:02:52.500879Z"
     },
     "lines_to_next_cell": 2
    },
@@ -42,12 +42,12 @@
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">20:23:01 </span><span style=\"color: #af5fd7; text-decoration-color: #af5fd7\">WARNING </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> The naima package is not available. Models that depend on it will not be         </span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">functions.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">48</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">21:02:51 </span><span style=\"color: #af5fd7; text-decoration-color: #af5fd7\">WARNING </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> The naima package is not available. Models that depend on it will not be         </span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">functions.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">48</span></a>\n",
        "<span style=\"color: #00ff00; text-decoration-color: #00ff00\">         </span>         <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">available                                                                         </span><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">               </span>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m20:23:01\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m The naima package is not available. Models that depend on it will not be        \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=276083;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py\u001b\\\u001b[2mfunctions.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=324596;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48\u001b\\\u001b[2m48\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m21:02:51\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m The naima package is not available. Models that depend on it will not be        \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=595023;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py\u001b\\\u001b[2mfunctions.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=250450;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48\u001b\\\u001b[2m48\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mavailable                                                                        \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m               \u001b[0m\n"
       ]
      },
@@ -62,7 +62,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=435970;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py\u001b\\\u001b[2mfunctions.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=945844;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#69\u001b\\\u001b[2m69\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=992474;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py\u001b\\\u001b[2mfunctions.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=85069;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#69\u001b\\\u001b[2m69\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mwill not be available.                                                           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m               \u001b[0m\n"
       ]
      },
@@ -77,7 +77,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m The ebltable package is not available. Models that depend on it will not be    \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=10167;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py\u001b\\\u001b[2mabsorption.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=263883;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py#33\u001b\\\u001b[2m33\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m The ebltable package is not available. Models that depend on it will not be    \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=425211;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py\u001b\\\u001b[2mabsorption.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=784269;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py#33\u001b\\\u001b[2m33\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mavailable                                                                       \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                \u001b[0m\n"
       ]
      },
@@ -95,7 +95,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "57cb3bf6",
+   "id": "b8207425",
    "metadata": {
     "lines_to_next_cell": 2
    },
@@ -115,13 +115,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "29bc6063",
+   "id": "190d6c60",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:02.522211Z",
-     "iopub.status.busy": "2024-09-11T20:23:02.521845Z",
-     "iopub.status.idle": "2024-09-11T20:23:02.529714Z",
-     "shell.execute_reply": "2024-09-11T20:23:02.529044Z"
+     "iopub.execute_input": "2024-09-11T21:02:52.504927Z",
+     "iopub.status.busy": "2024-09-11T21:02:52.504366Z",
+     "iopub.status.idle": "2024-09-11T21:02:52.512308Z",
+     "shell.execute_reply": "2024-09-11T21:02:52.511755Z"
     },
     "lines_to_next_cell": 2
    },
@@ -173,7 +173,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "baa859ce",
+   "id": "902d0c86",
    "metadata": {},
    "source": [
     "### The docstring\n",
@@ -214,13 +214,13 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "b7641aa6",
+   "id": "9e99b361",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:02.532275Z",
-     "iopub.status.busy": "2024-09-11T20:23:02.531827Z",
-     "iopub.status.idle": "2024-09-11T20:23:02.534695Z",
-     "shell.execute_reply": "2024-09-11T20:23:02.534166Z"
+     "iopub.execute_input": "2024-09-11T21:02:52.514664Z",
+     "iopub.status.busy": "2024-09-11T21:02:52.514274Z",
+     "iopub.status.idle": "2024-09-11T21:02:52.517250Z",
+     "shell.execute_reply": "2024-09-11T21:02:52.516728Z"
     }
    },
    "outputs": [],
@@ -237,13 +237,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "c61b534a",
+   "id": "046e4b90",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:02.536887Z",
-     "iopub.status.busy": "2024-09-11T20:23:02.536545Z",
-     "iopub.status.idle": "2024-09-11T20:23:02.540749Z",
-     "shell.execute_reply": "2024-09-11T20:23:02.540117Z"
+     "iopub.execute_input": "2024-09-11T21:02:52.519593Z",
+     "iopub.status.busy": "2024-09-11T21:02:52.519207Z",
+     "iopub.status.idle": "2024-09-11T21:02:52.523448Z",
+     "shell.execute_reply": "2024-09-11T21:02:52.522785Z"
     }
    },
    "outputs": [
@@ -264,7 +264,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "ba8d0253",
+   "id": "43f89c80",
    "metadata": {},
    "source": [
     "Now we will define a spectral model that will handle both the unit and non-unit call."
@@ -273,13 +273,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "f1d59f32",
+   "id": "3fb57ba3",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:02.543071Z",
-     "iopub.status.busy": "2024-09-11T20:23:02.542688Z",
-     "iopub.status.idle": "2024-09-11T20:23:02.548412Z",
-     "shell.execute_reply": "2024-09-11T20:23:02.547852Z"
+     "iopub.execute_input": "2024-09-11T21:02:52.525823Z",
+     "iopub.status.busy": "2024-09-11T21:02:52.525445Z",
+     "iopub.status.idle": "2024-09-11T21:02:52.531488Z",
+     "shell.execute_reply": "2024-09-11T21:02:52.530822Z"
     }
    },
    "outputs": [],
@@ -333,7 +333,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "e61f18ba",
+   "id": "09fe5d42",
    "metadata": {},
    "source": [
     "We can check the unit and non-unit call by making a point source and evaluating it"
@@ -342,13 +342,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "f288ee8c",
+   "id": "b9fd1cf2",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:02.550834Z",
-     "iopub.status.busy": "2024-09-11T20:23:02.550458Z",
-     "iopub.status.idle": "2024-09-11T20:23:03.353411Z",
-     "shell.execute_reply": "2024-09-11T20:23:03.352705Z"
+     "iopub.execute_input": "2024-09-11T21:02:52.533985Z",
+     "iopub.status.busy": "2024-09-11T21:02:52.533484Z",
+     "iopub.status.idle": "2024-09-11T21:02:53.358880Z",
+     "shell.execute_reply": "2024-09-11T21:02:53.358186Z"
     }
    },
    "outputs": [
@@ -386,7 +386,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "4b31747e",
+   "id": "4f78a318",
    "metadata": {},
    "source": [
     "## Template (Table) Models\n",
@@ -400,13 +400,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "0e47bd7e",
+   "id": "442ece89",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:03.356167Z",
-     "iopub.status.busy": "2024-09-11T20:23:03.355687Z",
-     "iopub.status.idle": "2024-09-11T20:23:03.359982Z",
-     "shell.execute_reply": "2024-09-11T20:23:03.359445Z"
+     "iopub.execute_input": "2024-09-11T21:02:53.361387Z",
+     "iopub.status.busy": "2024-09-11T21:02:53.361158Z",
+     "iopub.status.idle": "2024-09-11T21:02:53.365676Z",
+     "shell.execute_reply": "2024-09-11T21:02:53.365118Z"
     }
    },
    "outputs": [],
@@ -426,7 +426,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "591fee65",
+   "id": "b27d1c85",
    "metadata": {},
    "source": [
     "Now we define a template model factory. This takes a name, a description, the energy grid and an array of parameter names as input."
@@ -435,25 +435,25 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "a7fe1a85",
+   "id": "5f7d64a8",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:03.362340Z",
-     "iopub.status.busy": "2024-09-11T20:23:03.361988Z",
-     "iopub.status.idle": "2024-09-11T20:23:03.368215Z",
-     "shell.execute_reply": "2024-09-11T20:23:03.367674Z"
+     "iopub.execute_input": "2024-09-11T21:02:53.367864Z",
+     "iopub.status.busy": "2024-09-11T21:02:53.367666Z",
+     "iopub.status.idle": "2024-09-11T21:02:53.374183Z",
+     "shell.execute_reply": "2024-09-11T21:02:53.373633Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">20:23:03 </span><span style=\"color: #af5fd7; text-decoration-color: #af5fd7\">WARNING </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">template_model.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#127\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">127</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">21:02:53 </span><span style=\"color: #af5fd7; text-decoration-color: #af5fd7\">WARNING </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">template_model.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#127\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">127</span></a>\n",
        "<span style=\"color: #00ff00; text-decoration-color: #00ff00\">         </span>         <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">Using keV.                                                                  </span><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">                     </span>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m20:23:03\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m Energy unit is not a Quantity instance, so units has not been provided.   \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=630308;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py\u001b\\\u001b[2mtemplate_model.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=757395;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#127\u001b\\\u001b[2m127\u001b[0m\u001b]8;;\u001b\\\n",
+       "\u001b[38;5;46m21:02:53\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;134mWARNING \u001b[0m \u001b[1;38;5;251m Energy unit is not a Quantity instance, so units has not been provided.   \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=559167;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py\u001b\\\u001b[2mtemplate_model.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=503449;file:///opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#127\u001b\\\u001b[2m127\u001b[0m\u001b]8;;\u001b\\\n",
        "\u001b[38;5;46m         \u001b[0m         \u001b[1;38;5;251mUsing keV.                                                                 \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b[2m                     \u001b[0m\n"
       ]
      },
@@ -471,7 +471,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "22a67cb0",
+   "id": "a4c9d2c1",
    "metadata": {},
    "source": [
     "Now, define our grid in parameter space. While we are using a function here, this grid could be from a text file, a database of simulations, etc. We then assign these grid points to the template model factory."
@@ -480,13 +480,13 @@
   {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "e7f5fdd7",
+   "id": "50d7f5f9",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:03.370454Z",
-     "iopub.status.busy": "2024-09-11T20:23:03.370256Z",
-     "iopub.status.idle": "2024-09-11T20:23:03.374518Z",
-     "shell.execute_reply": "2024-09-11T20:23:03.373973Z"
+     "iopub.execute_input": "2024-09-11T21:02:53.376404Z",
+     "iopub.status.busy": "2024-09-11T21:02:53.376208Z",
+     "iopub.status.idle": "2024-09-11T21:02:53.380529Z",
+     "shell.execute_reply": "2024-09-11T21:02:53.379987Z"
     }
    },
    "outputs": [],
@@ -503,7 +503,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "2245a77b",
+   "id": "0d3b7a3a",
    "metadata": {},
    "source": [
     "Finally, we loop over our grid and set the interpolation data to the template model factory. The units of the fluxes must be a differential photon flux!"
@@ -512,13 +512,13 @@
   {
    "cell_type": "code",
    "execution_count": 10,
-   "id": "ec8e38a0",
+   "id": "979c014d",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:03.376920Z",
-     "iopub.status.busy": "2024-09-11T20:23:03.376531Z",
-     "iopub.status.idle": "2024-09-11T20:23:05.072479Z",
-     "shell.execute_reply": "2024-09-11T20:23:05.071843Z"
+     "iopub.execute_input": "2024-09-11T21:02:53.383088Z",
+     "iopub.status.busy": "2024-09-11T21:02:53.382587Z",
+     "iopub.status.idle": "2024-09-11T21:02:55.112767Z",
+     "shell.execute_reply": "2024-09-11T21:02:55.112113Z"
     },
     "lines_to_next_cell": 2
    },
@@ -537,7 +537,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "a06391a0",
+   "id": "d0855b2a",
    "metadata": {},
    "source": [
     "We can now save our model to disk. The formal is an HDF5 file which is saved to the astromodel data directory (~/.astromodels/data). The HDF5 file can easily be passed around to other users as all information defining the model is stored in the file. The other user would place the file in thier astromodels data directory."
@@ -546,13 +546,13 @@
   {
    "cell_type": "code",
    "execution_count": 11,
-   "id": "97bbaaab",
+   "id": "416a980c",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:05.075320Z",
-     "iopub.status.busy": "2024-09-11T20:23:05.074905Z",
-     "iopub.status.idle": "2024-09-11T20:23:05.228541Z",
-     "shell.execute_reply": "2024-09-11T20:23:05.227920Z"
+     "iopub.execute_input": "2024-09-11T21:02:55.115560Z",
+     "iopub.status.busy": "2024-09-11T21:02:55.115305Z",
+     "iopub.status.idle": "2024-09-11T21:02:55.277057Z",
+     "shell.execute_reply": "2024-09-11T21:02:55.276341Z"
     }
    },
    "outputs": [],
@@ -567,13 +567,13 @@
   {
    "cell_type": "code",
    "execution_count": 12,
-   "id": "e1142690",
+   "id": "985f2dbb",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2024-09-11T20:23:05.231378Z",
-     "iopub.status.busy": "2024-09-11T20:23:05.230976Z",
-     "iopub.status.idle": "2024-09-11T20:23:06.883543Z",
-     "shell.execute_reply": "2024-09-11T20:23:06.882863Z"
+     "iopub.execute_input": "2024-09-11T21:02:55.279979Z",
+     "iopub.status.busy": "2024-09-11T21:02:55.279748Z",
+     "iopub.status.idle": "2024-09-11T21:02:57.012362Z",
+     "shell.execute_reply": "2024-09-11T21:02:57.011619Z"
     }
    },
    "outputs": [
@@ -607,7 +607,7 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "3981113b",
+   "id": "0a8f141c",
    "metadata": {},
    "outputs": [],
    "source": []
