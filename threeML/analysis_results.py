@@ -1181,9 +1181,7 @@ class BayesianResults(_AnalysisResults):
         see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure
         for all options
         :param parameters: list of parameters to plot
-        :param renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
+        :param renamed_parameters: a python dictionary of parameters to rename. Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is {'old label': 'new label'}
         :param **cc_kwargs: chainconsumer general keyword arguments
         :return fig:
         """

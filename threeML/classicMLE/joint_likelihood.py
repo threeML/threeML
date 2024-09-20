@@ -226,8 +226,7 @@ class JointLikelihood(object):
         :param quiet: If True, print the results (default), otherwise do not print anything
         :param compute_covariance:If True (default), compute and display the errors and the correlation matrix.
         :param n_samples: Number of samples to scan the likelihood.
-        :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum
-                 for each dataset and the total one.
+        :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum for each dataset and the total one.
         """
 
         # Update the list of free parameters, to be safe against changes the user might do between

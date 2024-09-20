@@ -941,9 +941,8 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
     @property
     def background_file(self) -> Union[None, str]:
         """
-                Returns the background file definied in the header, or None if there is none defined
-        p
-                :return: a path to a file, or None
+        Returns the background file definied in the header, or None if there is none defined
+        :return: a path to a file, or None
         """
 
         back_file = self._return_file("backfile")
@@ -1355,9 +1354,8 @@ class PHASpectrumSet(BinnedSpectrumSet):
     @property
     def background_file(self):
         """
-                Returns the background file definied in the header, or None if there is none defined
-        p
-                :return: a path to a file, or None
+        Returns the background file definied in the header, or None if there is none defined
+        :return: a path to a file, or None
         """
 
         return self._return_file("backfile")

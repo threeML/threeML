@@ -20,7 +20,8 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
 .. toctree::
     :maxdepth: 5
     :hidden:
-    
+
+    team
     notebooks/installation.ipynb
     intro
     notebooks/configuration.ipynb

@@ -1179,33 +1179,31 @@ class Minimizer(object):
         **options
     ):
         """
-            Generate confidence contours for the given parameters by stepping for the given number of steps between
-            the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
-            generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
-            contour of param_1 vs param_2
+        Generate confidence contours for the given parameters by stepping for the given number of steps between
+        the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
+        generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
+        contour of param_1 vs param_2
 
-            :param param_1: name of the first parameter
-            :param param_1_minimum: lower bound for the range for the first parameter
-            :param param_1_maximum: upper bound for the range for the first parameter
-            :param param_1_n_steps: number of steps for the first parameter
-            :param param_2: name of the second parameter
-            :param param_2_minimum: lower bound for the range for the second parameter
-            :param param_2_maximum: upper bound for the range for the second parameter
-            :param param_2_n_steps: number of steps for the second parameter
-            :param progress: (True or False) whether to display progress or not
-            :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of
-            booleans which specify whether the steps are to be taken logarithmically. For example,
-            'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically, while they
-            are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
-             'log=(True,)' or 'log=(False,)' (optional)
-            :param: parallel: whether to use or not parallel computation (default:False)
-            :return: a : an array corresponding to the steps for the first parameter
-                     b : an array corresponding to the steps for the second parameter (or None if stepping only in one
-                     direction)
-                     contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
-                     corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
-                     an array of size param_1_steps.
-            """
+        :param param_1: name of the first parameter
+        :param param_1_minimum: lower bound for the range for the first parameter
+        :param param_1_maximum: upper bound for the range for the first parameter
+        :param param_1_n_steps: number of steps for the first parameter
+        :param param_2: name of the second parameter
+        :param param_2_minimum: lower bound for the range for the second parameter
+        :param param_2_maximum: upper bound for the range for the second parameter
+        :param param_2_n_steps: number of steps for the second parameter
+        :param progress: (True or False) whether to display progress or not
+        :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of
+        booleans which specify whether the steps are to be taken logarithmically. For example,
+        'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically, while they
+        are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
+        'log=(True,)' or 'log=(False,)' (optional)
+        :param: parallel: whether to use or not parallel computation (default:False)
+        :return:    
+           a : an array corresponding to the steps for the first parameter
+           b : an array corresponding to the steps for the second parameter (or None if stepping only in one direction) 
+           contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to an array of size param_1_steps.
+        """
 
         # Figure out if we are making a 1d or a 2d contour
 
