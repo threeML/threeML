@@ -152,7 +152,7 @@ explicit path to your XSPEC headers:</p>
 </section>
 <section id="xspec-modelsonly">
 <h3>xspec-modelsonly<a class="headerlink" href="#xspec-modelsonly" title="Permalink to this heading"></a></h3>
-<p>I{f using conda, it is possible to get access to XSPEC models without having to install HEASOFT. We thus recommend the following command to create your new conda environment:</p>
+<p>If using conda, it is possible to get access to XSPEC models without having to install HEASOFT. We thus recommend the following command to create your new conda environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>threeml<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>xspecmodels<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>xspec-modelsonly<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>matplotlib
 </pre></div>
 </div>
@@ -167,7 +167,7 @@ explicit path to your XSPEC headers:</p>
 <p>If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:</p>
 <ol class="arabic simple">
 <li><p>Download the script from <a class="reference external" href="https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh">here</a></p></li>
-<li><p>Run the script with <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span></code>. If you plan to use XSPEC models use <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span> <span class="pre">--with-xspec</span></code>.</p></li>
+<li><p>Run the script with <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span></code>. If you plan to use XSPEC models use <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span> <span class="pre">--with-xspec</span></code>. If you want to install from the dev branch add the <code class="docutils literal notranslate"><span class="pre">--dev</span></code> flag.</p></li>
 <li><p>The script will install 3ML and then create a <code class="docutils literal notranslate"><span class="pre">threeML_init.sh</span></code> script and a <code class="docutils literal notranslate"><span class="pre">threeML_init.csh</span></code> script. Source the former if you are using Bash (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">threeML_init.sh</span></code>) and the second one if you are using Csh/Tcsh (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">threeML_init.csh</span></code>).</p></li>
 </ol>
 </section>
@@ -183,6 +183,10 @@ explicit path to your XSPEC headers:</p>
 </div>
 <p><em>NOTE:</em> Recently a third party has uploaded a version of <code class="docutils literal notranslate"><span class="pre">astromodels</span></code> to the conda-forge channel. This version will break support for XSPEC currently if you used the xspec-modelsonly package. It is important to set your conda channel priority so that the threeml channel has priority over the conda-forge channel. Please verify that the <code class="docutils literal notranslate"><span class="pre">astromodels</span></code> installed comes from our threeml channel. We are working to resolve this hassle and we apologize to our users.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>threeml<span class="w"> </span>astromodels<span class="w"> </span>threeml
+</pre></div>
+</div>
+<p>If you want to install the dev version add the label dev:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>threeml/label/dev<span class="w"> </span>astromodels<span class="w"> </span>threeml
 </pre></div>
 </div>
 </section>
@@ -274,7 +278,7 @@ explicit path to your XSPEC headers:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+    <p>&#169; Copyright (2024), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

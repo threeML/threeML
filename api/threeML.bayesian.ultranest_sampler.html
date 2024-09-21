@@ -134,60 +134,30 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.bayesian.ultranest_sampler.UltraNestSampler.setup">
 <span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_num_live_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlogz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overwrite'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapped_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mlfriends</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/ultranest_sampler.html#UltraNestSampler.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.ultranest_sampler.UltraNestSampler.setup" title="Permalink to this definition"></a></dt>
-<dd><blockquote>
-<div><p>set up the Ultranest sampler. Consult the documentation:</p>
-<p><a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler">https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</a></p>
+<dd><p>set up the Ultranest sampler. Consult the documentation:
+<a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler">https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">param min_num_live_points<span class="colon">:</span></dt>
-<dd class="field-odd"><p>minimum number of live points throughout the run</p>
-</dd>
-<dt class="field-even">type min_num_live_points<span class="colon">:</span></dt>
-<dd class="field-even"><p>int</p>
-</dd>
-<dt class="field-odd">param dlogz<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Target evidence uncertainty. This is the std between bootstrapped logz integrators.</p>
-</dd>
-<dt class="field-even">type dlogz<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
-</dd>
-<dt class="field-odd">param chain_name<span class="colon">:</span></dt>
-<dd class="field-odd"><p>where to store output files</p>
-</dd>
-<dt class="field-even">type chain_name<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
-<dt class="field-odd">param resume<span class="colon">:</span></dt>
-<dd class="field-odd"><p>(‘resume’, ‘resume-similar’, ‘overwrite’ or ‘subfolder’) –</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_num_live_points</strong> (<em>int</em>) – minimum number of live points throughout the run</p></li>
+<li><p><strong>dlogz</strong> (<em>float</em>) – Target evidence uncertainty. This is the std between bootstrapped logz integrators.</p></li>
+<li><p><strong>chain_name</strong> – where to store output files</p></li>
+<li><p><strong>resume</strong> – (‘resume’, ‘resume-similar’, ‘overwrite’ or ‘subfolder’) –</p></li>
+</ul>
 </dd>
 </dl>
-</div></blockquote>
 <p>if ‘overwrite’, overwrite previous data.
 if ‘subfolder’, create a fresh subdirectory in log_dir.
 if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.
-if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.</p>
-<blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">type resume<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">param wrapped_params<span class="colon">:</span></dt>
-<dd class="field-even"><p>(list of bools) – indicating whether this parameter wraps around (circular parameter).</p>
-</dd>
-<dt class="field-odd">type wrapped_params<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">param stepsampler<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
-<dt class="field-odd">type stepsampler<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">param use_mlfriends<span class="colon">:</span></dt>
-<dd class="field-even"><p>Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</p>
-</dd>
-<dt class="field-odd">type use_mlfriends<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-<dt class="field-even">returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p></dd>
-</dl>
-</div></blockquote>
+if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.
+:type resume: str
+:param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).
+:type wrapped_params:
+:param stepsampler:
+:type stepsampler:
+:param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).
+:type use_mlfriends: bool
+:returns:</p>
 </dd></dl>
 
 </dd></dl>
@@ -205,7 +175,7 @@ if ‘resume-similar’, continue previous run if available. Only works when dim
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+    <p>&#169; Copyright (2024), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

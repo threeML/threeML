@@ -1291,33 +1291,31 @@
         <span class="o">**</span><span class="n">options</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Generate confidence contours for the given parameters by stepping for the given number of steps between</span>
-<span class="sd">            the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to</span>
-<span class="sd">            generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d</span>
-<span class="sd">            contour of param_1 vs param_2</span>
+<span class="sd">        Generate confidence contours for the given parameters by stepping for the given number of steps between</span>
+<span class="sd">        the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to</span>
+<span class="sd">        generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d</span>
+<span class="sd">        contour of param_1 vs param_2</span>
 
-<span class="sd">            :param param_1: name of the first parameter</span>
-<span class="sd">            :param param_1_minimum: lower bound for the range for the first parameter</span>
-<span class="sd">            :param param_1_maximum: upper bound for the range for the first parameter</span>
-<span class="sd">            :param param_1_n_steps: number of steps for the first parameter</span>
-<span class="sd">            :param param_2: name of the second parameter</span>
-<span class="sd">            :param param_2_minimum: lower bound for the range for the second parameter</span>
-<span class="sd">            :param param_2_maximum: upper bound for the range for the second parameter</span>
-<span class="sd">            :param param_2_n_steps: number of steps for the second parameter</span>
-<span class="sd">            :param progress: (True or False) whether to display progress or not</span>
-<span class="sd">            :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of</span>
-<span class="sd">            booleans which specify whether the steps are to be taken logarithmically. For example,</span>
-<span class="sd">            &#39;log=(True,False)&#39; specify that the steps for the first parameter are to be taken logarithmically, while they</span>
-<span class="sd">            are linear for the second parameter. If you are generating the profile for only one parameter, you can specify</span>
-<span class="sd">             &#39;log=(True,)&#39; or &#39;log=(False,)&#39; (optional)</span>
-<span class="sd">            :param: parallel: whether to use or not parallel computation (default:False)</span>
-<span class="sd">            :return: a : an array corresponding to the steps for the first parameter</span>
-<span class="sd">                     b : an array corresponding to the steps for the second parameter (or None if stepping only in one</span>
-<span class="sd">                     direction)</span>
-<span class="sd">                     contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the</span>
-<span class="sd">                     corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to</span>
-<span class="sd">                     an array of size param_1_steps.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">        :param param_1: name of the first parameter</span>
+<span class="sd">        :param param_1_minimum: lower bound for the range for the first parameter</span>
+<span class="sd">        :param param_1_maximum: upper bound for the range for the first parameter</span>
+<span class="sd">        :param param_1_n_steps: number of steps for the first parameter</span>
+<span class="sd">        :param param_2: name of the second parameter</span>
+<span class="sd">        :param param_2_minimum: lower bound for the range for the second parameter</span>
+<span class="sd">        :param param_2_maximum: upper bound for the range for the second parameter</span>
+<span class="sd">        :param param_2_n_steps: number of steps for the second parameter</span>
+<span class="sd">        :param progress: (True or False) whether to display progress or not</span>
+<span class="sd">        :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of</span>
+<span class="sd">        booleans which specify whether the steps are to be taken logarithmically. For example,</span>
+<span class="sd">        &#39;log=(True,False)&#39; specify that the steps for the first parameter are to be taken logarithmically, while they</span>
+<span class="sd">        are linear for the second parameter. If you are generating the profile for only one parameter, you can specify</span>
+<span class="sd">        &#39;log=(True,)&#39; or &#39;log=(False,)&#39; (optional)</span>
+<span class="sd">        :param: parallel: whether to use or not parallel computation (default:False)</span>
+<span class="sd">        :return:    </span>
+<span class="sd">           a : an array corresponding to the steps for the first parameter</span>
+<span class="sd">           b : an array corresponding to the steps for the second parameter (or None if stepping only in one direction) </span>
+<span class="sd">           contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to an array of size param_1_steps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Figure out if we are making a 1d or a 2d contour</span>
 
@@ -1520,7 +1518,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+    <p>&#169; Copyright (2024), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

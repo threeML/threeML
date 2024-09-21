@@ -178,29 +178,28 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                set up the Ultranest sampler. Consult the documentation:</span>
+<span class="sd">        set up the Ultranest sampler. Consult the documentation:</span>
+<span class="sd">        https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</span>
 
-<span class="sd">                https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</span>
-
-<span class="sd">                :param min_num_live_points: minimum number of live points throughout the run</span>
-<span class="sd">                :type min_num_live_points: int</span>
-<span class="sd">                :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.</span>
-<span class="sd">                :type dlogz: float</span>
-<span class="sd">                :param chain_name: where to store output files</span>
-<span class="sd">                :type chain_name:</span>
-<span class="sd">                :param resume:  (&#39;resume&#39;, &#39;resume-similar&#39;, &#39;overwrite&#39; or &#39;subfolder&#39;) –</span>
+<span class="sd">        :param min_num_live_points: minimum number of live points throughout the run</span>
+<span class="sd">        :type min_num_live_points: int</span>
+<span class="sd">        :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.</span>
+<span class="sd">        :type dlogz: float</span>
+<span class="sd">        :param chain_name: where to store output files</span>
+<span class="sd">        :type chain_name:</span>
+<span class="sd">        :param resume:  (&#39;resume&#39;, &#39;resume-similar&#39;, &#39;overwrite&#39; or &#39;subfolder&#39;) –</span>
 <span class="sd">        if ‘overwrite’, overwrite previous data.</span>
 <span class="sd">        if ‘subfolder’, create a fresh subdirectory in log_dir.</span>
 <span class="sd">        if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.</span>
 <span class="sd">        if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.</span>
-<span class="sd">                :type resume: str</span>
-<span class="sd">                :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).</span>
-<span class="sd">                :type wrapped_params:</span>
-<span class="sd">                :param stepsampler:</span>
-<span class="sd">                :type stepsampler:</span>
-<span class="sd">                :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</span>
-<span class="sd">                :type use_mlfriends: bool</span>
-<span class="sd">                :returns:</span>
+<span class="sd">        :type resume: str</span>
+<span class="sd">        :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).</span>
+<span class="sd">        :type wrapped_params:</span>
+<span class="sd">        :param stepsampler:</span>
+<span class="sd">        :type stepsampler:</span>
+<span class="sd">        :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</span>
+<span class="sd">        :type use_mlfriends: bool</span>
+<span class="sd">        :returns:</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -421,7 +420,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+    <p>&#169; Copyright (2024), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

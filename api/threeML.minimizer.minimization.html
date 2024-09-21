@@ -233,23 +233,15 @@ contour of param_1 vs param_2</p>
 </dl>
 <p>booleans which specify whether the steps are to be taken logarithmically. For example,
 ‘log=(True,False)’ specify that the steps for the first parameter are to be taken logarithmically, while they
-are linear for the second parameter. If you are generating the profile for only one parameter, you can specify</p>
+are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
+‘log=(True,)’ or ‘log=(False,)’ (optional)
+:param: parallel: whether to use or not parallel computation (default:False)
+:return:</p>
 <blockquote>
-<div><p>‘log=(True,)’ or ‘log=(False,)’ (optional)</p>
+<div><p>a : an array corresponding to the steps for the first parameter
+b : an array corresponding to the steps for the second parameter (or None if stepping only in one direction)
+contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to an array of size param_1_steps.</p>
 </div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Param<span class="colon">:</span></dt>
-<dd class="field-odd"><p>parallel: whether to use or not parallel computation (default:False)</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a : an array corresponding to the steps for the first parameter
-b : an array corresponding to the steps for the second parameter (or None if stepping only in one
-direction)
-contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
-corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
-an array of size param_1_steps.</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -375,7 +367,7 @@ an array of size param_1_steps.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
+    <p>&#169; Copyright (2024), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
