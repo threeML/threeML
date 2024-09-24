@@ -116,100 +116,139 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.statistics.likelihood_functions">
-<span id="threeml-utils-statistics-likelihood-functions-module"></span><h1>threeML.utils.statistics.likelihood_functions module<a class="headerlink" href="#module-threeML.utils.statistics.likelihood_functions" title="Permalink to this heading"></a></h1>
+<span id="threeml-utils-statistics-likelihood-functions-module"></span><h1>threeML.utils.statistics.likelihood_functions module<a class="headerlink" href="#module-threeML.utils.statistics.likelihood_functions" title="Permalink to this heading"></a>
+</h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.half_chi2">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">half_chi2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#half_chi2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.half_chi2" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">half_chi2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#half_chi2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.half_chi2" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.poisson_log_likelihood_ideal_bkg">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_log_likelihood_ideal_bkg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_bkg_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_log_likelihood_ideal_bkg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_log_likelihood_ideal_bkg" title="Permalink to this definition"></a></dt>
-<dd><p>Poisson log-likelihood for the case where the background has no uncertainties:</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_log_likelihood_ideal_bkg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_bkg_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_log_likelihood_ideal_bkg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_log_likelihood_ideal_bkg" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Poisson log-likelihood for the case where the background has no uncertainties:</p>
 <p>L = sum_{i=0}^{N}~o_i~log{(m_i + b_i)} - (m_i + b_i) - log{o_i!}</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>observed_counts</strong> – </p></li>
 <li><p><strong>expected_bkg_counts</strong> – </p></li>
 <li><p><strong>expected_model_counts</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>(log_like vector, background vector)</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>(log_like vector, background vector)</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.poisson_observed_gaussian_background">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_observed_gaussian_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_observed_gaussian_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_observed_gaussian_background" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_observed_gaussian_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_observed_gaussian_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_observed_gaussian_background" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_observed_poisson_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_observed_poisson_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_observed_poisson_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_observed_poisson_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background_xs">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_observed_poisson_background_xs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_observed_poisson_background_xs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background_xs" title="Permalink to this definition"></a></dt>
-<dd><p>Profile log-likelihood for the case when the observed counts are Poisson distributed, and the background counts
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">poisson_observed_poisson_background_xs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observed_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#poisson_observed_poisson_background_xs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background_xs" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Profile log-likelihood for the case when the observed counts are Poisson distributed, and the background counts
 are Poisson distributed as well (typical for X-ray analysis with aperture photometry). This has been derived
 by Keith Arnaud (see the Xspec manual, Wstat statistic)</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.regularized_log">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">regularized_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#regularized_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.regularized_log" title="Permalink to this definition"></a></dt>
-<dd><p>A function which is log(vector) where vector &gt; 0, and zero otherwise.</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">regularized_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#regularized_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.regularized_log" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>A function which is log(vector) where vector &gt; 0, and zero otherwise.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>vector</strong> – </p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>vector</strong> – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.xlogy">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">xlogy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#xlogy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.xlogy" title="Permalink to this definition"></a></dt>
-<dd><p>A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">xlogy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#xlogy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.xlogy" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
 0 * log(inf) is nan, instead of 0.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>x</strong> – </p></li>
 <li><p><strong>y</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.statistics.likelihood_functions.xlogy_one">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">xlogy_one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#xlogy_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.xlogy_one" title="Permalink to this definition"></a></dt>
-<dd><p>A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.likelihood_functions.</span></span><span class="sig-name descname"><span class="pre">xlogy_one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/likelihood_functions.html#xlogy_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.likelihood_functions.xlogy_one" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
 0 * log(inf) is nan, instead of 0.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>x</strong> – </p></li>
 <li><p><strong>y</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>

@@ -115,76 +115,107 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.binner">
-<span id="threeml-utils-binner-module"></span><h1>threeML.utils.binner module<a class="headerlink" href="#module-threeML.utils.binner" title="Permalink to this heading"></a></h1>
+<span id="threeml-utils-binner-module"></span><h1>threeML.utils.binner module<a class="headerlink" href="#module-threeML.utils.binner" title="Permalink to this heading"></a>
+</h1>
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.utils.binner.NotEnoughData">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">NotEnoughData</span></span><a class="reference internal" href="../_modules/threeML/utils/binner.html#NotEnoughData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.NotEnoughData" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
-</dd></dl>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">NotEnoughData</span></span><a class="reference internal" href="../_modules/threeML/utils/binner.html#NotEnoughData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.NotEnoughData" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd>
+</dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">Rebinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_to_rebin_on</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value_per_bin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">Rebinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_to_rebin_on</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value_per_bin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class to rebin vectors keeping a minimum value per bin. It supports array with a mask, so that elements excluded
 through the mask will not be considered for the rebinning</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.get_new_start_and_stop">
-<span class="sig-name descname"><span class="pre">get_new_start_and_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.get_new_start_and_stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.get_new_start_and_stop" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_new_start_and_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.get_new_start_and_stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.get_new_start_and_stop" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.grouping">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#threeML.utils.binner.Rebinner.grouping" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#threeML.utils.binner.Rebinner.grouping" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.n_bins">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_bins</span></span><a class="headerlink" href="#threeML.utils.binner.Rebinner.n_bins" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the number of bins defined.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_bins</span></span><a class="headerlink" href="#threeML.utils.binner.Rebinner.n_bins" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns the number of bins defined.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.rebin">
-<span class="sig-name descname"><span class="pre">rebin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.rebin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">rebin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.rebin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.rebin_errors">
-<span class="sig-name descname"><span class="pre">rebin_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.rebin_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin_errors" title="Permalink to this definition"></a></dt>
-<dd><p>Rebin errors by summing the squares</p>
+<span class="sig-name descname"><span class="pre">rebin_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#Rebinner.rebin_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin_errors" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Rebin errors by summing the squares</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*vectors</strong></p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>*vectors</strong></p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>array of rebinned errors</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>array of rebinned errors</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">TemporalBinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet" title="threeML.utils.time_interval.TimeIntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeIntervalSet</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.binner.</span></span><span class="sig-name descname"><span class="pre">TemporalBinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.time_interval.TimeIntervalSet" title="threeML.utils.time_interval.TimeIntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeIntervalSet</span></code></a></p>
 <p>An extension of the TimeInterval set that includes binning capabilities</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_bayesian_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_integral_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_bayesian_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks" title="Permalink to this definition"></a></dt>
-<dd><p>Divide a series of events characterized by their arrival time in blocks
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_bayesian_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_integral_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_bayesian_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Divide a series of events characterized by their arrival time in blocks
 of perceptibly constant count rate. If the background integral distribution
 is given, divide the series in blocks where the difference with respect to
 the background is perceptibly constant.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>arrival_times</strong> – An iterable (list, numpy.array…) containing the arrival
 time of the events.
 NOTE: the input array MUST be time-ordered, and without
@@ -203,69 +234,96 @@ larger than p0.</p></li>
 </dd>
 </dl>
 <dl class="simple">
-<dt>:param bkg_integral_distribution<span class="classifier">the integral distribution for the</span></dt><dd><p>background counts. It must be a function of the form f(x),
+<dt>:param bkg_integral_distribution<span class="classifier">the integral distribution for the</span>
+</dt>
+<dd>
+<p>background counts. It must be a function of the form f(x),
 which must return the integral number of counts expected from
 the background component between time 0 and x.</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_constant">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_constant" title="Permalink to this definition"></a></dt>
-<dd><p>Create bins with a constant dt</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_constant" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Create bins with a constant dt</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dt</strong> – temporal spacing of the bins</p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>dt</strong> – temporal spacing of the bins</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>None</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_custom">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_custom" title="Permalink to this definition"></a></dt>
-<dd><p>Simplicity function to make custom bins. This form keeps introduction of
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_custom" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Simplicity function to make custom bins. This form keeps introduction of
 custom bins uniform for other binning methods</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>start</strong> – start times of the bins</p></li>
 <li><p><strong>stop</strong> – stop times of the bins</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_significance">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_significance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_error_getter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_significance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_significance" title="Permalink to this definition"></a></dt>
-<dd><p>Bin the data to a given significance level for a given background method and sigma
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_significance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_error_getter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_significance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_significance" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bin the data to a given significance level for a given background method and sigma
 method. If a background error function is given then it is assumed that the error distribution
 is gaussian. Otherwise, the error distribution is assumed to be Poisson.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>background_getter</strong> – function of a start and stop time that returns background counts</p></li>
 <li><p><strong>background_error_getter</strong> – function of a start and stop time that returns background count errors</p></li>
 <li><p><strong>sigma_level</strong> – the sigma level of the intervals</p></li>
 <li><p><strong>min_counts</strong> – the minimum counts per bin</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
-</dd></dl>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>

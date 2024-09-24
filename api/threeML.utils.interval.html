@@ -115,346 +115,494 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.interval">
-<span id="threeml-utils-interval-module"></span><h1>threeML.utils.interval module<a class="headerlink" href="#module-threeML.utils.interval" title="Permalink to this heading"></a></h1>
+<span id="threeml-utils-interval-module"></span><h1>threeML.utils.interval module<a class="headerlink" href="#module-threeML.utils.interval" title="Permalink to this heading"></a>
+</h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">Interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">Interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.intersect">
-<span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.intersect" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a new time interval corresponding to the intersection between this interval and the provided one.</p>
+<span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.intersect" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns a new time interval corresponding to the intersection between this interval and the provided one.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>interval</strong> (<a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><em>Interval</em></a>) – a TimeInterval instance</p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>interval</strong> (<a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><em>Interval</em></a>) – a TimeInterval instance</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>new interval covering the intersection</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>new interval covering the intersection</p>
 </dd>
 </dl>
 <p>:raise IntervalsDoNotOverlap : if the intervals do not overlap</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.merge">
-<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.merge" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.merge" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals
 must overlap.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>interval</strong> – a TimeInterval instance
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>interval</strong> – a TimeInterval instance
 :type interval : Interval</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a new TimeInterval instance</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>a new TimeInterval instance</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.mid_point">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mid_point</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.interval.Interval.mid_point" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mid_point</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.interval.Interval.mid_point" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.new">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.new" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.new" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.overlaps_with">
-<span class="sig-name descname"><span class="pre">overlaps_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.overlaps_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.overlaps_with" title="Permalink to this definition"></a></dt>
-<dd><p>Returns whether the current time interval and the provided one overlap or not</p>
+<span class="sig-name descname"><span class="pre">overlaps_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.overlaps_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.overlaps_with" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns whether the current time interval and the provided one overlap or not</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>interval</strong> (<a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><em>Interval</em></a>) – a TimeInterval instance</p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>interval</strong> (<a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><em>Interval</em></a>) – a TimeInterval instance</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True or False</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>True or False</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.start">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.interval.Interval.start" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.interval.Interval.start" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.stop">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.interval.Interval.stop" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.interval.Interval.stop" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.Interval.to_string">
-<span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.to_string" title="Permalink to this definition"></a></dt>
-<dd><p>returns a string representation of the time interval that is like the
+<span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#Interval.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.to_string" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>returns a string representation of the time interval that is like the
 argument of many interval reading funcitons</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">IntervalSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">IntervalSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A set of intervals</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.INTERVAL_TYPE" title="Permalink to this definition"></a></dt>
-<dd><p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.INTERVAL_TYPE" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.absolute_start">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_start</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.absolute_start" title="Permalink to this definition"></a></dt>
-<dd><p>the minimum of the start times
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_start</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.absolute_start" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>the minimum of the start times
 :return:</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.absolute_stop">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_stop</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.absolute_stop" title="Permalink to this definition"></a></dt>
-<dd><p>the maximum of the stop times
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_stop</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.absolute_stop" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>the maximum of the stop times
 :return:</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.argsort">
-<span class="sig-name descname"><span class="pre">argsort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.argsort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.argsort" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the indices which order the set</p>
+<span class="sig-name descname"><span class="pre">argsort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.argsort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.argsort" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns the indices which order the set</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.bin_stack">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_stack</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.bin_stack" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>get a stacked view of the bins [[start_1,stop_1 ],</dt><dd><p>[start_2,stop_2 ]]</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_stack</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.bin_stack" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<dl class="simple">
+<dt>get a stacked view of the bins [[start_1,stop_1 ],</dt>
+<dd>
+<p>[start_2,stop_2 ]]</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.containing_bin">
-<span class="sig-name descname"><span class="pre">containing_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.containing_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.containing_bin" title="Permalink to this definition"></a></dt>
-<dd><p>finds the index of the interval containing
+<span class="sig-name descname"><span class="pre">containing_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.containing_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.containing_bin" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>finds the index of the interval containing
 :param value:
 :return:</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.containing_interval">
-<span class="sig-name descname"><span class="pre">containing_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.containing_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.containing_interval" title="Permalink to this definition"></a></dt>
-<dd><p>returns either a mask of the intervals contained in the selection
+<span class="sig-name descname"><span class="pre">containing_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.containing_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.containing_interval" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>returns either a mask of the intervals contained in the selection
 or a new set of intervals within the selection. NOTE: no sort is performed</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>start</strong> – start of interval</p></li>
 <li><p><strong>stop</strong> – stop of interval</p></li>
 <li><p><strong>inner</strong> – if True, returns only intervals strictly contained within bounds, if False, returns outer bounds as well</p></li>
 <li><p><strong>as_mask</strong> – if you want a mask or the intervals</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.edges">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.edges" title="Permalink to this definition"></a></dt>
-<dd><p>return an array of time edges if contiguous
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.edges" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>return an array of time edges if contiguous
 :return:</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.extend">
-<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.extend" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.extend" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.from_list_of_edges">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list_of_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.from_list_of_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_list_of_edges" title="Permalink to this definition"></a></dt>
-<dd><p>Builds a IntervalSet from a list of time edges:</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list_of_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.from_list_of_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_list_of_edges" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Builds a IntervalSet from a list of time edges:</p>
 <p>edges = [-1,0,1] -&gt; [-1,0], [0,1]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>edges</strong> – </p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>edges</strong> – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.from_starts_and_stops">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_starts_and_stops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.from_starts_and_stops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_starts_and_stops" title="Permalink to this definition"></a></dt>
-<dd><p>Builds a TimeIntervalSet from a list of start and stop times:</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_starts_and_stops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.from_starts_and_stops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_starts_and_stops" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Builds a TimeIntervalSet from a list of start and stop times:</p>
 <p>start = [-1,0]  -&gt;   [-1,0], [0,1]
 stop =  [0,1]</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>starts</strong> – </p></li>
 <li><p><strong>stops</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.from_strings">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.from_strings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_strings" title="Permalink to this definition"></a></dt>
-<dd><p>These are intervals specified as “-10 – 5”, “0-10”, and so on</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.from_strings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_strings" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>These are intervals specified as “-10 – 5”, “0-10”, and so on</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>intervals</strong> – </p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>intervals</strong> – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.is_contiguous">
-<span class="sig-name descname"><span class="pre">is_contiguous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.is_contiguous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.is_contiguous" title="Permalink to this definition"></a></dt>
-<dd><p>Check whether the time intervals are all contiguous, i.e., the stop time of one interval is the start
+<span class="sig-name descname"><span class="pre">is_contiguous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.is_contiguous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.is_contiguous" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Check whether the time intervals are all contiguous, i.e., the stop time of one interval is the start
 time of the next</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True or False</p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>True or False</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.is_sorted">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sorted</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.is_sorted" title="Permalink to this definition"></a></dt>
-<dd><p>Check whether the time intervals are sorted
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sorted</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.is_sorted" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Check whether the time intervals are sorted
 :return: True or False</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.merge_intersecting_intervals">
-<span class="sig-name descname"><span class="pre">merge_intersecting_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.merge_intersecting_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.merge_intersecting_intervals" title="Permalink to this definition"></a></dt>
-<dd><p>merges intersecting intervals into a contiguous intervals</p>
+<span class="sig-name descname"><span class="pre">merge_intersecting_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.merge_intersecting_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.merge_intersecting_intervals" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>merges intersecting intervals into a contiguous intervals</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.mid_points">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mid_points</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.mid_points" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mid_points</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.mid_points" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.new">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.new" title="Permalink to this definition"></a></dt>
-<dd><p>Create a new interval set of this type
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.new" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Create a new interval set of this type
 :param args:
 :param kwargs:
 :return: interval set</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.new_interval">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.new_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.new_interval" title="Permalink to this definition"></a></dt>
-<dd><p>Create a new interval of INTERVAL_TYPE
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.new_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.new_interval" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Create a new interval of INTERVAL_TYPE
 :param args:
 :param kwargs:
 :return: interval</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.pop">
-<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.pop" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.pop" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.sort">
-<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.sort" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a sorted copy of the set (sorted according to the tstart of the time intervals)</p>
+<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.sort" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns a sorted copy of the set (sorted according to the tstart of the time intervals)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.starts">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">starts</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.starts" title="Permalink to this definition"></a></dt>
-<dd><p>Return the starts fo the set</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">starts</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.starts" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Return the starts fo the set</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of start times</p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>list of start times</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.stops">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stops</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.stops" title="Permalink to this definition"></a></dt>
-<dd><p>Return the stops of the set</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stops</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.stops" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Return the stops of the set</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.to_string">
-<span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.to_string" title="Permalink to this definition"></a></dt>
-<dd><p>returns a set of string representaitons of the intervals
+<span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalSet.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.to_string" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>returns a set of string representaitons of the intervals
 :return:</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.widths">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">widths</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.widths" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">widths</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.widths" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalsDoNotOverlap">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">IntervalsDoNotOverlap</span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalsDoNotOverlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalsDoNotOverlap" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
-</dd></dl>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">IntervalsDoNotOverlap</span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalsDoNotOverlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalsDoNotOverlap" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd>
+</dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalsNotContiguous">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">IntervalsNotContiguous</span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalsNotContiguous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalsNotContiguous" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
-</dd></dl>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.interval.</span></span><span class="sig-name descname"><span class="pre">IntervalsNotContiguous</span></span><a class="reference internal" href="../_modules/threeML/utils/interval.html#IntervalsNotContiguous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalsNotContiguous" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>

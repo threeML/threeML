@@ -128,7 +128,8 @@
            <div itemprop="articleBody">
              
   <section id="Background-Modeling">
-<h1>Background Modeling<a class="headerlink" href="#Background-Modeling" title="Permalink to this heading"></a></h1>
+<h1>Background Modeling<a class="headerlink" href="#Background-Modeling" title="Permalink to this heading"></a>
+</h1>
 <p>When fitting a spectrum with a background, it is invalid to simply subtract off the background if the background is part of the data’s generative model <a class="reference external" href="http://iopscience.iop.org/article/10.1086/318656/meta">van Dyk et al. (2001)</a>. Therefore, we are often left with the task of modeling the statistical process of the background along with our source.</p>
 <p>In typical spectral modeling, we find a few common cases when background is involved. If we have total counts (<span class="math notranslate nohighlight">\(S_i\)</span>) in <span class="math notranslate nohighlight">\(i^{\rm th}\)</span> on <span class="math notranslate nohighlight">\(N\)</span> bins observed for an exposure of <span class="math notranslate nohighlight">\(t_{\rm s}\)</span> and also a measurement of <span class="math notranslate nohighlight">\(B_i\)</span> background counts from looking off source for <span class="math notranslate nohighlight">\(t_{\rm b}\)</span> seconds, we can then suppose a model for the source rate (<span class="math notranslate nohighlight">\(m_i\)</span>) and background rate (<span class="math notranslate nohighlight">\(b_i\)</span>).</p>
 <p><strong>Poisson source with Poisson background</strong></p>
@@ -148,44 +149,52 @@
 children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>) plugin.</p>
 <p>Let’s examine how to handle both cases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;divide&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;, &#39;invalid&#39;: &#39;warn&#39;}
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+{'divide': 'warn', 'over': 'warn', 'under': 'ignore', 'invalid': 'warn'}
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="o">%%capture</span>
 <span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">"talk"</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">set_threeML_style</span><span class="p">()</span>
 <span class="n">silence_warnings</span><span class="p">()</span>
 <span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
@@ -194,10 +203,12 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 </div>
 <p>First we will create an observation where we have a simulated broken power law source spectrum along with an observed background spectrum. The background is a powerl law continuum with a Gaussian line.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="c1"># create the simulated observation</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><br><span></span><span class="c1"># create the simulated observation</span>
 
 <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">151</span><span class="p">)</span>
 
@@ -213,7 +224,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <span class="p">)</span>
 
 <span class="n">spectrum_generator</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
-    <span class="s2">&quot;fake&quot;</span><span class="p">,</span>
+    <span class="s2">"fake"</span><span class="p">,</span>
     <span class="n">source_function</span><span class="o">=</span><span class="n">source_function</span><span class="p">,</span>
     <span class="n">background_function</span><span class="o">=</span><span class="n">background_function</span><span class="p">,</span>
     <span class="n">energy_min</span><span class="o">=</span><span class="n">low_edge</span><span class="p">,</span>
@@ -229,114 +240,130 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:14 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:22 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:16 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:24 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: poisson                                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:17 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:25 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: poisson                                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_5_12.png" src="../_images/notebooks_Background_modeling_5_12.png" />
+<img alt="../_images/notebooks_Background_modeling_5_12.png" src="../_images/notebooks_Background_modeling_5_12.png">
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_5_13.png" src="../_images/notebooks_Background_modeling_5_13.png" />
+<img alt="../_images/notebooks_Background_modeling_5_13.png" src="../_images/notebooks_Background_modeling_5_13.png">
 </div>
 </div>
 <section id="Using-a-profile-likelihood">
-<h2>Using a profile likelihood<a class="headerlink" href="#Using-a-profile-likelihood" title="Permalink to this heading"></a></h2>
+<h2>Using a profile likelihood<a class="headerlink" href="#Using-a-profile-likelihood" title="Permalink to this heading"></a>
+</h2>
 <p>We have very few counts counts in some channels (in fact sometimes zero), but let’s assume we do not know the model for the background. In this case, we will use the profile Poisson likelihood.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instance our source spectrum</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="c1"># instance our source spectrum</span>
 <span class="n">bpl</span> <span class="o">=</span> <span class="n">Broken_powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">xb</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 
 <span class="c1"># instance a point source</span>
 <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-<span class="n">ps_src</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">bpl</span><span class="p">)</span>
+<span class="n">ps_src</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"source"</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">bpl</span><span class="p">)</span>
 
 <span class="c1"># instance the likelihood model</span>
 <span class="n">src_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps_src</span><span class="p">)</span>
@@ -357,8 +384,9 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:18 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:26 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -366,7 +394,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -402,27 +431,28 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>2.18 -0.14 +0.15</td>
+      <td>1.90 -0.12 +0.13</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.03 +/- 0.11) x 10^2</td>
+      <td>(3.06 +/- 0.12) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(4 +/- 7) x 10^-2</td>
+      <td>(-1.4 +/- 0.7) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.14 +/- 0.16</td>
+      <td>-3.22 +/- 0.18</td>
       <td></td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -431,18 +461,40 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140022536490048">
-<tr><td>1.00</td><td>-0.60</td><td>0.75</td><td>0.01</td></tr>
-<tr><td>-0.60</td><td>1.00</td><td>-0.45</td><td>-0.59</td></tr>
-<tr><td>0.75</td><td>-0.45</td><td>1.00</td><td>0.01</td></tr>
-<tr><td>0.01</td><td>-0.59</td><td>0.01</td><td>1.00</td></tr>
-</table></div></div>
+<div><table id="table140439467181296">
+<tr>
+<td>1.00</td>
+<td>-0.59</td>
+<td>0.77</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>-0.59</td>
+<td>1.00</td>
+<td>-0.46</td>
+<td>-0.58</td>
+</tr>
+<tr>
+<td>0.77</td>
+<td>-0.46</td>
+<td>1.00</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>0.01</td>
+<td>-0.58</td>
+<td>0.01</td>
+<td>1.00</td>
+</tr>
+</table></div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -451,7 +503,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -481,15 +534,16 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>fake</th>
-      <td>401.898264</td>
+      <td>399.687177</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>401.898264</td>
+      <td>399.687177</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -498,7 +552,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -528,29 +583,32 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>812.072390</td>
+      <td>807.650216</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>823.839069</td>
+      <td>819.416895</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_7_9.png" src="../_images/notebooks_Background_modeling_7_9.png" />
+<img alt="../_images/notebooks_Background_modeling_7_9.png" src="../_images/notebooks_Background_modeling_7_9.png">
 </div>
 </div>
 <p>Our fit recovers the simulated parameters. However, we should have binned the spectrum up such that there is at least one background count per spectral bin for the profile to be valid.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 
@@ -564,8 +622,9 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:23 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">74</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1739" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1739</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:30 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">73</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1739" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1739</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -573,7 +632,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -609,27 +669,28 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>2.19 -0.15 +0.16</td>
+      <td>1.95 -0.14 +0.15</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(2.99 +/- 0.11) x 10^2</td>
+      <td>(3.00 -0.14 +0.15) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(5 +/- 7) x 10^-2</td>
+      <td>(-1.0 +/- 0.7) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.09 +/- 0.16</td>
+      <td>-3.12 +/- 0.18</td>
       <td></td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -638,18 +699,40 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140022524006464">
-<tr><td>1.00</td><td>-0.61</td><td>0.75</td><td>0.02</td></tr>
-<tr><td>-0.61</td><td>1.00</td><td>-0.46</td><td>-0.59</td></tr>
-<tr><td>0.75</td><td>-0.46</td><td>1.00</td><td>0.01</td></tr>
-<tr><td>0.02</td><td>-0.59</td><td>0.01</td><td>1.00</td></tr>
-</table></div></div>
+<div><table id="table140439466974704">
+<tr>
+<td>1.00</td>
+<td>-0.68</td>
+<td>0.79</td>
+<td>0.15</td>
+</tr>
+<tr>
+<td>-0.68</td>
+<td>1.00</td>
+<td>-0.53</td>
+<td>-0.64</td>
+</tr>
+<tr>
+<td>0.79</td>
+<td>-0.53</td>
+<td>1.00</td>
+<td>0.11</td>
+</tr>
+<tr>
+<td>0.15</td>
+<td>-0.64</td>
+<td>0.11</td>
+<td>1.00</td>
+</tr>
+</table></div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -658,7 +741,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -688,15 +772,16 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>fake</th>
-      <td>275.22513</td>
+      <td>282.221465</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>275.22513</td>
+      <td>282.221465</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -705,7 +790,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -735,42 +821,46 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>558.726122</td>
+      <td>572.718792</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>570.492801</td>
+      <td>584.485471</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_9_9.png" src="../_images/notebooks_Background_modeling_9_9.png" />
+<img alt="../_images/notebooks_Background_modeling_9_9.png" src="../_images/notebooks_Background_modeling_9_9.png">
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_9_10.png" src="../_images/notebooks_Background_modeling_9_10.png" />
+<img alt="../_images/notebooks_Background_modeling_9_10.png" src="../_images/notebooks_Background_modeling_9_10.png">
 </div>
 </div>
 </section>
 <section id="Modeling-the-background">
-<h2>Modeling the background<a class="headerlink" href="#Modeling-the-background" title="Permalink to this heading"></a></h2>
+<h2>Modeling the background<a class="headerlink" href="#Modeling-the-background" title="Permalink to this heading"></a>
+</h2>
 <p>Now let’s try to model the background assuming we know that the background is a power law with a Gaussian line. We can extract a background plugin from the data by passing the original plugin to a classmethod of spectrum like.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># extract the background from the spectrum plugin.</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="c1"># extract the background from the spectrum plugin.</span>
 <span class="c1"># This works for OGIPLike plugins as well, though we could easily also just read</span>
 <span class="c1"># in a bakcground PHA</span>
-<span class="n">background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="o">.</span><span class="n">from_background</span><span class="p">(</span><span class="s2">&quot;bkg&quot;</span><span class="p">,</span> <span class="n">spectrum_generator</span><span class="p">)</span>
+<span class="n">background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="o">.</span><span class="n">from_background</span><span class="p">(</span><span class="s2">"bkg"</span><span class="p">,</span> <span class="n">spectrum_generator</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -778,57 +868,65 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:24 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:32 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: </span><span style="color: #800080; text-decoration-color: #800080; font-weight: bold; font-style: italic">None</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <p>This constructs a new plugin with only the observed background so that we can first model it.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_13_0.png" src="../_images/notebooks_Background_modeling_13_0.png" />
+<img alt="../_images/notebooks_Background_modeling_13_0.png" src="../_images/notebooks_Background_modeling_13_0.png">
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_13_1.png" src="../_images/notebooks_Background_modeling_13_1.png" />
+<img alt="../_images/notebooks_Background_modeling_13_1.png" src="../_images/notebooks_Background_modeling_13_1.png">
 </div>
 </div>
 <p>We now construct our background model and fit it to the data. Let’s assume we know that the line occurs at 511 keV, but we are unsure of its strength an width. We do not need to bin the data up because we are using a simple Poisson likelihood which is valid even when we have zero counts <a class="reference external" href="http://adsabs.harvard.edu/abs/1979ApJ...228..939C">Cash (1979)</a>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instance the spectrum setting the line&#39;s location to 511</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="c1"># instance the spectrum setting the line's location to 511</span>
 <span class="n">bkg_spectrum</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">F</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">511</span><span class="p">)</span>
 
 <span class="c1"># setup model parameters</span>
-<span class="c1"># fix the line&#39;s location</span>
+<span class="c1"># fix the line's location</span>
 <span class="n">bkg_spectrum</span><span class="o">.</span><span class="n">mu_2</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="c1"># nice parameter bounds</span>
@@ -836,7 +934,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <span class="n">bkg_spectrum</span><span class="o">.</span><span class="n">F_2</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 <span class="n">bkg_spectrum</span><span class="o">.</span><span class="n">sigma_2</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
 
-<span class="n">ps_bkg</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;bkg&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">bkg_spectrum</span><span class="p">)</span>
+<span class="n">ps_bkg</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"bkg"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">bkg_spectrum</span><span class="p">)</span>
 
 <span class="n">bkg_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps_bkg</span><span class="p">)</span>
 
@@ -847,7 +945,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <span class="n">_</span> <span class="o">=</span> <span class="n">jl_bkg</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
 <span class="n">_</span> <span class="o">=</span> <span class="n">background_plugin</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span>
-    <span class="n">step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_color</span><span class="o">=</span><span class="s2">&quot;#1A68F0&quot;</span><span class="p">,</span> <span class="n">model_color</span><span class="o">=</span><span class="s2">&quot;#FF9700&quot;</span>
+    <span class="n">step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_color</span><span class="o">=</span><span class="s2">"#1A68F0"</span><span class="p">,</span> <span class="n">model_color</span><span class="o">=</span><span class="s2">"#FF9700"</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -856,8 +954,9 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:25 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:33 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -865,7 +964,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -901,27 +1001,28 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>bkg.spectrum.main.composite.K_1</th>
-      <td>(2.74 -0.21 +0.23) x 10^-1</td>
+      <td>(2.52 -0.21 +0.22) x 10^-1</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.index_1</th>
-      <td>-1.41 +/- 0.05</td>
+      <td>-1.46 +/- 0.05</td>
       <td></td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.F_2</th>
-      <td>(3.0 +/- 0.6) x 10</td>
+      <td>(2.3 +/- 0.5) x 10</td>
       <td>1 / (s cm2)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.sigma_2</th>
-      <td>(1.89 +/- 0.29) x 10</td>
+      <td>(1.86 +/- 0.33) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -930,18 +1031,40 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140022509002656">
-<tr><td>1.00</td><td>0.18</td><td>-0.04</td><td>-0.02</td></tr>
-<tr><td>0.18</td><td>1.00</td><td>-0.04</td><td>-0.02</td></tr>
-<tr><td>-0.04</td><td>-0.04</td><td>1.00</td><td>0.04</td></tr>
-<tr><td>-0.02</td><td>-0.02</td><td>0.04</td><td>1.00</td></tr>
-</table></div></div>
+<div><table id="table140439473969616">
+<tr>
+<td>1.00</td>
+<td>0.27</td>
+<td>-0.05</td>
+<td>-0.02</td>
+</tr>
+<tr>
+<td>0.27</td>
+<td>1.00</td>
+<td>-0.05</td>
+<td>-0.02</td>
+</tr>
+<tr>
+<td>-0.05</td>
+<td>-0.05</td>
+<td>1.00</td>
+<td>0.04</td>
+</tr>
+<tr>
+<td>-0.02</td>
+<td>-0.02</td>
+<td>0.04</td>
+<td>1.00</td>
+</tr>
+</table></div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -950,7 +1073,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -980,15 +1104,16 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>bkg</th>
-      <td>206.206384</td>
+      <td>192.022918</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>206.206384</td>
+      <td>192.022918</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -997,7 +1122,8 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1027,30 +1153,33 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>420.688629</td>
+      <td>392.321699</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>432.455308</td>
+      <td>404.088378</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_15_9.png" src="../_images/notebooks_Background_modeling_15_9.png" />
+<img alt="../_images/notebooks_Background_modeling_15_9.png" src="../_images/notebooks_Background_modeling_15_9.png">
 </div>
 </div>
 <p>We now have a model and estimate for the background which we can use when fitting with the source spectrum. We now create a new plugin with just the total observation and pass our background plugin as the background argument.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="p">(</span>
-    <span class="s2">&quot;full&quot;</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="p">(</span>
+    <span class="s2">"full"</span><span class="p">,</span>
     <span class="c1"># here we use the original observation</span>
     <span class="n">observation</span><span class="o">=</span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">observed_spectrum</span><span class="p">,</span>
     <span class="c1"># we pass the background plugin as the background!</span>
@@ -1063,113 +1192,126 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:27 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#479" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">479</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:34 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#479" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">479</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - observation: poisson                                                       </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#491" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">491</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> - background: poisson                                                        </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#492" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">492</span></a>
-</pre></div>
+</pre>
+</div>
 </div>
 <p>When we look at out count spectrum now, we will see the <em>predicted</em> background, rather than the measured one:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_19_0.png" src="../_images/notebooks_Background_modeling_19_0.png" />
+<img alt="../_images/notebooks_Background_modeling_19_0.png" src="../_images/notebooks_Background_modeling_19_0.png">
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_19_1.png" src="../_images/notebooks_Background_modeling_19_1.png" />
+<img alt="../_images/notebooks_Background_modeling_19_1.png" src="../_images/notebooks_Background_modeling_19_1.png">
 </div>
 </div>
 <p>Now we simply fit the spectrum as we did in the profiled case. The background plugin’s parameters are stored in our new plugin as nuissance parameters:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">nuisance_parameters</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">nuisance_parameters</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-OrderedDict([(&#39;cons_full&#39;,
+OrderedDict([('cons_full',
               Parameter cons_full = 1.0 []
               (min_value = 0.8, max_value = 1.2, delta = 0.05, free = False)),
-             (&#39;bkg_bkg_position_ra_full&#39;,
+             ('bkg_bkg_position_ra_full',
               Parameter ra = 0.0 [deg]
               (min_value = 0.0, max_value = 360.0, delta = 0.1, free = False)),
-             (&#39;bkg_bkg_position_dec_full&#39;,
+             ('bkg_bkg_position_dec_full',
               Parameter dec = 0.0 [deg]
               (min_value = -90.0, max_value = 90.0, delta = 0.1, free = False)),
-             (&#39;bkg_bkg_spectrum_main_composite_K_1_full&#39;,
-              Parameter K_1 = 0.27424742763723153 [1 / (keV s cm2)]
+             ('bkg_bkg_spectrum_main_composite_K_1_full',
+              Parameter K_1 = 0.25210331866523916 [1 / (keV s cm2)]
               (min_value = 0.0001, max_value = 10.0, delta = 0.1, free = True)),
-             (&#39;bkg_bkg_spectrum_main_composite_piv_1_full&#39;,
+             ('bkg_bkg_spectrum_main_composite_piv_1_full',
               Parameter piv_1 = 100.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
-             (&#39;bkg_bkg_spectrum_main_composite_index_1_full&#39;,
-              Parameter index_1 = -1.4051279272513864 []
+             ('bkg_bkg_spectrum_main_composite_index_1_full',
+              Parameter index_1 = -1.4564976469095852 []
               (min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)),
-             (&#39;bkg_bkg_spectrum_main_composite_F_2_full&#39;,
-              Parameter F_2 = 30.417412324526303 [1 / (s cm2)]
+             ('bkg_bkg_spectrum_main_composite_F_2_full',
+              Parameter F_2 = 22.75002079451368 [1 / (s cm2)]
               (min_value = 0.0, max_value = 1000.0, delta = 0.1, free = True)),
-             (&#39;bkg_bkg_spectrum_main_composite_mu_2_full&#39;,
+             ('bkg_bkg_spectrum_main_composite_mu_2_full',
               Parameter mu_2 = 511.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
-             (&#39;bkg_bkg_spectrum_main_composite_sigma_2_full&#39;,
-              Parameter sigma_2 = 18.910895443114736 [keV]
+             ('bkg_bkg_spectrum_main_composite_sigma_2_full',
+              Parameter sigma_2 = 18.57905005696616 [keV]
               (min_value = 2.0, max_value = 30.0, delta = 0.1, free = True)),
-             (&#39;bkg_cons_bkg_full&#39;,
+             ('bkg_cons_bkg_full',
               Parameter cons_bkg = 1.0 []
               (min_value = 0.8, max_value = 1.2, delta = 0.05, free = False))])
-</pre></div></div>
+</pre></div>
+</div>
 </div>
 <p>and the fitting engine will use them in the fit. The parameters will still be connected to the background plugin and its model and thus we can free/fix them there as well as set priors on them.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># instance the source model... the background plugin has it&#39;s model already specified</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="c1"># instance the source model... the background plugin has it's model already specified</span>
 <span class="n">bpl</span> <span class="o">=</span> <span class="n">Broken_powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">xb</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 
 <span class="n">bpl</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">)</span>
 <span class="n">bpl</span><span class="o">.</span><span class="n">xb</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1e1</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">)</span>
 
-<span class="n">ps_src</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bpl</span><span class="p">)</span>
+<span class="n">ps_src</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"source"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bpl</span><span class="p">)</span>
 
 <span class="n">src_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps_src</span><span class="p">)</span>
 
@@ -1184,8 +1326,9 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">19:39:28 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
-</pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:35 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1193,7 +1336,8 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="output_area rendered_html docutils container">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Best fit values:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1229,47 +1373,48 @@ OrderedDict([(&#39;cons_full&#39;,
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>2.10 -0.14 +0.15</td>
+      <td>1.79 -0.12 +0.13</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(2.98 -0.11 +0.12) x 10^2</td>
+      <td>(3.04 -0.13 +0.14) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-0 +/- 7) x 10^-2</td>
+      <td>(-2.0 +/- 0.6) x 10^-1</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.01 +/- 0.16</td>
+      <td>-3.01 +/- 0.17</td>
       <td></td>
     </tr>
     <tr>
       <th>K_1</th>
-      <td>(2.79 +/- 0.33) x 10^-1</td>
+      <td>(2.66 +/- 0.35) x 10^-1</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>index_1</th>
-      <td>-1.38 +/- 0.04</td>
+      <td>-1.42 +/- 0.05</td>
       <td></td>
     </tr>
     <tr>
       <th>F_2</th>
-      <td>(2.9 +/- 0.5) x 10</td>
+      <td>(2.5 +/- 0.4) x 10</td>
       <td>1 / (s cm2)</td>
     </tr>
     <tr>
       <th>sigma_2</th>
-      <td>(2.03 +/- 0.34) x 10</td>
+      <td>(1.95 +/- 0.30) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1278,22 +1423,96 @@ OrderedDict([(&#39;cons_full&#39;,
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Correlation matrix:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140022528274976">
-<tr><td>1.00</td><td>-0.61</td><td>0.75</td><td>0.05</td><td>0.07</td><td>-0.15</td><td>0.00</td><td>0.00</td></tr>
-<tr><td>-0.61</td><td>1.00</td><td>-0.46</td><td>-0.60</td><td>0.01</td><td>0.20</td><td>-0.07</td><td>-0.05</td></tr>
-<tr><td>0.75</td><td>-0.46</td><td>1.00</td><td>0.03</td><td>0.29</td><td>-0.22</td><td>-0.00</td><td>-0.00</td></tr>
-<tr><td>0.05</td><td>-0.60</td><td>0.03</td><td>1.00</td><td>-0.21</td><td>-0.31</td><td>-0.02</td><td>-0.01</td></tr>
-<tr><td>0.07</td><td>0.01</td><td>0.29</td><td>-0.21</td><td>1.00</td><td>0.18</td><td>-0.03</td><td>-0.01</td></tr>
-<tr><td>-0.15</td><td>0.20</td><td>-0.22</td><td>-0.31</td><td>0.18</td><td>1.00</td><td>-0.02</td><td>-0.01</td></tr>
-<tr><td>0.00</td><td>-0.07</td><td>-0.00</td><td>-0.02</td><td>-0.03</td><td>-0.02</td><td>1.00</td><td>0.22</td></tr>
-<tr><td>0.00</td><td>-0.05</td><td>-0.00</td><td>-0.01</td><td>-0.01</td><td>-0.01</td><td>0.22</td><td>1.00</td></tr>
-</table></div></div>
+<div><table id="table140439447479392">
+<tr>
+<td>1.00</td>
+<td>-0.59</td>
+<td>0.76</td>
+<td>0.06</td>
+<td>0.06</td>
+<td>-0.18</td>
+<td>0.00</td>
+<td>0.00</td>
+</tr>
+<tr>
+<td>-0.59</td>
+<td>1.00</td>
+<td>-0.46</td>
+<td>-0.62</td>
+<td>0.02</td>
+<td>0.22</td>
+<td>-0.08</td>
+<td>-0.03</td>
+</tr>
+<tr>
+<td>0.76</td>
+<td>-0.46</td>
+<td>1.00</td>
+<td>0.04</td>
+<td>0.28</td>
+<td>-0.26</td>
+<td>-0.00</td>
+<td>-0.00</td>
+</tr>
+<tr>
+<td>0.06</td>
+<td>-0.62</td>
+<td>0.04</td>
+<td>1.00</td>
+<td>-0.22</td>
+<td>-0.33</td>
+<td>-0.02</td>
+<td>-0.01</td>
+</tr>
+<tr>
+<td>0.06</td>
+<td>0.02</td>
+<td>0.28</td>
+<td>-0.22</td>
+<td>1.00</td>
+<td>0.21</td>
+<td>-0.02</td>
+<td>-0.01</td>
+</tr>
+<tr>
+<td>-0.18</td>
+<td>0.22</td>
+<td>-0.26</td>
+<td>-0.33</td>
+<td>0.21</td>
+<td>1.00</td>
+<td>-0.01</td>
+<td>-0.01</td>
+</tr>
+<tr>
+<td>0.00</td>
+<td>-0.08</td>
+<td>-0.00</td>
+<td>-0.02</td>
+<td>-0.02</td>
+<td>-0.01</td>
+<td>1.00</td>
+<td>0.16</td>
+</tr>
+<tr>
+<td>0.00</td>
+<td>-0.03</td>
+<td>-0.00</td>
+<td>-0.01</td>
+<td>-0.01</td>
+<td>-0.01</td>
+<td>0.16</td>
+<td>1.00</td>
+</tr>
+</table></div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1302,7 +1521,8 @@ OrderedDict([(&#39;cons_full&#39;,
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of -log(likelihood) at the minimum:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1332,15 +1552,16 @@ OrderedDict([(&#39;cons_full&#39;,
   <tbody>
     <tr>
       <th>full</th>
-      <td>525.211499</td>
+      <td>523.647478</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>525.211499</td>
+      <td>523.647478</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -1349,7 +1570,8 @@ OrderedDict([(&#39;cons_full&#39;,
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
 <span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold; text-decoration: underline">Values of statistical measures:</span>
 
-</pre></div>
+</pre>
+</div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -1379,25 +1601,28 @@ OrderedDict([(&#39;cons_full&#39;,
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>1067.444276</td>
+      <td>1064.316232</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>1090.508081</td>
+      <td>1087.380038</td>
     </tr>
   </tbody>
 </table>
-</div></div>
+</div>
+</div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="c1"># over plot the joint background and source fits</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><br><span></span><span class="c1"># over plot the joint background and source fits</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">modeled_background_plugin</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">_</span> <span class="o">=</span> <span class="n">background_plugin</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span>
-    <span class="n">data_color</span><span class="o">=</span><span class="s2">&quot;#1A68F0&quot;</span><span class="p">,</span> <span class="n">model_color</span><span class="o">=</span><span class="s2">&quot;#FF9700&quot;</span><span class="p">,</span> <span class="n">model_subplot</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">data_color</span><span class="o">=</span><span class="s2">"#1A68F0"</span><span class="p">,</span> <span class="n">model_color</span><span class="o">=</span><span class="s2">"#FF9700"</span><span class="p">,</span> <span class="n">model_subplot</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1406,19 +1631,22 @@ OrderedDict([(&#39;cons_full&#39;,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Background_modeling_24_0.png" src="../_images/notebooks_Background_modeling_24_0.png" />
+<img alt="../_images/notebooks_Background_modeling_24_0.png" src="../_images/notebooks_Background_modeling_24_0.png">
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
 </section>
 </section>
+
 
 
            </div>

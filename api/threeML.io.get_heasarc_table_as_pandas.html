@@ -115,31 +115,40 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.io.get_heasarc_table_as_pandas">
-<span id="threeml-io-get-heasarc-table-as-pandas-module"></span><h1>threeML.io.get_heasarc_table_as_pandas module<a class="headerlink" href="#module-threeML.io.get_heasarc_table_as_pandas" title="Permalink to this heading"></a></h1>
+<span id="threeml-io-get-heasarc-table-as-pandas-module"></span><h1>threeML.io.get_heasarc_table_as_pandas module<a class="headerlink" href="#module-threeML.io.get_heasarc_table_as_pandas" title="Permalink to this heading"></a>
+</h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.get_heasarc_table_as_pandas.</span></span><span class="sig-name descname"><span class="pre">get_heasarc_table_as_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heasarc_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_time_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/get_heasarc_table_as_pandas.html#get_heasarc_table_as_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas" title="Permalink to this definition"></a></dt>
-<dd><p>Obtain a a VO table from the HEASARC archives and return it as a pandas table indexed
+<span class="sig-prename descclassname"><span class="pre">threeML.io.get_heasarc_table_as_pandas.</span></span><span class="sig-name descname"><span class="pre">get_heasarc_table_as_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heasarc_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_time_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/get_heasarc_table_as_pandas.html#get_heasarc_table_as_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Obtain a a VO table from the HEASARC archives and return it as a pandas table indexed
 by object/trigger names. The heasarc_table_name values are the ones referenced at:</p>
 <p><a class="reference external" href="https://heasarc.gsfc.nasa.gov/docs/archive/vo/">https://heasarc.gsfc.nasa.gov/docs/archive/vo/</a></p>
 <p>In order to speed up the processing of the tables, 3ML can cache the XML table in a cache
 that is updated every cache_time_days. The cache can be forced to update, i.e, reload from
 the web, by setting update to True.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>heasarc_table_name</strong> – the name of a HEASARC browse table</p></li>
 <li><p><strong>update</strong> – force web read of the table and update cache</p></li>
 <li><p><strong>cache_time_days</strong> – number of days to hold the current cache</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>pandas DataFrame with results and astropy table</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>pandas DataFrame with results and astropy table</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>

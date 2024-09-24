@@ -115,43 +115,59 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.classicMLE.goodness_of_fit">
-<span id="threeml-classicmle-goodness-of-fit-module"></span><h1>threeML.classicMLE.goodness_of_fit module<a class="headerlink" href="#module-threeML.classicMLE.goodness_of_fit" title="Permalink to this heading"></a></h1>
+<span id="threeml-classicmle-goodness-of-fit-module"></span><h1>threeML.classicMLE.goodness_of_fit module<a class="headerlink" href="#module-threeML.classicMLE.goodness_of_fit" title="Permalink to this heading"></a>
+</h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.classicMLE.goodness_of_fit.GoodnessOfFit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.goodness_of_fit.</span></span><span class="sig-name descname"><span class="pre">GoodnessOfFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_likelihood_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">like_data_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.goodness_of_fit.</span></span><span class="sig-name descname"><span class="pre">GoodnessOfFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joint_likelihood_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">like_data_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.goodness_of_fit.GoodnessOfFit.by_mc">
-<span class="sig-name descname"><span class="pre">by_mc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continue_on_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit.by_mc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.by_mc" title="Permalink to this definition"></a></dt>
-<dd><p>Compute goodness of fit by generating Monte Carlo datasets and fitting the current model on them. The fraction
+<span class="sig-name descname"><span class="pre">by_mc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continue_on_failure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit.by_mc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.by_mc" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Compute goodness of fit by generating Monte Carlo datasets and fitting the current model on them. The fraction
 of synthetic datasets which have a value for the likelihood larger or equal to the observed one is a measure
 of the goodness of fit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>n_iterations</strong> – number of MC iterations to perform (default: 1000)</p></li>
 <li><p><strong>continue_of_failure</strong> – whether to continue in the case a fit fails (False by default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple (goodness of fit, frame with all results, frame with all likelihood values)</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>tuple (goodness of fit, frame with all results, frame with all likelihood values)</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_model">
-<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_model" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_model" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_simulated_data">
-<span class="sig-name descname"><span class="pre">get_simulated_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit.get_simulated_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_simulated_data" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_simulated_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/goodness_of_fit.html#GoodnessOfFit.get_simulated_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_simulated_data" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
-</dd></dl>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>

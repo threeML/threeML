@@ -122,36 +122,43 @@
            <div itemprop="articleBody">
              
   <section id="Configuration">
-<h1>Configuration<a class="headerlink" href="#Configuration" title="Permalink to this heading"></a></h1>
+<h1>Configuration<a class="headerlink" href="#Configuration" title="Permalink to this heading"></a>
+</h1>
 <p>The 3ML configuration sets up defaults that are read in at runtime and is a session wide state that the user can modify at any point during an analysis to alter behavior throughout 3ML.</p>
 <p>The configuration is a hierarchical you can import and modify.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;divide&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;, &#39;invalid&#39;: &#39;warn&#39;}
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+{'divide': 'warn', 'over': 'warn', 'under': 'ignore', 'invalid': 'warn'}
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="o">%%capture</span>
 <span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">threeML_config</span><span class="p">,</span> <span class="n">show_configuration</span>
 
 <span class="n">show_configuration</span><span class="p">()</span>
@@ -159,7 +166,8 @@
 </div>
 </div>
 <section id="Local-configuration">
-<h2>Local configuration<a class="headerlink" href="#Local-configuration" title="Permalink to this heading"></a></h2>
+<h2>Local configuration<a class="headerlink" href="#Local-configuration" title="Permalink to this heading"></a>
+</h2>
 <p>You can store a local configuration read in at the beginning of every session. By default, 3ML looking in <code class="docutils literal notranslate"><span class="pre">~/.config/threeml/*.yml</span></code> for configuration files.</p>
 <ul class="simple">
 <li><p>You can set your own location with the environment variable <code class="docutils literal notranslate"><span class="pre">THREEML_CONFIG</span></code></p></li>
@@ -168,7 +176,8 @@
 <p>Multiple configuration files can be added allowing you to have readable seperation between different topics.</p>
 <p>E.g, here are two configuration files that modify some plotting defaults and logging defaults in separate files.</p>
 <p><code class="docutils literal notranslate"><span class="pre">~/.config/threeml/plotting.yml</span></code></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">plugins</span><span class="p">:</span>
+<div class="highlight-yaml notranslate">
+<div class="highlight"><pre><span></span><span class="nt">plugins</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">ogip</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">fit_plot</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">model_cmap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Spectral</span>
@@ -176,25 +185,29 @@
 <span class="w">      </span><span class="nt">background_color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k</span>
 <span class="w">      </span><span class="nt">background_mpl_kwargs</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">lw</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.8</span>
-<span class="w">        </span><span class="nt">ls</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-&quot;</span>
+<span class="w">        </span><span class="nt">ls</span><span class="p">:</span><span class="w"> </span><span class="s">"-"</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">~/.config/threeml/logging.yml</span></code></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging</span><span class="p">:</span>
+<div class="highlight-yaml notranslate">
+<div class="highlight"><pre><span></span><span class="nt">logging</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">developer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">on</span>
 <span class="w">  </span><span class="nt">startup_warnings</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">off</span>
 </pre></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show_configuration</span><span class="p">(</span><span class="s2">&quot;plugins&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">show_configuration</span><span class="p">(</span><span class="s2">"plugins"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -259,13 +272,16 @@
 <span style="color: #af5fd7; text-decoration-color: #af5fd7">        ┣━━ </span><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold">data_mpl_kwargs: </span><span style="color: #5f87ff; text-decoration-color: #5f87ff; font-weight: bold">None</span>
 <span style="color: #af5fd7; text-decoration-color: #af5fd7">        ┣━━ </span><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold">model_mpl_kwargs: </span><span style="color: #5f87ff; text-decoration-color: #5f87ff; font-weight: bold">None</span>
 <span style="color: #af5fd7; text-decoration-color: #af5fd7">        ┗━━ </span><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold">background_mpl_kwargs: </span><span style="color: #5f87ff; text-decoration-color: #5f87ff; font-weight: bold">None</span>
-</pre></div>
+</pre>
+</div>
 </div>
 <p>The configuration now includes the values from the files.</p>
 <section id="Environment-variables">
-<h3>Environment variables<a class="headerlink" href="#Environment-variables" title="Permalink to this heading"></a></h3>
+<h3>Environment variables<a class="headerlink" href="#Environment-variables" title="Permalink to this heading"></a>
+</h3>
 <p>It is possible to set configuration values from environment variables. For example, if you are working in a HPC cluster environment and need to log to w write-safe directory: <code class="docutils literal notranslate"><span class="pre">~/.config/threeml/cluster_logging.yml</span></code></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging</span><span class="p">:</span>
+<div class="highlight-yaml notranslate">
+<div class="highlight"><pre><span></span><span class="nt">logging</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:USER_LOG_DIR}</span>
 <span class="w">  </span><span class="nt">developer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">off</span>
 <span class="w">  </span><span class="nt">console</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">off</span>
@@ -276,54 +292,66 @@
 </section>
 </section>
 <section id="Run-time-configuration-changes">
-<h2>Run-time configuration changes<a class="headerlink" href="#Run-time-configuration-changes" title="Permalink to this heading"></a></h2>
+<h2>Run-time configuration changes<a class="headerlink" href="#Run-time-configuration-changes" title="Permalink to this heading"></a>
+</h2>
 <p>But perhaps you want to change a parameter in the middle of a session? The configuration behaves like a nested dictionary but it has both <em>dot</em> and key access. Let’s take a look at what we can configure:</p>
 <p>Perhaps we want the default colors for light curves to be altered for this session:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_color</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_color</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;#C0392B&#39;
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+'#C0392B'
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">][</span><span class="s2">&quot;background_color&quot;</span><span class="p">]</span>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">"time_series"</span><span class="p">][</span><span class="s2">"background_color"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;#C0392B&#39;
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+'#C0392B'
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
-<span class="n">show_configuration</span><span class="p">(</span><span class="s2">&quot;time_series&quot;</span><span class="p">)</span>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_color</span> <span class="o">=</span> <span class="s2">"green"</span>
+<span class="n">show_configuration</span><span class="p">(</span><span class="s2">"time_series"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -336,24 +364,28 @@
 <span style="color: #af5fd7; text-decoration-color: #af5fd7">    ┣━━ </span><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold">fit_poly: </span><span style="color: #5f87ff; text-decoration-color: #5f87ff; font-weight: bold">True</span>
 <span style="color: #af5fd7; text-decoration-color: #af5fd7">    ┣━━ </span><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold">unbinned: </span><span style="color: #5f87ff; text-decoration-color: #5f87ff; font-weight: bold">False</span>
 <span style="color: #af5fd7; text-decoration-color: #af5fd7">    ┗━━ </span><span style="color: #00ffaf; text-decoration-color: #00ffaf; font-weight: bold">bayes: </span><span style="color: #5f87ff; text-decoration-color: #5f87ff; font-weight: bold">False</span>
-</pre></div>
+</pre>
+</div>
 </div>
 <p>From this point on in this session, fitting LLE backgrounds will be unbinned. When we close python, the next time we start 3ML, the values set in the configuration file be loaded.</p>
 <p>Do not worry about entering incorrect values in the file as 3ML checks both the structure and types of the parameters.</p>
 <p>If you modify your configuration at run time and want to save it to a file (<strong>in your configration directory</strong>) try this:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate">
+<div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">get_current_configuration_copy</span>
+<div class="input_area highlight-ipython3 notranslate">
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">get_current_configuration_copy</span>
 
-<span class="n">get_current_configuration_copy</span><span class="p">(</span><span class="s2">&quot;my_config.yml&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">get_current_configuration_copy</span><span class="p">(</span><span class="s2">"my_config.yml"</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>If you have a default configuration you would like to add, consider opening a pull request. We would love to hear your ideas.</p>
 </section>
 </section>
+
 
 
            </div>

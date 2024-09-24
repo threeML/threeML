@@ -114,83 +114,118 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.random_variates">
-<span id="threeml-random-variates-module"></span><h1>threeML.random_variates module<a class="headerlink" href="#module-threeML.random_variates" title="Permalink to this heading"></a></h1>
+<span id="threeml-random-variates-module"></span><h1>threeML.random_variates module<a class="headerlink" href="#module-threeML.random_variates" title="Permalink to this heading"></a>
+</h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.random_variates.</span></span><span class="sig-name descname"><span class="pre">RandomVariates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/random_variates.html#RandomVariates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.random_variates.</span></span><span class="sig-name descname"><span class="pre">RandomVariates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/random_variates.html#RandomVariates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 <p>A subclass of np.array which is meant to contain samples for one parameter. This class contains methods to easily
 compute properties for the parameter (errors and so on)</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.average">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">average</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.average" title="Permalink to this definition"></a></dt>
-<dd><p>Returns average value</p>
-</dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">average</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.average" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns average value</p>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.equal_tail_interval">
-<span class="sig-name descname"><span class="pre">equal_tail_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/random_variates.html#RandomVariates.equal_tail_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates.equal_tail_interval" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the equal tail interval, i.e., an interval centered on the median of the distribution with
+<span class="sig-name descname"><span class="pre">equal_tail_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/random_variates.html#RandomVariates.equal_tail_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates.equal_tail_interval" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns the equal tail interval, i.e., an interval centered on the median of the distribution with
 the same probability on the right and on the left of the mean.</p>
 <p>If the distribution of the parameter is Gaussian and cl=0.68, this is equivalent to the 1 sigma confidence
 interval.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cl</strong> – confidence level (0 &lt; cl &lt; 1)</p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>cl</strong> – confidence level (0 &lt; cl &lt; 1)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>(low_bound, hi_bound)</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>(low_bound, hi_bound)</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.highest_posterior_density_interval">
-<span class="sig-name descname"><span class="pre">highest_posterior_density_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/random_variates.html#RandomVariates.highest_posterior_density_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates.highest_posterior_density_interval" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the Highest Posterior Density interval (HPD) for the parameter, for the given credibility level.</p>
+<span class="sig-name descname"><span class="pre">highest_posterior_density_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/random_variates.html#RandomVariates.highest_posterior_density_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.random_variates.RandomVariates.highest_posterior_density_interval" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns the Highest Posterior Density interval (HPD) for the parameter, for the given credibility level.</p>
 <p>NOTE: the returned interval is the HPD only if the posterior is not multimodal. If it is multimodal, you should
 probably report the full posterior, not only an interval.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cl</strong> – credibility level (0 &lt; cl &lt; 1)</p>
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>cl</strong> – credibility level (0 &lt; cl &lt; 1)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>(low_bound, hi_bound)</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>(low_bound, hi_bound)</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.median">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">median</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.median" title="Permalink to this definition"></a></dt>
-<dd><p>Returns median value</p>
-</dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">median</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.median" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns median value</p>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.samples">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.samples" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.samples" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.std">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">std</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.std" title="Permalink to this definition"></a></dt>
-<dd><p>Returns sample std value</p>
-</dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">std</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.std" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns sample std value</p>
+</dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.value">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.value" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.value" title="Permalink to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.random_variates.RandomVariates.var">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">var</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.var" title="Permalink to this definition"></a></dt>
-<dd><p>Returns sample variance value</p>
-</dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">var</span></span><a class="headerlink" href="#threeML.random_variates.RandomVariates.var" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Returns sample variance value</p>
+</dd>
+</dl>
 
-</dd></dl>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>

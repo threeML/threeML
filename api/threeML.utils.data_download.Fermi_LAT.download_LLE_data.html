@@ -117,36 +117,48 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.data_download.Fermi_LAT.download_LLE_data">
-<span id="threeml-utils-data-download-fermi-lat-download-lle-data-module"></span><h1>threeML.utils.data_download.Fermi_LAT.download_LLE_data module<a class="headerlink" href="#module-threeML.utils.data_download.Fermi_LAT.download_LLE_data" title="Permalink to this heading"></a></h1>
+<span id="threeml-utils-data-download-fermi-lat-download-lle-data-module"></span><h1>threeML.utils.data_download.Fermi_LAT.download_LLE_data module<a class="headerlink" href="#module-threeML.utils.data_download.Fermi_LAT.download_LLE_data" title="Permalink to this heading"></a>
+</h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.data_download.Fermi_LAT.download_LLE_data.cleanup_downloaded_LLE_data">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.data_download.Fermi_LAT.download_LLE_data.</span></span><span class="sig-name descname"><span class="pre">cleanup_downloaded_LLE_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector_information_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_download/Fermi_LAT/download_LLE_data.html#cleanup_downloaded_LLE_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_download.Fermi_LAT.download_LLE_data.cleanup_downloaded_LLE_data" title="Permalink to this definition"></a></dt>
-<dd><p>deletes data downloaded with download_LLE_trigger_data.
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.data_download.Fermi_LAT.download_LLE_data.</span></span><span class="sig-name descname"><span class="pre">cleanup_downloaded_LLE_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector_information_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_download/Fermi_LAT/download_LLE_data.html#cleanup_downloaded_LLE_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_download.Fermi_LAT.download_LLE_data.cleanup_downloaded_LLE_data" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>deletes data downloaded with download_LLE_trigger_data.
 :param detector_information_dict: the return dictionary from download_LLE_trigger_data</p>
-</dd></dl>
+</dd>
+</dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.utils.data_download.Fermi_LAT.download_LLE_data.download_LLE_trigger_data">
-<span class="sig-prename descclassname"><span class="pre">threeML.utils.data_download.Fermi_LAT.download_LLE_data.</span></span><span class="sig-name descname"><span class="pre">download_LLE_trigger_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_download/Fermi_LAT/download_LLE_data.html#download_LLE_trigger_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_download.Fermi_LAT.download_LLE_data.download_LLE_trigger_data" title="Permalink to this definition"></a></dt>
-<dd><p>Download the latest Fermi LAT LLE and RSP files from the HEASARC server. Will get the
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.data_download.Fermi_LAT.download_LLE_data.</span></span><span class="sig-name descname"><span class="pre">download_LLE_trigger_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_download/Fermi_LAT/download_LLE_data.html#download_LLE_trigger_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_download.Fermi_LAT.download_LLE_data.download_LLE_trigger_data" title="Permalink to this definition"></a>
+</dt>
+<dd>
+<p>Download the latest Fermi LAT LLE and RSP files from the HEASARC server. Will get the
 latest file versions. If the files already exist in your destination
 directory, they will be skipped in the download process. The output dictionary can be used
 as input to the FermiLATLLELike class.</p>
 <p>example usage: download_LLE_trigger_data(‘080916009’, destination_directory=’.’)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
 <li><p><strong>trigger_name</strong> – trigger number (str) with no leading letter e.g. ‘080916009’</p></li>
 <li><p><strong>destination_directory</strong> – download directory</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a dictionary with information about the download</p>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>a dictionary with information about the download</p>
 </dd>
 </dl>
-</dd></dl>
+</dd>
+</dl>
 
 </section>
+
 
 
            </div>
