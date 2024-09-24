@@ -100,12 +100,12 @@ Responsibilities include:
 Sub-package and plug-in maintainers and point of contacts
 *********************************************************
 
-* astromodels - Nicola Omodei, Niccolò Di Lalla - Stanford University
-* ixpepy -  Niccolò Di Lalla - Stanford University
-* hawc_hal - Xiaojie Wang -  Michigan Technological University
-* `cosipy <https://cositools.github.io/cosipy/>` - Israel Martinez Castellanos
-* polpy - 
-* i3mla - 
+* astromodels - :email:`Nicola Omodei <nicola.omodei@stanford.edu>`, :email:`Niccolò Di Lalla <niccolo.dilalla@stanford.edu>`
+* ixpepy -  :email:`Niccolò Di Lalla <niccolo.dilalla@stanford.edu>` 
+* hawc_hal - :email:`Xiaojie Wang <xwang32@mtu.edu>`
+* `cosipy <https://cositools.github.io/cosipy/>`_ - :email:`Israel Martinez Castellanos <imc@umd.edu>`
+* polpy - :email:`Sujay Mate <sujay.mate@gmail.com>`, :email:`Merlin Kole <merlin.kole@unh.edu>`
+* `i3mla <https://github.com/icecube/i3mla>`_ - :email:`Michael Larson <mlarson@icecube.wisc.edu>`
 * gammapy-plugin - 
 
 Responsibilities include:

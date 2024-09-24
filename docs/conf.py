@@ -73,6 +73,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_gallery.load_style",
     "sphinx_rtd_dark_mode",
+    "sphinxcontrib.email"
 ]
 
 napoleon_google_docstring = True
@@ -80,7 +81,7 @@ napoleon_use_param = False
 
 
 default_dark_mode = True
-
+email_automode = True
 
 if "GITHUB_TOKEN" in os.environ:
 
