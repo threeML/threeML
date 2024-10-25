@@ -1,31 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.spectrum.binned_spectrum module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -116,17 +114,17 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.spectrum.binned_spectrum">
-<span id="threeml-utils-spectrum-binned-spectrum-module"></span><h1>threeML.utils.spectrum.binned_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.binned_spectrum" title="Permalink to this heading"></a>
+<span id="threeml-utils-spectrum-binned-spectrum-module"></span><h1>threeML.utils.spectrum.binned_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.binned_spectrum" title="Link to this heading"></a>
 </h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet" title="threeML.utils.spectrum.binned_spectrum.ChannelSet"><span class="pre">ChannelSet</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality" title="threeML.utils.spectrum.binned_spectrum.Quality"><span class="pre">Quality</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet" title="threeML.utils.spectrum.binned_spectrum.ChannelSet"><span class="pre">ChannelSet</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality" title="threeML.utils.spectrum.binned_spectrum.Quality"><span class="pre">Quality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.histogram.Histogram" title="threeML.utils.histogram.Histogram"><code class="xref py py-class docutils literal notranslate"><span class="pre">Histogram</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.INTERVAL_TYPE" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.INTERVAL_TYPE" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Channel" title="threeML.utils.spectrum.binned_spectrum.Channel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Channel</span></code></a></p>
@@ -135,14 +133,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted">
-<span class="sig-name descname"><span class="pre">add_inverse_variance_weighted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.add_inverse_variance_weighted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">add_inverse_variance_weighted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone">
-<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>make a new spectrum with new counts and errors and all other
@@ -167,7 +165,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>count error per channel</p>
@@ -183,7 +181,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>counts per channel</p>
@@ -199,7 +197,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exposure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exposure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Exposure in seconds</p>
@@ -215,7 +213,7 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.from_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Build a spectrum from data contained within a pandas data frame.</p>
@@ -251,7 +249,7 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series" title="Link to this definition"></a>
 </dt>
 <dd>
 <dl class="field-list simple">
@@ -259,8 +257,8 @@ parameters the same</p>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>time_series</strong> – </p></li>
-<li><p><strong>use_poly</strong> – </p></li>
+<li><p><strong>time_series</strong></p></li>
+<li><p><strong>use_poly</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
@@ -274,49 +272,49 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.instrument">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instrument</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.instrument" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">instrument</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.instrument" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.is_poisson">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_poisson</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.is_poisson" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_poisson</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.is_poisson" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.mission">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.mission" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mission</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.mission" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channel">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channel" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channel" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_channels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channels" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_channels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channels" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.quality">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quality</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality" title="threeML.utils.spectrum.binned_spectrum.Quality"><span class="pre">Quality</span></a></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.quality" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quality</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality" title="threeML.utils.spectrum.binned_spectrum.Quality"><span class="pre">Quality</span></a></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.quality" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rate_errors">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rate_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rate_errors" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rate_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rate_errors" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>If the spectrum has no Poisson error (POISSER is False in the header), this will return the STAT_ERR column
@@ -326,7 +324,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>rates per channel</p>
@@ -342,14 +340,14 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.scale_factor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.scale_factor" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.scale_factor" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sys_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sys_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Systematic errors per channel. This is nonzero only if the SYS_ERR column is present in the input file.</p>
@@ -365,7 +363,7 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas">
-<span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>make a pandas table from the spectrum.</p>
@@ -386,7 +384,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>total counts</p>
@@ -402,7 +400,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_count_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_count_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>total count error</p>
@@ -418,7 +416,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>total rate</p>
@@ -434,7 +432,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_rate_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_rate_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>total rate error</p>
@@ -450,14 +448,14 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstart">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tstart</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstart" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tstart</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstart" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstop">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tstop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstop" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tstop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstop" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -467,13 +465,13 @@ parameters the same</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrumWithDispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrumWithDispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrum</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone">
-<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>make a new spectrum with new counts and errors and all other
@@ -483,9 +481,9 @@ parameters the same</p>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>new_sys_errors</strong> – </p></li>
-<li><p><strong>new_exposure</strong> – </p></li>
-<li><p><strong>new_scale_factor</strong> – </p></li>
+<li><p><strong>new_sys_errors</strong></p></li>
+<li><p><strong>new_exposure</strong></p></li>
+<li><p><strong>new_scale_factor</strong></p></li>
 <li><p><strong>new_counts</strong> – new counts for the spectrum</p></li>
 <li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
@@ -501,7 +499,7 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series" title="Link to this definition"></a>
 </dt>
 <dd>
 <dl class="field-list simple">
@@ -509,8 +507,8 @@ parameters the same</p>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>time_series</strong> – </p></li>
-<li><p><strong>use_poly</strong> – </p></li>
+<li><p><strong>time_series</strong></p></li>
+<li><p><strong>use_poly</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
@@ -524,7 +522,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.response">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.response" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.response" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -534,13 +532,13 @@ parameters the same</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Channel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">Channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Channel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Channel" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">Channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Channel" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Channel.channel_width">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_width</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Channel.channel_width" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_width</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Channel.channel_width" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -550,13 +548,13 @@ parameters the same</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">ChannelSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#ChannelSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">ChannelSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSet</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet.INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.INTERVAL_TYPE" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.INTERVAL_TYPE" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Channel" title="threeML.utils.spectrum.binned_spectrum.Channel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Channel</span></code></a></p>
@@ -565,14 +563,14 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet.channels_widths">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels_widths</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.channels_widths" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels_widths</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.channels_widths" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_instrument_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#ChannelSet.from_instrument_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_instrument_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Build EBOUNDS interval from an instrument response</p>
@@ -580,7 +578,7 @@ parameters the same</p>
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>instrument_response</strong> – </p>
+<p><strong>instrument_response</strong></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>
@@ -596,20 +594,20 @@ parameters the same</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">Quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">Quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.bad">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bad</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.bad" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bad</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.bad" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.create_all_good">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_all_good</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_channels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.create_all_good"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_all_good</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>construct a quality object with all good channels
@@ -620,7 +618,7 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.from_ogip">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ogip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ogip_quality</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.from_ogip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ogip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ogip_quality</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Read in quality from an OGIP file</p>
@@ -629,8 +627,8 @@ parameters the same</p>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>cls</strong> – </p></li>
-<li><p><strong>ogip_quality</strong> – </p></li>
+<li><p><strong>cls</strong></p></li>
+<li><p><strong>ogip_quality</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
@@ -644,28 +642,28 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.get_slice">
-<span class="sig-name descname"><span class="pre">get_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.get_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.get_slice" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">get_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.get_slice" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.good">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">good</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.good" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">good</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.good" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.n_elements">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.n_elements" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.n_elements" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.to_ogip">
-<span class="sig-name descname"><span class="pre">to_ogip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.to_ogip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">to_ogip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>makes a quality array following the OGIP standards:
@@ -684,7 +682,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.warn">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">warn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.warn" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">warn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.warn" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>

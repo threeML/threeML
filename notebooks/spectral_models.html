@@ -1,34 +1,32 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spectral Models &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -135,12 +133,12 @@
            <div itemprop="articleBody">
              
   <section id="Spectral-Models">
-<h1>Spectral Models<a class="headerlink" href="#Spectral-Models" title="Permalink to this heading"></a>
+<h1>Spectral Models<a class="headerlink" href="#Spectral-Models" title="Link to this heading"></a>
 </h1>
 <p>Spectral models are provided via astromodels. For details, visit the astromodels <a class="reference external" href="http://astromodels.readthedocs.io/en/latest/Model_tutorial.html">documentation</a>.</p>
 <p>The important points are breifly covered below.</p>
 <section id="Building-Custom-Models">
-<h2>Building Custom Models<a class="headerlink" href="#Building-Custom-Models" title="Permalink to this heading"></a>
+<h2>Building Custom Models<a class="headerlink" href="#Building-Custom-Models" title="Link to this heading"></a>
 </h2>
 <p>One of the most powerful aspects of astromodels and 3ML is the ability to quickly build custom models on the fly. The source code for a model can be pure python, FORTRAN linked via f2py, C++ linked via cython, etc. Anything that provides a python function can be used to fit data.</p>
 <p>To build a custom spectral model in 3ML, we need to import a few things that will allow astromodels to recognize your model.</p>
@@ -162,7 +160,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:19:16 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">48</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">00:08:38 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">48</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                         </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
 </pre>
 </div>
@@ -245,7 +243,7 @@
 </div>
 </div>
 <section id="The-docstring">
-<h3>The docstring<a class="headerlink" href="#The-docstring" title="Permalink to this heading"></a>
+<h3>The docstring<a class="headerlink" href="#The-docstring" title="Link to this heading"></a>
 </h3>
 <p>We have used the docstring interface to provide a YAML description of the model. This sets up the important information used in the fitting process and record keeping. The docstring has three parts:</p>
 <ul class="simple">
@@ -271,7 +269,7 @@
 <p>Keep in mind that this is in YAML format.</p>
 </section>
 <section id="Set-units">
-<h3>Set units<a class="headerlink" href="#Set-units" title="Permalink to this heading"></a>
+<h3>Set units<a class="headerlink" href="#Set-units" title="Link to this heading"></a>
 </h3>
 <p>3ML and astromodels keep track of units for you. However, a model must be set up to properly describe the units with astropy’s unit system. Keep in mind that models are fit with a differential photon flux,</p>
 <div class="math notranslate nohighlight">
@@ -279,14 +277,14 @@
 <p>so your units should reflect this convention. Therefore, proper normalizations should be taken into account.</p>
 </section>
 <section id="Evaluate">
-<h3>Evaluate<a class="headerlink" href="#Evaluate" title="Permalink to this heading"></a>
+<h3>Evaluate<a class="headerlink" href="#Evaluate" title="Link to this heading"></a>
 </h3>
 <p>This is where the function is evaluated. The first argumument <strong>must be called x</strong> and the parameter names and ordering must reflect what is in the docstring. Any number of operations can take place inside the evaluate call, but remember that the return must be in the form of a differential photon flux.</p>
 <p>A model is defined in a python session. If you save the results of a fit to an AnalysisResults file and try to load this file without loading this model, you will get a error,</p>
 </section>
 </section>
 <section id="Custom-models-in-other-langauges">
-<h2>Custom models in other langauges<a class="headerlink" href="#Custom-models-in-other-langauges" title="Permalink to this heading"></a>
+<h2>Custom models in other langauges<a class="headerlink" href="#Custom-models-in-other-langauges" title="Link to this heading"></a>
 </h2>
 <p>What if your model is built from a C++ function and you want to fit that directly to the data? using Cython, pybind, f2py, etc, you can wrap these models and call them easily.</p>
 <div class="nbinput nblast docutils container">
@@ -418,11 +416,11 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 </div>
 </section>
 <section id="Template-(Table)-Models">
-<h2>Template (Table) Models<a class="headerlink" href="#Template-(Table)-Models" title="Permalink to this heading"></a>
+<h2>Template (Table) Models<a class="headerlink" href="#Template-(Table)-Models" title="Link to this heading"></a>
 </h2>
 <p>3ML (via astromodels) provides the ability to construct models in tabluated form. This is very useful for models that are from numerical simualtions. While in other software special care must be taken to construct table models into FITS files, in 3ML the construction of the table model is taken care of for you. Here is an example of how to build a template model from a pre-existing function.</p>
 <section id="Constructing-a-template">
-<h3>Constructing a template<a class="headerlink" href="#Constructing-a-template" title="Permalink to this heading"></a>
+<h3>Constructing a template<a class="headerlink" href="#Constructing-a-template" title="Link to this heading"></a>
 </h3>
 <p>First, we grab a function and make an energy grid.</p>
 <div class="nbinput nblast docutils container">
@@ -464,7 +462,7 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">02:19:18 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#126" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">126</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">00:08:39 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#126" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">126</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">Using keV.                                                                  </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                     </span>
 </pre>
 </div>

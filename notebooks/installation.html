@@ -1,33 +1,31 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -133,16 +131,16 @@
            <div itemprop="articleBody">
              
   <section id="Installation">
-<h1>Installation<a class="headerlink" href="#Installation" title="Permalink to this heading"></a>
+<h1>Installation<a class="headerlink" href="#Installation" title="Link to this heading"></a>
 </h1>
 <p>3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that <em>you</em>
 plan on using. Are their libraries accessible on you system’s standard paths? If you think that you have everything setup properly and the install does not work for you, please <a class="reference external" href="https://github.com/threeML/threeML/issues">submit an issue</a> and we will do our best to find a solution.</p>
 <section id="XSPEC-models">
-<h2>XSPEC models<a class="headerlink" href="#XSPEC-models" title="Permalink to this heading"></a>
+<h2>XSPEC models<a class="headerlink" href="#XSPEC-models" title="Link to this heading"></a>
 </h2>
 <p>We allow the ability to use the models provided by <a href="#id1"><span class="problematic" id="id2">`XSPEC &lt;&gt;`__</span></a> natively in 3ML. However, before installing <a href="#id1"><span class="problematic" id="id3">`astromodels &lt;&gt;`__</span></a> or 3ML, you must already have XSPEC installed by one of a few methods.</p>
 <section id="HEASARC-install">
-<h3>HEASARC install<a class="headerlink" href="#HEASARC-install" title="Permalink to this heading"></a>
+<h3>HEASARC install<a class="headerlink" href="#HEASARC-install" title="Link to this heading"></a>
 </h3>
 <p>If you have XSPEC installed on your computer via the source code, then before installing astromodels, make sure to <code class="docutils literal notranslate"><span class="pre">init</span></code> your HEASARC environment. Upon installing <code class="docutils literal notranslate"><span class="pre">astromodels</span></code>, the process will attempt to find the proper libraries on your system if it detects XSPEC and compile the proper extensions. If you have installed your XSPEC in a non-standard directory (e.g. your home directory), the process my not find all the libraries. You can thus export an env variable that provides the
 explicit path to your XSPEC headers:</p>
@@ -157,7 +155,7 @@ explicit path to your XSPEC headers:</p>
 </div>
 </section>
 <section id="xspec-modelsonly">
-<h3>xspec-modelsonly<a class="headerlink" href="#xspec-modelsonly" title="Permalink to this heading"></a>
+<h3>xspec-modelsonly<a class="headerlink" href="#xspec-modelsonly" title="Link to this heading"></a>
 </h3>
 <p>If using conda, it is possible to get access to XSPEC models without having to install HEASOFT. We thus recommend the following command to create your new conda environment:</p>
 <div class="highlight-bash notranslate">
@@ -168,11 +166,11 @@ explicit path to your XSPEC headers:</p>
 </section>
 </section>
 <section id="Conda-installation">
-<h2>Conda installation<a class="headerlink" href="#Conda-installation" title="Permalink to this heading"></a>
+<h2>Conda installation<a class="headerlink" href="#Conda-installation" title="Link to this heading"></a>
 </h2>
 <p><a class="reference external" href="https://conda.io/docs/">Conda</a> is a platform independent package manager. It allows to install 3ML (and a lot of other software) without the need to compile anything, and in a completely separate environment from your system and your system python.</p>
 <section id="If-you-don't-know-Conda">
-<h3>If you don’t know Conda<a class="headerlink" href="#If-you-don't-know-Conda" title="Permalink to this heading"></a>
+<h3>If you don’t know Conda<a class="headerlink" href="#If-you-don't-know-Conda" title="Link to this heading"></a>
 </h3>
 <p>If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:</p>
 <ol class="arabic simple">
@@ -182,7 +180,7 @@ explicit path to your XSPEC headers:</p>
 </ol>
 </section>
 <section id="If-you-already-know-Conda">
-<h3>If you already know Conda<a class="headerlink" href="#If-you-already-know-Conda" title="Permalink to this heading"></a>
+<h3>If you already know Conda<a class="headerlink" href="#If-you-already-know-Conda" title="Link to this heading"></a>
 </h3>
 <p>If you are familiar with Conda and you already have it installed, you can install 3ML by creating an environment with (<em>note the exceptions above w.r.t. to include XSPEC support</em>):</p>
 <div class="highlight-bash notranslate">
@@ -207,7 +205,7 @@ explicit path to your XSPEC headers:</p>
 </section>
 </section>
 <section id="pip">
-<h2>pip<a class="headerlink" href="#pip" title="Permalink to this heading"></a>
+<h2>pip<a class="headerlink" href="#pip" title="Link to this heading"></a>
 </h2>
 <p>If you would like to install 3ML and astromodels on their own and have more control over which dependencies you would like to use. Please to the following</p>
 <ol class="arabic simple">
@@ -228,7 +226,7 @@ explicit path to your XSPEC headers:</p>
 <p>If you need to build other dependencies such as pagmo, multinest, XSPEC, etc., it is recommended you do this <strong>before</strong> installing astromodels!</p>
 </section>
 <section id="Docker">
-<h2>Docker<a class="headerlink" href="#Docker" title="Permalink to this heading"></a>
+<h2>Docker<a class="headerlink" href="#Docker" title="Link to this heading"></a>
 </h2>
 <p>A docker with the complete 3ML environment and all dependencies can be installed with</p>
 <div class="highlight-bash notranslate">
@@ -243,7 +241,7 @@ explicit path to your XSPEC headers:</p>
 <p>which will launch a notebook server that can operate on the current directory. The notebooks and be accessed by typing <code class="docutils literal notranslate"><span class="pre">localhost:8888</span></code> in your browser.</p>
 </section>
 <section id="Other-dependencies">
-<h2>Other dependencies<a class="headerlink" href="#Other-dependencies" title="Permalink to this heading"></a>
+<h2>Other dependencies<a class="headerlink" href="#Other-dependencies" title="Link to this heading"></a>
 </h2>
 <p>You need to set up packages such as AERIE (for HAWC), or the Fermi Science Tools, before running the script, otherwise some of the functionalities will not work.</p>
 <ul>
@@ -258,7 +256,7 @@ explicit path to your XSPEC headers:</p>
 </ul>
 </section>
 <section id="Install-from-source-(advanced)">
-<h2>Install from source (advanced)<a class="headerlink" href="#Install-from-source-(advanced)" title="Permalink to this heading"></a>
+<h2>Install from source (advanced)<a class="headerlink" href="#Install-from-source-(advanced)" title="Link to this heading"></a>
 </h2>
 <p>Remove any previous installation you might have with:</p>
 <div class="highlight-bash notranslate">
@@ -283,7 +281,7 @@ explicit path to your XSPEC headers:</p>
 <li><p>NOTE: If you do not have permission to install packages in your current python environment, you can still install the packages by adding the <code class="docutils literal notranslate"><span class="pre">--user</span></code> option at the end of each <code class="docutils literal notranslate"><span class="pre">pip</span></code> command.</p></li>
 </ul>
 <section id="Tips-for-Mac-users">
-<h3>Tips for Mac users<a class="headerlink" href="#Tips-for-Mac-users" title="Permalink to this heading"></a>
+<h3>Tips for Mac users<a class="headerlink" href="#Tips-for-Mac-users" title="Link to this heading"></a>
 </h3>
 <p>The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:</p>
 <ul class="simple">

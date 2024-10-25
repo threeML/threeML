@@ -53,7 +53,7 @@ Responsibilities include:
 * somenone (HAWC) - Institution
 * Israel Martinez Castellanos (cosipy) - NSFC
 * somenone (polpy) - Institution
-* somenone (i3mla) - Institution
+* Michael Larson (i3mla) - Institution
 * somenone (polarpy) - Institution
 
 

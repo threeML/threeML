@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.file_utils &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -124,7 +122,9 @@
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<div class="viewcode-block" id="sanitize_filename"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.sanitize_filename">[docs]</a><span class="k">def</span> <span class="nf">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">abspath</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<div class="viewcode-block" id="sanitize_filename">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.sanitize_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">abspath</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 
     <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
@@ -139,14 +139,20 @@
         <span class="k">return</span> <span class="n">sanitized</span></div>
 
 
-<div class="viewcode-block" id="file_existing_and_readable"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.file_existing_and_readable">[docs]</a><span class="k">def</span> <span class="nf">file_existing_and_readable</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="file_existing_and_readable">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.file_existing_and_readable">[docs]</a>
+<span class="k">def</span> <span class="nf">file_existing_and_readable</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     
     <span class="n">sanitized_filename</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sanitized_filename</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="fits_file_existing_and_readable"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.fits_file_existing_and_readable">[docs]</a><span class="k">def</span> <span class="nf">fits_file_existing_and_readable</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="fits_file_existing_and_readable">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.fits_file_existing_and_readable">[docs]</a>
+<span class="k">def</span> <span class="nf">fits_file_existing_and_readable</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    checks if a FITS file exists ignoring extension ({})</span>
 <span class="sd">    info</span>
@@ -155,17 +161,23 @@
     <span class="n">base_filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     
     <span class="k">return</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">base_filename</span><span class="p">)</span></div>
+
     
 
 
-<div class="viewcode-block" id="path_exists_and_is_directory"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.path_exists_and_is_directory">[docs]</a><span class="k">def</span> <span class="nf">path_exists_and_is_directory</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="path_exists_and_is_directory">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.path_exists_and_is_directory">[docs]</a>
+<span class="k">def</span> <span class="nf">path_exists_and_is_directory</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="n">sanitized_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sanitized_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="if_directory_not_existing_then_make"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.if_directory_not_existing_then_make">[docs]</a><span class="k">def</span> <span class="nf">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="if_directory_not_existing_then_make">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.if_directory_not_existing_then_make">[docs]</a>
+<span class="k">def</span> <span class="nf">if_directory_not_existing_then_make</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If the given directory does not exists, then make it</span>
 
@@ -186,7 +198,10 @@
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="get_random_unique_name"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.get_random_unique_name">[docs]</a><span class="k">def</span> <span class="nf">get_random_unique_name</span><span class="p">():</span>
+
+<div class="viewcode-block" id="get_random_unique_name">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.get_random_unique_name">[docs]</a>
+<span class="k">def</span> <span class="nf">get_random_unique_name</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a name which is random and (with extremely high probability) unique</span>
 
@@ -196,7 +211,10 @@
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="temporary_directory"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.temporary_directory">[docs]</a><span class="nd">@contextmanager</span>
+
+<div class="viewcode-block" id="temporary_directory">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.temporary_directory">[docs]</a>
+<span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">temporary_directory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">within_directory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This context manager creates a temporary directory in the most secure possible way (with no race condition), and</span>
@@ -223,7 +241,10 @@
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t remove temporary directory </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">directory</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="within_directory"><a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.within_directory">[docs]</a><span class="nd">@contextmanager</span>
+
+<div class="viewcode-block" id="within_directory">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.file_utils.within_directory">[docs]</a>
+<span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">within_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 
     <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
@@ -240,6 +261,7 @@
     <span class="k">finally</span><span class="p">:</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">current_dir</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

@@ -1,34 +1,32 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fitting XMM-Newton data with the APEC model &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -120,13 +118,13 @@
            <div itemprop="articleBody">
              
   <section id="Fitting-XMM-Newton-data-with-the-APEC-model">
-<h1>Fitting XMM-Newton data with the APEC model<a class="headerlink" href="#Fitting-XMM-Newton-data-with-the-APEC-model" title="Permalink to this heading"></a>
+<h1>Fitting XMM-Newton data with the APEC model<a class="headerlink" href="#Fitting-XMM-Newton-data-with-the-APEC-model" title="Link to this heading"></a>
 </h1>
 <p>The Astrophysical Plasma Emission Code (APEC, <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2001ApJ...556L..91S/abstract">Smith et al. 2001</a>) is a state-of-the-art code to model the X-ray emission of optically thin astrophysical plasma in collisional equilibrium. APEC has been widely used in the literature to study the spectra of a wide variety of sources, such as galaxy clusters and groups, supernova remnants, or stellar coronae. The code self-consistently models the continuum (bremsstrahlung) emission
 as well as the pseudo-continuum and over 10,000 individual emission lines.</p>
 <p>Astromodels includes a native Python implementation of APEC based on <code class="docutils literal notranslate"><span class="pre">`pyatomdb</span></code> &lt;<a class="reference external" href="https://atomdb.readthedocs.io/en/master/">https://atomdb.readthedocs.io/en/master/</a>&gt;`__. As the model is only available when an installation of <code class="docutils literal notranslate"><span class="pre">pyatomdb</span></code> can be found, the user must make sure <code class="docutils literal notranslate"><span class="pre">pyatomdb</span></code> is installed and the required atomic data files have been downloaded.</p>
 <section id="Setting-up-pyatomdb">
-<h2>Setting up pyatomdb<a class="headerlink" href="#Setting-up-pyatomdb" title="Permalink to this heading"></a>
+<h2>Setting up pyatomdb<a class="headerlink" href="#Setting-up-pyatomdb" title="Link to this heading"></a>
 </h2>
 <p><code class="docutils literal notranslate"><span class="pre">pyatomdb</span></code> is easily installable using pip:</p>
 <div class="highlight-none notranslate">
@@ -146,7 +144,7 @@ as well as the pseudo-continuum and over 10,000 individual emission lines.</p>
 <p>OK, we’re all set!</p>
 </section>
 <section id="Loading-the-APEC-model">
-<h2>Loading the APEC model<a class="headerlink" href="#Loading-the-APEC-model" title="Permalink to this heading"></a>
+<h2>Loading the APEC model<a class="headerlink" href="#Loading-the-APEC-model" title="Link to this heading"></a>
 </h2>
 <p>Once <code class="docutils literal notranslate"><span class="pre">pyatomdb</span></code> is properly installed, it is available as a “Function1D” object</p>
 <div class="nbinput nblast docutils container">
@@ -493,7 +491,7 @@ Will not thermally broaden lines
 </div>
 </section>
 <section id="Comparison-with-XSPEC">
-<h2>Comparison with XSPEC<a class="headerlink" href="#Comparison-with-XSPEC" title="Permalink to this heading"></a>
+<h2>Comparison with XSPEC<a class="headerlink" href="#Comparison-with-XSPEC" title="Link to this heading"></a>
 </h2>
 <p>To test the implementation, let’s simulate a spectrum with XSPEC and fit it within 3ML using the APEC model. We simulate an <em>XMM-Newton</em>/EPIC-pn spectrum with a temperature of 5 keV, a metallicity of 0.3 Solar, a normalization of unity and a redshift of 0.1. The simulated model is absorbed by photo-electric absorption (PhAbs model) with a column density of <span class="math notranslate nohighlight">\(10^{21}\)</span> cm<span class="math notranslate nohighlight">\(^{-2}\)</span>. We start by declaring the model,</p>
 <div class="nbinput nblast docutils container">

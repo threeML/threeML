@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.data_download.Fermi_LAT.download_LAT_data &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -140,7 +138,9 @@
 <span class="n">socket</span><span class="o">.</span><span class="n">setdefaulttimeout</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="DivParser"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser">[docs]</a><span class="k">class</span> <span class="nc">DivParser</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">HTMLParser</span><span class="p">):</span>
+<div class="viewcode-block" id="DivParser">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser">[docs]</a>
+<span class="k">class</span> <span class="nc">DivParser</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">HTMLParser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract data from a &lt;div&gt;&lt;/div&gt; tag</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -153,7 +153,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">desiredDivName</span> <span class="o">=</span> <span class="n">desiredDivName</span>
 
-<div class="viewcode-block" id="DivParser.handle_starttag"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_starttag">[docs]</a>    <span class="k">def</span> <span class="nf">handle_starttag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+<div class="viewcode-block" id="DivParser.handle_starttag">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_starttag">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_starttag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;div&quot;</span><span class="p">:</span>
             <span class="k">return</span>
@@ -176,24 +178,34 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="DivParser.handle_endtag"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_endtag">[docs]</a>    <span class="k">def</span> <span class="nf">handle_endtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DivParser.handle_endtag">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_endtag">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_endtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;div&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">-=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="DivParser.handle_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_data">[docs]</a>    <span class="k">def</span> <span class="nf">handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DivParser.handle_data">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.DivParser.handle_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+</div>
+
 
 
 <span class="c1"># Keyword name to store the unique ID for the download</span>
 <span class="n">_uid_fits_keyword</span> <span class="o">=</span> <span class="s2">&quot;QUERYUID&quot;</span>
 
 
-<div class="viewcode-block" id="merge_LAT_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.merge_LAT_data">[docs]</a><span class="k">def</span> <span class="nf">merge_LAT_data</span><span class="p">(</span><span class="n">ft1s</span><span class="p">,</span> <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ft1_merged.fits&#39;</span><span class="p">,</span> <span class="n">Emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">Emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<div class="viewcode-block" id="merge_LAT_data">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.merge_LAT_data">[docs]</a>
+<span class="k">def</span> <span class="nf">merge_LAT_data</span><span class="p">(</span><span class="n">ft1s</span><span class="p">,</span> <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ft1_merged.fits&#39;</span><span class="p">,</span> <span class="n">Emin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">Emax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 
     <span class="n">outfile</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">outfile</span>
 
@@ -243,7 +255,10 @@
     <span class="k">return</span> <span class="n">outfile</span></div>
 
 
-<div class="viewcode-block" id="download_LAT_data"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.download_LAT_data">[docs]</a><span class="k">def</span> <span class="nf">download_LAT_data</span><span class="p">(</span>
+
+<div class="viewcode-block" id="download_LAT_data">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.download_LAT_data">[docs]</a>
+<span class="k">def</span> <span class="nf">download_LAT_data</span><span class="p">(</span>
     <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -689,14 +704,19 @@
         <span class="n">FT2</span>
     <span class="p">)</span></div>
 
-<div class="viewcode-block" id="LAT_dataset"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset">[docs]</a><span class="k">class</span> <span class="nc">LAT_dataset</span><span class="p">():</span>
+
+<div class="viewcode-block" id="LAT_dataset">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset">[docs]</a>
+<span class="k">class</span> <span class="nc">LAT_dataset</span><span class="p">():</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ft1</span><span class="o">=</span><span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ft2</span><span class="o">=</span><span class="kc">None</span>
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="LAT_dataset.make_LAT_dataset"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.make_LAT_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">make_LAT_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="LAT_dataset.make_LAT_dataset">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.make_LAT_dataset">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_LAT_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                          <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                          <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                          <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -771,7 +791,10 @@
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="LAT_dataset.extract_events"><a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.extract_events">[docs]</a>    <span class="k">def</span> <span class="nf">extract_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">roi</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="n">thetamax</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="n">data_quality</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LAT_dataset.extract_events">
+<a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_LAT.html#threeML.utils.data_download.Fermi_LAT.download_LAT_data.LAT_dataset.extract_events">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">roi</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="n">thetamax</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="n">data_quality</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">GtBurst</span> <span class="kn">import</span> <span class="n">dataHandling</span>
         <span class="k">global</span> <span class="n">lastDisplay</span>
 
@@ -780,7 +803,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filt_file</span><span class="p">,</span> <span class="n">nEvents</span> <span class="o">=</span> <span class="n">LATdata</span><span class="o">.</span><span class="n">performStandardCut</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span> <span class="n">roi</span><span class="p">,</span> <span class="n">irf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">METstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">METstop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Emin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Emax</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span>
                                                            <span class="n">thetamax</span><span class="p">,</span>
                                                            <span class="kc">True</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Extracted </span><span class="si">%s</span><span class="s1"> events&#39;</span> <span class="o">%</span> <span class="n">nEvents</span><span class="p">)</span></div></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Extracted </span><span class="si">%s</span><span class="s1"> events&#39;</span> <span class="o">%</span> <span class="n">nEvents</span><span class="p">)</span></div>
+</div>
+
 
 
 </pre></div>

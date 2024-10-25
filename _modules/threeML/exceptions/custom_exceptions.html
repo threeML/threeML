@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.exceptions.custom_exceptions &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -118,7 +116,9 @@
 <span class="c1"># Monkeypatch the print of warning so we can customize them</span>
 
 
-<div class="viewcode-block" id="my_format_warning"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.my_format_warning">[docs]</a><span class="k">def</span> <span class="nf">my_format_warning</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineo</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="my_format_warning">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.my_format_warning">[docs]</a>
+<span class="k">def</span> <span class="nf">my_format_warning</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineo</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Override the default showwarning to customize the appearance of warnings</span>
 <span class="sd">    :return:</span>
@@ -128,70 +128,115 @@
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
 
 
+
 <span class="n">custom_warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">my_format_warning</span>
 
 
-<div class="viewcode-block" id="NegativeBackground"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.NegativeBackground">[docs]</a><span class="k">class</span> <span class="nc">NegativeBackground</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<div class="viewcode-block" id="NegativeBackground">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.NegativeBackground">[docs]</a>
+<span class="k">class</span> <span class="nc">NegativeBackground</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="TriggerDoesNotExist"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.TriggerDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">TriggerDoesNotExist</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TriggerDoesNotExist">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.TriggerDoesNotExist">[docs]</a>
+<span class="k">class</span> <span class="nc">TriggerDoesNotExist</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ForbiddenRegionOfParameterSpace"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.ForbiddenRegionOfParameterSpace">[docs]</a><span class="k">class</span> <span class="nc">ForbiddenRegionOfParameterSpace</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
 
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="CppInterfaceNotAvailable"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.CppInterfaceNotAvailable">[docs]</a><span class="k">class</span> <span class="nc">CppInterfaceNotAvailable</span><span class="p">(</span><span class="ne">ImportWarning</span><span class="p">):</span>
-
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="CannotImportPlugin"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.CannotImportPlugin">[docs]</a><span class="k">class</span> <span class="nc">CannotImportPlugin</span><span class="p">(</span><span class="ne">ImportWarning</span><span class="p">):</span>
-
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="LikelihoodIsInfinite"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.LikelihoodIsInfinite">[docs]</a><span class="k">class</span> <span class="nc">LikelihoodIsInfinite</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+<div class="viewcode-block" id="ForbiddenRegionOfParameterSpace">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.ForbiddenRegionOfParameterSpace">[docs]</a>
+<span class="k">class</span> <span class="nc">ForbiddenRegionOfParameterSpace</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
 
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="FitFailed"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.FitFailed">[docs]</a><span class="k">class</span> <span class="nc">FitFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CppInterfaceNotAvailable">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.CppInterfaceNotAvailable">[docs]</a>
+<span class="k">class</span> <span class="nc">CppInterfaceNotAvailable</span><span class="p">(</span><span class="ne">ImportWarning</span><span class="p">):</span>
+
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ConfigurationFileCorrupt"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.ConfigurationFileCorrupt">[docs]</a><span class="k">class</span> <span class="nc">ConfigurationFileCorrupt</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CannotImportPlugin">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.CannotImportPlugin">[docs]</a>
+<span class="k">class</span> <span class="nc">CannotImportPlugin</span><span class="p">(</span><span class="ne">ImportWarning</span><span class="p">):</span>
+
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="BadCovariance"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.BadCovariance">[docs]</a><span class="k">class</span> <span class="nc">BadCovariance</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LikelihoodIsInfinite">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.LikelihoodIsInfinite">[docs]</a>
+<span class="k">class</span> <span class="nc">LikelihoodIsInfinite</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="MinLargerMax"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.MinLargerMax">[docs]</a><span class="k">class</span> <span class="nc">MinLargerMax</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FitFailed">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.FitFailed">[docs]</a>
+<span class="k">class</span> <span class="nc">FitFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="NoFitYet"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.NoFitYet">[docs]</a><span class="k">class</span> <span class="nc">NoFitYet</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ConfigurationFileCorrupt">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.ConfigurationFileCorrupt">[docs]</a>
+<span class="k">class</span> <span class="nc">ConfigurationFileCorrupt</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="DetDoesNotExist"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.DetDoesNotExist">[docs]</a><span class="k">class</span> <span class="nc">DetDoesNotExist</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BadCovariance">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.BadCovariance">[docs]</a>
+<span class="k">class</span> <span class="nc">BadCovariance</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="MinimizerNotAvailable"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.MinimizerNotAvailable">[docs]</a><span class="k">class</span> <span class="nc">MinimizerNotAvailable</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MinLargerMax">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.MinLargerMax">[docs]</a>
+<span class="k">class</span> <span class="nc">MinLargerMax</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="TimeTypeNotKnown"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.TimeTypeNotKnown">[docs]</a><span class="k">class</span> <span class="nc">TimeTypeNotKnown</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="NoFitYet">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.NoFitYet">[docs]</a>
+<span class="k">class</span> <span class="nc">NoFitYet</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="deprecated"><a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.deprecated">[docs]</a><span class="k">class</span> <span class="nc">deprecated</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DetDoesNotExist">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.DetDoesNotExist">[docs]</a>
+<span class="k">class</span> <span class="nc">DetDoesNotExist</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="MinimizerNotAvailable">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.MinimizerNotAvailable">[docs]</a>
+<span class="k">class</span> <span class="nc">MinimizerNotAvailable</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="TimeTypeNotKnown">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.TimeTypeNotKnown">[docs]</a>
+<span class="k">class</span> <span class="nc">TimeTypeNotKnown</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="deprecated">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.exceptions.html#threeML.exceptions.custom_exceptions.deprecated">[docs]</a>
+<span class="k">class</span> <span class="nc">deprecated</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">reason</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Reason for deprecation must be supplied&quot;</span><span class="p">)</span>
@@ -229,6 +274,7 @@
             <span class="k">return</span> <span class="n">cls_or_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_func</span></div>
+
 </pre></div>
 
            </div>

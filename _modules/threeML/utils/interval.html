@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.interval &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -121,15 +119,23 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="IntervalsDoNotOverlap"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalsDoNotOverlap">[docs]</a><span class="k">class</span> <span class="nc">IntervalsDoNotOverlap</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<div class="viewcode-block" id="IntervalsDoNotOverlap">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalsDoNotOverlap">[docs]</a>
+<span class="k">class</span> <span class="nc">IntervalsDoNotOverlap</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="IntervalsNotContiguous"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalsNotContiguous">[docs]</a><span class="k">class</span> <span class="nc">IntervalsNotContiguous</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalsNotContiguous">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalsNotContiguous">[docs]</a>
+<span class="k">class</span> <span class="nc">IntervalsNotContiguous</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="Interval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval">[docs]</a><span class="k">class</span> <span class="nc">Interval</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Interval">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval">[docs]</a>
+<span class="k">class</span> <span class="nc">Interval</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">swap_if_inverted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
@@ -161,10 +167,13 @@
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
 
-<div class="viewcode-block" id="Interval.new"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.new">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Interval.new">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.new">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_get_width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 
@@ -183,7 +192,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_width</span><span class="p">(),</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Interval.intersect"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.intersect">[docs]</a>    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+<div class="viewcode-block" id="Interval.intersect">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.intersect">[docs]</a>
+    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="c1"># type: (Interval) -&gt; Interval</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a new time interval corresponding to the intersection between this interval and the provided one.</span>
@@ -203,7 +214,10 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_stop</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Interval.merge"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Interval.merge">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.merge">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="c1"># type: (Interval) -&gt; Interval</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals</span>
@@ -225,7 +239,10 @@
 
             <span class="k">raise</span> <span class="n">IntervalsDoNotOverlap</span><span class="p">(</span><span class="s2">&quot;Could not merge non-overlapping intervals!&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Interval.overlaps_with"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.overlaps_with">[docs]</a>    <span class="k">def</span> <span class="nf">overlaps_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Interval.overlaps_with">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.overlaps_with">[docs]</a>
+    <span class="k">def</span> <span class="nf">overlaps_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="c1"># type: (Interval) -&gt; bool</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns whether the current time interval and the provided one overlap or not</span>
@@ -255,7 +272,10 @@
 
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="Interval.to_string"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Interval.to_string">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval.to_string">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns a string representation of the time interval that is like the</span>
 <span class="sd">        argument of many interval reading funcitons</span>
@@ -264,6 +284,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%f</span><span class="s2">-</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 
@@ -280,7 +301,10 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">stop</span></div>
 
 
-<div class="viewcode-block" id="IntervalSet"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet">[docs]</a><span class="k">class</span> <span class="nc">IntervalSet</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IntervalSet">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet">[docs]</a>
+<span class="k">class</span> <span class="nc">IntervalSet</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A set of intervals</span>
 
@@ -292,7 +316,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span>
 
-<div class="viewcode-block" id="IntervalSet.new"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.new">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IntervalSet.new">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.new">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new interval set of this type</span>
@@ -303,7 +329,10 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IntervalSet.new_interval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.new_interval">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="IntervalSet.new_interval">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.new_interval">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new_interval</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new interval of INTERVAL_TYPE</span>
@@ -314,7 +343,10 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">INTERVAL_TYPE</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IntervalSet.from_strings"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_strings">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="IntervalSet.from_strings">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_strings">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_strings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        These are intervals specified as &quot;-10 -- 5&quot;, &quot;0-10&quot;, and so on</span>
@@ -332,6 +364,7 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
 
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_parse_interval</span><span class="p">(</span><span class="n">time_interval</span><span class="p">):</span>
         <span class="c1"># The following regular expression matches any two numbers, positive or negative,</span>
@@ -343,7 +376,9 @@
 
         <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
 
-<div class="viewcode-block" id="IntervalSet.from_starts_and_stops"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_starts_and_stops">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IntervalSet.from_starts_and_stops">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_starts_and_stops">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_starts_and_stops</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds a TimeIntervalSet from a list of start and stop times:</span>
@@ -370,7 +405,10 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IntervalSet.from_list_of_edges"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_list_of_edges">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="IntervalSet.from_list_of_edges">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.from_list_of_edges">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_list_of_edges</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds a IntervalSet from a list of time edges:</span>
@@ -392,7 +430,10 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IntervalSet.merge_intersecting_intervals"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.merge_intersecting_intervals">[docs]</a>    <span class="k">def</span> <span class="nf">merge_intersecting_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalSet.merge_intersecting_intervals">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.merge_intersecting_intervals">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge_intersecting_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        merges intersecting intervals into a contiguous intervals</span>
@@ -469,9 +510,13 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_intervals</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IntervalSet.extend"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalSet.extend">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.extend">[docs]</a>
+    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">list_of_intervals</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -495,11 +540,16 @@
 
         <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="IntervalSet.pop"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="IntervalSet.pop">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.pop">[docs]</a>
+    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IntervalSet.sort"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalSet.sort">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.sort">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a sorted copy of the set (sorted according to the tstart of the time intervals)</span>
 
@@ -514,7 +564,10 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">())(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="IntervalSet.argsort"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.argsort">[docs]</a>    <span class="k">def</span> <span class="nf">argsort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalSet.argsort">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.argsort">[docs]</a>
+    <span class="k">def</span> <span class="nf">argsort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the indices which order the set</span>
 
@@ -526,7 +579,10 @@
 
         <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">tstarts</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span></div>
 
-<div class="viewcode-block" id="IntervalSet.is_contiguous"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.is_contiguous">[docs]</a>    <span class="k">def</span> <span class="nf">is_contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalSet.is_contiguous">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.is_contiguous">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check whether the time intervals are all contiguous, i.e., the stop time of one interval is the start</span>
 <span class="sd">        time of the next</span>
@@ -539,6 +595,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">starts</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stops</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">relative_tolerance</span><span class="p">)</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -548,7 +605,9 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="IntervalSet.containing_bin"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.containing_bin">[docs]</a>    <span class="k">def</span> <span class="nf">containing_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="IntervalSet.containing_bin">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.containing_bin">[docs]</a>
+    <span class="k">def</span> <span class="nf">containing_bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        finds the index of the interval containing</span>
 <span class="sd">        :param value:</span>
@@ -561,7 +620,10 @@
 
         <span class="k">return</span> <span class="n">idx</span></div>
 
-<div class="viewcode-block" id="IntervalSet.containing_interval"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.containing_interval">[docs]</a>    <span class="k">def</span> <span class="nf">containing_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IntervalSet.containing_interval">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.containing_interval">[docs]</a>
+    <span class="k">def</span> <span class="nf">containing_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        returns either a mask of the intervals contained in the selection</span>
@@ -604,6 +666,7 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">)[</span><span class="n">condition</span><span class="p">])</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">starts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -681,7 +744,9 @@
 
         <span class="k">return</span> <span class="n">edges</span>
 
-<div class="viewcode-block" id="IntervalSet.to_string"><a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IntervalSet.to_string">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet.to_string">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 
@@ -690,6 +755,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">interval</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">bin_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -702,6 +768,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stops</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
+
 </pre></div>
 
            </div>

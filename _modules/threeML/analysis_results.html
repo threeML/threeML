@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.analysis_results &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -203,7 +201,9 @@
     <span class="k">return</span> <span class="n">yaml_code</span>
 
 
-<div class="viewcode-block" id="SEQUENCE"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.SEQUENCE">[docs]</a><span class="k">class</span> <span class="nc">SEQUENCE</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
+<div class="viewcode-block" id="SEQUENCE">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.SEQUENCE">[docs]</a>
+<span class="k">class</span> <span class="nc">SEQUENCE</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis</span>
 
@@ -224,7 +224,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;SEQ_TYPE&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ANALYSIS_RESULTS_HDF"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS_HDF">[docs]</a><span class="k">class</span> <span class="nc">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ANALYSIS_RESULTS_HDF">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS_HDF">[docs]</a>
+<span class="k">class</span> <span class="nc">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">,</span> <span class="n">hdf_obj</span><span class="p">):</span>
 
         <span class="n">optimized_model</span> <span class="o">=</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">optimized_model</span>
@@ -403,7 +406,10 @@
             <span class="n">hdf_obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;MV</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">measure_value</span></div>
 
 
-<div class="viewcode-block" id="ANALYSIS_RESULTS"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS">[docs]</a><span class="k">class</span> <span class="nc">ANALYSIS_RESULTS</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ANALYSIS_RESULTS">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS">[docs]</a>
+<span class="k">class</span> <span class="nc">ANALYSIS_RESULTS</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis</span>
 
@@ -547,7 +553,10 @@
             <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AnalysisResultsFITS"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsFITS">[docs]</a><span class="k">class</span> <span class="nc">AnalysisResultsFITS</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AnalysisResultsFITS">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsFITS">[docs]</a>
+<span class="k">class</span> <span class="nc">AnalysisResultsFITS</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A FITS file for storing one or more results from 3ML analysis</span>
 
@@ -591,6 +600,7 @@
             <span class="s2">&quot;3ML&quot;</span><span class="p">,</span>
             <span class="n">comment</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Multi-Mission Max. Likelihood v. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">__version__</span><span class="p">),</span>
         <span class="p">)</span></div>
+
 
 
 <span class="k">class</span> <span class="nc">_AnalysisResults</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -1081,7 +1091,9 @@
         <span class="k">return</span> <span class="n">variates</span><span class="o">.</span><span class="n">equal_tail_interval</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="BayesianResults"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults">[docs]</a><span class="k">class</span> <span class="nc">BayesianResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
+<div class="viewcode-block" id="BayesianResults">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults">[docs]</a>
+<span class="k">class</span> <span class="nc">BayesianResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and &quot;error propagation&quot;</span>
 
@@ -1113,7 +1125,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span> <span class="o">=</span> <span class="n">log_probabilty</span>
 
-<div class="viewcode-block" id="BayesianResults.get_correlation_matrix"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_correlation_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BayesianResults.get_correlation_matrix">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_correlation_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the covariance matrix from the samples</span>
 
@@ -1126,11 +1140,17 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_correlation_matrix</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BayesianResults.get_statistic_frame"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_statistic_frame">[docs]</a>    <span class="k">def</span> <span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.get_statistic_frame">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_statistic_frame">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_statistic_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;-log(posterior)&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BayesianResults.display"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display_correlation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;equal tail&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.display">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.display">[docs]</a>
+    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display_correlation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;equal tail&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
 
         <span class="n">best_fit_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_results_table</span><span class="p">(</span><span class="n">error_type</span><span class="p">,</span> <span class="n">cl</span><span class="p">)</span>
 
@@ -1169,7 +1189,10 @@
 
         <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_statistic_measure_frame</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="BayesianResults.corner_plot"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.corner_plot">[docs]</a>    <span class="k">def</span> <span class="nf">corner_plot</span><span class="p">(</span>
+
+<div class="viewcode-block" id="BayesianResults.corner_plot">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.corner_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">corner_plot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">renamed_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">components</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1277,6 +1300,7 @@
 
         <span class="k">return</span> <span class="n">fig</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">log_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1287,7 +1311,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span>
 
-<div class="viewcode-block" id="BayesianResults.corner_plot_cc"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.corner_plot_cc">[docs]</a>    <span class="k">def</span> <span class="nf">corner_plot_cc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">renamed_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">cc_kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BayesianResults.corner_plot_cc">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.corner_plot_cc">[docs]</a>
+    <span class="k">def</span> <span class="nf">corner_plot_cc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">renamed_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">cc_kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Corner plots using chainconsumer which allows for nicer plotting of</span>
 <span class="sd">        marginals</span>
@@ -1362,7 +1388,10 @@
 
         <span class="k">return</span> <span class="n">fig</span></div>
 
-<div class="viewcode-block" id="BayesianResults.comparison_corner_plot"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.comparison_corner_plot">[docs]</a>    <span class="k">def</span> <span class="nf">comparison_corner_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">other_fits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.comparison_corner_plot">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.comparison_corner_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">comparison_corner_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">other_fits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a corner plot from many different fits which allow for co-plotting of parameters marginals.</span>
 
@@ -1531,7 +1560,10 @@
 
         <span class="k">return</span> <span class="n">fig</span></div>
 
-<div class="viewcode-block" id="BayesianResults.plot_chains"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.plot_chains">[docs]</a>    <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.plot_chains">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.plot_chains">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce a plot of the series of samples for each parameter</span>
 
@@ -1568,7 +1600,10 @@
 
         <span class="k">return</span> <span class="n">figures</span></div>
 
-<div class="viewcode-block" id="BayesianResults.convergence_plots"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.convergence_plots">[docs]</a>    <span class="k">def</span> <span class="nf">convergence_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.convergence_plots">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.convergence_plots">[docs]</a>
+    <span class="k">def</span> <span class="nf">convergence_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same</span>
 <span class="sd">        values if the MCMC has converged to the posterior distribution.</span>
@@ -1672,7 +1707,10 @@
 
         <span class="k">return</span> <span class="n">figures</span></div>
 
-<div class="viewcode-block" id="BayesianResults.freedman_diaconis_rule"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.freedman_diaconis_rule">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="BayesianResults.freedman_diaconis_rule">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.freedman_diaconis_rule">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">freedman_diaconis_rule</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data</span>
@@ -1690,7 +1728,10 @@
 
         <span class="k">return</span> <span class="n">nbins</span></div>
 
-<div class="viewcode-block" id="BayesianResults.get_highest_density_posterior_interval"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval">[docs]</a>    <span class="k">def</span> <span class="nf">get_highest_density_posterior_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.get_highest_density_posterior_interval">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_highest_density_posterior_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        returns the highest density posterior interval for that parameter</span>
@@ -1712,7 +1753,10 @@
 
         <span class="k">return</span> <span class="n">variates</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BayesianResults.get_median_fit_model"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_median_fit_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_median_fit_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BayesianResults.get_median_fit_model">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_median_fit_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_median_fit_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the model parameters to the mean of the marginal distributions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1737,10 +1781,14 @@
 
             <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">par</span>
 
-        <span class="k">return</span> <span class="n">new_model</span></div></div>
+        <span class="k">return</span> <span class="n">new_model</span></div>
+</div>
 
 
-<div class="viewcode-block" id="MLEResults"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults">[docs]</a><span class="k">class</span> <span class="nc">MLEResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MLEResults">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults">[docs]</a>
+<span class="k">class</span> <span class="nc">MLEResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build the _AnalysisResults object starting from a covariance matrix.</span>
 
@@ -1889,7 +1937,9 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covariance_matrix</span>
 
-<div class="viewcode-block" id="MLEResults.get_correlation_matrix"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_correlation_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MLEResults.get_correlation_matrix">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_correlation_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute correlation matrix</span>
 
@@ -1898,11 +1948,17 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_covariance_matrix</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MLEResults.get_statistic_frame"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_statistic_frame">[docs]</a>    <span class="k">def</span> <span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MLEResults.get_statistic_frame">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_statistic_frame">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_statistic_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MLEResults.display"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display_correlation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MLEResults.display">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.display">[docs]</a>
+    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display_correlation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
 
         <span class="n">best_fit_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_results_table</span><span class="p">(</span>
             <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;covariance&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="n">cl</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance_matrix</span>
@@ -1929,10 +1985,14 @@
 
         <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of statistical measures:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_statistic_measure_frame</span><span class="p">())</span></div></div>
+        <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_statistic_measure_frame</span><span class="p">())</span></div>
+</div>
 
 
-<div class="viewcode-block" id="AnalysisResultsSet"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet">[docs]</a><span class="k">class</span> <span class="nc">AnalysisResultsSet</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AnalysisResultsSet">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet">[docs]</a>
+<span class="k">class</span> <span class="nc">AnalysisResultsSet</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A container for results which behaves like a list (but you cannot add/remove elements).</span>
 
@@ -1951,7 +2011,9 @@
 
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
 
-<div class="viewcode-block" id="AnalysisResultsSet.set_x"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_x">[docs]</a>    <span class="k">def</span> <span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisResultsSet.set_x">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_x">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when</span>
 <span class="sd">        saving these results to a FITS file.</span>
@@ -1980,7 +2042,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">characterize_sequence</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AnalysisResultsSet.set_bins"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_bins">[docs]</a>    <span class="k">def</span> <span class="nf">set_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AnalysisResultsSet.set_bins">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_bins">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when</span>
 <span class="sd">        saving these results to a FITS file</span>
@@ -2022,7 +2087,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">characterize_sequence</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AnalysisResultsSet.characterize_sequence"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.characterize_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">characterize_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AnalysisResultsSet.characterize_sequence">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.characterize_sequence">[docs]</a>
+    <span class="k">def</span> <span class="nf">characterize_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Characterize the sequence of these results. The provided data frame will be saved along with the results</span>
 <span class="sd">        in the &quot;SEQUENCE&quot; extension to allow the interpretation of the results.</span>
@@ -2048,7 +2116,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_tuple</span> <span class="o">=</span> <span class="n">data_tuple</span></div>
 
-<div class="viewcode-block" id="AnalysisResultsSet.write_to"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AnalysisResultsSet.write_to">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.write_to">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write this set of results to a FITS file.</span>
 
@@ -2103,10 +2174,14 @@
 
                     <span class="n">grp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;AnalysisResults_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
 
-                    <span class="n">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">grp</span><span class="p">)</span></div></div>
+                    <span class="n">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">grp</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="load_analysis_results"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results">[docs]</a><span class="k">def</span> <span class="nf">load_analysis_results</span><span class="p">(</span><span class="n">fits_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
+
+<div class="viewcode-block" id="load_analysis_results">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results">[docs]</a>
+<span class="k">def</span> <span class="nf">load_analysis_results</span><span class="p">(</span><span class="n">fits_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load the results of one or more analysis from a FITS file produced by 3ML</span>
 
@@ -2133,7 +2208,10 @@
             <span class="k">return</span> <span class="n">_load_set_of_results</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">n_results</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="load_analysis_results_hdf"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results_hdf">[docs]</a><span class="k">def</span> <span class="nf">load_analysis_results_hdf</span><span class="p">(</span><span class="n">hdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
+
+<div class="viewcode-block" id="load_analysis_results_hdf">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results_hdf">[docs]</a>
+<span class="k">def</span> <span class="nf">load_analysis_results_hdf</span><span class="p">(</span><span class="n">hdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load the results of one or more analysis from a FITS file produced by 3ML</span>
 
@@ -2160,7 +2238,10 @@
             <span class="k">return</span> <span class="n">_load_set_of_results_hdf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">n_results</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="convert_fits_analysis_result_to_hdf"><a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.convert_fits_analysis_result_to_hdf">[docs]</a><span class="k">def</span> <span class="nf">convert_fits_analysis_result_to_hdf</span><span class="p">(</span><span class="n">fits_result_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+<div class="viewcode-block" id="convert_fits_analysis_result_to_hdf">
+<a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.convert_fits_analysis_result_to_hdf">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_fits_analysis_result_to_hdf</span><span class="p">(</span><span class="n">fits_result_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="n">ar</span> <span class="o">=</span> <span class="n">load_analysis_results</span><span class="p">(</span><span class="n">fits_result_file</span><span class="p">)</span>  <span class="c1"># type: _AnalysisResults</span>
 
@@ -2171,6 +2252,7 @@
     <span class="n">ar</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">new_file_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted </span><span class="si">{</span><span class="n">fits_result_file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new_file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_load_one_results</span><span class="p">(</span><span class="n">fits_extension</span><span class="p">):</span>

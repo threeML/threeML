@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.bayesian.sampler_base &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -151,7 +149,9 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SamplerBase"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase">[docs]</a><span class="k">class</span> <span class="nc">SamplerBase</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="SamplerBase">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase">[docs]</a>
+<span class="k">class</span> <span class="nc">SamplerBase</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -195,13 +195,19 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_share_spectrum</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="SamplerBase.setup"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.setup">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<div class="viewcode-block" id="SamplerBase.setup">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.setup">[docs]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="SamplerBase.sample"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.sample">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+
+<div class="viewcode-block" id="SamplerBase.sample">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.sample">[docs]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BayesianResults</span><span class="p">:</span>
@@ -262,7 +268,9 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span>
 
-<div class="viewcode-block" id="SamplerBase.restore_median_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.restore_median_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_median_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="SamplerBase.restore_median_fit">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.restore_median_fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">restore_median_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the model parameters to the median of the log probability</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -276,7 +284,10 @@
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fit restored to median of posterior&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SamplerBase.restore_MAP_fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.restore_MAP_fit">[docs]</a>    <span class="k">def</span> <span class="nf">restore_MAP_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="SamplerBase.restore_MAP_fit">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.restore_MAP_fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">restore_MAP_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the model parameters to the MAP of the probability</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -289,6 +300,7 @@
             <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">par</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fit restored to maximum of posterior&quot;</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_build_samples_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -416,7 +428,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span>
 
-<div class="viewcode-block" id="SamplerBase.get_posterior"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.get_posterior">[docs]</a>    <span class="k">def</span> <span class="nf">get_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="SamplerBase.get_posterior">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.get_posterior">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the posterior for the normal sampler&quot;&quot;&quot;</span>
 
         <span class="c1"># Assign this trial values to the parameters and</span>
@@ -456,6 +470,7 @@
         <span class="c1"># print(&quot;Log like is %s, log_prior is %s, for trial values %s&quot; % (log_like, log_prior,trial_values))</span>
 
         <span class="k">return</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">log_prior</span></div>
+
 
     <span class="k">def</span> <span class="nf">_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sum of log-priors, used in the parallel tempering sampling&quot;&quot;&quot;</span>
@@ -565,7 +580,10 @@
         <span class="k">return</span> <span class="n">log_like</span></div>
 
 
-<div class="viewcode-block" id="MCMCSampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.MCMCSampler">[docs]</a><span class="k">class</span> <span class="nc">MCMCSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MCMCSampler">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.MCMCSampler">[docs]</a>
+<span class="k">class</span> <span class="nc">MCMCSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">MCMCSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -591,7 +609,10 @@
         <span class="k">return</span> <span class="n">p0</span></div>
 
 
-<div class="viewcode-block" id="UnitCubeSampler"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.UnitCubeSampler">[docs]</a><span class="k">class</span> <span class="nc">UnitCubeSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UnitCubeSampler">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.UnitCubeSampler">[docs]</a>
+<span class="k">class</span> <span class="nc">UnitCubeSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -672,7 +693,10 @@
         <span class="k">return</span> <span class="n">loglike</span><span class="p">,</span> <span class="n">prior</span></div>
 
 
-<div class="viewcode-block" id="arg_median"><a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.arg_median">[docs]</a><span class="k">def</span> <span class="nf">arg_median</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+
+<div class="viewcode-block" id="arg_median">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.arg_median">[docs]</a>
+<span class="k">def</span> <span class="nf">arg_median</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">a</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -680,6 +704,7 @@
         <span class="n">left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">l</span><span class="p">)[</span><span class="n">l</span><span class="p">]</span>
         <span class="n">right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">r</span><span class="p">)[</span><span class="n">r</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">min</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">left</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">right</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span></div>
+
 </pre></div>
 
            </div>

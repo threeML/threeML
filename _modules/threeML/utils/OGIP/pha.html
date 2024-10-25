@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.OGIP.pha &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -126,7 +124,9 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="PHAWrite"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite">[docs]</a><span class="k">class</span> <span class="nc">PHAWrite</span><span class="p">:</span>
+<div class="viewcode-block" id="PHAWrite">
+<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite">[docs]</a>
+<span class="k">class</span> <span class="nc">PHAWrite</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">ogiplike</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as</span>
@@ -177,7 +177,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_spec_iterator</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="PHAWrite.write"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="PHAWrite.write">
+<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAWrite.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines</span>
 <span class="sd">        if BAK files should be generated.</span>
@@ -212,6 +214,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_append_ogip</span><span class="p">(</span><span class="n">ogip</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_phaII</span><span class="p">(</span><span class="n">overwrite</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_append_ogip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ogip</span><span class="p">,</span> <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -481,6 +484,7 @@
             <span class="n">rsp2</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.rsp&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outfile_basename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">_atleast_2d_with_dtype</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -511,7 +515,9 @@
     <span class="k">return</span> <span class="n">arr</span>
 
 
-<div class="viewcode-block" id="SPECTRUM"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.SPECTRUM">[docs]</a><span class="k">class</span> <span class="nc">SPECTRUM</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
+<div class="viewcode-block" id="SPECTRUM">
+<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.SPECTRUM">[docs]</a>
+<span class="k">class</span> <span class="nc">SPECTRUM</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
 
     <span class="n">_HEADER_KEYWORDS</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s2">&quot;EXTNAME&quot;</span><span class="p">,</span> <span class="s2">&quot;SPECTRUM&quot;</span><span class="p">,</span> <span class="s2">&quot;Extension name&quot;</span><span class="p">),</span>
@@ -611,7 +617,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;POISSERR&quot;</span><span class="p">,</span> <span class="n">is_poisson</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PHAII"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII">[docs]</a><span class="k">class</span> <span class="nc">PHAII</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PHAII">
+<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII">[docs]</a>
+<span class="k">class</span> <span class="nc">PHAII</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">instrument_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -716,7 +725,9 @@
 
         <span class="nb">super</span><span class="p">(</span><span class="n">PHAII</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fits_extensions</span><span class="o">=</span><span class="p">[</span><span class="n">spectrum_extension</span><span class="p">])</span>
 
-<div class="viewcode-block" id="PHAII.from_time_series"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII.from_time_series">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PHAII.from_time_series">
+<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII.from_time_series">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_time_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PHAII&quot;</span><span class="p">:</span>
 
         <span class="n">pha_information</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">get_information_dict</span><span class="p">(</span><span class="n">use_poly</span><span class="p">)</span>
@@ -744,7 +755,10 @@
             <span class="n">is_poisson</span><span class="o">=</span><span class="n">is_poisson</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="PHAII.from_fits_file"><a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII.from_fits_file">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="PHAII.from_fits_file">
+<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII.from_fits_file">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_fits_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fits_file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FITSFile</span><span class="p">:</span>
 
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -777,9 +791,11 @@
 
         <span class="k">return</span> <span class="n">out</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">instrument</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span></div>
+
 </pre></div>
 
            </div>

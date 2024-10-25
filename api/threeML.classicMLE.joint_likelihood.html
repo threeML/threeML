@@ -1,31 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.classicMLE.joint_likelihood module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -115,24 +113,24 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.classicMLE.joint_likelihood">
-<span id="threeml-classicmle-joint-likelihood-module"></span><h1>threeML.classicMLE.joint_likelihood module<a class="headerlink" href="#module-threeML.classicMLE.joint_likelihood" title="Permalink to this heading"></a>
+<span id="threeml-classicmle-joint-likelihood-module"></span><h1>threeML.classicMLE.joint_likelihood module<a class="headerlink" href="#module-threeML.classicMLE.joint_likelihood" title="Link to this heading"></a>
 </h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">JointLikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">likelihood_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">JointLikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">likelihood_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.analysis_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">analysis_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.analysis_type" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">analysis_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.analysis_type" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS">
-<span class="sig-name descname"><span class="pre">compute_TS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt_hyp_mlike_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.compute_TS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">compute_TS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt_hyp_mlike_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.compute_TS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Computes the Likelihood Ratio Test statistic (TS) for the provided source</p>
@@ -157,7 +155,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.correlation_matrix">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlation_matrix</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.correlation_matrix" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">correlation_matrix</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.correlation_matrix" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>correlation matrix from the last fit</p>
@@ -173,7 +171,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.covariance_matrix">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance_matrix</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.covariance_matrix" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance_matrix</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.covariance_matrix" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>covariance matrix from the last fit</p>
@@ -189,7 +187,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.current_minimum">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_minimum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.current_minimum" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_minimum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.current_minimum" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>current minimum of the joint likelihood (available only after the fit() method)</p>
@@ -205,7 +203,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.data_list">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.data_list" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.html#threeML.data_list.DataList" title="threeML.data_list.DataList"><span class="pre">DataList</span></a></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.data_list" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>data list for this analysis</p>
@@ -221,7 +219,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_covariance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.fit" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_covariance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.fit" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Perform a fit of the current likelihood model on the datasets</p>
@@ -240,14 +238,14 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.fit_trace">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit_trace</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.fit_trace" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit_trace</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.fit_trace" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.get_contours">
-<span class="sig-name descname"><span class="pre">get_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_minimum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_maximum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_contours" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">get_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_minimum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_maximum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_contours" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Generate confidence contours for the given parameters by stepping for the given number of steps between
@@ -293,7 +291,7 @@ size param_1_steps.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors">
-<span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Compute the errors on the parameters using the profile likelihood method.</p>
@@ -309,7 +307,7 @@ size param_1_steps.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.likelihood_model">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">likelihood_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Model</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.likelihood_model" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">likelihood_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Model</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.likelihood_model" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>likelihood model for this analysis</p>
@@ -325,7 +323,7 @@ size param_1_steps.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimizer</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimizer</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>an instance of the minimizer used in the fit (available only after the fit() method)</p>
@@ -341,14 +339,14 @@ size param_1_steps.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer_in_use">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimizer_in_use</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer_in_use" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimizer_in_use</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer_in_use" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile">
-<span class="sig-name descname"><span class="pre">minus_log_like_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">trial_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.minus_log_like_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">minus_log_like_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">trial_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.minus_log_like_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Return the minus log likelihood for a given set of trial values</p>
@@ -369,14 +367,14 @@ size param_1_steps.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.plot_all_contours">
-<span class="sig-name descname"><span class="pre">plot_all_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps_1d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps_2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.plot_all_contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.plot_all_contours" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">plot_all_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps_1d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsteps_2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.plot_all_contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.plot_all_contours" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit">
-<span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Restore the model to its best fit</p>
@@ -392,14 +390,14 @@ size param_1_steps.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.results">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.html#threeML.analysis_results.MLEResults" title="threeML.analysis_results.MLEResults"><span class="pre">MLEResults</span></a></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.results" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.html#threeML.analysis_results.MLEResults" title="threeML.analysis_results.MLEResults"><span class="pre">MLEResults</span></a></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.results" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer">
-<span class="sig-name descname"><span class="pre">set_minimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.set_minimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">set_minimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.set_minimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Set the minimizer to be used, among those available.</p>
@@ -421,7 +419,7 @@ minimization, like the choice of algorithms (if supported by the used minimizer)
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.NotANumberInLikelihood">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">NotANumberInLikelihood</span></span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#NotANumberInLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.NotANumberInLikelihood" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">NotANumberInLikelihood</span></span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#NotANumberInLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.NotANumberInLikelihood" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></p>
@@ -430,7 +428,7 @@ minimization, like the choice of algorithms (if supported by the used minimizer)
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.ReducingNumberOfSteps">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">ReducingNumberOfSteps</span></span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#ReducingNumberOfSteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.ReducingNumberOfSteps" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">ReducingNumberOfSteps</span></span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#ReducingNumberOfSteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.ReducingNumberOfSteps" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></p>
@@ -439,7 +437,7 @@ minimization, like the choice of algorithms (if supported by the used minimizer)
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.classicMLE.joint_likelihood.ReducingNumberOfThreads">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">ReducingNumberOfThreads</span></span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#ReducingNumberOfThreads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.ReducingNumberOfThreads" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.classicMLE.joint_likelihood.</span></span><span class="sig-name descname"><span class="pre">ReducingNumberOfThreads</span></span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#ReducingNumberOfThreads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.ReducingNumberOfThreads" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Warning</span></code></p>

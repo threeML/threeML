@@ -1,31 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.polarization.binned_polarization module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -116,17 +114,17 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.polarization.binned_polarization">
-<span id="threeml-utils-polarization-binned-polarization-module"></span><h1>threeML.utils.polarization.binned_polarization module<a class="headerlink" href="#module-threeML.utils.polarization.binned_polarization" title="Permalink to this heading"></a>
+<span id="threeml-utils-polarization-binned-polarization-module"></span><h1>threeML.utils.polarization.binned_polarization module<a class="headerlink" href="#module-threeML.utils.polarization.binned_polarization" title="Link to this heading"></a>
 </h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.BinnedModulationCurve">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.polarization.binned_polarization.</span></span><span class="sig-name descname"><span class="pre">BinnedModulationCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#BinnedModulationCurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.polarization.binned_polarization.</span></span><span class="sig-name descname"><span class="pre">BinnedModulationCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#BinnedModulationCurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.BinnedModulationCurve.INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.INTERVAL_TYPE" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.INTERVAL_TYPE" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.ScatteringChannel" title="threeML.utils.polarization.binned_polarization.ScatteringChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatteringChannel</span></code></a></p>
@@ -135,14 +133,14 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.BinnedModulationCurve.abounds">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abounds</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.abounds" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abounds</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.abounds" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.BinnedModulationCurve.clone">
-<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#BinnedModulationCurve.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.clone" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#BinnedModulationCurve.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.clone" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>make a new spectrum with new counts and errors and all other
@@ -167,7 +165,7 @@ parameters the same</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.BinnedModulationCurve.from_time_series">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#BinnedModulationCurve.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.from_time_series" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#BinnedModulationCurve.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.from_time_series" title="Link to this definition"></a>
 </dt>
 <dd>
 <dl class="field-list simple">
@@ -175,8 +173,8 @@ parameters the same</p>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>time_series</strong> – </p></li>
-<li><p><strong>use_poly</strong> – </p></li>
+<li><p><strong>time_series</strong></p></li>
+<li><p><strong>use_poly</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
@@ -193,13 +191,13 @@ parameters the same</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.ScatteringChannel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.polarization.binned_polarization.</span></span><span class="sig-name descname"><span class="pre">ScatteringChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#ScatteringChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannel" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.polarization.binned_polarization.</span></span><span class="sig-name descname"><span class="pre">ScatteringChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#ScatteringChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannel" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.ScatteringChannel.channel_width">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_width</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannel.channel_width" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_width</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannel.channel_width" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -209,13 +207,13 @@ parameters the same</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.ScatteringChannelSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.polarization.binned_polarization.</span></span><span class="sig-name descname"><span class="pre">ScatteringChannelSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#ScatteringChannelSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.polarization.binned_polarization.</span></span><span class="sig-name descname"><span class="pre">ScatteringChannelSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#ScatteringChannelSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSet</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.ScatteringChannelSet.INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.INTERVAL_TYPE" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.INTERVAL_TYPE" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.ScatteringChannel" title="threeML.utils.polarization.binned_polarization.ScatteringChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatteringChannel</span></code></a></p>
@@ -224,14 +222,14 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.ScatteringChannelSet.channels_widths">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels_widths</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.channels_widths" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels_widths</span></span><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.channels_widths" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.polarization.binned_polarization.ScatteringChannelSet.from_instrument_response">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_instrument_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#ScatteringChannelSet.from_instrument_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.from_instrument_response" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_instrument_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/polarization/binned_polarization.html#ScatteringChannelSet.from_instrument_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.from_instrument_response" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Build EBOUNDS interval from an instrument response</p>
@@ -239,7 +237,7 @@ parameters the same</p>
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>instrument_response</strong> – </p>
+<p><strong>instrument_response</strong></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>

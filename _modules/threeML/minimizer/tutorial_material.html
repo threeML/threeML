@@ -1,30 +1,28 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.minimizer.tutorial_material &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../../../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../../../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -133,7 +131,9 @@
 
 <span class="c1"># You don&#39;t need to do this in a normal 3ML analysis</span>
 <span class="c1"># This is only for illustrative purposes</span>
-<div class="viewcode-block" id="get_callback"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.get_callback">[docs]</a><span class="k">def</span> <span class="nf">get_callback</span><span class="p">(</span><span class="n">jl</span><span class="p">):</span>
+<div class="viewcode-block" id="get_callback">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.get_callback">[docs]</a>
+<span class="k">def</span> <span class="nf">get_callback</span><span class="p">(</span><span class="n">jl</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">global_minim_callback</span><span class="p">(</span><span class="n">best_value</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
 
         <span class="n">jl</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">jump_tracking</span><span class="p">()</span>
@@ -142,8 +142,13 @@
 
 
 
-<div class="viewcode-block" id="JointLikelihoodWrap"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.JointLikelihoodWrap">[docs]</a><span class="k">class</span> <span class="nc">JointLikelihoodWrap</span><span class="p">(</span><span class="n">JointLikelihood</span><span class="p">):</span>
-<div class="viewcode-block" id="JointLikelihoodWrap.fit"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.JointLikelihoodWrap.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="JointLikelihoodWrap">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.JointLikelihoodWrap">[docs]</a>
+<span class="k">class</span> <span class="nc">JointLikelihoodWrap</span><span class="p">(</span><span class="n">JointLikelihood</span><span class="p">):</span>
+<div class="viewcode-block" id="JointLikelihoodWrap.fit">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.JointLikelihoodWrap.fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">reset_tracking</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
@@ -160,10 +165,14 @@
 
             <span class="k">finally</span><span class="p">:</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">stop_tracking</span><span class="p">()</span></div></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">stop_tracking</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="get_joint_likelihood_object_simple_likelihood"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.get_joint_likelihood_object_simple_likelihood">[docs]</a><span class="k">def</span> <span class="nf">get_joint_likelihood_object_simple_likelihood</span><span class="p">():</span>
+
+<div class="viewcode-block" id="get_joint_likelihood_object_simple_likelihood">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.get_joint_likelihood_object_simple_likelihood">[docs]</a>
+<span class="k">def</span> <span class="nf">get_joint_likelihood_object_simple_likelihood</span><span class="p">():</span>
 
     <span class="n">minus_log_L</span> <span class="o">=</span> <span class="n">Simple</span><span class="p">()</span>
 
@@ -184,7 +193,10 @@
     <span class="k">return</span> <span class="n">jl</span><span class="p">,</span> <span class="n">model</span></div>
 
 
-<div class="viewcode-block" id="get_joint_likelihood_object_complex_likelihood"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.get_joint_likelihood_object_complex_likelihood">[docs]</a><span class="k">def</span> <span class="nf">get_joint_likelihood_object_complex_likelihood</span><span class="p">():</span>
+
+<div class="viewcode-block" id="get_joint_likelihood_object_complex_likelihood">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.get_joint_likelihood_object_complex_likelihood">[docs]</a>
+<span class="k">def</span> <span class="nf">get_joint_likelihood_object_complex_likelihood</span><span class="p">():</span>
 
     <span class="n">minus_log_L</span> <span class="o">=</span> <span class="n">Complex</span><span class="p">()</span>
 
@@ -205,7 +217,10 @@
     <span class="k">return</span> <span class="n">jl</span><span class="p">,</span> <span class="n">model</span></div>
 
 
-<div class="viewcode-block" id="plot_likelihood_function"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.plot_likelihood_function">[docs]</a><span class="k">def</span> <span class="nf">plot_likelihood_function</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="plot_likelihood_function">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.plot_likelihood_function">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_likelihood_function</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -227,7 +242,10 @@
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="plot_minimizer_path"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.plot_minimizer_path">[docs]</a><span class="k">def</span> <span class="nf">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="plot_minimizer_path">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.plot_minimizer_path">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param jl:</span>
@@ -279,7 +297,10 @@
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="CustomLikelihoodLike"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike">[docs]</a><span class="k">class</span> <span class="nc">CustomLikelihoodLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CustomLikelihoodLike">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike">[docs]</a>
+<span class="k">class</span> <span class="nc">CustomLikelihoodLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_l</span> <span class="o">=</span> <span class="kc">None</span>
@@ -287,11 +308,16 @@
 
         <span class="nb">super</span><span class="p">(</span><span class="n">CustomLikelihoodLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span>
 
-<div class="viewcode-block" id="CustomLikelihoodLike.set_minus_log_likelihood"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.set_minus_log_likelihood">[docs]</a>    <span class="k">def</span> <span class="nf">set_minus_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_function</span><span class="p">):</span>
+<div class="viewcode-block" id="CustomLikelihoodLike.set_minus_log_likelihood">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.set_minus_log_likelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_minus_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_function</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_l</span> <span class="o">=</span> <span class="n">likelihood_function</span></div>
 
-<div class="viewcode-block" id="CustomLikelihoodLike.set_model"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CustomLikelihoodLike.set_model">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.set_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -299,7 +325,10 @@
         <span class="c1"># Gather free parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="n">likelihood_model_instance</span><span class="o">.</span><span class="n">free_parameters</span></div>
 
-<div class="viewcode-block" id="CustomLikelihoodLike.get_log_like"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.get_log_like">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CustomLikelihoodLike.get_log_like">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.get_log_like">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of the log-likelihood with the current values for the</span>
 <span class="sd">        parameters</span>
@@ -310,14 +339,21 @@
 
         <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_l</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)</span></div>
 
+
     <span class="n">inner_fit</span> <span class="o">=</span> <span class="n">get_log_like</span>
 
-<div class="viewcode-block" id="CustomLikelihoodLike.get_number_of_data_points"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.get_number_of_data_points">[docs]</a>    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CustomLikelihoodLike.get_number_of_data_points">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.CustomLikelihoodLike.get_number_of_data_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">return</span> <span class="mi">1</span></div></div>
+        <span class="k">return</span> <span class="mi">1</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Simple"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple">[docs]</a><span class="k">class</span> <span class="nc">Simple</span><span class="p">(</span><span class="n">Function1D</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FunctionMeta</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Simple">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple">[docs]</a>
+<span class="k">class</span> <span class="nc">Simple</span><span class="p">(</span><span class="n">Function1D</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FunctionMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    description :</span>
 
@@ -350,23 +386,35 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_track</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="Simple.reset_tracking"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.reset_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">reset_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Simple.reset_tracking">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.reset_tracking">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_returned_values</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_traversed_points</span> <span class="o">=</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="Simple.start_tracking"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.start_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Simple.start_tracking">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.start_tracking">[docs]</a>
+    <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_track</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Simple.stop_tracking"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.stop_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">stop_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Simple.stop_tracking">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.stop_tracking">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_track</span> <span class="o">=</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="Simple.jump_tracking"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.jump_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">jump_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Simple.jump_tracking">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.jump_tracking">[docs]</a>
+    <span class="k">def</span> <span class="nf">jump_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_returned_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_traversed_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_unit</span><span class="p">,</span> <span class="n">y_unit</span><span class="p">):</span>
 
@@ -374,7 +422,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">y_unit</span>
 
     <span class="c1"># noinspection PyPep8Naming</span>
-<div class="viewcode-block" id="Simple.evaluate"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<div class="viewcode-block" id="Simple.evaluate">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Simple.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
 
         <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gau</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -383,10 +433,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_traversed_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_returned_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">val</span></div></div>
+        <span class="k">return</span> <span class="n">val</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Complex"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Complex">[docs]</a><span class="k">class</span> <span class="nc">Complex</span><span class="p">(</span><span class="n">Simple</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Complex">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Complex">[docs]</a>
+<span class="k">class</span> <span class="nc">Complex</span><span class="p">(</span><span class="n">Simple</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    description :</span>
 
@@ -433,7 +487,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">y_unit</span>
 
     <span class="c1"># noinspection PyPep8Naming</span>
-<div class="viewcode-block" id="Complex.evaluate"><a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Complex.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<div class="viewcode-block" id="Complex.evaluate">
+<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.tutorial_material.Complex.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
 
         <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gau</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -442,7 +498,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_traversed_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_returned_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">val</span></div></div>
+        <span class="k">return</span> <span class="n">val</span></div>
+</div>
+
 </pre></div>
 
            </div>

@@ -1,31 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.spectrum.pha_spectrum module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -116,17 +114,17 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.spectrum.pha_spectrum">
-<span id="threeml-utils-spectrum-pha-spectrum-module"></span><h1>threeML.utils.spectrum.pha_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.pha_spectrum" title="Permalink to this heading"></a>
+<span id="threeml-utils-spectrum-pha-spectrum-module"></span><h1>threeML.utils.spectrum.pha_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.pha_spectrum" title="Link to this heading"></a>
 </h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.pha_spectrum.</span></span><span class="sig-name descname"><span class="pre">PHASpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pha_file_or_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII" title="threeML.utils.OGIP.pha.PHAII"><span class="pre">PHAII</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile" title="threeML.io.fits_file.FITSFile"><span class="pre">FITSFile</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.pha_spectrum.</span></span><span class="sig-name descname"><span class="pre">PHASpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pha_file_or_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII" title="threeML.utils.OGIP.pha.PHAII"><span class="pre">PHAII</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile" title="threeML.io.fits_file.FITSFile"><span class="pre">FITSFile</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrumWithDispersion</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.ancillary_file">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ancillary_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.ancillary_file" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ancillary_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.ancillary_file" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Returns the ancillary file definied in the header, or None if there is none defined</p>
@@ -142,7 +140,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.background_file">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.background_file" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.background_file" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Returns the background file definied in the header, or None if there is none defined
@@ -152,7 +150,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.clone">
-<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="threeML.utils.spectrum.pha_spectrum.PHASpectrum"><span class="pre">PHASpectrum</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.clone" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="threeML.utils.spectrum.pha_spectrum.PHASpectrum"><span class="pre">PHASpectrum</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.clone" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>make a new spectrum with new counts and errors and all other
@@ -179,28 +177,28 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.filename">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.filename" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.filename" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dispersion_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.from_dispersion_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dispersion_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.from_dispersion_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.grouping">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.grouping" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.grouping" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.response_file">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.response_file" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.response_file" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Returns the response file definied in the header, or None if there is none defined</p>
@@ -216,7 +214,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.scale_factor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.scale_factor" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.scale_factor" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>This is a scale factor (in the BACKSCAL keyword) which must be used to rescale background and source
@@ -233,7 +231,7 @@ regions</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping">
-<span class="sig-name descname"><span class="pre">set_ogip_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.set_ogip_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">set_ogip_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.set_ogip_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>If the counts are rebinned, this updates the grouping
@@ -243,7 +241,7 @@ regions</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum">
-<span class="sig-name descname"><span class="pre">to_binned_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><span class="pre">BinnedSpectrumWithDispersion</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.to_binned_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">to_binned_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><span class="pre">BinnedSpectrumWithDispersion</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.to_binned_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Convert directly to as Binned Spectrum
@@ -256,13 +254,13 @@ regions</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.pha_spectrum.</span></span><span class="sig-name descname"><span class="pre">PHASpectrumSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pha_file_or_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII" title="threeML.utils.OGIP.pha.PHAII"><span class="pre">PHAII</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.pha_spectrum.</span></span><span class="sig-name descname"><span class="pre">PHASpectrumSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pha_file_or_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII" title="threeML.utils.OGIP.pha.PHAII"><span class="pre">PHAII</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet" title="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrumSet</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.ancillary_file">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ancillary_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.ancillary_file" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ancillary_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.ancillary_file" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Returns the ancillary file definied in the header, or None if there is none defined</p>
@@ -278,7 +276,7 @@ regions</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.background_file">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.background_file" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.background_file" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Returns the background file definied in the header, or None if there is none defined
@@ -288,7 +286,7 @@ regions</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.clone">
-<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.clone" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.clone" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>make a new spectrum with new counts and errors and all other
@@ -313,28 +311,28 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.filename">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.filename" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.filename" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dispersion_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispersion_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><span class="pre">BinnedSpectrumWithDispersion</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="threeML.utils.spectrum.pha_spectrum.PHASpectrum"><span class="pre">PHASpectrum</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.from_dispersion_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dispersion_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispersion_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><span class="pre">BinnedSpectrumWithDispersion</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="threeML.utils.spectrum.pha_spectrum.PHASpectrum"><span class="pre">PHASpectrum</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.from_dispersion_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.grouping">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.grouping" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.grouping" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.response_file">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.response_file" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.response_file" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Returns the response file definied in the header, or None if there is none defined</p>
@@ -350,7 +348,7 @@ parameters the same</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.scale_factor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.scale_factor" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factor</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.scale_factor" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>This is a scale factor (in the BACKSCAL keyword) which must be used to rescale background and source
@@ -367,7 +365,7 @@ regions</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping">
-<span class="sig-name descname"><span class="pre">set_ogip_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.set_ogip_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">set_ogip_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.set_ogip_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>If the counts are rebinned, this updates the grouping

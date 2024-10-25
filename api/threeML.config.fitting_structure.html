@@ -1,31 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.config.fitting_structure module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -115,73 +113,73 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.config.fitting_structure">
-<span id="threeml-config-fitting-structure-module"></span><h1>threeML.config.fitting_structure module<a class="headerlink" href="#module-threeML.config.fitting_structure" title="Permalink to this heading"></a>
+<span id="threeml-config-fitting-structure-module"></span><h1>threeML.config.fitting_structure module<a class="headerlink" href="#module-threeML.config.fitting_structure" title="Link to this heading"></a>
 </h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">BayesianDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_median_fit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_sampler:</span> <span class="pre">threeML.config.fitting_structure.Sampler</span> <span class="pre">=</span> <span class="pre">&lt;Sampler.emcee:</span> <span class="pre">'emcee'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emcee_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multinest_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ultranest_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeus_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynesty_nested_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynesty_dynmaic_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corner_style:</span> <span class="pre">threeML.config.plotting_structure.CornerStyle</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#BayesianDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">BayesianDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_median_fit:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_sampler:</span> <span class="pre">threeML.config.fitting_structure.Sampler</span> <span class="pre">=</span> <span class="pre">&lt;Sampler.emcee:</span> <span class="pre">'emcee'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emcee_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multinest_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ultranest_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeus_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynesty_nested_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynesty_dynmaic_setup:</span> <span class="pre">Optional[Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Any]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corner_style:</span> <span class="pre">threeML.config.plotting_structure.CornerStyle</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#BayesianDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.corner_style">
-<span class="sig-name descname"><span class="pre">corner_style</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.plotting_structure.CornerStyle" title="threeML.config.plotting_structure.CornerStyle"><span class="pre">CornerStyle</span></a></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.corner_style" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">corner_style</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.plotting_structure.CornerStyle" title="threeML.config.plotting_structure.CornerStyle"><span class="pre">CornerStyle</span></a></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.corner_style" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.default_sampler">
-<span class="sig-name descname"><span class="pre">default_sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.fitting_structure.Sampler" title="threeML.config.fitting_structure.Sampler"><span class="pre">Sampler</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'emcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.default_sampler" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">default_sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.fitting_structure.Sampler" title="threeML.config.fitting_structure.Sampler"><span class="pre">Sampler</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'emcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.default_sampler" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.dynesty_dynmaic_setup">
-<span class="sig-name descname"><span class="pre">dynesty_dynmaic_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.dynesty_dynmaic_setup" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">dynesty_dynmaic_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.dynesty_dynmaic_setup" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.dynesty_nested_setup">
-<span class="sig-name descname"><span class="pre">dynesty_nested_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.dynesty_nested_setup" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">dynesty_nested_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.dynesty_nested_setup" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.emcee_setup">
-<span class="sig-name descname"><span class="pre">emcee_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.emcee_setup" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">emcee_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.emcee_setup" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.multinest_setup">
-<span class="sig-name descname"><span class="pre">multinest_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.multinest_setup" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">multinest_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.multinest_setup" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.ultranest_setup">
-<span class="sig-name descname"><span class="pre">ultranest_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.ultranest_setup" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">ultranest_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.ultranest_setup" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.use_median_fit">
-<span class="sig-name descname"><span class="pre">use_median_fit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.use_median_fit" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">use_median_fit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.use_median_fit" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.BayesianDefault.zeus_setup">
-<span class="sig-name descname"><span class="pre">zeus_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.zeus_setup" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">zeus_setup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.BayesianDefault.zeus_setup" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -191,90 +189,90 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">MLEDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_minimizer:</span> <span class="pre">threeML.config.fitting_structure.Optimizer</span> <span class="pre">=</span> <span class="pre">&lt;Optimizer.minuit:</span> <span class="pre">'minuit'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_minimizer_algorithm:</span> <span class="pre">Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_minimizer_callback:</span> <span class="pre">Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_cmap:</span> <span class="pre">threeML.config.plotting_structure.MPLCmap</span> <span class="pre">=</span> <span class="pre">&lt;MPLCmap.Pastel1:</span> <span class="pre">'Pastel1'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_background:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_level_1:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ffa372'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_level_2:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ed6663'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_level_3:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#0f4c81'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_color:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_level_1:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ffa372'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_level_2:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ed6663'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_level_3:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#0f4c81'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#MLEDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">MLEDefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_minimizer:</span> <span class="pre">threeML.config.fitting_structure.Optimizer</span> <span class="pre">=</span> <span class="pre">&lt;Optimizer.minuit:</span> <span class="pre">'minuit'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_minimizer_algorithm:</span> <span class="pre">Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_minimizer_callback:</span> <span class="pre">Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_cmap:</span> <span class="pre">threeML.config.plotting_structure.MPLCmap</span> <span class="pre">=</span> <span class="pre">&lt;MPLCmap.Pastel1:</span> <span class="pre">'Pastel1'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_background:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_level_1:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ffa372'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_level_2:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ed6663'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_level_3:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#0f4c81'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_color:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_level_1:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ffa372'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_level_2:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#ed6663'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_level_3:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'#0f4c81'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#MLEDefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.contour_background">
-<span class="sig-name descname"><span class="pre">contour_background</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'white'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_background" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">contour_background</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'white'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_background" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.contour_cmap">
-<span class="sig-name descname"><span class="pre">contour_cmap</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.plotting_structure.MPLCmap" title="threeML.config.plotting_structure.MPLCmap"><span class="pre">MPLCmap</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Pastel1'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_cmap" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">contour_cmap</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.plotting_structure.MPLCmap" title="threeML.config.plotting_structure.MPLCmap"><span class="pre">MPLCmap</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Pastel1'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_cmap" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.contour_level_1">
-<span class="sig-name descname"><span class="pre">contour_level_1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ffa372'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_level_1" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">contour_level_1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ffa372'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_level_1" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.contour_level_2">
-<span class="sig-name descname"><span class="pre">contour_level_2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ed6663'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_level_2" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">contour_level_2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ed6663'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_level_2" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.contour_level_3">
-<span class="sig-name descname"><span class="pre">contour_level_3</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#0f4c81'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_level_3" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">contour_level_3</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#0f4c81'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.contour_level_3" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.default_minimizer">
-<span class="sig-name descname"><span class="pre">default_minimizer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.fitting_structure.Optimizer" title="threeML.config.fitting_structure.Optimizer"><span class="pre">Optimizer</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'minuit'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.default_minimizer" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">default_minimizer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.config.html#threeML.config.fitting_structure.Optimizer" title="threeML.config.fitting_structure.Optimizer"><span class="pre">Optimizer</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'minuit'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.default_minimizer" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.default_minimizer_algorithm">
-<span class="sig-name descname"><span class="pre">default_minimizer_algorithm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.default_minimizer_algorithm" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">default_minimizer_algorithm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.default_minimizer_algorithm" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.default_minimizer_callback">
-<span class="sig-name descname"><span class="pre">default_minimizer_callback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.default_minimizer_callback" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">default_minimizer_callback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.default_minimizer_callback" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.profile_color">
-<span class="sig-name descname"><span class="pre">profile_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'k'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_color" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">profile_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'k'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_color" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.profile_level_1">
-<span class="sig-name descname"><span class="pre">profile_level_1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ffa372'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_level_1" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">profile_level_1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ffa372'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_level_1" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.profile_level_2">
-<span class="sig-name descname"><span class="pre">profile_level_2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ed6663'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_level_2" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">profile_level_2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#ed6663'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_level_2" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.MLEDefault.profile_level_3">
-<span class="sig-name descname"><span class="pre">profile_level_3</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#0f4c81'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_level_3" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">profile_level_3</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#0f4c81'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.MLEDefault.profile_level_3" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -284,28 +282,28 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Optimizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#Optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#Optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Optimizer.ROOT">
-<span class="sig-name descname"><span class="pre">ROOT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ROOT'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.ROOT" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">ROOT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ROOT'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.ROOT" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Optimizer.minuit">
-<span class="sig-name descname"><span class="pre">minuit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'minuit'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.minuit" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">minuit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'minuit'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.minuit" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Optimizer.scipy">
-<span class="sig-name descname"><span class="pre">scipy</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scipy'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.scipy" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">scipy</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scipy'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.scipy" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -315,56 +313,56 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Sampler" title="Permalink to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/config/fitting_structure.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Sampler" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.autoemcee">
-<span class="sig-name descname"><span class="pre">autoemcee</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autoemcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.autoemcee" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">autoemcee</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autoemcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.autoemcee" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.dynesty_dynamic">
-<span class="sig-name descname"><span class="pre">dynesty_dynamic</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dynesty_dynamic'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.dynesty_dynamic" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">dynesty_dynamic</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dynesty_dynamic'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.dynesty_dynamic" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.dynesty_nested">
-<span class="sig-name descname"><span class="pre">dynesty_nested</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dynesty_nested'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.dynesty_nested" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">dynesty_nested</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dynesty_nested'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.dynesty_nested" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.emcee">
-<span class="sig-name descname"><span class="pre">emcee</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'emcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.emcee" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">emcee</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'emcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.emcee" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.multinest">
-<span class="sig-name descname"><span class="pre">multinest</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'multinest'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.multinest" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">multinest</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'multinest'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.multinest" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.ultranest">
-<span class="sig-name descname"><span class="pre">ultranest</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ultranest'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.ultranest" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">ultranest</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ultranest'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.ultranest" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.zeus">
-<span class="sig-name descname"><span class="pre">zeus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zeus'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.zeus" title="Permalink to this definition"></a>
+<span class="sig-name descname"><span class="pre">zeus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zeus'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.zeus" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>

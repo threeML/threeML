@@ -1,34 +1,32 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Background Modeling &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <script src="../_static/dark_mode_js/default_dark.js"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -128,7 +126,7 @@
            <div itemprop="articleBody">
              
   <section id="Background-Modeling">
-<h1>Background Modeling<a class="headerlink" href="#Background-Modeling" title="Permalink to this heading"></a>
+<h1>Background Modeling<a class="headerlink" href="#Background-Modeling" title="Link to this heading"></a>
 </h1>
 <p>When fitting a spectrum with a background, it is invalid to simply subtract off the background if the background is part of the data’s generative model <a class="reference external" href="http://iopscience.iop.org/article/10.1086/318656/meta">van Dyk et al. (2001)</a>. Therefore, we are often left with the task of modeling the statistical process of the background along with our source.</p>
 <p>In typical spectral modeling, we find a few common cases when background is involved. If we have total counts (<span class="math notranslate nohighlight">\(S_i\)</span>) in <span class="math notranslate nohighlight">\(i^{\rm th}\)</span> on <span class="math notranslate nohighlight">\(N\)</span> bins observed for an exposure of <span class="math notranslate nohighlight">\(t_{\rm s}\)</span> and also a measurement of <span class="math notranslate nohighlight">\(B_i\)</span> background counts from looking off source for <span class="math notranslate nohighlight">\(t_{\rm b}\)</span> seconds, we can then suppose a model for the source rate (<span class="math notranslate nohighlight">\(m_i\)</span>) and background rate (<span class="math notranslate nohighlight">\(b_i\)</span>).</p>
@@ -240,7 +238,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:22 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:37:53 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
 </pre>
 </div>
 </div>
@@ -264,7 +262,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:24 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:37:55 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
 </pre>
 </div>
 </div>
@@ -312,7 +310,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:25 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:37:57 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
 </pre>
 </div>
 </div>
@@ -349,7 +347,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 </div>
 </div>
 <section id="Using-a-profile-likelihood">
-<h2>Using a profile likelihood<a class="headerlink" href="#Using-a-profile-likelihood" title="Permalink to this heading"></a>
+<h2>Using a profile likelihood<a class="headerlink" href="#Using-a-profile-likelihood" title="Link to this heading"></a>
 </h2>
 <p>We have very few counts counts in some channels (in fact sometimes zero), but let’s assume we do not know the model for the background. In this case, we will use the profile Poisson likelihood.</p>
 <div class="nbinput docutils container">
@@ -384,7 +382,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:26 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:37:58 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
 </pre>
 </div>
 </div>
@@ -431,22 +429,22 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>1.90 -0.12 +0.13</td>
+      <td>1.91 -0.13 +0.14</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.06 +/- 0.12) x 10^2</td>
+      <td>(3.10 -0.12 +0.13) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-1.4 +/- 0.7) x 10^-1</td>
+      <td>(-2 +/- 8) x 10^-2</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.22 +/- 0.18</td>
+      <td>-3.09 +/- 0.17</td>
       <td></td>
     </tr>
   </tbody>
@@ -468,28 +466,28 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140439467181296">
+<div><table id="table140368283029904">
 <tr>
 <td>1.00</td>
-<td>-0.59</td>
-<td>0.77</td>
-<td>0.01</td>
+<td>-0.60</td>
+<td>0.75</td>
+<td>0.02</td>
 </tr>
 <tr>
-<td>-0.59</td>
+<td>-0.60</td>
 <td>1.00</td>
 <td>-0.46</td>
-<td>-0.58</td>
+<td>-0.59</td>
 </tr>
 <tr>
-<td>0.77</td>
+<td>0.75</td>
 <td>-0.46</td>
 <td>1.00</td>
 <td>0.01</td>
 </tr>
 <tr>
-<td>0.01</td>
-<td>-0.58</td>
+<td>0.02</td>
+<td>-0.59</td>
 <td>0.01</td>
 <td>1.00</td>
 </tr>
@@ -534,11 +532,11 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>fake</th>
-      <td>399.687177</td>
+      <td>407.332049</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>399.687177</td>
+      <td>407.332049</td>
     </tr>
   </tbody>
 </table>
@@ -583,11 +581,11 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>807.650216</td>
+      <td>822.939959</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>819.416895</td>
+      <td>834.706638</td>
     </tr>
   </tbody>
 </table>
@@ -622,7 +620,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:30 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">73</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1739" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1739</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:38:04 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Now using </span><span style="color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold">78</span><span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> bins                                                           </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#1739" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1739</span></a>
 </pre>
 </div>
 </div>
@@ -669,22 +667,22 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>1.95 -0.14 +0.15</td>
+      <td>1.98 -0.14 +0.16</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.00 -0.14 +0.15) x 10^2</td>
+      <td>(2.99 -0.12 +0.13) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-1.0 +/- 0.7) x 10^-1</td>
+      <td>(4 +/- 9) x 10^-2</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.12 +/- 0.18</td>
+      <td>-2.94 +/- 0.15</td>
       <td></td>
     </tr>
   </tbody>
@@ -706,29 +704,29 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140439466974704">
+<div><table id="table140368283469760">
 <tr>
 <td>1.00</td>
-<td>-0.68</td>
-<td>0.79</td>
-<td>0.15</td>
+<td>-0.66</td>
+<td>0.77</td>
+<td>0.05</td>
 </tr>
 <tr>
-<td>-0.68</td>
+<td>-0.66</td>
 <td>1.00</td>
-<td>-0.53</td>
-<td>-0.64</td>
+<td>-0.51</td>
+<td>-0.58</td>
 </tr>
 <tr>
-<td>0.79</td>
-<td>-0.53</td>
+<td>0.77</td>
+<td>-0.51</td>
 <td>1.00</td>
-<td>0.11</td>
+<td>0.04</td>
 </tr>
 <tr>
-<td>0.15</td>
-<td>-0.64</td>
-<td>0.11</td>
+<td>0.05</td>
+<td>-0.58</td>
+<td>0.04</td>
 <td>1.00</td>
 </tr>
 </table></div>
@@ -772,11 +770,11 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>fake</th>
-      <td>282.221465</td>
+      <td>285.45915</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>282.221465</td>
+      <td>285.45915</td>
     </tr>
   </tbody>
 </table>
@@ -821,11 +819,11 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>572.718792</td>
+      <td>579.194162</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>584.485471</td>
+      <td>590.960841</td>
     </tr>
   </tbody>
 </table>
@@ -848,7 +846,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 </div>
 </section>
 <section id="Modeling-the-background">
-<h2>Modeling the background<a class="headerlink" href="#Modeling-the-background" title="Permalink to this heading"></a>
+<h2>Modeling the background<a class="headerlink" href="#Modeling-the-background" title="Link to this heading"></a>
 </h2>
 <p>Now let’s try to model the background assuming we know that the background is a power law with a Gaussian line. We can extract a background plugin from the data by passing the original plugin to a classmethod of spectrum like.</p>
 <div class="nbinput docutils container">
@@ -868,7 +866,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:32 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:38:05 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Auto-probed noise models:                                                    </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#490" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">490</span></a>
 </pre>
 </div>
 </div>
@@ -954,7 +952,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:33 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:38:07 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
 </pre>
 </div>
 </div>
@@ -1001,7 +999,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>bkg.spectrum.main.composite.K_1</th>
-      <td>(2.52 -0.21 +0.22) x 10^-1</td>
+      <td>(2.78 -0.22 +0.24) x 10^-1</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
@@ -1011,12 +1009,12 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.F_2</th>
-      <td>(2.3 +/- 0.5) x 10</td>
+      <td>(3.4 +/- 0.6) x 10</td>
       <td>1 / (s cm2)</td>
     </tr>
     <tr>
       <th>bkg.spectrum.main.composite.sigma_2</th>
-      <td>(1.86 +/- 0.33) x 10</td>
+      <td>(2.3 +/- 0.4) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -1038,29 +1036,29 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140439473969616">
+<div><table id="table140368263593696">
 <tr>
 <td>1.00</td>
-<td>0.27</td>
-<td>-0.05</td>
-<td>-0.02</td>
+<td>0.28</td>
+<td>-0.06</td>
+<td>-0.06</td>
 </tr>
 <tr>
-<td>0.27</td>
+<td>0.28</td>
 <td>1.00</td>
-<td>-0.05</td>
-<td>-0.02</td>
+<td>-0.06</td>
+<td>-0.06</td>
 </tr>
 <tr>
-<td>-0.05</td>
-<td>-0.05</td>
+<td>-0.06</td>
+<td>-0.06</td>
 <td>1.00</td>
-<td>0.04</td>
+<td>0.10</td>
 </tr>
 <tr>
-<td>-0.02</td>
-<td>-0.02</td>
-<td>0.04</td>
+<td>-0.06</td>
+<td>-0.06</td>
+<td>0.10</td>
 <td>1.00</td>
 </tr>
 </table></div>
@@ -1104,11 +1102,11 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>bkg</th>
-      <td>192.022918</td>
+      <td>199.196568</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>192.022918</td>
+      <td>199.196568</td>
     </tr>
   </tbody>
 </table>
@@ -1153,11 +1151,11 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>392.321699</td>
+      <td>406.668998</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>404.088378</td>
+      <td>418.435677</td>
     </tr>
   </tbody>
 </table>
@@ -1192,7 +1190,7 @@ children, <strong>DispersionSpectrumLike</strong> and <strong>OGIPLike</strong>)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:34 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#479" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">479</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:38:08 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Background modeled from plugin: bkg                                          </span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">SpectrumLike.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/plugins/SpectrumLike.py#479" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">479</span></a>
 </pre>
 </div>
 </div>
@@ -1275,22 +1273,22 @@ OrderedDict([('cons_full',
               Parameter dec = 0.0 [deg]
               (min_value = -90.0, max_value = 90.0, delta = 0.1, free = False)),
              ('bkg_bkg_spectrum_main_composite_K_1_full',
-              Parameter K_1 = 0.25210331866523916 [1 / (keV s cm2)]
+              Parameter K_1 = 0.27794926007499343 [1 / (keV s cm2)]
               (min_value = 0.0001, max_value = 10.0, delta = 0.1, free = True)),
              ('bkg_bkg_spectrum_main_composite_piv_1_full',
               Parameter piv_1 = 100.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
              ('bkg_bkg_spectrum_main_composite_index_1_full',
-              Parameter index_1 = -1.4564976469095852 []
+              Parameter index_1 = -1.457997615687492 []
               (min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)),
              ('bkg_bkg_spectrum_main_composite_F_2_full',
-              Parameter F_2 = 22.75002079451368 [1 / (s cm2)]
+              Parameter F_2 = 34.13012911545888 [1 / (s cm2)]
               (min_value = 0.0, max_value = 1000.0, delta = 0.1, free = True)),
              ('bkg_bkg_spectrum_main_composite_mu_2_full',
               Parameter mu_2 = 511.0 [keV]
               (min_value = None, max_value = None, delta = 0.1, free = False)),
              ('bkg_bkg_spectrum_main_composite_sigma_2_full',
-              Parameter sigma_2 = 18.57905005696616 [keV]
+              Parameter sigma_2 = 23.272665994888424 [keV]
               (min_value = 2.0, max_value = 30.0, delta = 0.1, free = True)),
              ('bkg_cons_bkg_full',
               Parameter cons_bkg = 1.0 []
@@ -1326,7 +1324,7 @@ OrderedDict([('cons_full',
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">01:47:35 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:38:10 </span><span style="color: #00ffaf; text-decoration-color: #00ffaf">INFO    </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> set the minimizer to minuit                                             </span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">joint_likelihood.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1045" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">1045</span></a>
 </pre>
 </div>
 </div>
@@ -1373,42 +1371,42 @@ OrderedDict([('cons_full',
   <tbody>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.K</th>
-      <td>1.79 -0.12 +0.13</td>
+      <td>1.86 -0.13 +0.14</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.xb</th>
-      <td>(3.04 -0.13 +0.14) x 10^2</td>
+      <td>(3.09 -0.12 +0.13) x 10^2</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.alpha</th>
-      <td>(-2.0 +/- 0.6) x 10^-1</td>
+      <td>(-4 +/- 8) x 10^-2</td>
       <td></td>
     </tr>
     <tr>
       <th>source.spectrum.main.Broken_powerlaw.beta</th>
-      <td>-3.01 +/- 0.17</td>
+      <td>-3.01 +/- 0.16</td>
       <td></td>
     </tr>
     <tr>
       <th>K_1</th>
-      <td>(2.66 +/- 0.35) x 10^-1</td>
+      <td>(2.83 +/- 0.34) x 10^-1</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>index_1</th>
-      <td>-1.42 +/- 0.05</td>
+      <td>-1.44 +/- 0.04</td>
       <td></td>
     </tr>
     <tr>
       <th>F_2</th>
-      <td>(2.5 +/- 0.4) x 10</td>
+      <td>(3.7 +/- 0.5) x 10</td>
       <td>1 / (s cm2)</td>
     </tr>
     <tr>
       <th>sigma_2</th>
-      <td>(1.95 +/- 0.30) x 10</td>
+      <td>(2.18 +/- 0.27) x 10</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -1430,85 +1428,85 @@ OrderedDict([('cons_full',
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140439447479392">
+<div><table id="table140368271051984">
 <tr>
 <td>1.00</td>
-<td>-0.59</td>
-<td>0.76</td>
+<td>-0.64</td>
+<td>0.75</td>
+<td>0.05</td>
 <td>0.06</td>
-<td>0.06</td>
-<td>-0.18</td>
+<td>-0.16</td>
 <td>0.00</td>
 <td>0.00</td>
 </tr>
 <tr>
-<td>-0.59</td>
+<td>-0.64</td>
 <td>1.00</td>
-<td>-0.46</td>
-<td>-0.62</td>
+<td>-0.49</td>
+<td>-0.57</td>
 <td>0.02</td>
-<td>0.22</td>
+<td>0.20</td>
 <td>-0.08</td>
 <td>-0.03</td>
 </tr>
 <tr>
-<td>0.76</td>
-<td>-0.46</td>
+<td>0.75</td>
+<td>-0.49</td>
 <td>1.00</td>
-<td>0.04</td>
+<td>0.03</td>
 <td>0.28</td>
-<td>-0.26</td>
+<td>-0.20</td>
 <td>-0.00</td>
 <td>-0.00</td>
 </tr>
 <tr>
-<td>0.06</td>
-<td>-0.62</td>
-<td>0.04</td>
+<td>0.05</td>
+<td>-0.57</td>
+<td>0.03</td>
 <td>1.00</td>
-<td>-0.22</td>
-<td>-0.33</td>
-<td>-0.02</td>
+<td>-0.23</td>
+<td>-0.32</td>
 <td>-0.01</td>
+<td>0.02</td>
 </tr>
 <tr>
 <td>0.06</td>
 <td>0.02</td>
 <td>0.28</td>
-<td>-0.22</td>
+<td>-0.23</td>
 <td>1.00</td>
-<td>0.21</td>
-<td>-0.02</td>
-<td>-0.01</td>
+<td>0.31</td>
+<td>-0.03</td>
+<td>-0.05</td>
 </tr>
 <tr>
-<td>-0.18</td>
-<td>0.22</td>
-<td>-0.26</td>
-<td>-0.33</td>
-<td>0.21</td>
+<td>-0.16</td>
+<td>0.20</td>
+<td>-0.20</td>
+<td>-0.32</td>
+<td>0.31</td>
 <td>1.00</td>
-<td>-0.01</td>
-<td>-0.01</td>
+<td>-0.03</td>
+<td>-0.05</td>
 </tr>
 <tr>
 <td>0.00</td>
 <td>-0.08</td>
 <td>-0.00</td>
-<td>-0.02</td>
-<td>-0.02</td>
 <td>-0.01</td>
+<td>-0.03</td>
+<td>-0.03</td>
 <td>1.00</td>
-<td>0.16</td>
+<td>0.13</td>
 </tr>
 <tr>
 <td>0.00</td>
 <td>-0.03</td>
 <td>-0.00</td>
-<td>-0.01</td>
-<td>-0.01</td>
-<td>-0.01</td>
-<td>0.16</td>
+<td>0.02</td>
+<td>-0.05</td>
+<td>-0.05</td>
+<td>0.13</td>
 <td>1.00</td>
 </tr>
 </table></div>
@@ -1552,11 +1550,11 @@ OrderedDict([('cons_full',
   <tbody>
     <tr>
       <th>full</th>
-      <td>523.647478</td>
+      <td>508.921094</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>523.647478</td>
+      <td>508.921094</td>
     </tr>
   </tbody>
 </table>
@@ -1601,11 +1599,11 @@ OrderedDict([('cons_full',
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>1064.316232</td>
+      <td>1034.863464</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>1087.380038</td>
+      <td>1057.927270</td>
     </tr>
   </tbody>
 </table>
