@@ -39,19 +39,19 @@ log = setup_logger(__name__)
 
 try:
 
-    from polarpy.poldata import PolData
-    from polarpy.polresponse import PolResponse
-    from polarpy.polarizationlike import PolarizationLike
+    from polpy.poldata import PolData
+    from polpy.polresponse import PolResponse
+    from polpy.polarizationlike import PolarizationLike
 
-    log.debug("POLAR plugins are available")
+    log.debug("Polarization plugins are available")
 
-    has_polarpy = True
+    has_polpy = True
 
 except (ImportError):
 
-    log.debug("POLAR plugins are unavailable")
+    log.debug("Polarization plugins are unavailable")
 
-    has_polarpy = False
+    has_polpy = False
 
 try:
 
@@ -1455,9 +1455,9 @@ class TimeSeriesBuilder(object):
         verbose=True,
     ):
 
-        if not has_polarpy:
+        if not has_polpy:
 
-            log.error("The polarpy module is not installed")
+            log.error("The polpy module is not installed")
             raise RuntimeError()
 
         # self._default_unbinned = unbinned
@@ -1465,7 +1465,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polar_data = PolData(
-            polevents,specrsp, polrsp, reference_time=trigger_time
+            polevents, polrsp, specrsp, reference_time=trigger_time
         )
 
         # Create the the event list
@@ -1508,9 +1508,9 @@ class TimeSeriesBuilder(object):
         verbose=True,
     ):
 
-        if not has_polarpy:
+        if not has_polpy:
 
-            log.error("The polarpy module is not installed")
+            log.error("The polpy module is not installed")
             raise RuntimeError()
 
         # self._default_unbinned = unbinned
@@ -1518,7 +1518,7 @@ class TimeSeriesBuilder(object):
         # extract the polar varaibles
 
         polar_data = PolData(
-            polevents, specrsp, polrsp, trigger_time)
+            polevents, polrsp, specrsp, trigger_time)
 
         # Create the the event list
 
@@ -1549,6 +1549,7 @@ class TimeSeriesBuilder(object):
 
     def to_polarizationlike(
         self,
+        pa_offset=0.,
         from_bins=False,
         start=None,
         stop=None,
@@ -1556,7 +1557,7 @@ class TimeSeriesBuilder(object):
         extract_measured_background=False,
     ):
 
-        assert has_polarpy, "you must have the polarpy module installed"
+        assert has_polpy, "you must have the polpy module installed"
 
         assert issubclass(
             self._container_type, BinnedModulationCurve
@@ -1571,7 +1572,7 @@ class TimeSeriesBuilder(object):
             this_background_spectrum = self._background_spectrum
 
         if isinstance(self._response, str):
-            self._response = PolResponse(self._response)
+            self._response = PolResponse(self._response, pa_offset)
 
         if not from_bins:
 
