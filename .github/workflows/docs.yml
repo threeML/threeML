@@ -78,7 +78,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -163,7 +163,7 @@ jobs:
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -255,7 +255,7 @@ jobs:
     
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -343,7 +343,7 @@ jobs:
   
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -444,7 +444,7 @@ jobs:
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-12
+    runs-on: macos-13
     
     steps:
       - name: Checkout
@@ -502,7 +502,7 @@ jobs:
 
   api_doc:
     name: "Create the API stubs"
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
         with:
@@ -548,7 +548,7 @@ jobs:
 
   build_docs:
     name: "Build the Documentation"
-    runs-on: macos-12
+    runs-on: macos-13
     needs: [upload_notebooks, api_doc]
     steps:
 
