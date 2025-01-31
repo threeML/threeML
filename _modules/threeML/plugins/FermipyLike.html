@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.FermipyLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,39 +108,39 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.plugins.FermipyLike</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">astromodels</span>
-<span class="kn">import</span> <span class="nn">astropy.io.fits</span> <span class="k">as</span> <span class="nn">fits</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">astromodels.core</span> <span class="kn">import</span> <span class="n">parameter_transformation</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">circmean</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.config.plotting_structure</span> <span class="kn">import</span> <span class="n">FermiSpectrumPlot</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.dict_with_pretty_print</span> <span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
-<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">sanitize_filename</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.cmap_cycle</span> <span class="kn">import</span> <span class="n">cmap_intervals</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.data_residual_plot</span> <span class="kn">import</span> <span class="n">ResidualPlot</span>
-<span class="kn">from</span> <span class="nn">threeML.plugin_prototype</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.power_of_two_utils</span> <span class="kn">import</span> <span class="n">is_power_of_2</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.gammaln</span> <span class="kn">import</span> <span class="n">logfactorial</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">Significance</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.unique_deterministic_tag</span> <span class="kn">import</span> <span class="n">get_unique_deterministic_tag</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astromodels</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.io.fits</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fits</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Parameter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">parameter_transformation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">circmean</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.plotting_structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermiSpectrumPlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.dict_with_pretty_print</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.cmap_cycle</span><span class="w"> </span><span class="kn">import</span> <span class="n">cmap_intervals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.data_residual_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResidualPlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugin_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginPrototype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.power_of_two_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_power_of_2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.gammaln</span><span class="w"> </span><span class="kn">import</span> <span class="n">logfactorial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.stats_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Significance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.unique_deterministic_tag</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_unique_deterministic_tag</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -170,7 +169,7 @@
 <span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">_get_unique_tag_from_configuration</span><span class="p">(</span><span class="n">configuration</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_unique_tag_from_configuration</span><span class="p">(</span><span class="n">configuration</span><span class="p">):</span>
     <span class="n">keys_for_hash</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;evfile&quot;</span><span class="p">,</span> <span class="s2">&quot;scfile&quot;</span><span class="p">)),</span>
         <span class="p">(</span><span class="s2">&quot;binning&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;roiwidth&quot;</span><span class="p">,</span> <span class="s2">&quot;binsz&quot;</span><span class="p">,</span> <span class="s2">&quot;binsperdec&quot;</span><span class="p">)),</span>
@@ -211,7 +210,7 @@
     <span class="k">return</span> <span class="n">get_unique_deterministic_tag</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string_to_hash</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_get_fermipy_instance</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_fermipy_instance</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a &#39;model&#39; configuration section for fermipy starting from a likelihood model from astromodels</span>
 
@@ -437,10 +436,10 @@
     <span class="k">return</span> <span class="n">gta</span><span class="p">,</span> <span class="n">energies_keV</span>
 
 
-<span class="k">def</span> <span class="nf">_expensive_imports_hook</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_expensive_imports_hook</span><span class="p">():</span>
 
-    <span class="kn">from</span> <span class="nn">fermipy.gtanalysis</span> <span class="kn">import</span> <span class="n">GTAnalysis</span>
-    <span class="kn">from</span> <span class="nn">GtBurst.LikelihoodComponent</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">fermipy.gtanalysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">GTAnalysis</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">GtBurst.LikelihoodComponent</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">findGalacticTemplate</span><span class="p">,</span>
         <span class="n">findIsotropicTemplate</span><span class="p">,</span>
     <span class="p">)</span>
@@ -452,12 +451,12 @@
 
 <div class="viewcode-block" id="FermipyLike">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike">[docs]</a>
-<span class="k">class</span> <span class="nc">FermipyLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FermipyLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plugin for the data of the Fermi Large Area Telescope, based on fermipy (http://fermipy.readthedocs.io/)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="n">instance</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
@@ -467,7 +466,7 @@
 
         <span class="k">return</span> <span class="n">instance</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fermipy_config</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fermipy_config</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param name: a name for this instance</span>
 <span class="sd">        :param fermipy_config: either a path to a YAML configuration file or a dictionary containing the configuration</span>
@@ -575,7 +574,7 @@
 <div class="viewcode-block" id="FermipyLike.get_basic_config">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_basic_config">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_basic_config</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_basic_config</span><span class="p">(</span>
         <span class="n">evfile</span><span class="p">,</span>
         <span class="n">scfile</span><span class="p">,</span>
         <span class="n">ra</span><span class="p">,</span>
@@ -590,7 +589,7 @@
         <span class="n">fermitools_chatter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="p">):</span>
 
-        <span class="kn">from</span> <span class="nn">fermipy.config</span> <span class="kn">import</span> <span class="n">ConfigManager</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">fermipy.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigManager</span>
 
         <span class="c1"># Get default config from fermipy</span>
         <span class="n">basic_config</span> <span class="o">=</span> <span class="n">ConfigManager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
@@ -669,7 +668,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the loaded configuration</span>
 
@@ -678,7 +677,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -690,7 +689,7 @@
 
 <div class="viewcode-block" id="FermipyLike.get_observation_duration">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_observation_duration">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_observation_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_observation_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">event_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;evfile&quot;</span><span class="p">]</span>
         <span class="n">tmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;tmin&quot;</span><span class="p">]</span>
         <span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_configuration</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;tmax&quot;</span><span class="p">]</span>
@@ -714,7 +713,7 @@
 
 <div class="viewcode-block" id="FermipyLike.set_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.set_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -734,7 +733,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_nuisance_parameters</span><span class="p">(</span><span class="n">new_nuisance_parameters</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_update_model_in_fermipy</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_model_in_fermipy</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">update_dictionary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 
@@ -889,7 +888,7 @@
 
 <div class="viewcode-block" id="FermipyLike.get_log_like">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_log_like">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of the log-likelihood with the current values for the</span>
 <span class="sd">        parameters stored in the ModelManager instance</span>
@@ -922,7 +921,7 @@
 
 <div class="viewcode-block" id="FermipyLike.inner_fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.inner_fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is used for the profile likelihood. Keeping fixed all parameters in the</span>
 <span class="sd">        LikelihoodModel, this method minimize the logLike over the remaining nuisance</span>
@@ -936,7 +935,7 @@
 
 <div class="viewcode-block" id="FermipyLike.set_inner_minimization">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.set_inner_minimization">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_inner_minimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_inner_minimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Turn on the minimization of the internal Fermi</span>
@@ -956,7 +955,7 @@
 
 <div class="viewcode-block" id="FermipyLike.get_number_of_data_points">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.get_number_of_data_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the number of spatial/energy bins</span>
 
@@ -981,7 +980,7 @@
         <span class="k">return</span> <span class="n">num</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_set_nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># Get the list of the sources</span>
         <span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">get_sources</span><span class="p">())</span>
@@ -1025,7 +1024,7 @@
 
         <span class="k">return</span> <span class="n">nuisance_parameters</span>
 
-    <span class="k">def</span> <span class="nf">_split_nuisance_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_nuisance_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">):</span>
 
         <span class="n">tokens</span> <span class="o">=</span> <span class="n">param_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
         <span class="n">pname</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1035,7 +1034,7 @@
 
 <div class="viewcode-block" id="FermipyLike.set_nuisance_parameter_value">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.set_nuisance_parameter_value">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_nuisance_parameter_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_nuisance_parameter_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 
         <span class="n">srcName</span><span class="p">,</span> <span class="n">parName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_nuisance_parameter</span><span class="p">(</span><span class="n">paramName</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gta</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span>
@@ -1045,7 +1044,7 @@
 
 <div class="viewcode-block" id="FermipyLike.display_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.FermipyLike.FermipyLike.display_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">display_model</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
         <span class="n">model_cmap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">fermipy</span><span class="o">.</span><span class="n">fit_plot</span><span class="o">.</span><span class="n">model_cmap</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -1493,7 +1492,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.plotting package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -50,7 +50,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
@@ -108,189 +107,135 @@
            <div itemprop="articleBody">
              
   <section id="threeml-io-plotting-package">
-<h1>threeML.io.plotting package<a class="headerlink" href="#threeml-io-plotting-package" title="Link to this heading"></a>
-</h1>
+<h1>threeML.io.plotting package<a class="headerlink" href="#threeml-io-plotting-package" title="Link to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a>
-</h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="module-threeML.io.plotting.cmap_cycle">
-<span id="threeml-io-plotting-cmap-cycle-module"></span><h2>threeML.io.plotting.cmap_cycle module<a class="headerlink" href="#module-threeML.io.plotting.cmap_cycle" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-cmap-cycle-module"></span><h2>threeML.io.plotting.cmap_cycle module<a class="headerlink" href="#module-threeML.io.plotting.cmap_cycle" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.cmap_cycle.cmap_intervals">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.cmap_cycle.</span></span><span class="sig-name descname"><span class="pre">cmap_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'YlOrBr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/cmap_cycle.html#cmap_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.cmap_cycle.cmap_intervals" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Return evenly spaced intervals of a given colormap <cite>cmap</cite>.</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.cmap_cycle.</span></span><span class="sig-name descname"><span class="pre">cmap_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'YlOrBr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/cmap_cycle.html#cmap_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.cmap_cycle.cmap_intervals" title="Link to this definition"></a></dt>
+<dd><p>Return evenly spaced intervals of a given colormap <cite>cmap</cite>.</p>
 <p>Colormaps listed in REVERSE_CMAP will be cycled in reverse order.
 Certain colormaps have pre-specified color ranges in CMAP_RANGE. These module
 variables ensure that colors cycle from light to dark and light colors are
 not too close to white.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p><strong>length</strong> – int the number of colors used before cycling back to first color. When</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>length</strong> – int the number of colors used before cycling back to first color. When</p>
 </dd>
 </dl>
 <p>length is large (&gt; ~10), it is difficult to distinguish between
 successive lines because successive colors are very similar.
 :param cmap: str name of a matplotlib colormap (see matplotlib.pyplot.cm)</p>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting.data_residual_plot">
-<span id="threeml-io-plotting-data-residual-plot-module"></span><h2>threeML.io.plotting.data_residual_plot module<a class="headerlink" href="#module-threeML.io.plotting.data_residual_plot" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-data-residual-plot-module"></span><h2>threeML.io.plotting.data_residual_plot module<a class="headerlink" href="#module-threeML.io.plotting.data_residual_plot" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.data_residual_plot.</span></span><span class="sig-name descname"><span class="pre">ResidualPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.data_residual_plot.</span></span><span class="sig-name descname"><span class="pre">ResidualPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.add_data">
-<span class="sig-name descname"><span class="pre">add_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residuals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual_yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_data" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Add the data for the this model</p>
+<span class="sig-name descname"><span class="pre">add_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residuals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual_yerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_data" title="Link to this definition"></a></dt>
+<dd><p>Add the data for the this model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – energy of the data</p></li>
 <li><p><strong>y</strong> – value of the data</p></li>
 <li><p><strong>residuals</strong> – the residuals for the data</p></li>
 <li><p><strong>label</strong> – label of the data</p></li>
 <li><p><strong>xerr</strong> – the error in energy (or bin width)</p></li>
 <li><p><strong>yerr</strong> – the errorbars of the data</p></li>
-<li>
-<p><strong>**kwargs</strong> – </p>
-<p>any kwargs passed to plot</p>
-</li>
+<li><p><strong>**kwargs</strong> – <p>any kwargs passed to plot</p>
+</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.add_model">
-<span class="sig-name descname"><span class="pre">add_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Add a model and interpolate it across the energy span for the plotting.</p>
+<span class="sig-name descname"><span class="pre">add_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model" title="Link to this definition"></a></dt>
+<dd><p>Add a model and interpolate it across the energy span for the plotting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – the evaluation energies</p></li>
 <li><p><strong>y</strong> – the model values</p></li>
 <li><p><strong>label</strong> – the label of the model</p></li>
-<li>
-<p><strong>**kwargs</strong> – </p>
-<p>any kwargs passed to plot</p>
-</li>
+<li><p><strong>**kwargs</strong> – <p>any kwargs passed to plot</p>
+</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.add_model_step">
-<span class="sig-name descname"><span class="pre">add_model_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xwidth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_model_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model_step" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Add a model but use discontinuous steps for the plotting.</p>
+<span class="sig-name descname"><span class="pre">add_model_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xwidth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.add_model_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.add_model_step" title="Link to this definition"></a></dt>
+<dd><p>Add a model but use discontinuous steps for the plotting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>xmin</strong> – the low end boundaries</p></li>
 <li><p><strong>xmax</strong> – the high end boundaries</p></li>
 <li><p><strong>xwidth</strong> – the width of the bins</p></li>
 <li><p><strong>y</strong> – the height of the bins</p></li>
 <li><p><strong>label</strong> – the label of the model</p></li>
-<li>
-<p><strong>**kwargs</strong> – </p>
-<p>any kwargs passed to plot</p>
-</li>
+<li><p><strong>**kwargs</strong> – <p>any kwargs passed to plot</p>
+</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.axes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">axes</span></span><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.axes" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">axes</span></span><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.axes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.data_axis">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_axis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Axes</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.data_axis" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>the top or data axis</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_axis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Axes</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.data_axis" title="Link to this definition"></a></dt>
+<dd><p>the top or data axis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>return</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>return</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.figure">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">figure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Figure</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.figure" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>the figure instance</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">figure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Figure</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.figure" title="Link to this definition"></a></dt>
+<dd><p>the figure instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>return</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>return</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.finalize">
-<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.finalize" title="Link to this definition"></a>
-</dt>
-<dd>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/data_residual_plot.html#ResidualPlot.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.finalize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>xlabel</strong></p></li>
 <li><p><strong>ylabel</strong></p></li>
 <li><p><strong>xscale</strong></p></li>
@@ -298,80 +243,57 @@ successive lines because successive colors are very similar.
 <li><p><strong>show_legend</strong></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.ratio_residuals">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ratio_residuals</span></span><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.ratio_residuals" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ratio_residuals</span></span><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.ratio_residuals" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.residual_axis">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">residual_axis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Axes</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.residual_axis" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>the bottom or residual axis</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">residual_axis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Axes</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.residual_axis" title="Link to this definition"></a></dt>
+<dd><p>the bottom or residual axis</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>return</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>return</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.plotting.data_residual_plot.ResidualPlot.show_residuals">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">show_residuals</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.show_residuals" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">show_residuals</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.io.plotting.data_residual_plot.ResidualPlot.show_residuals" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting.get_style">
-<span id="threeml-io-plotting-get-style-module"></span><h2>threeML.io.plotting.get_style module<a class="headerlink" href="#module-threeML.io.plotting.get_style" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-get-style-module"></span><h2>threeML.io.plotting.get_style module<a class="headerlink" href="#module-threeML.io.plotting.get_style" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.get_style.get_threeML_style">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.get_style.</span></span><span class="sig-name descname"><span class="pre">get_threeML_style</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/get_style.html#get_threeML_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.get_style.get_threeML_style" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.get_style.</span></span><span class="sig-name descname"><span class="pre">get_threeML_style</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/get_style.html#get_threeML_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.get_style.get_threeML_style" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.get_style.set_threeML_style">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.get_style.</span></span><span class="sig-name descname"><span class="pre">set_threeML_style</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/get_style.html#set_threeML_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.get_style.set_threeML_style" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.get_style.</span></span><span class="sig-name descname"><span class="pre">set_threeML_style</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/get_style.html#set_threeML_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.get_style.set_threeML_style" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting.light_curve_plots">
-<span id="threeml-io-plotting-light-curve-plots-module"></span><h2>threeML.io.plotting.light_curve_plots module<a class="headerlink" href="#module-threeML.io.plotting.light_curve_plots" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-light-curve-plots-module"></span><h2>threeML.io.plotting.light_curve_plots module<a class="headerlink" href="#module-threeML.io.plotting.light_curve_plots" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.light_curve_plots.binned_light_curve_plot">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">binned_light_curve_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_selections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#binned_light_curve_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.binned_light_curve_plot" title="Link to this definition"></a>
-</dt>
-<dd>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">binned_light_curve_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_selections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#binned_light_curve_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.binned_light_curve_plot" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>time_bins</strong> – stacked array of time intervals</p></li>
 <li><p><strong>cnts</strong> – counts per bin</p></li>
 <li><p><strong>bkg</strong> – background of the light curve</p></li>
@@ -381,33 +303,24 @@ successive lines because successive colors are very similar.
 <li><p><strong>instrument</strong></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.light_curve_plots.channel_plot">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">channel_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chan_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chan_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#channel_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.channel_plot" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">channel_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chan_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chan_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#channel_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.channel_plot" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.light_curve_plots.disjoint_patch_plot">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">disjoint_patch_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#disjoint_patch_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.disjoint_patch_plot" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>plots patches that are disjoint given by the mask</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">disjoint_patch_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#disjoint_patch_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.disjoint_patch_plot" title="Link to this definition"></a></dt>
+<dd><p>plots patches that are disjoint given by the mask</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> – matplotlib Axes to plot to</p></li>
 <li><p><strong>bin_min</strong> – bin starts</p></li>
 <li><p><strong>bin_max</strong> – bin stops</p></li>
@@ -417,96 +330,69 @@ successive lines because successive colors are very similar.
 <li><p><strong>kwargs</strong> – matplotlib plot keywords</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.light_curve_plots.plot_tte_lightcurve">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">plot_tte_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tte_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#plot_tte_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.plot_tte_lightcurve" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>quick plot of a TTE light curve
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">plot_tte_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tte_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#plot_tte_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.plot_tte_lightcurve" title="Link to this definition"></a></dt>
+<dd><p>quick plot of a TTE light curve
 :param tte_file: GBM TTE file name
 :param start: start of the light curve
 :param stop: stop of the light curve
 :param dt: with of the bins</p>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.light_curve_plots.slice_disjoint">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">slice_disjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#slice_disjoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.slice_disjoint" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Returns an array of disjoint indices from a bool array</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.light_curve_plots.</span></span><span class="sig-name descname"><span class="pre">slice_disjoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/light_curve_plots.html#slice_disjoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.light_curve_plots.slice_disjoint" title="Link to this definition"></a></dt>
+<dd><p>Returns an array of disjoint indices from a bool array</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p><strong>arr</strong> – and array of bools</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arr</strong> – and array of bools</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting.model_plot">
-<span id="threeml-io-plotting-model-plot-module"></span><h2>threeML.io.plotting.model_plot module<a class="headerlink" href="#module-threeML.io.plotting.model_plot" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-model-plot-module"></span><h2>threeML.io.plotting.model_plot module<a class="headerlink" href="#module-threeML.io.plotting.model_plot" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">SpectralContourPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_total</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">SpectralContourPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_total</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot.add_dimensionless_model">
-<span class="sig-name descname"><span class="pre">add_dimensionless_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.add_dimensionless_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.add_dimensionless_model" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-name descname"><span class="pre">add_dimensionless_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.add_dimensionless_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.add_dimensionless_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot.add_model">
-<span class="sig-name descname"><span class="pre">add_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.add_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.add_model" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-name descname"><span class="pre">add_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'model'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.add_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.add_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.SpectralContourPlot.finalize">
-<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_defaults</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.finalize" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_defaults</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#SpectralContourPlot.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.SpectralContourPlot.finalize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.plot_point_source_spectra">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">plot_point_source_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#plot_point_source_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.plot_point_source_spectra" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">plot_point_source_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#plot_point_source_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.plot_point_source_spectra" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.model_plot.plot_spectra">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.plot_spectra" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>plotting routine for fitted point source spectra</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../../_modules/threeML/io/plotting/model_plot.html#plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.plot_spectra" title="Link to this definition"></a></dt>
+<dd><p>plotting routine for fitted point source spectra</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>analysis_results</strong> – fitted JointLikelihood or BayesianAnalysis objects</p></li>
 <li><p><strong>sources_to_use</strong> – (optional) list of PointSource string names to plot from the analysis</p></li>
 <li><p><strong>energy_unit</strong> – (optional) astropy energy unit in string form (can also be frequency)</p></li>
@@ -532,34 +418,26 @@ successive lines because successive colors are very similar.
 :param yscale: ‘log’ or ‘linear’
 :param include_extended: True or False, also plot extended source spectra.
 :return:</p>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting.model_plot_2D">
-<span id="threeml-io-plotting-model-plot-2d-module"></span><h2>threeML.io.plotting.model_plot_2D module<a class="headerlink" href="#module-threeML.io.plotting.model_plot_2D" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-model-plot-2d-module"></span><h2>threeML.io.plotting.model_plot_2D module<a class="headerlink" href="#module-threeML.io.plotting.model_plot_2D" title="Link to this heading"></a></h2>
 </section>
 <section id="module-threeML.io.plotting.model_plot_tags">
-<span id="threeml-io-plotting-model-plot-tags-module"></span><h2>threeML.io.plotting.model_plot_tags module<a class="headerlink" href="#module-threeML.io.plotting.model_plot_tags" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-model-plot-tags-module"></span><h2>threeML.io.plotting.model_plot_tags module<a class="headerlink" href="#module-threeML.io.plotting.model_plot_tags" title="Link to this heading"></a></h2>
 </section>
 <section id="module-threeML.io.plotting.post_process_data_plots">
-<span id="threeml-io-plotting-post-process-data-plots-module"></span><h2>threeML.io.plotting.post_process_data_plots module<a class="headerlink" href="#module-threeML.io.plotting.post_process_data_plots" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-post-process-data-plots-module"></span><h2>threeML.io.plotting.post_process_data_plots module<a class="headerlink" href="#module-threeML.io.plotting.post_process_data_plots" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.post_process_data_plots.display_photometry_model_magnitudes">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.post_process_data_plots.</span></span><span class="sig-name descname"><span class="pre">display_photometry_model_magnitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/post_process_data_plots.html#display_photometry_model_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.post_process_data_plots.display_photometry_model_magnitudes" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Display the fitted model count spectrum of one or more Spectrum plugins</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.post_process_data_plots.</span></span><span class="sig-name descname"><span class="pre">display_photometry_model_magnitudes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/post_process_data_plots.html#display_photometry_model_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.post_process_data_plots.display_photometry_model_magnitudes" title="Link to this definition"></a></dt>
+<dd><p>Display the fitted model count spectrum of one or more Spectrum plugins</p>
 <p>NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments
 to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – one or more instances of Spectrum plugin</p></li>
 <li><p><strong>min_rate</strong> – (optional) rebin to keep this minimum rate in each channel (if possible). If one number is</p></li>
 </ul>
@@ -575,22 +453,17 @@ for each dataset
 :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
 with linear interpolation between each bin
 :return: figure instance</p>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.post_process_data_plots.display_spectrum_model_counts">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.post_process_data_plots.</span></span><span class="sig-name descname"><span class="pre">display_spectrum_model_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/post_process_data_plots.html#display_spectrum_model_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.post_process_data_plots.display_spectrum_model_counts" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Display the fitted model count spectrum of one or more Spectrum plugins</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.post_process_data_plots.</span></span><span class="sig-name descname"><span class="pre">display_spectrum_model_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/post_process_data_plots.html#display_spectrum_model_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.post_process_data_plots.display_spectrum_model_counts" title="Link to this definition"></a></dt>
+<dd><p>Display the fitted model count spectrum of one or more Spectrum plugins</p>
 <p>NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments
 to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – one or more instances of Spectrum plugin</p></li>
 <li><p><strong>min_rate</strong> – (optional) rebin to keep this minimum rate in each channel (if possible). If one number is</p></li>
 </ul>
@@ -616,31 +489,24 @@ are more detectors than this number it will split it up in several plots
 :param background_colors: (optional) a tuple or list with the color for each background
 :param background_color: (optional) color for all backgrounds
 :return: figure instance</p>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting.step_plot">
-<span id="threeml-io-plotting-step-plot-module"></span><h2>threeML.io.plotting.step_plot module<a class="headerlink" href="#module-threeML.io.plotting.step_plot" title="Link to this heading"></a>
-</h2>
+<span id="threeml-io-plotting-step-plot-module"></span><h2>threeML.io.plotting.step_plot module<a class="headerlink" href="#module-threeML.io.plotting.step_plot" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.plotting.step_plot.step_plot">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.step_plot.</span></span><span class="sig-name descname"><span class="pre">step_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xbins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/step_plot.html#step_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.step_plot.step_plot" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Routine for plotting a in steps with the ability to fill the plot
+<span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.step_plot.</span></span><span class="sig-name descname"><span class="pre">step_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xbins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/plotting/step_plot.html#step_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.step_plot.step_plot" title="Link to this definition"></a></dt>
+<dd><p>Routine for plotting a in steps with the ability to fill the plot
 xbins is a 2D list of start and stop values.
 y are the values in the bins.</p>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
 <section id="module-threeML.io.plotting">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.io.plotting" title="Link to this heading"></a>
-</h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.io.plotting" title="Link to this heading"></a></h2>
 </section>
 </section>
-
 
 
            </div>
@@ -650,7 +516,7 @@ y are the values in the bins.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.statistics.likelihood_functions &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,18 +108,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.statistics.likelihood_functions</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">njit</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.gammaln</span> <span class="kn">import</span> <span class="n">logfactorial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">njit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.gammaln</span><span class="w"> </span><span class="kn">import</span> <span class="n">logfactorial</span>
 
 <span class="n">_log_pi_2</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="regularized_log">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.regularized_log">[docs]</a>
-<span class="k">def</span> <span class="nf">regularized_log</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">regularized_log</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function which is log(vector) where vector &gt; 0, and zero otherwise.</span>
 
@@ -135,7 +134,7 @@
 <div class="viewcode-block" id="xlogy">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">xlogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xlogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine</span>
 <span class="sd">    0 * log(inf) is nan, instead of 0.</span>
@@ -159,7 +158,7 @@
 <div class="viewcode-block" id="xlogy_one">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy_one">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">xlogy_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xlogy_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine</span>
 <span class="sd">    0 * log(inf) is nan, instead of 0.</span>
@@ -178,7 +177,7 @@
 <div class="viewcode-block" id="poisson_log_likelihood_ideal_bkg">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_log_likelihood_ideal_bkg">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">poisson_log_likelihood_ideal_bkg</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">poisson_log_likelihood_ideal_bkg</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">expected_bkg_counts</span><span class="p">,</span> <span class="n">expected_model_counts</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -214,7 +213,7 @@
 
 <div class="viewcode-block" id="poisson_observed_poisson_background_xs">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background_xs">[docs]</a>
-<span class="k">def</span> <span class="nf">poisson_observed_poisson_background_xs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">poisson_observed_poisson_background_xs</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">exposure_ratio</span><span class="p">,</span> <span class="n">expected_model_counts</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -278,7 +277,7 @@
 <div class="viewcode-block" id="poisson_observed_poisson_background">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_observed_poisson_background">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">poisson_observed_poisson_background</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">poisson_observed_poisson_background</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">exposure_ratio</span><span class="p">,</span> <span class="n">expected_model_counts</span>
 <span class="p">):</span>
 
@@ -337,7 +336,7 @@
 <div class="viewcode-block" id="poisson_observed_gaussian_background">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.poisson_observed_gaussian_background">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">poisson_observed_gaussian_background</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">poisson_observed_gaussian_background</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">background_error</span><span class="p">,</span> <span class="n">expected_model_counts</span>
 <span class="p">):</span>
 
@@ -415,7 +414,7 @@
 <div class="viewcode-block" id="half_chi2">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.half_chi2">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">half_chi2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">half_chi2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
 
     <span class="c1"># This is half of a chi2. The reason for the factor of two is that we need this to be the Gaussian likelihood,</span>
     <span class="c1"># so that the delta log-like for an error of say 1 sigma is 0.5 and not 1 like it would be for</span>
@@ -442,7 +441,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.minimizer.grid_minimizer module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -113,93 +112,66 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.minimizer.grid_minimizer">
-<span id="threeml-minimizer-grid-minimizer-module"></span><h1>threeML.minimizer.grid_minimizer module<a class="headerlink" href="#module-threeML.minimizer.grid_minimizer" title="Link to this heading"></a>
-</h1>
+<span id="threeml-minimizer-grid-minimizer-module"></span><h1>threeML.minimizer.grid_minimizer module<a class="headerlink" href="#module-threeML.minimizer.grid_minimizer" title="Link to this heading"></a></h1>
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.minimizer.grid_minimizer.AllFitFailed">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.grid_minimizer.</span></span><span class="sig-name descname"><span class="pre">AllFitFailed</span></span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#AllFitFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.AllFitFailed" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
-</dd>
-</dl>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.grid_minimizer.</span></span><span class="sig-name descname"><span class="pre">AllFitFailed</span></span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#AllFitFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.AllFitFailed" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.minimizer.grid_minimizer.GridMinimizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.grid_minimizer.</span></span><span class="sig-name descname"><span class="pre">GridMinimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <a class="reference internal" href="../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimizer" title="threeML.minimizer.minimization.GlobalMinimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalMinimizer</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.grid_minimizer.</span></span><span class="sig-name descname"><span class="pre">GridMinimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimizer" title="threeML.minimizer.minimization.GlobalMinimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalMinimizer</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.minimizer.grid_minimizer.GridMinimizer.add_callback">
-<span class="sig-name descname"><span class="pre">add_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer.add_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.add_callback" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>This adds a callback function which is called after each point in the grid has been used.</p>
+<span class="sig-name descname"><span class="pre">add_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer.add_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.add_callback" title="Link to this definition"></a></dt>
+<dd><p>This adds a callback function which is called after each point in the grid has been used.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p><strong>function</strong> – a function receiving in input a tuple containing the point in the grid and the minimum of the</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>function</strong> – a function receiving in input a tuple containing the point in the grid and the minimum of the</p>
 </dd>
 </dl>
 <p>function reached starting from that point. The function should return nothing
 :return: none</p>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.minimizer.grid_minimizer.GridMinimizer.add_parameter_to_grid">
-<span class="sig-name descname"><span class="pre">add_parameter_to_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer.add_parameter_to_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.add_parameter_to_grid" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Add a parameter to the grid</p>
+<span class="sig-name descname"><span class="pre">add_parameter_to_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer.add_parameter_to_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.add_parameter_to_grid" title="Link to this definition"></a></dt>
+<dd><p>Add a parameter to the grid</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>parameter</strong> – an instance of a parameter or a parameter path</p></li>
 <li><p><strong>grid</strong> – a list (or a numpy.array) with the values the parameter is supposed to take during the grid search</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.minimizer.grid_minimizer.GridMinimizer.remove_callbacks">
-<span class="sig-name descname"><span class="pre">remove_callbacks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer.remove_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.remove_callbacks" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Remove all callbacks added with add_callback</p>
+<span class="sig-name descname"><span class="pre">remove_callbacks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/grid_minimizer.html#GridMinimizer.remove_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.remove_callbacks" title="Link to this definition"></a></dt>
+<dd><p>Remove all callbacks added with add_callback</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>none</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>none</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.minimizer.grid_minimizer.GridMinimizer.valid_setup_keys">
-<span class="sig-name descname"><span class="pre">valid_setup_keys</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('grid',</span> <span class="pre">'second_minimization',</span> <span class="pre">'callbacks')</span></em><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.valid_setup_keys" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-name descname"><span class="pre">valid_setup_keys</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('grid',</span> <span class="pre">'second_minimization',</span> <span class="pre">'callbacks')</span></em><a class="headerlink" href="#threeML.minimizer.grid_minimizer.GridMinimizer.valid_setup_keys" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 </section>
-
 
 
            </div>
@@ -212,7 +184,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

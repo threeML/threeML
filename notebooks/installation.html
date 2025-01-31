@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Intro" href="../intro.html" />
-    <link rel="prev" title="Project &amp; Team" href="../team.html" /> 
+    <link rel="prev" title="3ML" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,7 +54,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#XSPEC-models">XSPEC models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#HEASARC-install">HEASARC install</a></li>
@@ -131,162 +130,131 @@
            <div itemprop="articleBody">
              
   <section id="Installation">
-<h1>Installation<a class="headerlink" href="#Installation" title="Link to this heading"></a>
-</h1>
+<h1>Installation<a class="headerlink" href="#Installation" title="Link to this heading"></a></h1>
 <p>3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that <em>you</em>
 plan on using. Are their libraries accessible on you system’s standard paths? If you think that you have everything setup properly and the install does not work for you, please <a class="reference external" href="https://github.com/threeML/threeML/issues">submit an issue</a> and we will do our best to find a solution.</p>
 <section id="XSPEC-models">
-<h2>XSPEC models<a class="headerlink" href="#XSPEC-models" title="Link to this heading"></a>
-</h2>
+<h2>XSPEC models<a class="headerlink" href="#XSPEC-models" title="Link to this heading"></a></h2>
 <p>We allow the ability to use the models provided by <a href="#id1"><span class="problematic" id="id2">`XSPEC &lt;&gt;`__</span></a> natively in 3ML. However, before installing <a href="#id1"><span class="problematic" id="id3">`astromodels &lt;&gt;`__</span></a> or 3ML, you must already have XSPEC installed by one of a few methods.</p>
 <section id="HEASARC-install">
-<h3>HEASARC install<a class="headerlink" href="#HEASARC-install" title="Link to this heading"></a>
-</h3>
+<h3>HEASARC install<a class="headerlink" href="#HEASARC-install" title="Link to this heading"></a></h3>
 <p>If you have XSPEC installed on your computer via the source code, then before installing astromodels, make sure to <code class="docutils literal notranslate"><span class="pre">init</span></code> your HEASARC environment. Upon installing <code class="docutils literal notranslate"><span class="pre">astromodels</span></code>, the process will attempt to find the proper libraries on your system if it detects XSPEC and compile the proper extensions. If you have installed your XSPEC in a non-standard directory (e.g. your home directory), the process my not find all the libraries. You can thus export an env variable that provides the
 explicit path to your XSPEC headers:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">XSPEC_INC_PATH</span><span class="o">=</span>/path/to/xspec/headers
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">XSPEC_INC_PATH</span><span class="o">=</span>/path/to/xspec/headers
 </pre></div>
 </div>
 <p>As XSPEC evolves, various models have different interfaces that depend on the version. To accommodate this, you need to set the version of XSPEC you are using with another env variable, e.g.:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ASTRO_XSPEC_VERSION</span><span class="o">=</span><span class="s1">'12.12.1'</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ASTRO_XSPEC_VERSION</span><span class="o">=</span><span class="s1">&#39;12.12.1&#39;</span>
 </pre></div>
 </div>
 </section>
 <section id="xspec-modelsonly">
-<h3>xspec-modelsonly<a class="headerlink" href="#xspec-modelsonly" title="Link to this heading"></a>
-</h3>
-<p>If using conda, it is possible to get access to XSPEC models without having to install HEASOFT. We thus recommend the following command to create your new conda environment:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>threeml<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>xspecmodels<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>xspec-modelsonly<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>matplotlib
+<h3>xspec-modelsonly<a class="headerlink" href="#xspec-modelsonly" title="Link to this heading"></a></h3>
+<p>I{f using conda, it is possible to get access to XSPEC models without having to install HEASOFT. We thus recommend the following command to create your new conda environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>threeml<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>xspecmodels<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>xspec-modelsonly<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>matplotlib
 </pre></div>
 </div>
 <p>This must be done <em>before</em> installing <code class="docutils literal notranslate"><span class="pre">astromodels</span></code>.</p>
 </section>
 </section>
 <section id="Conda-installation">
-<h2>Conda installation<a class="headerlink" href="#Conda-installation" title="Link to this heading"></a>
-</h2>
+<h2>Conda installation<a class="headerlink" href="#Conda-installation" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="https://conda.io/docs/">Conda</a> is a platform independent package manager. It allows to install 3ML (and a lot of other software) without the need to compile anything, and in a completely separate environment from your system and your system python.</p>
 <section id="If-you-don't-know-Conda">
-<h3>If you don’t know Conda<a class="headerlink" href="#If-you-don't-know-Conda" title="Link to this heading"></a>
-</h3>
+<h3>If you don’t know Conda<a class="headerlink" href="#If-you-don't-know-Conda" title="Link to this heading"></a></h3>
 <p>If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:</p>
 <ol class="arabic simple">
 <li><p>Download the script from <a class="reference external" href="https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh">here</a></p></li>
-<li><p>Run the script with <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span></code>. If you plan to use XSPEC models use <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span> <span class="pre">--with-xspec</span></code>. If you want to install from the dev branch add the <code class="docutils literal notranslate"><span class="pre">--dev</span></code> flag.</p></li>
+<li><p>Run the script with <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span></code>. If you plan to use XSPEC models use <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span> <span class="pre">--with-xspec</span></code>.</p></li>
 <li><p>The script will install 3ML and then create a <code class="docutils literal notranslate"><span class="pre">threeML_init.sh</span></code> script and a <code class="docutils literal notranslate"><span class="pre">threeML_init.csh</span></code> script. Source the former if you are using Bash (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">threeML_init.sh</span></code>) and the second one if you are using Csh/Tcsh (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">threeML_init.csh</span></code>).</p></li>
 </ol>
 </section>
 <section id="If-you-already-know-Conda">
-<h3>If you already know Conda<a class="headerlink" href="#If-you-already-know-Conda" title="Link to this heading"></a>
-</h3>
+<h3>If you already know Conda<a class="headerlink" href="#If-you-already-know-Conda" title="Link to this heading"></a></h3>
 <p>If you are familiar with Conda and you already have it installed, you can install 3ML by creating an environment with (<em>note the exceptions above w.r.t. to include XSPEC support</em>):</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>threeML<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>matplotlib
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>threeML<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>matplotlib
 </pre></div>
 </div>
 <p>then activating your environment:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>threeML
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>threeML
 </pre></div>
 </div>
 <p><em>NOTE:</em> Recently a third party has uploaded a version of <code class="docutils literal notranslate"><span class="pre">astromodels</span></code> to the conda-forge channel. This version will break support for XSPEC currently if you used the xspec-modelsonly package. It is important to set your conda channel priority so that the threeml channel has priority over the conda-forge channel. Please verify that the <code class="docutils literal notranslate"><span class="pre">astromodels</span></code> installed comes from our threeml channel. We are working to resolve this hassle and we apologize to our users.</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>threeml<span class="w"> </span>astromodels<span class="w"> </span>threeml
-</pre></div>
-</div>
-<p>If you want to install the dev version add the label dev:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>threeml/label/dev<span class="w"> </span>astromodels<span class="w"> </span>threeml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>threeml<span class="w"> </span>astromodels<span class="w"> </span>threeml
 </pre></div>
 </div>
 </section>
 </section>
 <section id="pip">
-<h2>pip<a class="headerlink" href="#pip" title="Link to this heading"></a>
-</h2>
+<h2>pip<a class="headerlink" href="#pip" title="Link to this heading"></a></h2>
 <p>If you would like to install 3ML and astromodels on their own and have more control over which dependencies you would like to use. Please to the following</p>
 <ol class="arabic simple">
 <li><p>It is highly recommended you work within a python virtual environment to keep you base python clean</p></li>
 <li><p>install astromodels</p></li>
 </ol>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>astromodels
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>astromodels
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
 <li><p>install 3ML</p></li>
 </ol>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>threeml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>threeml
 </pre></div>
 </div>
 <p>If you need to build other dependencies such as pagmo, multinest, XSPEC, etc., it is recommended you do this <strong>before</strong> installing astromodels!</p>
 </section>
 <section id="Docker">
-<h2>Docker<a class="headerlink" href="#Docker" title="Link to this heading"></a>
-</h2>
+<h2>Docker<a class="headerlink" href="#Docker" title="Link to this heading"></a></h2>
 <p>A docker with the complete 3ML environment and all dependencies can be installed with</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>threeml/notebook:latest
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>threeml/notebook:latest
 </pre></div>
 </div>
 <p>which will install a docker that can be launched with</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8888</span>:8888<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>:/workdir<span class="w"> </span>-w<span class="w"> </span>/workdir<span class="w"> </span>threeml/notebook
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8888</span>:8888<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>:/workdir<span class="w"> </span>-w<span class="w"> </span>/workdir<span class="w"> </span>threeml/notebook
 </pre></div>
 </div>
 <p>which will launch a notebook server that can operate on the current directory. The notebooks and be accessed by typing <code class="docutils literal notranslate"><span class="pre">localhost:8888</span></code> in your browser.</p>
 </section>
 <section id="Other-dependencies">
-<h2>Other dependencies<a class="headerlink" href="#Other-dependencies" title="Link to this heading"></a>
-</h2>
+<h2>Other dependencies<a class="headerlink" href="#Other-dependencies" title="Link to this heading"></a></h2>
 <p>You need to set up packages such as AERIE (for HAWC), or the Fermi Science Tools, before running the script, otherwise some of the functionalities will not work.</p>
 <ul>
-<li>
-<p>AERIE for HAWC: make sure that this works before running the script:</p>
+<li><p>AERIE for HAWC: make sure that this works before running the script:</p>
 <p>```bash &gt; liff-PointSourceExpectation –version INFO [CommandLineConfigurator.cc, ParseCommandLine:137]:</p>
 <p>liff-PointSourceExpectation Aerie version: 2.04.00 Build type: Debug</p>
 <p>``` If it doesn’t, you need to set up the HAWC environment (refer to the appropriate documentation)</p>
 </li>
-<li><p>Fermi Science Tools for Fermi/LAT analysis: make sure that this works: <code class="docutils literal notranslate"><span class="pre">bash</span>     <span class="pre">&gt;</span> <span class="pre">gtirfs</span> <span class="pre">...</span>  <span class="pre">P8R2_TRANSIENT100_V6::EDISP0</span> <span class="pre">P8R2_TRANSIENT100_V6::EDISP1</span> <span class="pre">...</span></code> If it doesn’t, you need to configure and set up the Fermi Science Tools.</p></li>
-<li><p>ROOT: ROOT is not required by 3ML, but it provides the Minuit2 minimizer which can be used in 3ML. If you have ROOT, make sure that this works before running the script: <code class="docutils literal notranslate"><span class="pre">bash</span>     <span class="pre">&gt;</span> <span class="pre">root-config</span> <span class="pre">--version</span>     <span class="pre">5.34/36</span></code></p></li>
+<li><p>Fermi Science Tools for Fermi/LAT analysis: make sure that this works: <code class="docutils literal notranslate"><span class="pre">bash</span>&#160;&#160;&#160;&#160; <span class="pre">&gt;</span> <span class="pre">gtirfs</span> <span class="pre">...</span>&#160; <span class="pre">P8R2_TRANSIENT100_V6::EDISP0</span> <span class="pre">P8R2_TRANSIENT100_V6::EDISP1</span> <span class="pre">...</span></code> If it doesn’t, you need to configure and set up the Fermi Science Tools.</p></li>
+<li><p>ROOT: ROOT is not required by 3ML, but it provides the Minuit2 minimizer which can be used in 3ML. If you have ROOT, make sure that this works before running the script: <code class="docutils literal notranslate"><span class="pre">bash</span>&#160;&#160;&#160;&#160; <span class="pre">&gt;</span> <span class="pre">root-config</span> <span class="pre">--version</span>&#160;&#160;&#160;&#160; <span class="pre">5.34/36</span></code></p></li>
 </ul>
 </section>
 <section id="Install-from-source-(advanced)">
-<h2>Install from source (advanced)<a class="headerlink" href="#Install-from-source-(advanced)" title="Link to this heading"></a>
-</h2>
+<h2>Install from source (advanced)<a class="headerlink" href="#Install-from-source-(advanced)" title="Link to this heading"></a></h2>
 <p>Remove any previous installation you might have with:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>&gt;<span class="w"> </span>pip<span class="w"> </span>uninstall<span class="w"> </span>threeML
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>pip<span class="w"> </span>uninstall<span class="w"> </span>threeML
 &gt;<span class="w"> </span>pip<span class="w"> </span>uninstall<span class="w"> </span>astromodels
 &gt;<span class="w"> </span>pip<span class="w"> </span>uninstall<span class="w"> </span>cthreeML
 </pre></div>
 </div>
 <p>then:</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>ipython<span class="w"> </span>astropy<span class="w"> </span>numba<span class="w"> </span>cython
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>ipython<span class="w"> </span>astropy<span class="w"> </span>numba<span class="w"> </span>cython
 &gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/threeML/threeml.git
 &gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/threeML/astromodels.git<span class="w"> </span>--upgrade
 </pre></div>
 </div>
 <p>In order to use the HAWC plugin, you will also need to install cthreeML (run this <em>after</em> setting up the HAWC environment):</p>
-<div class="highlight-bash notranslate">
-<div class="highlight"><pre><span></span>&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/threeML/cthreeML.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/threeML/cthreeML.git
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>NOTE: If you do not have permission to install packages in your current python environment, you can still install the packages by adding the <code class="docutils literal notranslate"><span class="pre">--user</span></code> option at the end of each <code class="docutils literal notranslate"><span class="pre">pip</span></code> command.</p></li>
 </ul>
 <section id="Tips-for-Mac-users">
-<h3>Tips for Mac users<a class="headerlink" href="#Tips-for-Mac-users" title="Link to this heading"></a>
-</h3>
+<h3>Tips for Mac users<a class="headerlink" href="#Tips-for-Mac-users" title="Link to this heading"></a></h3>
 <p>The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:</p>
 <ul class="simple">
-<li><p>Homebrew: <code class="docutils literal notranslate"><span class="pre">DYLD_LIBRARY_PATH=/usr/local/lib/gcc/&lt;version</span>   <span class="pre">number&gt;:$DYLD_LIBRARY_PATH</span></code></p></li>
-<li><p>Fink: <code class="docutils literal notranslate"><span class="pre">DYLD_LIBRARY_PATH=/sw/lib/gcc&lt;version</span>   <span class="pre">number&gt;/lib:$DYLD_LIBRARY_PATH</span></code></p></li>
+<li><p>Homebrew: <code class="docutils literal notranslate"><span class="pre">DYLD_LIBRARY_PATH=/usr/local/lib/gcc/&lt;version</span>&#160;&#160; <span class="pre">number&gt;:$DYLD_LIBRARY_PATH</span></code></p></li>
+<li><p>Fink: <code class="docutils literal notranslate"><span class="pre">DYLD_LIBRARY_PATH=/sw/lib/gcc&lt;version</span>&#160;&#160; <span class="pre">number&gt;/lib:$DYLD_LIBRARY_PATH</span></code></p></li>
 </ul>
 <p>Please inform us if you have problems related to your FORTRAN distribution.</p>
 </section>
@@ -294,18 +262,17 @@ explicit path to your XSPEC headers:</p>
 </section>
 
 
-
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../team.html" class="btn btn-neutral float-left" title="Project &amp; Team" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="3ML" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../intro.html" class="btn btn-neutral float-right" title="Intro" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

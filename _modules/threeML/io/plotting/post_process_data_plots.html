@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.plotting.post_process_data_plots &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,34 +108,34 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.io.plotting.post_process_data_plots</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colormaps</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">threeML.plugins.PhotometryLike</span> <span class="k">as</span> <span class="nn">photolike</span>
-<span class="kn">import</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="k">as</span> <span class="nn">speclike</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colormaps</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threeML.plugins.PhotometryLike</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">photolike</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threeML.plugins.SpectrumLike</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">speclike</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">threeML.plugins.FermiLATLike</span> <span class="kn">import</span> <span class="n">FermiLATLike</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.FermiLATLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermiLATLike</span>
 
     <span class="n">FermiLATLike_flag</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">FermiLATLike_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">threeML.plugins.FermipyLike</span> <span class="kn">import</span> <span class="n">FermipyLike</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.FermipyLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermipyLike</span>
 
     <span class="n">FermipyLike_flag</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">FermipyLike_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.config.plotting_structure</span> <span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.cmap_cycle</span> <span class="kn">import</span> <span class="n">cmap_intervals</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.data_residual_plot</span> <span class="kn">import</span> <span class="n">ResidualPlot</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.step_plot</span> <span class="kn">import</span> <span class="n">step_plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.plotting_structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinnedSpectrumPlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.cmap_cycle</span><span class="w"> </span><span class="kn">import</span> <span class="n">cmap_intervals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.data_residual_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResidualPlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.step_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_plot</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
 
@@ -152,7 +151,7 @@
 
 <div class="viewcode-block" id="display_spectrum_model_counts">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.post_process_data_plots.display_spectrum_model_counts">[docs]</a>
-<span class="k">def</span> <span class="nf">display_spectrum_model_counts</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_spectrum_model_counts</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Display the fitted model count spectrum of one or more Spectrum plugins</span>
@@ -598,7 +597,7 @@
 
 <div class="viewcode-block" id="display_photometry_model_magnitudes">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.post_process_data_plots.display_photometry_model_magnitudes">[docs]</a>
-<span class="k">def</span> <span class="nf">display_photometry_model_magnitudes</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_photometry_model_magnitudes</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Display the fitted model count spectrum of one or more Spectrum plugins</span>
@@ -784,7 +783,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

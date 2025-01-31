@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.UnresolvedExtendedXYLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,22 +108,22 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.plugins.UnresolvedExtendedXYLike</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">PointSource</span>
-<span class="kn">from</span> <span class="nn">threeML.classicMLE.goodness_of_fit</span> <span class="kn">import</span> <span class="n">GoodnessOfFit</span>
-<span class="kn">from</span> <span class="nn">threeML.classicMLE.joint_likelihood</span> <span class="kn">import</span> <span class="n">JointLikelihood</span>
-<span class="kn">from</span> <span class="nn">threeML.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
-<span class="kn">from</span> <span class="nn">threeML.plugin_prototype</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
-<span class="kn">from</span> <span class="nn">threeML.plugins.XYLike</span> <span class="kn">import</span> <span class="n">XYLike</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.likelihood_functions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">PointSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.classicMLE.goodness_of_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">GoodnessOfFit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.classicMLE.joint_likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">JointLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugin_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginPrototype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.XYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.likelihood_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">half_chi2</span><span class="p">,</span> <span class="n">poisson_log_likelihood_ideal_bkg</span><span class="p">)</span>
 
 <span class="n">__instrument_name</span> <span class="o">=</span> <span class="s2">&quot;n.a.&quot;</span>
@@ -140,8 +139,8 @@
 
 <div class="viewcode-block" id="UnresolvedExtendedXYLike">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike">[docs]</a>
-<span class="k">class</span> <span class="nc">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="n">XYLike</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnresolvedExtendedXYLike</span><span class="p">(</span><span class="n">XYLike</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
         <span class="n">x</span><span class="p">,</span>
@@ -166,7 +165,7 @@
 
 <div class="viewcode-block" id="UnresolvedExtendedXYLike.assign_to_source">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike.assign_to_source">[docs]</a>
-    <span class="k">def</span> <span class="nf">assign_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign these data to the given source (instead of to the sum of all sources, which is the default)</span>
 
@@ -186,7 +185,7 @@
 
 <div class="viewcode-block" id="UnresolvedExtendedXYLike.set_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike.set_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
 
@@ -210,7 +209,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span> <span class="o">=</span> <span class="n">likelihood_model_instance</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_total_expectation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_total_expectation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -279,7 +278,7 @@
 
 <div class="viewcode-block" id="UnresolvedExtendedXYLike.plot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.UnresolvedExtendedXYLike.UnresolvedExtendedXYLike.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">x_scale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">y_scale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span>
     <span class="p">):</span>
 
@@ -318,7 +317,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

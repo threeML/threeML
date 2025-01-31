@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.time_series.binned_spectrum_series &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,31 +108,31 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.time_series.binned_spectrum_series</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
 
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.light_curve_plots</span> <span class="kn">import</span> <span class="n">binned_light_curve_plot</span>
-<span class="kn">from</span> <span class="nn">threeML.parallel.parallel_client</span> <span class="kn">import</span> <span class="n">ParallelClient</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.binned_spectrum_set</span> <span class="kn">import</span> <span class="n">BinnedSpectrumSet</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.time_interval</span> <span class="kn">import</span> <span class="n">TimeIntervalSet</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.time_series.polynomial</span> <span class="kn">import</span> <span class="n">polyfit</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.time_series.time_series</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.light_curve_plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">binned_light_curve_plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.spectrum.binned_spectrum_set</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinnedSpectrumSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_interval</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeIntervalSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_series.polynomial</span><span class="w"> </span><span class="kn">import</span> <span class="n">polyfit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_series.time_series</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="BinnedSpectrumSeries">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries">[docs]</a>
-<span class="k">class</span> <span class="nc">BinnedSpectrumSeries</span><span class="p">(</span><span class="n">TimeSeries</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinnedSpectrumSeries</span><span class="p">(</span><span class="n">TimeSeries</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">binned_spectrum_set</span><span class="p">,</span>
         <span class="n">first_channel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -173,7 +172,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_set</span> <span class="o">=</span> <span class="n">binned_spectrum_set</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the time bins of the spectrum set</span>
 <span class="sd">        :return: TimeIntervalSet</span>
@@ -182,7 +181,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binned_spectrum_set</span><span class="o">.</span><span class="n">time_intervals</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">binned_spectrum_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">binned_spectrum_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns the spectrum set</span>
 <span class="sd">        :return: binned_spectrum_set</span>
@@ -192,7 +191,7 @@
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.view_lightcurve">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.view_lightcurve">[docs]</a>
-    <span class="k">def</span> <span class="nf">view_lightcurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">view_lightcurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span>
                         <span class="n">stop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>
                         <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -336,7 +335,7 @@
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.counts_over_interval">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.counts_over_interval">[docs]</a>
-    <span class="k">def</span> <span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">counts_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the number of counts in the selected interval</span>
 <span class="sd">        :param start: start of interval</span>
@@ -362,7 +361,7 @@
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.count_per_channel_over_interval">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.count_per_channel_over_interval">[docs]</a>
-    <span class="k">def</span> <span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count_per_channel_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return the number of counts in the selected interval</span>
 <span class="sd">        :param start: start of interval</span>
@@ -385,7 +384,7 @@
         <span class="k">return</span> <span class="n">total_counts</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_select_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_select_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return an index of the selected bins</span>
 <span class="sd">        :param start: start time</span>
@@ -397,7 +396,7 @@
             <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_adjust_to_true_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_intervals</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_adjust_to_true_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_intervals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        adjusts time selections to those of the Binned spectrum set</span>
@@ -445,7 +444,7 @@
 
         <span class="k">return</span> <span class="n">TimeIntervalSet</span><span class="o">.</span><span class="n">from_starts_and_stops</span><span class="p">(</span><span class="n">new_starts</span><span class="p">,</span> <span class="n">new_stops</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_polynomials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bayes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        fits a polynomial to all channels over the input time intervals</span>
 
@@ -519,7 +518,7 @@
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
 
-            <span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
 
                 <span class="k">with</span> <span class="n">silence_console_log</span><span class="p">():</span>
                     <span class="n">polynomial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span>
@@ -563,7 +562,7 @@
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.set_active_time_intervals">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.set_active_time_intervals">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_active_time_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the time interval(s) to be used during the analysis.</span>
 <span class="sd">        Specified as &#39;tmin-tmax&#39;. Intervals are in seconds. Example:</span>
@@ -657,7 +656,7 @@
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.dead_time_over_interval">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.dead_time_over_interval">[docs]</a>
-    <span class="k">def</span> <span class="nf">dead_time_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dead_time_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        computer the dead time over the interval</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -671,7 +670,7 @@
 
 <div class="viewcode-block" id="BinnedSpectrumSeries.exposure_over_interval">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.exposure_over_interval">[docs]</a>
-    <span class="k">def</span> <span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exposure_over_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the exposure over the given interval</span>
 
@@ -694,7 +693,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.classicMLE.joint_likelihood &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,35 +108,35 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.classicMLE.joint_likelihood</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 
-<span class="kn">import</span> <span class="nn">astromodels.core.model</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colormaps</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">scipy.optimize</span>
-<span class="kn">import</span> <span class="nn">scipy.stats</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">clone_model</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astromodels.core.model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colormaps</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.optimize</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">clone_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
 
-<span class="kn">from</span> <span class="nn">threeML.analysis_results</span> <span class="kn">import</span> <span class="n">MLEResults</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions</span> <span class="kn">import</span> <span class="n">custom_exceptions</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">FitFailed</span><span class="p">,</span> <span class="n">custom_warnings</span><span class="p">,</span>\
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.analysis_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLEResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_exceptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">FitFailed</span><span class="p">,</span> <span class="n">custom_warnings</span><span class="p">,</span>\
     <span class="n">NoFitYet</span><span class="p">,</span> <span class="n">MinLargerMax</span><span class="p">,</span> <span class="n">ForbiddenRegionOfParameterSpace</span><span class="p">,</span> <span class="n">MinimizerNotAvailable</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
-<span class="kn">from</span> <span class="nn">threeML.io.results_table</span> <span class="kn">import</span> <span class="n">ResultsTable</span>
-<span class="kn">from</span> <span class="nn">threeML.io.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">threeML.minimizer</span> <span class="kn">import</span> <span class="n">minimization</span>
-<span class="kn">from</span> <span class="nn">threeML.parallel.parallel_client</span> <span class="kn">import</span> <span class="n">ParallelClient</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">aic</span><span class="p">,</span> <span class="n">bic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.results_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimization</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.stats_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">aic</span><span class="p">,</span> <span class="n">bic</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
 
@@ -149,29 +148,29 @@
 
 <div class="viewcode-block" id="ReducingNumberOfThreads">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.ReducingNumberOfThreads">[docs]</a>
-<span class="k">class</span> <span class="nc">ReducingNumberOfThreads</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReducingNumberOfThreads</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="ReducingNumberOfSteps">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.ReducingNumberOfSteps">[docs]</a>
-<span class="k">class</span> <span class="nc">ReducingNumberOfSteps</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReducingNumberOfSteps</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="NotANumberInLikelihood">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.NotANumberInLikelihood">[docs]</a>
-<span class="k">class</span> <span class="nc">NotANumberInLikelihood</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotANumberInLikelihood</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="JointLikelihood">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood">[docs]</a>
-<span class="k">class</span> <span class="nc">JointLikelihood</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JointLikelihood</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
         <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span><span class="p">,</span>
@@ -237,7 +236,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_assign_model_to_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_assign_model_to_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;REGISTERING MODEL&quot;</span><span class="p">)</span>
 
@@ -267,7 +266,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;MODEL REGISTERED!&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">likelihood_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">likelihood_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: likelihood model for this analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -275,7 +274,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataList</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataList</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: data list for this analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -283,21 +282,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">current_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: current minimum of the joint likelihood (available only after the fit() method)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_minimum</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: an instance of the minimizer used in the fit (available only after the fit() method)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: covariance matrix from the last fit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -312,7 +311,7 @@
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: correlation matrix from the last fit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -328,17 +327,17 @@
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">analysis_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analysis_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span>
 
-    <span class="k">def</span> <span class="nf">_update_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the dictionary of free parameters&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span>
 
 <div class="viewcode-block" id="JointLikelihood.fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">compute_covariance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -350,7 +349,8 @@
 <span class="sd">        :param quiet: If True, print the results (default), otherwise do not print anything</span>
 <span class="sd">        :param compute_covariance:If True (default), compute and display the errors and the correlation matrix.</span>
 <span class="sd">        :param n_samples: Number of samples to scan the likelihood.</span>
-<span class="sd">        :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum for each dataset and the total one.</span>
+<span class="sd">        :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum</span>
+<span class="sd">                 for each dataset and the total one.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Update the list of free parameters, to be safe against changes the user might do between</span>
@@ -538,13 +538,13 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MLEResults</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MLEResults</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span>
 
 <div class="viewcode-block" id="JointLikelihood.get_errors">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the errors on the parameters using the profile likelihood method.</span>
 
@@ -586,7 +586,7 @@
 
 <div class="viewcode-block" id="JointLikelihood.get_contours">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.get_contours">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_contours</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_contours</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">param_1</span><span class="p">,</span>
         <span class="n">param_1_minimum</span><span class="p">,</span>
@@ -820,7 +820,7 @@
             <span class="c1"># threads are more or less well mixed for points close and</span>
             <span class="c1"># far from the best fit</span>
 
-            <span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">start_index</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">start_index</span><span class="p">):</span>
 
                 <span class="c1"># Re-create the minimizer</span>
 
@@ -939,7 +939,7 @@
 
 <div class="viewcode-block" id="JointLikelihood.plot_all_contours">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.plot_all_contours">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_all_contours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps_1d</span><span class="p">,</span> <span class="n">nsteps_2d</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">log_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_all_contours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps_1d</span><span class="p">,</span> <span class="n">nsteps_2d</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">log_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="n">figs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1069,7 +1069,7 @@
 
 <div class="viewcode-block" id="JointLikelihood.minus_log_like_profile">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile">[docs]</a>
-    <span class="k">def</span> <span class="nf">minus_log_like_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minus_log_like_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the minus log likelihood for a given set of trial values</span>
 
@@ -1162,12 +1162,12 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">fit_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_record_calls</span><span class="p">)</span>
 
 <div class="viewcode-block" id="JointLikelihood.set_minimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.set_minimizer">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the minimizer to be used, among those available.</span>
 
@@ -1201,7 +1201,7 @@
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set the minimizer to </span><span class="si">{</span><span class="n">minimizer</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="c1"># Get an instance of the minimizer</span>
 
@@ -1217,13 +1217,13 @@
         <span class="k">return</span> <span class="n">minimizer_instance</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">minimizer_in_use</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimizer_in_use</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span>
 
 <div class="viewcode-block" id="JointLikelihood.restore_best_fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Restore the model to its best fit</span>
 
@@ -1240,7 +1240,7 @@
                 <span class="s2">&quot;Cannot restore best fit, since fit has not been executed.&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_table_of_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_table_of_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">max_length_of_name</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1262,7 +1262,7 @@
 
         <span class="k">return</span> <span class="n">table</span>
 
-    <span class="k">def</span> <span class="nf">_plot_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the likelihood profile.</span>
 
@@ -1345,7 +1345,7 @@
 
         <span class="k">return</span> <span class="n">fig</span>
 
-    <span class="k">def</span> <span class="nf">_plot_contours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_contours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">cc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a contour plot.</span>
 
@@ -1430,7 +1430,7 @@
 
 <div class="viewcode-block" id="JointLikelihood.compute_TS">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_TS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">alt_hyp_mlike_df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_TS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">alt_hyp_mlike_df</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the Likelihood Ratio Test statistic (TS) for the provided source</span>
 
@@ -1503,7 +1503,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

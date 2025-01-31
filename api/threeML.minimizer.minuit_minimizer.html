@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.minimizer.minuit_minimizer module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -113,75 +112,53 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.minimizer.minuit_minimizer">
-<span id="threeml-minimizer-minuit-minimizer-module"></span><h1>threeML.minimizer.minuit_minimizer module<a class="headerlink" href="#module-threeML.minimizer.minuit_minimizer" title="Link to this heading"></a>
-</h1>
+<span id="threeml-minimizer-minuit-minimizer-module"></span><h1>threeML.minimizer.minuit_minimizer module<a class="headerlink" href="#module-threeML.minimizer.minuit_minimizer" title="Link to this heading"></a></h1>
 <dl class="py exception">
 <dt class="sig sig-object py" id="threeML.minimizer.minuit_minimizer.MINOSFailed">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minuit_minimizer.</span></span><span class="sig-name descname"><span class="pre">MINOSFailed</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MINOSFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MINOSFailed" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd>
-</dl>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minuit_minimizer.</span></span><span class="sig-name descname"><span class="pre">MINOSFailed</span></span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MINOSFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MINOSFailed" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.minimizer.minuit_minimizer.MinuitMinimizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minuit_minimizer.</span></span><span class="sig-name descname"><span class="pre">MinuitMinimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MinuitMinimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <a class="reference internal" href="../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.LocalMinimizer" title="threeML.minimizer.minimization.LocalMinimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalMinimizer</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minuit_minimizer.</span></span><span class="sig-name descname"><span class="pre">MinuitMinimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MinuitMinimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.LocalMinimizer" title="threeML.minimizer.minimization.LocalMinimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalMinimizer</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.minimizer.minuit_minimizer.MinuitMinimizer.get_errors">
-<span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MinuitMinimizer.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer.get_errors" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Compute asymmetric errors using MINOS (slow, but accurate) and print them.</p>
+<span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MinuitMinimizer.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer.get_errors" title="Link to this definition"></a></dt>
+<dd><p>Compute asymmetric errors using MINOS (slow, but accurate) and print them.</p>
 <p>NOTE: this should be called immediately after the minimize() method</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>a dictionary containing the asymmetric errors for each parameter.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dictionary containing the asymmetric errors for each parameter.</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.minimizer.minuit_minimizer.MinuitMinimizer.restore_best_fit">
-<span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MinuitMinimizer.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer.restore_best_fit" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Set the parameters back to their best fit value</p>
+<span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#MinuitMinimizer.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer.restore_best_fit" title="Link to this definition"></a></dt>
+<dd><p>Set the parameters back to their best fit value</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>none</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>none</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.minimizer.minuit_minimizer.MinuitMinimizer.valid_setup_keys">
-<span class="sig-name descname"><span class="pre">valid_setup_keys</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ftol',)</span></em><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer.valid_setup_keys" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-name descname"><span class="pre">valid_setup_keys</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ftol',)</span></em><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.MinuitMinimizer.valid_setup_keys" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.minimizer.minuit_minimizer.add_method">
-<span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minuit_minimizer.</span></span><span class="sig-name descname"><span class="pre">add_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#add_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.add_method" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">threeML.minimizer.minuit_minimizer.</span></span><span class="sig-name descname"><span class="pre">add_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minuit_minimizer.html#add_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minuit_minimizer.add_method" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
-
 
 
            </div>
@@ -194,7 +171,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

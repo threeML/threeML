@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.histogram module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -113,104 +112,74 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.utils.histogram">
-<span id="threeml-utils-histogram-module"></span><h1>threeML.utils.histogram module<a class="headerlink" href="#module-threeML.utils.histogram" title="Link to this heading"></a>
-</h1>
+<span id="threeml-utils-histogram-module"></span><h1>threeML.utils.histogram module<a class="headerlink" href="#module-threeML.utils.histogram" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.histogram.</span></span><span class="sig-name descname"><span class="pre">Histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSet</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.histogram.</span></span><span class="sig-name descname"><span class="pre">Histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSet</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.INTERVAL_TYPE" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.INTERVAL_TYPE" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.bin_entries">
-<span class="sig-name descname"><span class="pre">bin_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entires</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.bin_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.bin_entries" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>add the entries into the proper bin</p>
+<span class="sig-name descname"><span class="pre">bin_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entires</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.bin_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.bin_entries" title="Link to this definition"></a></dt>
+<dd><p>add the entries into the proper bin</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p><strong>entires</strong> – list of events</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entires</strong> – list of events</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.contents">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contents</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.contents" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contents</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.contents" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.display">
-<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.display" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.display" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.errors">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.errors" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.errors" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.from_entries">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.from_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.from_entries" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>create a histogram from a list of intervals and entries to bin</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.from_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.from_entries" title="Link to this definition"></a></dt>
+<dd><p>create a histogram from a list of intervals and entries to bin</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>list_of_intervals</strong></p></li>
 <li><p><strong>entries</strong></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.from_numpy_histogram">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_numpy_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.from_numpy_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.from_numpy_histogram" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>create a Histogram from a numpy histogram.
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_numpy_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/histogram.html#Histogram.from_numpy_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.from_numpy_histogram" title="Link to this definition"></a></dt>
+<dd><p>create a Histogram from a numpy histogram.
 .. rubric:: Example</p>
 <p>r = np.random.randn(1000)
 np_hist = np.histogram(r)
 hist = Histogram.from_numpy_histogram(np_hist)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>hist</strong> – a np.histogram tuple</p></li>
 <li><p><strong>errors</strong> – list of errors for each bin in the numpy histogram</p></li>
 <li><p><strong>sys_errors</strong> – list of systematic errors for each bin in the numpy histogram</p></li>
@@ -218,48 +187,35 @@ hist = Histogram.from_numpy_histogram(np_hist)</p>
 <li><p><strong>kwargs</strong> – any kwargs to pass along</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>a Histogram object</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a Histogram object</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.is_poisson">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_poisson</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.is_poisson" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_poisson</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.is_poisson" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.sys_errors">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sys_errors</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.sys_errors" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sys_errors</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.sys_errors" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.total">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.total" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.total" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.histogram.Histogram.total_error">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_error</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.total_error" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_error</span></span><a class="headerlink" href="#threeML.utils.histogram.Histogram.total_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 </section>
-
 
 
            </div>
@@ -272,7 +228,7 @@ hist = Histogram.from_numpy_histogram(np_hist)</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

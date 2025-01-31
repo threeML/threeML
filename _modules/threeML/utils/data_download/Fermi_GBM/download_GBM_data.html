@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.data_download.Fermi_GBM.download_GBM_data &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,35 +108,35 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.data_download.Fermi_GBM.download_GBM_data</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_function</span>
 
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">map</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DetDoesNotExist</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DetDoesNotExist</span><span class="p">,</span>
                                                   <span class="n">TriggerDoesNotExist</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.io.dict_with_pretty_print</span> <span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
-<span class="kn">from</span> <span class="nn">threeML.io.download_from_http</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ApacheDirectory</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.dict_with_pretty_print</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.download_from_http</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ApacheDirectory</span><span class="p">,</span>
                                            <span class="n">RemoteDirectoryNotFound</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">file_existing_and_readable</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">file_existing_and_readable</span><span class="p">,</span>
                                    <span class="n">if_directory_not_existing_then_make</span><span class="p">,</span>
                                    <span class="n">sanitize_filename</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 
-<span class="k">def</span> <span class="nf">_validate_fermi_date</span><span class="p">(</span><span class="n">year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">month</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">day</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_fermi_date</span><span class="p">(</span><span class="n">year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">month</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">day</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
     <span class="n">_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">]</span>
 
@@ -163,7 +162,7 @@
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}{</span><span class="n">month</span><span class="si">}{</span><span class="n">day</span><span class="si">}</span><span class="s2">&quot;</span>
     
 
-<span class="k">def</span> <span class="nf">_validate_fermi_trigger_name</span><span class="p">(</span><span class="n">trigger</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_fermi_trigger_name</span><span class="p">(</span><span class="n">trigger</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 
     <span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^(bn|grb?)? ?(\d</span><span class="si">{9}</span><span class="s2">)$&quot;</span><span class="p">)</span>
 
@@ -204,7 +203,7 @@
 
 <div class="viewcode-block" id="download_GBM_trigger_data">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_GBM.html#threeML.utils.data_download.Fermi_GBM.download_GBM_data.download_GBM_trigger_data">[docs]</a>
-<span class="k">def</span> <span class="nf">download_GBM_trigger_data</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_GBM_trigger_data</span><span class="p">(</span>
         <span class="n">trigger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">detectors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">destination_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">compress_tte</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cspec_only</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -397,7 +396,7 @@
 
 <div class="viewcode-block" id="download_GBM_daily_data">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_GBM.html#threeML.utils.data_download.Fermi_GBM.download_GBM_data.download_GBM_daily_data">[docs]</a>
-<span class="k">def</span> <span class="nf">download_GBM_daily_data</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_GBM_daily_data</span><span class="p">(</span>
         <span class="n">year</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">month</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">day</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -572,7 +571,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_latest_version</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_latest_version</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    returns the list with only the highest version numbers selected</span>
 
@@ -644,7 +643,7 @@
 
 <div class="viewcode-block" id="cleanup_downloaded_GBM_data">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_download.Fermi_GBM.html#threeML.utils.data_download.Fermi_GBM.download_GBM_data.cleanup_downloaded_GBM_data">[docs]</a>
-<span class="k">def</span> <span class="nf">cleanup_downloaded_GBM_data</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cleanup_downloaded_GBM_data</span><span class="p">(</span><span class="n">detector_information_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    deletes data downloaded with download_GBM_trigger_data.</span>
 <span class="sd">    :param detector_information_dict: the return dictionary from download_GBM_trigger_data</span>
@@ -669,7 +668,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

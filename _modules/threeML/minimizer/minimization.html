@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.minimizer.minimization &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,22 +108,22 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.minimizer.minimization</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">zip</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">scipy.optimize</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.optimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
 
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.differentiation</span> <span class="kn">import</span> <span class="n">ParameterOnBoundary</span><span class="p">,</span> <span class="n">get_hessian</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.differentiation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterOnBoundary</span><span class="p">,</span> <span class="n">get_hessian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="c1"># Set the warnings to be issued always for this module</span>
 
@@ -141,42 +140,42 @@
 
 <div class="viewcode-block" id="CannotComputeCovariance">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.CannotComputeCovariance">[docs]</a>
-<span class="k">class</span> <span class="nc">CannotComputeCovariance</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CannotComputeCovariance</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="CannotComputeErrors">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.CannotComputeErrors">[docs]</a>
-<span class="k">class</span> <span class="nc">CannotComputeErrors</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CannotComputeErrors</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="ParameterIsNotFree">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.ParameterIsNotFree">[docs]</a>
-<span class="k">class</span> <span class="nc">ParameterIsNotFree</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParameterIsNotFree</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="FitFailed">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.FitFailed">[docs]</a>
-<span class="k">class</span> <span class="nc">FitFailed</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FitFailed</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MinimizerNotAvailable">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.MinimizerNotAvailable">[docs]</a>
-<span class="k">class</span> <span class="nc">MinimizerNotAvailable</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MinimizerNotAvailable</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="BetterMinimumDuringProfiling">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.BetterMinimumDuringProfiling">[docs]</a>
-<span class="k">class</span> <span class="nc">BetterMinimumDuringProfiling</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BetterMinimumDuringProfiling</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -188,7 +187,7 @@
 
 <div class="viewcode-block" id="get_minimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.get_minimizer">[docs]</a>
-<span class="k">def</span> <span class="nf">get_minimizer</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_minimizer</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the requested minimizer *class* (not instance)</span>
 
@@ -211,8 +210,8 @@
 
 <div class="viewcode-block" id="FunctionWrapper">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.FunctionWrapper">[docs]</a>
-<span class="k">class</span> <span class="nc">FunctionWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">all_parameters</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">all_parameters</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param function:</span>
@@ -239,7 +238,7 @@
 
 <div class="viewcode-block" id="FunctionWrapper.set_fixed_values">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.FunctionWrapper.set_fixed_values">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_fixed_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_fixed_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_fixed_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_fixed_values</span><span class="p">):</span>
 
         <span class="c1"># Note that this will receive the fixed values in internal reference (after the transformations, if any)</span>
 
@@ -248,7 +247,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fixed_parameters_values</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">new_fixed_values</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
 
         <span class="c1"># Note that this function will receive the trial values in internal reference (after the transformations,</span>
         <span class="c1"># if any)</span>
@@ -262,8 +261,8 @@
 
 <div class="viewcode-block" id="ProfileLikelihood">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.ProfileLikelihood">[docs]</a>
-<span class="k">class</span> <span class="nc">ProfileLikelihood</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_instance</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProfileLikelihood</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_instance</span><span class="p">,</span> <span class="n">fixed_parameters</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fixed_parameters</span> <span class="o">=</span> <span class="n">fixed_parameters</span>
 
@@ -319,7 +318,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_wrapper</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_transform_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If the parameter has a transformation, use it for the steps and return the transformed steps</span>
 
@@ -342,7 +341,7 @@
 
 <div class="viewcode-block" id="ProfileLikelihood.step">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.ProfileLikelihood.step">[docs]</a>
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">,</span> <span class="n">steps2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">,</span> <span class="n">steps2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">steps2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -396,7 +395,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step1d</span><span class="p">(</span><span class="n">steps1</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_wrapper</span><span class="o">.</span><span class="n">set_fixed_values</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
@@ -404,7 +403,7 @@
 
         <span class="k">return</span> <span class="n">this_log_like</span>
 
-    <span class="k">def</span> <span class="nf">_step1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_step1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">):</span>
 
         <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">steps1</span><span class="p">)</span>
 
@@ -429,7 +428,7 @@
 
         <span class="k">return</span> <span class="n">log_likes</span>
 
-    <span class="k">def</span> <span class="nf">_step2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">,</span> <span class="n">steps2</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_step2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps1</span><span class="p">,</span> <span class="n">steps2</span><span class="p">):</span>
 
         <span class="n">log_likes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">steps1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps2</span><span class="p">)))</span>
 
@@ -480,8 +479,8 @@
 <span class="c1"># They are actually factories</span>
 
 
-<span class="k">class</span> <span class="nc">_Minimization</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Minimization</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">minimizer_type</span>
 
@@ -490,7 +489,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_algorithm</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">setup_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">setup_dict</span><span class="p">):</span>
 
         <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="o">.</span><span class="n">valid_setup_keys</span>
 
@@ -504,10 +503,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_dict</span> <span class="o">=</span> <span class="n">setup_dict</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
-    <span class="k">def</span> <span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">):</span>
 
         <span class="c1"># Note that algorithm might be None</span>
 
@@ -516,8 +515,8 @@
 
 <div class="viewcode-block" id="LocalMinimization">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.LocalMinimization">[docs]</a>
-<span class="k">class</span> <span class="nc">LocalMinimization</span><span class="p">(</span><span class="n">_Minimization</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_type</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalMinimization</span><span class="p">(</span><span class="n">_Minimization</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_type</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">LocalMinimization</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">)</span>
 
@@ -527,7 +526,7 @@
 
 <div class="viewcode-block" id="LocalMinimization.get_instance">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.LocalMinimization.get_instance">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -545,8 +544,8 @@
 
 <div class="viewcode-block" id="GlobalMinimization">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimization">[docs]</a>
-<span class="k">class</span> <span class="nc">GlobalMinimization</span><span class="p">(</span><span class="n">_Minimization</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_type</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GlobalMinimization</span><span class="p">(</span><span class="n">_Minimization</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer_type</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">GlobalMinimization</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">minimizer_type</span><span class="p">)</span>
 
@@ -558,7 +557,7 @@
 
 <div class="viewcode-block" id="GlobalMinimization.setup">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimization.setup">[docs]</a>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">setup_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">setup_dict</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="s2">&quot;second_minimization&quot;</span> <span class="ow">in</span> <span class="n">setup_dict</span><span class="p">,</span> <span class="p">(</span>
             <span class="s2">&quot;You have to provide a secondary minimizer during setup, &quot;</span>
@@ -572,14 +571,14 @@
 
 <div class="viewcode-block" id="GlobalMinimization.get_second_minimization_instance">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimization.get_second_minimization_instance">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_second_minimization_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_second_minimization_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_2nd_minimization</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GlobalMinimization.get_instance">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimization.get_instance">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -597,8 +596,8 @@
 
 <div class="viewcode-block" id="Minimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer">[docs]</a>
-<span class="k">class</span> <span class="nc">Minimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Minimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param function: function to be minimized</span>
@@ -626,7 +625,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_internal_parameter_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_internal_parameter_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dictionary parameter_name -&gt; (current value, delta, minimum, maximum) in the internal frame</span>
 <span class="sd">        (if the parameter has a transformation set).</span>
@@ -753,37 +752,37 @@
         <span class="k">return</span> <span class="n">internal_parameter_dictionary</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_external_parameters</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">Npar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Npar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Npar</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">verbosity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verbosity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbosity</span>
 
-    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setup_dict</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to implement this.&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">algorithm_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">algorithm_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_algorithm_name</span>
 
 <div class="viewcode-block" id="Minimizer.minimize">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.minimize">[docs]</a>
-    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_covar</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_covar</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Minimize objective function. This call _minimize, which is implemented by each subclass.</span>
 
@@ -841,7 +840,7 @@
         <span class="k">return</span> <span class="n">external_best_fit_values</span><span class="p">,</span> <span class="n">function_minimum</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># This should return the list of best fit parameters and the minimum of the function</span>
 
@@ -851,14 +850,14 @@
 
 <div class="viewcode-block" id="Minimizer.set_algorithm">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.set_algorithm">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
             <span class="s2">&quot;Must be implemented by the actual minimizer if it provides more than one algorithm&quot;</span>
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_store_fit_results</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_store_fit_results</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_values</span><span class="p">,</span> <span class="n">m_log_like_minimum</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 
@@ -940,23 +939,23 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">_correlation_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">fit_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covariance_matrix</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correlation_matrix</span>
 
 <div class="viewcode-block" id="Minimizer.restore_best_fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.restore_best_fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset all the parameters to their best fit value (from the last run fit)</span>
 
@@ -977,7 +976,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_internal_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_internal_parameter_dictionary</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_compute_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_values</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function compute the approximate covariance matrix as the inverse of the Hessian matrix,</span>
 <span class="sd">        which is the matrix of second derivatives of the likelihood function with respect to</span>
@@ -1071,7 +1070,7 @@
 
         <span class="k">return</span> <span class="n">covariance_matrix</span>
 
-    <span class="k">def</span> <span class="nf">_get_one_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">target_delta_log_like</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_one_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">target_delta_log_like</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A generic procedure to numerically compute the error for the parameters. You can override this if the</span>
 <span class="sd">        minimizer provides its own method to compute the error of one parameter. If it provides a method to compute</span>
@@ -1261,7 +1260,7 @@
 
 <div class="viewcode-block" id="Minimizer.get_errors">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.get_errors">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute asymmetric errors using the profile likelihood method (slow, but accurate).</span>
 
@@ -1307,7 +1306,7 @@
         <span class="k">return</span> <span class="n">errors_dict</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this method if the minimizer provide a function to get all errors at once. If instead it provides</span>
 <span class="sd">        a method to get one error at the time, override the _get_one_error method</span>
@@ -1343,7 +1342,7 @@
 
 <div class="viewcode-block" id="Minimizer.contours">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.Minimizer.contours">[docs]</a>
-    <span class="k">def</span> <span class="nf">contours</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contours</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">param_1</span><span class="p">,</span>
         <span class="n">param_1_minimum</span><span class="p">,</span>
@@ -1357,31 +1356,33 @@
         <span class="o">**</span><span class="n">options</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate confidence contours for the given parameters by stepping for the given number of steps between</span>
-<span class="sd">        the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to</span>
-<span class="sd">        generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d</span>
-<span class="sd">        contour of param_1 vs param_2</span>
+<span class="sd">            Generate confidence contours for the given parameters by stepping for the given number of steps between</span>
+<span class="sd">            the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to</span>
+<span class="sd">            generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d</span>
+<span class="sd">            contour of param_1 vs param_2</span>
 
-<span class="sd">        :param param_1: name of the first parameter</span>
-<span class="sd">        :param param_1_minimum: lower bound for the range for the first parameter</span>
-<span class="sd">        :param param_1_maximum: upper bound for the range for the first parameter</span>
-<span class="sd">        :param param_1_n_steps: number of steps for the first parameter</span>
-<span class="sd">        :param param_2: name of the second parameter</span>
-<span class="sd">        :param param_2_minimum: lower bound for the range for the second parameter</span>
-<span class="sd">        :param param_2_maximum: upper bound for the range for the second parameter</span>
-<span class="sd">        :param param_2_n_steps: number of steps for the second parameter</span>
-<span class="sd">        :param progress: (True or False) whether to display progress or not</span>
-<span class="sd">        :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of</span>
-<span class="sd">        booleans which specify whether the steps are to be taken logarithmically. For example,</span>
-<span class="sd">        &#39;log=(True,False)&#39; specify that the steps for the first parameter are to be taken logarithmically, while they</span>
-<span class="sd">        are linear for the second parameter. If you are generating the profile for only one parameter, you can specify</span>
-<span class="sd">        &#39;log=(True,)&#39; or &#39;log=(False,)&#39; (optional)</span>
-<span class="sd">        :param: parallel: whether to use or not parallel computation (default:False)</span>
-<span class="sd">        :return:    </span>
-<span class="sd">           a : an array corresponding to the steps for the first parameter</span>
-<span class="sd">           b : an array corresponding to the steps for the second parameter (or None if stepping only in one direction) </span>
-<span class="sd">           contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to an array of size param_1_steps.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            :param param_1: name of the first parameter</span>
+<span class="sd">            :param param_1_minimum: lower bound for the range for the first parameter</span>
+<span class="sd">            :param param_1_maximum: upper bound for the range for the first parameter</span>
+<span class="sd">            :param param_1_n_steps: number of steps for the first parameter</span>
+<span class="sd">            :param param_2: name of the second parameter</span>
+<span class="sd">            :param param_2_minimum: lower bound for the range for the second parameter</span>
+<span class="sd">            :param param_2_maximum: upper bound for the range for the second parameter</span>
+<span class="sd">            :param param_2_n_steps: number of steps for the second parameter</span>
+<span class="sd">            :param progress: (True or False) whether to display progress or not</span>
+<span class="sd">            :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of</span>
+<span class="sd">            booleans which specify whether the steps are to be taken logarithmically. For example,</span>
+<span class="sd">            &#39;log=(True,False)&#39; specify that the steps for the first parameter are to be taken logarithmically, while they</span>
+<span class="sd">            are linear for the second parameter. If you are generating the profile for only one parameter, you can specify</span>
+<span class="sd">             &#39;log=(True,)&#39; or &#39;log=(False,)&#39; (optional)</span>
+<span class="sd">            :param: parallel: whether to use or not parallel computation (default:False)</span>
+<span class="sd">            :return: a : an array corresponding to the steps for the first parameter</span>
+<span class="sd">                     b : an array corresponding to the steps for the second parameter (or None if stepping only in one</span>
+<span class="sd">                     direction)</span>
+<span class="sd">                     contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the</span>
+<span class="sd">                     corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to</span>
+<span class="sd">                     an array of size param_1_steps.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
 
         <span class="c1"># Figure out if we are making a 1d or a 2d contour</span>
 
@@ -1492,7 +1493,7 @@
 
 <div class="viewcode-block" id="LocalMinimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.LocalMinimizer">[docs]</a>
-<span class="k">class</span> <span class="nc">LocalMinimizer</span><span class="p">(</span><span class="n">Minimizer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalMinimizer</span><span class="p">(</span><span class="n">Minimizer</span><span class="p">):</span>
 
     <span class="k">pass</span></div>
 
@@ -1500,7 +1501,7 @@
 
 <div class="viewcode-block" id="GlobalMinimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minimization.GlobalMinimizer">[docs]</a>
-<span class="k">class</span> <span class="nc">GlobalMinimizer</span><span class="p">(</span><span class="n">Minimizer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GlobalMinimizer</span><span class="p">(</span><span class="n">Minimizer</span><span class="p">):</span>
 
     <span class="k">pass</span></div>
 
@@ -1510,7 +1511,7 @@
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="kn">from</span> <span class="nn">threeML.minimizer.minuit_minimizer</span> <span class="kn">import</span> <span class="n">MinuitMinimizer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minuit_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinuitMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -1522,7 +1523,7 @@
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="kn">from</span> <span class="nn">threeML.minimizer.ROOT_minimizer</span> <span class="kn">import</span> <span class="n">ROOTMinimizer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.ROOT_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROOTMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -1534,7 +1535,7 @@
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="kn">from</span> <span class="nn">threeML.minimizer.multinest_minimizer</span> <span class="kn">import</span> <span class="n">MultinestMinimizer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.multinest_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultinestMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -1546,7 +1547,7 @@
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="kn">from</span> <span class="nn">threeML.minimizer.pagmo_minimizer</span> <span class="kn">import</span> <span class="n">PAGMOMinimizer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.pagmo_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PAGMOMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -1558,7 +1559,7 @@
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="kn">from</span> <span class="nn">threeML.minimizer.scipy_minimizer</span> <span class="kn">import</span> <span class="n">ScipyMinimizer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.scipy_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScipyMinimizer</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -1580,7 +1581,7 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="c1"># Add the GRID minimizer here since it needs at least one other minimizer</span>
 
-    <span class="kn">from</span> <span class="nn">threeML.minimizer.grid_minimizer</span> <span class="kn">import</span> <span class="n">GridMinimizer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.grid_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridMinimizer</span>
 
     <span class="n">_minimizers</span><span class="p">[</span><span class="s2">&quot;GRID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GridMinimizer</span>
 </pre></div>
@@ -1592,7 +1593,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

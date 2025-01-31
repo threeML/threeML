@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.config.plugin_structure &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,9 +108,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.config.plugin_structure</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="kn">from</span> <span class="nn">.plotting_structure</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.plotting_structure</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BinnedSpectrumPlot</span><span class="p">,</span>
     <span class="n">DataHistPlot</span><span class="p">,</span>
     <span class="n">FermiSpectrumPlot</span><span class="p">,</span>
@@ -122,7 +121,7 @@
 <div class="viewcode-block" id="OGIP">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plugin_structure.OGIP">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">OGIP</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OGIP</span><span class="p">:</span>
     <span class="n">fit_plot</span><span class="p">:</span> <span class="n">BinnedSpectrumPlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">BinnedSpectrumPlot</span><span class="p">())</span>
     <span class="n">data_plot</span><span class="p">:</span> <span class="n">DataHistPlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">DataHistPlot</span><span class="p">())</span>
     <span class="n">response_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">viridis</span>
@@ -133,7 +132,7 @@
 <div class="viewcode-block" id="Fermipy">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plugin_structure.Fermipy">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Fermipy</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Fermipy</span><span class="p">:</span>
     <span class="n">fit_plot</span><span class="p">:</span> <span class="n">FermiSpectrumPlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">FermiSpectrumPlot</span><span class="p">())</span></div>
 
 <span class="c1">#    data_plot: DataHistPlot = DataHistPlot()</span>
@@ -142,7 +141,7 @@
 <div class="viewcode-block" id="Photo">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plugin_structure.Photo">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Photo</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Photo</span><span class="p">:</span>
     <span class="n">fit_plot</span><span class="p">:</span> <span class="n">BinnedSpectrumPlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">BinnedSpectrumPlot</span><span class="p">())</span></div>
 
 
@@ -150,7 +149,7 @@
 <div class="viewcode-block" id="Plugins">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plugin_structure.Plugins">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Plugins</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Plugins</span><span class="p">:</span>
     <span class="n">ogip</span><span class="p">:</span> <span class="n">OGIP</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">OGIP</span><span class="p">())</span>
     <span class="n">photo</span><span class="p">:</span> <span class="n">Photo</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Photo</span><span class="p">())</span>
     <span class="n">fermipy</span><span class="p">:</span> <span class="n">Fermipy</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Fermipy</span><span class="p">())</span></div>
@@ -159,7 +158,7 @@
 <div class="viewcode-block" id="TimeSeriesFit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plugin_structure.TimeSeriesFit">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TimeSeriesFit</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimeSeriesFit</span><span class="p">:</span>
     <span class="n">fit_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">unbinned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">bayes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
@@ -169,7 +168,7 @@
 <div class="viewcode-block" id="TimeSeries">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plugin_structure.TimeSeries">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TimeSeries</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimeSeries</span><span class="p">:</span>
     <span class="n">light_curve_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#05716c&quot;</span>
     <span class="n">selection_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#1fbfb8&quot;</span>
     <span class="n">background_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#C0392B&quot;</span>
@@ -185,7 +184,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.time_series.polynomial &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
@@ -110,27 +109,27 @@
              
   <h1>Source code for threeML.utils.time_series.polynomial</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">Cubic</span><span class="p">,</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Log_normal</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">Cubic</span><span class="p">,</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">Log_normal</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span>
                          <span class="n">PointSource</span><span class="p">,</span> <span class="n">Quadratic</span><span class="p">,</span> <span class="n">Quartic</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">threeML.bayesian.bayesian_analysis</span> <span class="kn">import</span> <span class="n">BayesianAnalysis</span>
-<span class="kn">from</span> <span class="nn">threeML.classicMLE.joint_likelihood</span> <span class="kn">import</span> <span class="n">JointLikelihood</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config_utils</span> <span class="kn">import</span> <span class="n">get_value</span>
-<span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">BadCovariance</span><span class="c1">#, FitFailed</span>
-<span class="kn">from</span> <span class="nn">threeML.minimizer.minimization</span> <span class="kn">import</span> <span class="n">FitFailed</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
-<span class="kn">from</span> <span class="nn">threeML.minimizer.grid_minimizer</span> <span class="kn">import</span> <span class="n">AllFitFailed</span>
-<span class="kn">from</span> <span class="nn">threeML.minimizer.minimization</span> <span class="kn">import</span> <span class="p">(</span><span class="n">CannotComputeCovariance</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.bayesian_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianAnalysis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.classicMLE.joint_likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">JointLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadCovariance</span><span class="c1">#, FitFailed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">FitFailed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span><span class="p">,</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.grid_minimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllFitFailed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minimization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CannotComputeCovariance</span><span class="p">,</span>
                                             <span class="n">GlobalMinimization</span><span class="p">,</span>
                                             <span class="n">LocalMinimization</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.plugins.UnbinnedPoissonLike</span> <span class="kn">import</span> <span class="p">(</span><span class="n">EventObservation</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.UnbinnedPoissonLike</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">EventObservation</span><span class="p">,</span>
                                                  <span class="n">UnbinnedPoissonLike</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.plugins.XYLike</span> <span class="kn">import</span> <span class="n">XYLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.XYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYLike</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -140,8 +139,8 @@
 
 <div class="viewcode-block" id="Polynomial">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial">[docs]</a>
-<span class="k">class</span> <span class="nc">Polynomial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">is_integral</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Polynomial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">is_integral</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A polynomial</span>
 
@@ -182,7 +181,7 @@
 <div class="viewcode-block" id="Polynomial.from_previous_fit">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.from_previous_fit">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_previous_fit</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">covariance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Polynomial&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_previous_fit</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">covariance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Polynomial&quot;</span><span class="p">:</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;restoring polynomial from previous fit&quot;</span><span class="p">)</span>
 
@@ -193,7 +192,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the polynomial degree</span>
 <span class="sd">        :return:</span>
@@ -201,24 +200,24 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_degree</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the error on the polynomial coefficients</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">__get_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; gets the coefficients&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">___get_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">___get_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect coefficient getter &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_coefficient</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__set_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; sets the coefficients&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span> <span class="o">=</span> <span class="n">val</span>
@@ -235,7 +234,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_integral_polynomial</span> <span class="o">=</span> <span class="n">Polynomial</span><span class="p">(</span>
             <span class="n">integral_coeff</span><span class="p">,</span> <span class="n">is_integral</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">___set_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">___set_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Indirect coefficient setter &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_coefficient</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
@@ -246,10 +245,10 @@
         <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Gets or sets the coefficients of the polynomial.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">coefficient</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
@@ -258,18 +257,18 @@
 
 <div class="viewcode-block" id="Polynomial.set_covariace_matrix">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.set_covariace_matrix">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_covariace_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_covariace_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span> <span class="o">=</span> <span class="n">matrix</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span>
 
 <div class="viewcode-block" id="Polynomial.integral">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral">[docs]</a>
-    <span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the integral of the polynomial between xmin and xmax</span>
 
@@ -278,13 +277,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_polynomial</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_polynomial</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_eval_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_eval_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i_plus_1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i_plus_1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Polynomial.integral_error">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral_error">[docs]</a>
-    <span class="k">def</span> <span class="nf">integral_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integral_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        computes the integral error of an interval</span>
 <span class="sd">        :param xmin: start of the interval</span>
@@ -302,7 +301,7 @@
 
 <div class="viewcode-block" id="polyfit">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.polyfit">[docs]</a>
-<span class="k">def</span> <span class="nf">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">exposure</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
             <span class="n">bayes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Polynomial</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
@@ -491,7 +490,7 @@
 
 <div class="viewcode-block" id="unbinned_polyfit">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.unbinned_polyfit">[docs]</a>
-<span class="k">def</span> <span class="nf">unbinned_polyfit</span><span class="p">(</span><span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unbinned_polyfit</span><span class="p">(</span><span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">t_start</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">t_stop</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
                      <span class="n">exposure</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">bayes</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Polynomial</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -664,7 +663,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

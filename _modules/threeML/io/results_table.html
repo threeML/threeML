@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.results_table &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,18 +108,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.io.results_table</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">threeML.io.table</span> <span class="kn">import</span> <span class="n">long_path_formatter</span>
-<span class="kn">from</span> <span class="nn">threeML.io.rich_display</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">from</span> <span class="nn">threeML.io.uncertainty_formatter</span> <span class="kn">import</span> <span class="n">uncertainty_formatter</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">long_path_formatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.rich_display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.uncertainty_formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">uncertainty_formatter</span>
 
 
 <div class="viewcode-block" id="ResultsTable">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.results_table.ResultsTable">[docs]</a>
-<span class="k">class</span> <span class="nc">ResultsTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResultsTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">parameter_paths</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">negative_errors</span><span class="p">,</span> <span class="n">positive_errors</span><span class="p">,</span> <span class="n">units</span>
     <span class="p">):</span>
 
@@ -164,14 +163,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_frame</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units_s</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_frame</span>
 
 <div class="viewcode-block" id="ResultsTable.display">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.results_table.ResultsTable.display">[docs]</a>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_formatter</span><span class="o">=</span><span class="n">long_path_formatter</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">row_formatter</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_formatter</span><span class="o">=</span><span class="n">long_path_formatter</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">row_formatter</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
 
             <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
             <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;negative_error&quot;</span><span class="p">]</span>
@@ -207,7 +206,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

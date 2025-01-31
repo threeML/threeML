@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.bayesian_blocks &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -112,14 +111,14 @@
 <span></span><span class="c1"># Author: Giacomo Vianello (giacomov@stanford.edu)</span>
 
 
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">import</span> <span class="nn">numexpr</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -128,7 +127,7 @@
 
 <div class="viewcode-block" id="bayesian_blocks_not_unique">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.bayesian_blocks.bayesian_blocks_not_unique">[docs]</a>
-<span class="k">def</span> <span class="nf">bayesian_blocks_not_unique</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bayesian_blocks_not_unique</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">):</span>
     <span class="c1"># Verify that the input array is one-dimensional</span>
     <span class="n">tt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
@@ -260,7 +259,7 @@
 
 <div class="viewcode-block" id="bayesian_blocks">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.bayesian_blocks.bayesian_blocks">[docs]</a>
-<span class="k">def</span> <span class="nf">bayesian_blocks</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bayesian_blocks</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">ttstart</span><span class="p">,</span> <span class="n">ttstop</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Divide a series of events characterized by their arrival time in blocks</span>
 <span class="sd">    of perceptibly constant count rate. If the background integral distribution</span>
@@ -463,7 +462,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

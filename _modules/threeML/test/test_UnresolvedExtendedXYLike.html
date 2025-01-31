@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.test.test_UnresolvedExtendedXYLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,15 +108,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.test.test_UnresolvedExtendedXYLike</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">threeML.plugins.UnresolvedExtendedXYLike</span> <span class="kn">import</span> <span class="n">UnresolvedExtendedXYLike</span>
-<span class="kn">from</span> <span class="nn">astromodels.functions.functions_2D</span> <span class="kn">import</span> <span class="n">Gaussian_on_sphere</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.UnresolvedExtendedXYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnresolvedExtendedXYLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.functions.functions_2D</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gaussian_on_sphere</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <div class="viewcode-block" id="get_signal">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.get_signal">[docs]</a>
-<span class="k">def</span> <span class="nf">get_signal</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_signal</span><span class="p">():</span>
     <span class="c1"># Generate a test signal</span>
     <span class="n">generator</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span> <span class="o">+</span> <span class="n">Gaussian</span><span class="p">()</span>
 
@@ -299,7 +298,7 @@
 
 <div class="viewcode-block" id="test_UnresolvedExtendedXYLike_chi2">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_chi2">[docs]</a>
-<span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_chi2</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_UnresolvedExtendedXYLike_chi2</span><span class="p">():</span>
 
     <span class="c1"># Get fake data with Gaussian noise</span>
 
@@ -340,7 +339,7 @@
 
 <div class="viewcode-block" id="test_UnresolvedExtendedXYLike_poisson">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_poisson">[docs]</a>
-<span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_poisson</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_UnresolvedExtendedXYLike_poisson</span><span class="p">():</span>
 
     <span class="c1"># Now Poisson case</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">poiss_sig</span><span class="p">)</span>
@@ -370,7 +369,7 @@
 
 <div class="viewcode-block" id="test_UnresolvedExtendedXYLike_assign_to_source">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_assign_to_source">[docs]</a>
-<span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_assign_to_source</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_UnresolvedExtendedXYLike_assign_to_source</span><span class="p">():</span>
 
     <span class="c1"># Get fake data with Gaussian noise</span>
 
@@ -449,7 +448,7 @@
 
 <div class="viewcode-block" id="test_UnresolvedExtendedXYLike_dataframe">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_dataframe">[docs]</a>
-<span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_dataframe</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_UnresolvedExtendedXYLike_dataframe</span><span class="p">():</span>
 
     <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
@@ -482,7 +481,7 @@
 
 <div class="viewcode-block" id="test_UnresolvedExtendedXYLike_txt">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedXYLike_txt">[docs]</a>
-<span class="k">def</span> <span class="nf">test_UnresolvedExtendedXYLike_txt</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_UnresolvedExtendedXYLike_txt</span><span class="p">():</span>
 
     <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_signal</span><span class="p">)</span>
@@ -523,7 +522,7 @@
 
 <div class="viewcode-block" id="test_UnresolvedExtendedxy_plot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.test.html#threeML.test.test_UnresolvedExtendedXYLike.test_UnresolvedExtendedxy_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">test_UnresolvedExtendedxy_plot</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_UnresolvedExtendedxy_plot</span><span class="p">():</span>
     <span class="c1"># Get fake data with Gaussian noise</span>
 
     <span class="n">yerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gauss_sigma</span><span class="p">)</span>
@@ -552,7 +551,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

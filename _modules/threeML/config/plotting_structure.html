@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.config.plotting_structure &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,11 +108,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.config.plotting_structure</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># type checking matplotlib colormaps</span>
 <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s2">&quot;MPLCmap&quot;</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">(),</span> <span class="n">plt</span><span class="o">.</span><span class="n">colormaps</span><span class="p">()))</span>
@@ -122,7 +121,7 @@
 <div class="viewcode-block" id="BinnedSpectrumPlot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.BinnedSpectrumPlot">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BinnedSpectrumPlot</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinnedSpectrumPlot</span><span class="p">:</span>
     <span class="n">data_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
     <span class="n">model_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
     <span class="n">background_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
@@ -143,7 +142,7 @@
 <div class="viewcode-block" id="FermiSpectrumPlot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.FermiSpectrumPlot">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">FermiSpectrumPlot</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FermiSpectrumPlot</span><span class="p">:</span>
     <span class="n">total_model_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
     <span class="n">show_background_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">shade_fixed_sources</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -168,7 +167,7 @@
 <div class="viewcode-block" id="DataHistPlot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.DataHistPlot">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">DataHistPlot</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataHistPlot</span><span class="p">:</span>
     <span class="n">counts_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#500472&quot;</span>
     <span class="n">background_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#79cbb8&quot;</span>
     <span class="n">warn_channels_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#C79BFE&quot;</span>
@@ -180,7 +179,7 @@
 <div class="viewcode-block" id="PlotStyle">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.PlotStyle">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PlotStyle</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlotStyle</span><span class="p">:</span>
     <span class="n">linestyle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
     <span class="n">linewidth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span><span class="o">=</span> <span class="mf">1.7</span></div>
 
@@ -188,7 +187,7 @@
 <div class="viewcode-block" id="ContourStyle">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.ContourStyle">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ContourStyle</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContourStyle</span><span class="p">:</span>
     <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span></div>
 
 
@@ -196,7 +195,7 @@
 <div class="viewcode-block" id="CornerStyle">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.CornerStyle">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">CornerStyle</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CornerStyle</span><span class="p">:</span>
     <span class="n">show_titles</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">smooth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span>
     <span class="n">title_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.2g&quot;</span>
@@ -223,7 +222,7 @@
 <div class="viewcode-block" id="LegendStyle">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.LegendStyle">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">LegendStyle</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LegendStyle</span><span class="p">:</span>
     <span class="n">loc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
     <span class="n">fancybox</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">shadow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
@@ -233,7 +232,7 @@
 <div class="viewcode-block" id="PointSourcePlot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.PointSourcePlot">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PointSourcePlot</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointSourcePlot</span><span class="p">:</span>
     <span class="n">fit_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
     <span class="n">contour_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
     <span class="n">bayes_cmap</span><span class="p">:</span> <span class="n">MPLCmap</span> <span class="o">=</span> <span class="n">MPLCmap</span><span class="o">.</span><span class="n">Set1</span>
@@ -252,7 +251,7 @@
 <div class="viewcode-block" id="ResidualPlot">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.ResidualPlot">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ResidualPlot</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResidualPlot</span><span class="p">:</span>
     <span class="n">linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span>
@@ -263,7 +262,7 @@
 <div class="viewcode-block" id="GenericPlotting">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.GenericPlotting">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">GenericPlotting</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericPlotting</span><span class="p">:</span>
     <span class="n">use_threeml_style</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">mplstyle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;threeml.mplstyle&quot;</span>
     <span class="n">residual_plot</span><span class="p">:</span> <span class="n">ResidualPlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ResidualPlot</span><span class="p">())</span></div>
@@ -273,7 +272,7 @@
 <div class="viewcode-block" id="ModelPlotting">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.plotting_structure.ModelPlotting">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ModelPlotting</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelPlotting</span><span class="p">:</span>
 
     <span class="n">point_source_plot</span><span class="p">:</span> <span class="n">PointSourcePlot</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">PointSourcePlot</span><span class="p">())</span></div>
 
@@ -286,7 +285,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

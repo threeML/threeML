@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.polarization.binned_polarization &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,21 +108,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.polarization.binned_polarization</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># from threeML.utils.OGIP.response import InstrumentResponse</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.binned_spectrum</span> <span class="kn">import</span> <span class="n">BinnedSpectrum</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.histogram</span> <span class="kn">import</span> <span class="n">Histogram</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.interval</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">IntervalSet</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">sqrt_sum_of_squares</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.spectrum.binned_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinnedSpectrum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.histogram</span><span class="w"> </span><span class="kn">import</span> <span class="n">Histogram</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.interval</span><span class="w"> </span><span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">IntervalSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.stats_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">sqrt_sum_of_squares</span>
 
 
 <div class="viewcode-block" id="ScatteringChannel">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.ScatteringChannel">[docs]</a>
-<span class="k">class</span> <span class="nc">ScatteringChannel</span><span class="p">(</span><span class="n">Interval</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScatteringChannel</span><span class="p">(</span><span class="n">Interval</span><span class="p">):</span>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channel_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channel_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_width</span><span class="p">()</span></div>
 
@@ -131,14 +130,14 @@
 
 <div class="viewcode-block" id="ScatteringChannelSet">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.ScatteringChannelSet">[docs]</a>
-<span class="k">class</span> <span class="nc">ScatteringChannelSet</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScatteringChannelSet</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
 
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">ScatteringChannel</span>
 
 <div class="viewcode-block" id="ScatteringChannelSet.from_instrument_response">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.ScatteringChannelSet.from_instrument_response">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_instrument_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instrument_response</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_instrument_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instrument_response</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build EBOUNDS interval from an instrument response</span>
 
@@ -154,7 +153,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channels_widths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channels_widths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">channel</span><span class="o">.</span><span class="n">channel_width</span> <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intervals</span><span class="p">])</span></div>
 
@@ -162,11 +161,11 @@
 
 <div class="viewcode-block" id="BinnedModulationCurve">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.BinnedModulationCurve">[docs]</a>
-<span class="k">class</span> <span class="nc">BinnedModulationCurve</span><span class="p">(</span><span class="n">BinnedSpectrum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinnedModulationCurve</span><span class="p">(</span><span class="n">BinnedSpectrum</span><span class="p">):</span>
 
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">ScatteringChannel</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">counts</span><span class="p">,</span>
         <span class="n">exposure</span><span class="p">,</span>
@@ -216,13 +215,13 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">abounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">abounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebounds</span>
 
 <div class="viewcode-block" id="BinnedModulationCurve.from_time_series">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.from_time_series">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_time_series</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -258,7 +257,7 @@
 
 <div class="viewcode-block" id="BinnedModulationCurve.clone">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.polarization.html#threeML.utils.polarization.binned_polarization.BinnedModulationCurve.clone">[docs]</a>
-    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">new_counts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">new_count_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -309,7 +308,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

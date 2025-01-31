@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.data_builders.fermi.lat_transient_builder &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,21 +108,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.data_builders.fermi.lat_transient_builder</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">site</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">site</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">threeML.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.io.file_utils</span> <span class="kn">import</span> <span class="n">file_existing_and_readable</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">file_existing_and_readable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="n">pd</span><span class="o">.</span><span class="n">reset_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">)</span>
 
@@ -131,11 +130,11 @@
 
 
 <span class="k">try</span><span class="p">:</span> 
-    <span class="kn">from</span> <span class="nn">GtBurst</span> <span class="kn">import</span> <span class="n">IRFS</span>
-    <span class="kn">from</span> <span class="nn">GtBurst.Configuration</span> <span class="kn">import</span> <span class="n">Configuration</span>
-    <span class="kn">from</span> <span class="nn">GtBurst.FuncFactory</span> <span class="kn">import</span> <span class="n">Spectra</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">GtBurst</span><span class="w"> </span><span class="kn">import</span> <span class="n">IRFS</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">GtBurst.Configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">Configuration</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">GtBurst.FuncFactory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectra</span>
 
-    <span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">FermiLATLike</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermiLATLike</span>
 
     <span class="n">irfs</span> <span class="o">=</span> <span class="n">IRFS</span><span class="o">.</span><span class="n">IRFS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     <span class="n">spectra</span> <span class="o">=</span> <span class="n">Spectra</span><span class="p">()</span>
@@ -160,9 +159,9 @@
 
 <div class="viewcode-block" id="LATLikelihoodParameter">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.LATLikelihoodParameter">[docs]</a>
-<span class="k">class</span> <span class="nc">LATLikelihoodParameter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LATLikelihoodParameter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">help_string</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allowed_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">help_string</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allowed_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        A container for the parameters that are needed by GtBurst</span>
@@ -191,7 +190,7 @@
         <span class="k">if</span> <span class="n">default_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__set_value</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># make sure that the value set is allowed</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -218,7 +217,7 @@
 
         <span class="k">return</span> <span class="n">out_string</span>
 
-    <span class="k">def</span> <span class="nf">__set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">,</span> <span class="s1">&#39;The value </span><span class="si">%s</span><span class="s1"> of </span><span class="si">%s</span><span class="s1"> is not in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span><span class="p">)</span>
 
@@ -230,22 +229,22 @@
 
 <div class="viewcode-block" id="LATLikelihoodParameter.get_disp_value">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.LATLikelihoodParameter.get_disp_value">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_disp_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_disp_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_set</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
 <div class="viewcode-block" id="LATLikelihoodParameter.display">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.LATLikelihoodParameter.display">[docs]</a>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help_string</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -275,9 +274,9 @@
 
 <div class="viewcode-block" id="TransientLATDataBuilder">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder">[docs]</a>
-<span class="k">class</span> <span class="nc">TransientLATDataBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransientLATDataBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triggername</span><span class="p">,</span> <span class="o">**</span><span class="n">init_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triggername</span><span class="p">,</span> <span class="o">**</span><span class="n">init_values</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build the command for GtBurst&#39;s likelihood analysis </span>
 <span class="sd">        and produce the required files for the FermiLATLike </span>
@@ -668,7 +667,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_keywords</span><span class="p">(</span><span class="o">**</span><span class="n">init_values</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_process_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        processes the keywords from a dictionary </span>
 <span class="sd">        likely loaded from a yaml config</span>
@@ -688,7 +687,7 @@
                 <span class="c1"># add warning that there is something strange in the configuration</span>
                 <span class="k">pass</span>
  
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this so that we cannot erase parameters</span>
 <span class="sd">        </span>
@@ -700,7 +699,7 @@
 
             <span class="nb">super</span><span class="p">(</span><span class="n">TransientLATDataBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_command_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_command_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This builds the cmd string for the script</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -726,7 +725,7 @@
 
 <div class="viewcode-block" id="TransientLATDataBuilder.run">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_previous_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">recompute_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_previous_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">recompute_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        run GtBurst to produce the files needed for the FermiLATLike plugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -801,7 +800,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lat_observations</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_create_lat_observations_from_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervals_before_run</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_lat_observations_from_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervals_before_run</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        After a run of gtburst, this collects the all the relevant files from</span>
 <span class="sd">        each inteval and turns them into LAT observations.</span>
@@ -899,7 +898,7 @@
 
 <div class="viewcode-block" id="TransientLATDataBuilder.to_LATLike">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.to_LATLike">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_LATLike</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_LATLike</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">_lat_like_plugins</span><span class="o">=</span><span class="p">[]</span>
 
@@ -912,7 +911,7 @@
 
 <div class="viewcode-block" id="TransientLATDataBuilder.display">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.display">[docs]</a>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the current set parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -934,13 +933,13 @@
             <span class="k">return</span> <span class="n">df</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">get</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TransientLATDataBuilder.save_configuration">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.save_configuration">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the current configuration to a yaml </span>
 <span class="sd">        file for use later. Suggested extension is .yml</span>
@@ -969,7 +968,7 @@
 <div class="viewcode-block" id="TransientLATDataBuilder.from_saved_configuration">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.TransientLATDataBuilder.from_saved_configuration">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_saved_configuration</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">triggername</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_saved_configuration</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">triggername</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a saved yaml configuration for the given trigger name</span>
 
@@ -990,9 +989,9 @@
 
 <div class="viewcode-block" id="LATObservation">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.LATObservation">[docs]</a>
-<span class="k">class</span> <span class="nc">LATObservation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LATObservation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="p">,</span> <span class="n">exposure_map</span><span class="p">,</span> <span class="n">livetime_cube</span><span class="p">,</span> <span class="n">tstart</span><span class="p">,</span> <span class="n">tstop</span><span class="p">,</span> <span class="n">liketype</span><span class="p">,</span> <span class="n">triggername</span><span class="p">):</span><span class="c1">#, bin_file):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_file</span><span class="p">,</span> <span class="n">ft2_file</span><span class="p">,</span> <span class="n">exposure_map</span><span class="p">,</span> <span class="n">livetime_cube</span><span class="p">,</span> <span class="n">tstart</span><span class="p">,</span> <span class="n">tstop</span><span class="p">,</span> <span class="n">liketype</span><span class="p">,</span> <span class="n">triggername</span><span class="p">):</span><span class="c1">#, bin_file):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A container to formalize the storage of Fermi LAT </span>
 <span class="sd">        observation files</span>
@@ -1021,31 +1020,31 @@
         <span class="c1">#self._bin_file = bin_file</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">event_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">event_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_file</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ft2_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ft2_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ft2_file</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">exposure_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exposure_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exposure_map</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">livetime_cube</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">livetime_cube</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_livetime_cube</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tstart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tstart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tstop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tstop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">liketype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">liketype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_liketype</span>
 
     <span class="c1">#@property</span>
@@ -1053,10 +1052,10 @@
     <span class="c1">#    return self._bin_file</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">triggername</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">triggername</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triggername</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
@@ -1075,7 +1074,7 @@
 
 <div class="viewcode-block" id="LATObservation.to_LATLike">
 <a class="viewcode-back" href="../../../../../notebooks/api/threeML.utils.data_builders.fermi.html#threeML.utils.data_builders.LATObservation.to_LATLike">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_LATLike</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_LATLike</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">_fermi_lat_like</span> <span class="o">=</span>  <span class="n">FermiLATLike</span><span class="p">(</span>
                      <span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;LAT</span><span class="si">%d</span><span class="s1">X</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tstop</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">),</span>
@@ -1101,7 +1100,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

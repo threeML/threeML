@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.plotting.light_curve_plots &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,12 +108,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.io.plotting.light_curve_plots</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.step_plot</span> <span class="kn">import</span> <span class="n">step_plot</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.step_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_plot</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
 
@@ -126,7 +125,7 @@
 
 <div class="viewcode-block" id="binned_light_curve_plot">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.binned_light_curve_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">binned_light_curve_plot</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">binned_light_curve_plot</span><span class="p">(</span>
     <span class="n">time_bins</span><span class="p">,</span> <span class="n">cnts</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">bkg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bkg_selections</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -265,7 +264,7 @@
 
 <div class="viewcode-block" id="channel_plot">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.channel_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">channel_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">chan_min</span><span class="p">,</span> <span class="n">chan_max</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">channel_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">chan_min</span><span class="p">,</span> <span class="n">chan_max</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">chans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">chan_min</span><span class="p">,</span> <span class="n">chan_max</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     <span class="n">width</span> <span class="o">=</span> <span class="n">chan_max</span> <span class="o">-</span> <span class="n">chan_min</span>
 
@@ -279,7 +278,7 @@
 
 <div class="viewcode-block" id="disjoint_patch_plot">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.disjoint_patch_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">disjoint_patch_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">bin_min</span><span class="p">,</span> <span class="n">bin_max</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">disjoint_patch_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">bin_min</span><span class="p">,</span> <span class="n">bin_max</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># type: (plt.Axes, np.array, np.array, float, float, np.array, dict) -&gt; None</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -315,7 +314,7 @@
 
 <div class="viewcode-block" id="slice_disjoint">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.slice_disjoint">[docs]</a>
-<span class="k">def</span> <span class="nf">slice_disjoint</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">slice_disjoint</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns an array of disjoint indices from a bool array</span>
 
@@ -343,7 +342,7 @@
 
 <div class="viewcode-block" id="plot_tte_lightcurve">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.plot_tte_lightcurve">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tte_lightcurve</span><span class="p">(</span><span class="n">tte_file</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tte_lightcurve</span><span class="p">(</span><span class="n">tte_file</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="c1"># type: (str, float, float, float) -&gt; plt.Figure</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    quick plot of a TTE light curve</span>
@@ -358,7 +357,7 @@
     <span class="c1"># build a quick object that will extract the data</span>
     <span class="c1"># the local import is because GBMTTEFile is dependent</span>
     <span class="c1"># on other files</span>
-    <span class="kn">from</span> <span class="nn">threeML.plugins.FermiGBMTTELike</span> <span class="kn">import</span> <span class="n">GBMTTEFile</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.FermiGBMTTELike</span><span class="w"> </span><span class="kn">import</span> <span class="n">GBMTTEFile</span>
 
     <span class="n">tte</span> <span class="o">=</span> <span class="n">GBMTTEFile</span><span class="p">(</span><span class="n">ttefile</span><span class="o">=</span><span class="n">tte_file</span><span class="p">)</span>
 
@@ -385,7 +384,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

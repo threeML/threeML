@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.catalogs.FermiGBM &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,31 +108,31 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.catalogs.FermiGBM</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">str</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">str</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">astromodels.utils.angular_distance</span> <span class="kn">import</span> <span class="n">angular_distance</span>
-<span class="kn">from</span> <span class="nn">past.utils</span> <span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.utils.angular_distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">angular_distance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
 
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.exceptions.custom_exceptions</span> <span class="kn">import</span> <span class="n">custom_warnings</span>
-<span class="kn">from</span> <span class="nn">threeML.io.dict_with_pretty_print</span> <span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
-<span class="kn">from</span> <span class="nn">threeML.io.get_heasarc_table_as_pandas</span> <span class="kn">import</span> <span class="n">get_heasarc_table_as_pandas</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.exceptions.custom_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.dict_with_pretty_print</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictWithPrettyPrint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.get_heasarc_table_as_pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_heasarc_table_as_pandas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
-<span class="kn">from</span> <span class="nn">.VirtualObservatoryCatalog</span> <span class="kn">import</span> <span class="n">VirtualObservatoryCatalog</span>
-<span class="kn">from</span> <span class="nn">.catalog_utils</span> <span class="kn">import</span> <span class="n">_gbm_and_lle_valid_source_check</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.VirtualObservatoryCatalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualObservatoryCatalog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.catalog_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_gbm_and_lle_valid_source_check</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog">[docs]</a>
-<span class="k">class</span> <span class="nc">FermiGBMBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FermiGBMBurstCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Fermi-LAT GBM GRB catalog. Search for GRBs  by trigger</span>
 <span class="sd">        number, location, spectral parameters, T90, and date range.</span>
@@ -170,7 +169,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_available_models</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="s2">&quot;comp&quot;</span><span class="p">,</span> <span class="s2">&quot;plaw&quot;</span><span class="p">,</span> <span class="s2">&quot;sbpl&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
             <span class="s2">&quot;fermigbrst&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">1.0</span>
@@ -178,7 +177,7 @@
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog.apply_format">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.apply_format">[docs]</a>
-    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
             <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
@@ -193,13 +192,13 @@
         <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog.get_detector_information">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_detector_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_detector_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_detector_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the detectors used for spectral analysis as well as their background</span>
 <span class="sd">        intervals. Peak flux and fluence intervals are also returned as well as best fit models</span>
@@ -284,7 +283,7 @@
 
 <div class="viewcode-block" id="FermiGBMBurstCatalog.get_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;fluence&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;fluence&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model form.</span>
 <span class="sd">        You can choose band, comp, plaw, or sbpl models corresponding to the models</span>
@@ -357,7 +356,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_build_band</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_band</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a band function from the Fermi-LAT GBM catalog</span>
 
@@ -423,7 +422,7 @@
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">band</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_build_cpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_cpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a cpl function from the Fermi-LAT GBM catalog</span>
 
@@ -476,7 +475,7 @@
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">cpl</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_build_powerlaw</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_powerlaw</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a pl function from the Fermi-LAT GBM catalog</span>
 
@@ -510,7 +509,7 @@
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">pl</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_build_sbpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_sbpl</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        builds a sbpl function from the Fermi-LAT GBM catalog</span>
 
@@ -581,8 +580,8 @@
 
 <div class="viewcode-block" id="FermiGBMTriggerCatalog">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog">[docs]</a>
-<span class="k">class</span> <span class="nc">FermiGBMTriggerCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FermiGBMTriggerCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The Fermi-GBM trigger catalog.</span>
 
@@ -597,7 +596,7 @@
             <span class="s2">&quot;Fermi-GBM trigger catalog&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
             <span class="s2">&quot;fermigtrig&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">1.0</span>
@@ -605,7 +604,7 @@
 
 <div class="viewcode-block" id="FermiGBMTriggerCatalog.apply_format">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog.apply_format">[docs]</a>
-    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
             <span class="s2">&quot;trigger_type&quot;</span><span class="p">,</span>
@@ -622,7 +621,7 @@
         <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;trigger_time&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">_gbm_and_lle_valid_source_check</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div>
 
@@ -636,7 +635,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.binner &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,37 +108,37 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.binner</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.bayesian_blocks</span> <span class="kn">import</span> <span class="p">(</span><span class="n">bayesian_blocks</span><span class="p">,</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.bayesian_blocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">bayesian_blocks</span><span class="p">,</span>
                                            <span class="n">bayesian_blocks_not_unique</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.numba_utils</span> <span class="kn">import</span> <span class="n">VectorFloat64</span><span class="p">,</span> <span class="n">VectorInt64</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">Significance</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.time_interval</span> <span class="kn">import</span> <span class="n">TimeIntervalSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.numba_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorFloat64</span><span class="p">,</span> <span class="n">VectorInt64</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.progress_bar</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.stats_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Significance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.time_interval</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeIntervalSet</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="NotEnoughData">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.NotEnoughData">[docs]</a>
-<span class="k">class</span> <span class="nc">NotEnoughData</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotEnoughData</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="Rebinner">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner">[docs]</a>
-<span class="k">class</span> <span class="nc">Rebinner</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rebinner</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to rebin vectors keeping a minimum value per bin. It supports array with a mask, so that elements excluded</span>
 <span class="sd">    through the mask will not be considered for the rebinning</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_to_rebin_on</span><span class="p">,</span> <span class="n">min_value_per_bin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_to_rebin_on</span><span class="p">,</span> <span class="n">min_value_per_bin</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="c1"># Basic check that it is possible to do what we have been requested to do</span>
 
@@ -269,7 +268,7 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of bins defined.</span>
 
@@ -279,13 +278,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_bins</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grouping</span>
 
 <div class="viewcode-block" id="Rebinner.rebin">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner.rebin">[docs]</a>
-    <span class="k">def</span> <span class="nf">rebin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vectors</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rebin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vectors</span><span class="p">):</span>
 
         <span class="n">rebinned_vectors</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -319,7 +318,7 @@
 
 <div class="viewcode-block" id="Rebinner.rebin_errors">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner.rebin_errors">[docs]</a>
-    <span class="k">def</span> <span class="nf">rebin_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vectors</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rebin_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">vectors</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rebin errors by summing the squares</span>
 
@@ -353,7 +352,7 @@
 
 <div class="viewcode-block" id="Rebinner.get_new_start_and_stop">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.Rebinner.get_new_start_and_stop">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_new_start_and_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_start</span><span class="p">,</span> <span class="n">old_stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_new_start_and_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_start</span><span class="p">,</span> <span class="n">old_stop</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_start</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_stop</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
 
@@ -371,7 +370,7 @@
 
 <div class="viewcode-block" id="TemporalBinner">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner">[docs]</a>
-<span class="k">class</span> <span class="nc">TemporalBinner</span><span class="p">(</span><span class="n">TimeIntervalSet</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TemporalBinner</span><span class="p">(</span><span class="n">TimeIntervalSet</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An extension of the TimeInterval set that includes binning capabilities</span>
 
@@ -380,7 +379,7 @@
 <div class="viewcode-block" id="TemporalBinner.bin_by_significance">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_significance">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">bin_by_significance</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_significance</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">arrival_times</span><span class="p">,</span>
         <span class="n">background_getter</span><span class="p">,</span>
@@ -626,7 +625,7 @@
 <div class="viewcode-block" id="TemporalBinner.bin_by_constant">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_constant">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">bin_by_constant</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_constant</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create bins with a constant dt</span>
 
@@ -644,7 +643,7 @@
 <div class="viewcode-block" id="TemporalBinner.bin_by_bayesian_blocks">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">bin_by_bayesian_blocks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_bayesian_blocks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">arrival_times</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">bkg_integral_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Divide a series of events characterized by their arrival time in blocks</span>
 <span class="sd">        of perceptibly constant count rate. If the background integral distribution</span>
 <span class="sd">        is given, divide the series in blocks where the difference with respect to</span>
@@ -707,7 +706,7 @@
 <div class="viewcode-block" id="TemporalBinner.bin_by_custom">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.binner.TemporalBinner.bin_by_custom">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">bin_by_custom</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_by_custom</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simplicity function to make custom bins. This form keeps introduction of</span>
 <span class="sd">        custom bins uniform for other binning methods</span>
@@ -721,7 +720,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_check_exceeds_sigma_interval</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_exceeds_sigma_interval</span><span class="p">(</span>
         <span class="n">start</span><span class="p">,</span>
         <span class="n">stop</span><span class="p">,</span>
         <span class="n">counts</span><span class="p">,</span>
@@ -768,7 +767,7 @@
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_select_events</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_select_events</span><span class="p">(</span><span class="n">arrival_times</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get the events and total counts over an interval</span>
 
@@ -789,7 +788,7 @@
 
 <span class="c1">#####</span>
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_rebin_vector_float</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_rebin_vector_float</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    faster rebinner using numba</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -809,7 +808,7 @@
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_rebin_vector_int</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_rebin_vector_int</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    faster rebinner using numba</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -835,7 +834,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

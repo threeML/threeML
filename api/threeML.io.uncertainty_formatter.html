@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.uncertainty_formatter module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -113,81 +112,58 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.io.uncertainty_formatter">
-<span id="threeml-io-uncertainty-formatter-module"></span><h1>threeML.io.uncertainty_formatter module<a class="headerlink" href="#module-threeML.io.uncertainty_formatter" title="Link to this heading"></a>
-</h1>
+<span id="threeml-io-uncertainty-formatter-module"></span><h1>threeML.io.uncertainty_formatter module<a class="headerlink" href="#module-threeML.io.uncertainty_formatter" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.uncertainty_formatter.get_uncertainty_tokens">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">get_uncertainty_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/uncertainty_formatter.html#get_uncertainty_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.get_uncertainty_tokens" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Split the given uncertainty in number, error and exponent.</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">get_uncertainty_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/uncertainty_formatter.html#get_uncertainty_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.get_uncertainty_tokens" title="Link to this definition"></a></dt>
+<dd><p>Split the given uncertainty in number, error and exponent.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p><strong>x</strong> – an uncertainty instance</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – an uncertainty instance</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>number, error and exponent</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number, error and exponent</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.uncertainty_formatter.interval_to_errors">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">interval_to_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/uncertainty_formatter.html#interval_to_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.interval_to_errors" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Convert error intervals to errors</p>
+<span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">interval_to_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/uncertainty_formatter.html#interval_to_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.interval_to_errors" title="Link to this definition"></a></dt>
+<dd><p>Convert error intervals to errors</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>value</strong> – central value</p></li>
 <li><p><strong>low_bound</strong> – interval low bound</p></li>
 <li><p><strong>hi_bound</strong> – interval high bound</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>(error minus, error plus)</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(error minus, error plus)</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.uncertainty_formatter.uncertainty_formatter">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">uncertainty_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/uncertainty_formatter.html#uncertainty_formatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.uncertainty_formatter" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Gets a value and its error in input, and returns the value, the uncertainty and the common exponent with the proper
+<span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">uncertainty_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/uncertainty_formatter.html#uncertainty_formatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.uncertainty_formatter" title="Link to this definition"></a></dt>
+<dd><p>Gets a value and its error in input, and returns the value, the uncertainty and the common exponent with the proper
 number of significant digits in a string like (4.2 -0.023 +5.23) x 10^5</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>value</strong></p></li>
 <li><p><strong>error</strong> – a <em>positive</em> value</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>string representation of interval</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>string representation of interval</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
-
 
 
            </div>
@@ -200,7 +176,7 @@ number of significant digits in a string like (4.2 -0.023 +5.23) x 10^5</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

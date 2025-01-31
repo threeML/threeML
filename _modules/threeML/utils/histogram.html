@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.histogram &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,23 +108,23 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.histogram</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.step_plot</span> <span class="kn">import</span> <span class="n">step_plot</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.interval</span> <span class="kn">import</span> <span class="n">IntervalSet</span><span class="p">,</span> <span class="n">Interval</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.statistics.stats_tools</span> <span class="kn">import</span> <span class="n">sqrt_sum_of_squares</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.step_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.interval</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntervalSet</span><span class="p">,</span> <span class="n">Interval</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.stats_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">sqrt_sum_of_squares</span>
 
 
 <div class="viewcode-block" id="Histogram">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.histogram.Histogram">[docs]</a>
-<span class="k">class</span> <span class="nc">Histogram</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Histogram</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
 
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">Interval</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">list_of_intervals</span><span class="p">,</span>
         <span class="n">contents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -183,7 +182,7 @@
 
 <div class="viewcode-block" id="Histogram.bin_entries">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.histogram.Histogram.bin_entries">[docs]</a>
-    <span class="k">def</span> <span class="nf">bin_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entires</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bin_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entires</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        add the entries into the proper bin</span>
 
@@ -205,7 +204,7 @@
                 <span class="k">pass</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">&quot;The bins are not equal&quot;</span>
 
@@ -277,39 +276,39 @@
         <span class="k">return</span> <span class="n">new_hist</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errors</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">total_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">sqrt_sum_of_squares</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_errors</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sys_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sys_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sys_errors</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">contents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contents</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_poisson</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_poisson</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_poisson</span>
 
 <div class="viewcode-block" id="Histogram.from_numpy_histogram">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.histogram.Histogram.from_numpy_histogram">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_numpy_histogram</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_numpy_histogram</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sys_errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_poisson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -353,7 +352,7 @@
 <div class="viewcode-block" id="Histogram.from_entries">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.histogram.Histogram.from_entries">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_entries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_entries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">list_of_intervals</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create a histogram from a list of intervals and entries to bin</span>
 
@@ -371,7 +370,7 @@
 
 <div class="viewcode-block" id="Histogram.display">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.histogram.Histogram.display">[docs]</a>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
@@ -399,7 +398,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

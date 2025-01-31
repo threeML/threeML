@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.catalogs.VirtualObservatoryCatalog &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,24 +108,24 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.catalogs.VirtualObservatoryCatalog</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">astropy</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy</span>
 
 <span class="c1"># from astropy.vo.client.vos_catalog import VOSCatalog</span>
-<span class="kn">from</span> <span class="nn">astroquery.vo_conesearch.vos_catalog</span> <span class="kn">import</span> <span class="n">VOSCatalog</span>
-<span class="kn">from</span> <span class="nn">astroquery.vo_conesearch</span> <span class="kn">import</span> <span class="n">conesearch</span>
-<span class="kn">from</span> <span class="nn">astroquery.vo_conesearch.exceptions</span> <span class="kn">import</span> <span class="n">VOSError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astroquery.vo_conesearch.vos_catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">VOSCatalog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astroquery.vo_conesearch</span><span class="w"> </span><span class="kn">import</span> <span class="n">conesearch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astroquery.vo_conesearch.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">VOSError</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">astropy.coordinates.name_resolve</span> <span class="kn">import</span> <span class="n">get_icrs_coordinates</span>
-<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates.name_resolve</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_icrs_coordinates</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span>
 
-<span class="kn">import</span> <span class="nn">astropy.table</span> <span class="k">as</span> <span class="nn">astro_table</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">astro_table</span>
 
-<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 
-<span class="kn">from</span> <span class="nn">threeML.io.network</span> <span class="kn">import</span> <span class="n">internet_connection_is_active</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">internet_connection_is_active</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -140,15 +139,15 @@
 
 <div class="viewcode-block" id="ConeSearchFailed">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.ConeSearchFailed">[docs]</a>
-<span class="k">class</span> <span class="nc">ConeSearchFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConeSearchFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog">[docs]</a>
-<span class="k">class</span> <span class="nc">VirtualObservatoryCatalog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VirtualObservatoryCatalog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">VOSCatalog</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
 
@@ -158,7 +157,7 @@
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.search_around_source">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.search_around_source">[docs]</a>
-    <span class="k">def</span> <span class="nf">search_around_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_around_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search for sources around the named source. The coordinates of the provided source are resolved using the</span>
 <span class="sd">        astropy.coordinates.name_resolve facility.</span>
@@ -178,7 +177,7 @@
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.cone_search">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search">[docs]</a>
-    <span class="k">def</span> <span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches for sources in a cone of given radius and center</span>
 
@@ -270,34 +269,34 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ra_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ra_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ra</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dec_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dec_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dec</span>
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.apply_format">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.apply_format">[docs]</a>
-    <span class="k">def</span> <span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.get_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.get_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.query">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query">[docs]</a>
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        query the entire VO table for the given logical argument. Queries are in the form of pandas</span>
 <span class="sd">        queries: http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.query.html</span>
@@ -326,7 +325,7 @@
 
 <div class="viewcode-block" id="VirtualObservatoryCatalog.query_sources">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources">[docs]</a>
-    <span class="k">def</span> <span class="nf">query_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        query for the specific source names.</span>
 
@@ -364,12 +363,12 @@
             <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There were not valid sources in your search&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to override this!&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        return a searchable pandas dataframe of results from the last query.</span>
 <span class="sd">        :return:</span>
@@ -386,7 +385,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

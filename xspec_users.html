@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notes for XSPEC Users &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/configuration.html">Configuration</a></li>
@@ -119,21 +118,16 @@
            <div itemprop="articleBody">
              
   <section id="notes-for-xspec-users">
-<h1>Notes for XSPEC Users<a class="headerlink" href="#notes-for-xspec-users" title="Link to this heading"></a>
-</h1>
+<h1>Notes for XSPEC Users<a class="headerlink" href="#notes-for-xspec-users" title="Link to this heading"></a></h1>
 <p>Users coming from XSPEC typically have a few questions about getting started with 3ML</p>
 <section id="why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data">
-<h2>Why use 3ML over XSPEC if I am just fitting X-ray data?<a class="headerlink" href="#why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data" title="Link to this heading"></a>
-</h2>
+<h2>Why use 3ML over XSPEC if I am just fitting X-ray data?<a class="headerlink" href="#why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data" title="Link to this heading"></a></h2>
 <p>XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your favorite tool and you are only fitting x-ray data, then there are some marginal benefits:</p>
 <ul class="simple">
 <li><p>3ML is a lighter install and natively in Python rather than a Python wrapper around XSPEC</p></li>
 <li><p>3ML does many operations in parallel on HPC environments with little effort</p></li>
-<li>
-<dl class="simple">
-<dt>3ML has many many more optimizers and Bayesian samplers</dt>
-<dd>
-<ul>
+<li><dl class="simple">
+<dt>3ML has many many more optimizers and Bayesian samplers</dt><dd><ul>
 <li><p><a class="reference external" href="https://iminuit.readthedocs.io/en/stable/">minuit</a></p></li>
 <li><p><a class="reference external" href="https://esa.github.io/pagmo2/)(dozensanddozensofmethods">PAGMO</a></p></li>
 <li><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/optimize.html)optimizer">scipy</a></p></li>
@@ -153,8 +147,7 @@
 </ul>
 </section>
 <section id="do-i-need-a-new-plugin-for-my-instrument">
-<h2>Do I need a new plugin for my instrument?<a class="headerlink" href="#do-i-need-a-new-plugin-for-my-instrument" title="Link to this heading"></a>
-</h2>
+<h2>Do I need a new plugin for my instrument?<a class="headerlink" href="#do-i-need-a-new-plugin-for-my-instrument" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>If it is an X-ray instrument that has PHA1 data, BAK files, RSPs and ARFs, nope! This is handled by the OGIPLike plugin.</p></li>
 <li><p>Think of OGIPLike as an XSPEC-like object. Feed your data in and pass it to to the JointLikelihood or BayesianAnalysis objects. You need one plugin per observation.</p></li>
@@ -162,8 +155,7 @@
 </ul>
 </section>
 <section id="can-i-use-xspec-models">
-<h2>Can I use XSPEC models?<a class="headerlink" href="#can-i-use-xspec-models" title="Link to this heading"></a>
-</h2>
+<h2>Can I use XSPEC models?<a class="headerlink" href="#can-i-use-xspec-models" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Yes!</p></li>
 <li><p>astromodels provides and interface to XSPEC models. See details in the modeling section.</p></li>
@@ -171,17 +163,15 @@
 </ul>
 </section>
 <section id="can-i-trust-the-results-of-the-fits">
-<h2>Can I trust the results of the fits?<a class="headerlink" href="#can-i-trust-the-results-of-the-fits" title="Link to this heading"></a>
-</h2>
-<img alt="https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg" src="https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg">
+<h2>Can I trust the results of the fits?<a class="headerlink" href="#can-i-trust-the-results-of-the-fits" title="Link to this heading"></a></h2>
+<img alt="https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg" src="https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg" />
 <ul class="simple">
 <li><p>With each build of 3ML, we always test the code automatically against XSPEC to ensure fitting (up to factor) and RSP convolution give the same results.</p></li>
 <li><p>You can always try yourself as the file types are the same. Expect differences in fit results that could be due to the underlying fitting engines.</p></li>
 </ul>
 </section>
 <section id="how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model">
-<h2>How do I fake a dummy response to fit optical data or a background model?<a class="headerlink" href="#how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model" title="Link to this heading"></a>
-</h2>
+<h2>How do I fake a dummy response to fit optical data or a background model?<a class="headerlink" href="#how-do-i-fake-a-dummy-response-to-fit-optical-data-or-a-background-model" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>DON’T DO THAT!</p></li>
 <li><p>Since 3ML is not limited to a rigid data format, we have custom plugins for photometric data. You simply need to provide the filter name and magnitude. See the docs for more details.</p></li>
@@ -189,22 +179,19 @@
 </ul>
 </section>
 <section id="how-do-i-choose-the-likelihood-statistic-for-my-fit">
-<h2>How do I choose the likelihood statistic for my fit?<a class="headerlink" href="#how-do-i-choose-the-likelihood-statistic-for-my-fit" title="Link to this heading"></a>
-</h2>
+<h2>How do I choose the likelihood statistic for my fit?<a class="headerlink" href="#how-do-i-choose-the-likelihood-statistic-for-my-fit" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>It is possible, but if your PHA files are formatted correctly, we probe them and choose the <strong>correct</strong> likelihood for your data.</p></li>
 <li><p>We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called $chi^2$ regime. This is an incorrect and bad practice.</p></li>
 </ul>
 </section>
 <section id="how-do-i-plot-unfolded-data-points-along-with-my-fit">
-<h2>How do I plot <em>unfolded data points</em> along with my fit?<a class="headerlink" href="#how-do-i-plot-unfolded-data-points-along-with-my-fit" title="Link to this heading"></a>
-</h2>
+<h2>How do I plot <em>unfolded data points</em> along with my fit?<a class="headerlink" href="#how-do-i-plot-unfolded-data-points-along-with-my-fit" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>You can’t and you shouldn’t</p></li>
 </ul>
 </section>
 </section>
-
 
 
            </div>
@@ -217,7 +204,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.UnbinnedPoissonLike module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -113,121 +112,87 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.plugins.UnbinnedPoissonLike">
-<span id="threeml-plugins-unbinnedpoissonlike-module"></span><h1>threeML.plugins.UnbinnedPoissonLike module<a class="headerlink" href="#module-threeML.plugins.UnbinnedPoissonLike" title="Link to this heading"></a>
-</h1>
+<span id="threeml-plugins-unbinnedpoissonlike-module"></span><h1>threeML.plugins.UnbinnedPoissonLike module<a class="headerlink" href="#module-threeML.plugins.UnbinnedPoissonLike" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.plugins.UnbinnedPoissonLike.</span></span><span class="sig-name descname"><span class="pre">EventObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_timeseries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#EventObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.plugins.UnbinnedPoissonLike.</span></span><span class="sig-name descname"><span class="pre">EventObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_timeseries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#EventObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.events">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">events</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.events" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">events</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.events" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.exposure">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exposure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.exposure" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exposure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.exposure" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.for_timeseries">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_timeseries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.for_timeseries" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_timeseries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.for_timeseries" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.is_multi_interval">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_multi_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.is_multi_interval" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_multi_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.is_multi_interval" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.n_events">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_events</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.n_events" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_events</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.n_events" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.start">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.start" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.start" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.EventObservation.stop">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.stop" title="Link to this definition"></a>
-</dt>
-<dd></dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.EventObservation.stop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.plugins.UnbinnedPoissonLike.</span></span><span class="sig-name descname"><span class="pre">UnbinnedPoissonLike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.EventObservation" title="threeML.plugins.UnbinnedPoissonLike.EventObservation"><span class="pre">EventObservation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Bases: <a class="reference internal" href="../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype" title="threeML.plugin_prototype.PluginPrototype"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginPrototype</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.plugins.UnbinnedPoissonLike.</span></span><span class="sig-name descname"><span class="pre">UnbinnedPoissonLike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../notebooks/api/threeML.plugins.html#threeML.plugins.UnbinnedPoissonLike.EventObservation" title="threeML.plugins.UnbinnedPoissonLike.EventObservation"><span class="pre">EventObservation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype" title="threeML.plugin_prototype.PluginPrototype"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginPrototype</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_log_like">
-<span class="sig-name descname"><span class="pre">get_log_like</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.get_log_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_log_like" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Return the value of the log-likelihood with the current values for the
+<span class="sig-name descname"><span class="pre">get_log_like</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.get_log_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_log_like" title="Link to this definition"></a></dt>
+<dd><p>Return the value of the log-likelihood with the current values for the
 parameters</p>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_number_of_data_points">
-<span class="sig-name descname"><span class="pre">get_number_of_data_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.get_number_of_data_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_number_of_data_points" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>This returns the number of data points that are used to evaluate the likelihood.
+<span class="sig-name descname"><span class="pre">get_number_of_data_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.get_number_of_data_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.get_number_of_data_points" title="Link to this definition"></a></dt>
+<dd><p>This returns the number of data points that are used to evaluate the likelihood.
 For binned measurements, this is the number of active bins used in the fit. For
 unbinned measurements, this would be the number of photons/particles that are
 evaluated on the likelihood</p>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.inner_fit">
-<span class="sig-name descname"><span class="pre">inner_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.inner_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.inner_fit" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>This is used for the profile likelihood. Keeping fixed all parameters in the
+<span class="sig-name descname"><span class="pre">inner_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.inner_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.inner_fit" title="Link to this definition"></a></dt>
+<dd><p>This is used for the profile likelihood. Keeping fixed all parameters in the
 LikelihoodModel, this method minimize the logLike over the remaining nuisance
 parameters, i.e., the parameters belonging only to the model for this
 particular detector. If there are no nuisance parameters, simply return the
 logLike value.</p>
-</dd>
-</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.set_model">
-<span class="sig-name descname"><span class="pre">set_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.set_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.set_model" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">set_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/UnbinnedPoissonLike.html#UnbinnedPoissonLike.set_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.UnbinnedPoissonLike.UnbinnedPoissonLike.set_model" title="Link to this definition"></a></dt>
+<dd><p>Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</p>
+</dd></dl>
 
-</dd>
-</dl>
+</dd></dl>
 
 </section>
-
 
 
            </div>
@@ -240,7 +205,7 @@ logLike value.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

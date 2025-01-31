@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -110,33 +109,33 @@
   <h1>Source code for threeML</h1><div class="highlight"><pre>
 <span></span><span class="c1"># We import matplotlib first, because we need control on the backend</span>
 <span class="c1"># Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="c1"># Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue</span>
 <span class="c1"># LEAVE THESE HERE BEFORE ANY THREEML IMPORT</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">ROOT</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ROOT</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pyLikelihood</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyLikelihood</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="c1"># Import everything from astromodels</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">threeML_config</span><span class="p">,</span>
     <span class="n">show_configuration</span><span class="p">,</span>
     <span class="n">get_current_configuration_copy</span><span class="p">,</span>
@@ -161,31 +160,31 @@
             <span class="s2">&quot;no display variable set. using backend for graphics without display (agg)&quot;</span>
         <span class="p">)</span>
 
-    <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 
     <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
 
 <span class="c1"># Import version (this has to be placed before the import of serialization</span>
 <span class="c1"># since __version__ needs to be defined at that stage)</span>
-<span class="kn">from</span> <span class="nn">._version</span> <span class="kn">import</span> <span class="n">get_versions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_versions</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
 <span class="k">del</span> <span class="n">get_versions</span>
 
 
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">from</span> <span class="nn">importlib.machinery</span> <span class="kn">import</span> <span class="n">SourceFileLoader</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.machinery</span><span class="w"> </span><span class="kn">import</span> <span class="n">SourceFileLoader</span>
 
 <span class="c1"># Finally import the serialization machinery</span>
-<span class="kn">from</span> <span class="nn">.io.serialization</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.io.serialization</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 <span class="c1"># Now import the optimizers first (to avoid conflicting libraries problems)</span>
-<span class="kn">from</span> <span class="nn">.minimizer.minimization</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.minimizer.minimization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">GlobalMinimization</span><span class="p">,</span>
     <span class="n">LocalMinimization</span><span class="p">,</span>
     <span class="n">_minimizers</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.plugin_prototype</span> <span class="kn">import</span> <span class="n">PluginPrototype</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.plugin_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginPrototype</span>
 
 <span class="c1"># from .exceptions.custom_exceptions import custom_warnings</span>
 
@@ -197,7 +196,7 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># noinspection PyUnresolvedReferences</span>
-    <span class="kn">from</span> <span class="nn">cthreeML.pyModelInterfaceCache</span> <span class="kn">import</span> <span class="n">pyToCppModelInterfaceCache</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">cthreeML.pyModelInterfaceCache</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyToCppModelInterfaceCache</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -212,7 +211,7 @@
 
 <div class="viewcode-block" id="is_module_importable">
 <a class="viewcode-back" href="../notebooks/api/threeML.html#threeML.is_module_importable">[docs]</a>
-<span class="k">def</span> <span class="nf">is_module_importable</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_module_importable</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">):</span>
 
     <span class="k">try</span><span class="p">:</span>
 
@@ -300,7 +299,7 @@
 
 <div class="viewcode-block" id="get_available_plugins">
 <a class="viewcode-back" href="../notebooks/api/threeML.html#threeML.get_available_plugins">[docs]</a>
-<span class="k">def</span> <span class="nf">get_available_plugins</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_plugins</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a list of available plugins</span>
 
@@ -314,7 +313,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_display_plugin_traceback</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_display_plugin_traceback</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;#############################################################&quot;</span>
@@ -329,7 +328,7 @@
 
 <div class="viewcode-block" id="is_plugin_available">
 <a class="viewcode-back" href="../notebooks/api/threeML.html#threeML.is_plugin_available">[docs]</a>
-<span class="k">def</span> <span class="nf">is_plugin_available</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_plugin_available</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Test whether the plugin for the provided instrument is available</span>
 
@@ -375,19 +374,19 @@
 
 <span class="c1"># Import the classic Maximum Likelihood Estimation package</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 
 <span class="c1"># Import the results loader</span>
-<span class="kn">from</span> <span class="nn">threeML.analysis_results</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.analysis_results</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">convert_fits_analysis_result_to_hdf</span><span class="p">,</span>
     <span class="n">load_analysis_results</span><span class="p">,</span>
     <span class="n">load_analysis_results_hdf</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Import catalogs</span>
-<span class="kn">from</span> <span class="nn">threeML.catalogs</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.catalogs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FermiGBMBurstCatalog</span><span class="p">,</span>
     <span class="n">FermiGBMTriggerCatalog</span><span class="p">,</span>
     <span class="n">FermiLATSourceCatalog</span><span class="p">,</span>
@@ -396,7 +395,7 @@
     <span class="n">SwiftGRBCatalog</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">threeML.io</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">activate_warnings</span><span class="p">,</span>
     <span class="n">silence_warnings</span><span class="p">,</span>
     <span class="n">update_logging_level</span><span class="p">,</span>
@@ -409,61 +408,61 @@
     <span class="n">debug_mode</span><span class="p">,</span>
     <span class="n">activate_logs</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.light_curve_plots</span> <span class="kn">import</span> <span class="n">plot_tte_lightcurve</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.model_plot</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.light_curve_plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_tte_lightcurve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.model_plot</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">plot_point_source_spectra</span><span class="p">,</span>
     <span class="n">plot_spectra</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">threeML.io.plotting.post_process_data_plots</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.post_process_data_plots</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">display_photometry_model_magnitudes</span><span class="p">,</span>
     <span class="n">display_spectrum_model_counts</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1">#</span>
-<span class="kn">from</span> <span class="nn">threeML.io.uncertainty_formatter</span> <span class="kn">import</span> <span class="n">interval_to_errors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.uncertainty_formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">interval_to_errors</span>
 
 <span class="c1"># import time series builder, soon to replace the Fermi plugins</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.data_builders</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.data_download.Fermi_GBM.download_GBM_data</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.data_builders</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.data_download.Fermi_GBM.download_GBM_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">download_GBM_trigger_data</span><span class="p">,</span>
     <span class="n">download_GBM_daily_data</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Import the LAT data downloader</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.data_download.Fermi_LAT.download_LAT_data</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.data_download.Fermi_LAT.download_LAT_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">download_LAT_data</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Import LLE downloader</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.data_download.Fermi_LAT.download_LLE_data</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.data_download.Fermi_LAT.download_LLE_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">download_LLE_trigger_data</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Import the Bayesian analysis</span>
-<span class="kn">from</span> <span class="nn">.bayesian.bayesian_analysis</span> <span class="kn">import</span> <span class="n">BayesianAnalysis</span>
-<span class="kn">from</span> <span class="nn">.classicMLE.goodness_of_fit</span> <span class="kn">import</span> <span class="n">GoodnessOfFit</span>
-<span class="kn">from</span> <span class="nn">.classicMLE.joint_likelihood</span> <span class="kn">import</span> <span class="n">JointLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.bayesian.bayesian_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianAnalysis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.classicMLE.goodness_of_fit</span><span class="w"> </span><span class="kn">import</span> <span class="n">GoodnessOfFit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.classicMLE.joint_likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">JointLikelihood</span>
 
 <span class="c1"># Import the joint likelihood set</span>
-<span class="kn">from</span> <span class="nn">.classicMLE.joint_likelihood_set</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.classicMLE.joint_likelihood_set</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">JointLikelihoodSet</span><span class="p">,</span>
     <span class="n">JointLikelihoodSetAnalyzer</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.classicMLE.likelihood_ratio_test</span> <span class="kn">import</span> <span class="n">LikelihoodRatioTest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.classicMLE.likelihood_ratio_test</span><span class="w"> </span><span class="kn">import</span> <span class="n">LikelihoodRatioTest</span>
 
 <span class="c1"># Now read the configuration and make it available as threeML_config</span>
 
-<span class="kn">from</span> <span class="nn">.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span> <span class="nn">.io.calculate_flux</span> <span class="kn">import</span> <span class="n">calculate_point_source_flux</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.io.calculate_flux</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_point_source_flux</span>
 
 <span class="c1"># Import the plot_style context manager and the function to create new styles</span>
 
-<span class="kn">from</span> <span class="nn">.parallel.parallel_client</span> <span class="kn">import</span> <span class="n">parallel_computation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel_computation</span>
 
 <span class="c1"># Added by JM. step generator for time-resolved fits</span>
-<span class="kn">from</span> <span class="nn">.utils.step_parameter_generator</span> <span class="kn">import</span> <span class="n">step_generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.step_parameter_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_generator</span>
 
-<span class="kn">from</span> <span class="nn">.io</span> <span class="kn">import</span> <span class="n">get_threeML_style</span><span class="p">,</span> <span class="n">set_threeML_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_threeML_style</span><span class="p">,</span> <span class="n">set_threeML_style</span>
 
 
 <span class="c1"># Import optical filters</span>
@@ -523,7 +522,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

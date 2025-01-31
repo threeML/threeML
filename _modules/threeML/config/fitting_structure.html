@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.config.fitting_structure &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,18 +108,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.config.fitting_structure</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.plotting_structure</span> <span class="kn">import</span> <span class="n">CornerStyle</span><span class="p">,</span> <span class="n">MPLCmap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.plotting_structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">CornerStyle</span><span class="p">,</span> <span class="n">MPLCmap</span>
 
 
 <div class="viewcode-block" id="Sampler">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.fitting_structure.Sampler">[docs]</a>
-<span class="k">class</span> <span class="nc">Sampler</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Sampler</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">emcee</span> <span class="o">=</span> <span class="s2">&quot;emcee&quot;</span>
     <span class="n">multinest</span> <span class="o">=</span> <span class="s2">&quot;multinest&quot;</span>
     <span class="n">zeus</span> <span class="o">=</span> <span class="s2">&quot;zeus&quot;</span>
@@ -136,7 +135,7 @@
 
 <div class="viewcode-block" id="Optimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.fitting_structure.Optimizer">[docs]</a>
-<span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Optimizer</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">minuit</span> <span class="o">=</span> <span class="s2">&quot;minuit&quot;</span>
     <span class="n">scipy</span> <span class="o">=</span> <span class="s2">&quot;scipy&quot;</span>
     <span class="n">ROOT</span> <span class="o">=</span> <span class="s2">&quot;ROOT&quot;</span></div>
@@ -146,7 +145,7 @@
 <div class="viewcode-block" id="BayesianDefault">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.fitting_structure.BayesianDefault">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BayesianDefault</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BayesianDefault</span><span class="p">:</span>
     <span class="n">use_median_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">default_sampler</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">emcee</span>
@@ -299,7 +298,7 @@
 <div class="viewcode-block" id="MLEDefault">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.config.html#threeML.config.fitting_structure.MLEDefault">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">MLEDefault</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MLEDefault</span><span class="p">:</span>
     <span class="n">default_minimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="n">Optimizer</span><span class="o">.</span><span class="n">minuit</span>
     <span class="n">default_minimizer_algorithm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">default_minimizer_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -323,7 +322,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

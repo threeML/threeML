@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spectral Models &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
@@ -55,7 +55,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
@@ -133,22 +132,18 @@
            <div itemprop="articleBody">
              
   <section id="Spectral-Models">
-<h1>Spectral Models<a class="headerlink" href="#Spectral-Models" title="Link to this heading"></a>
-</h1>
+<h1>Spectral Models<a class="headerlink" href="#Spectral-Models" title="Link to this heading"></a></h1>
 <p>Spectral models are provided via astromodels. For details, visit the astromodels <a class="reference external" href="http://astromodels.readthedocs.io/en/latest/Model_tutorial.html">documentation</a>.</p>
 <p>The important points are breifly covered below.</p>
 <section id="Building-Custom-Models">
-<h2>Building Custom Models<a class="headerlink" href="#Building-Custom-Models" title="Link to this heading"></a>
-</h2>
+<h2>Building Custom Models<a class="headerlink" href="#Building-Custom-Models" title="Link to this heading"></a></h2>
 <p>One of the most powerful aspects of astromodels and 3ML is the ability to quickly build custom models on the fly. The source code for a model can be pure python, FORTRAN linked via f2py, C++ linked via cython, etc. Anything that provides a python function can be used to fit data.</p>
 <p>To build a custom spectral model in 3ML, we need to import a few things that will allow astromodels to recognize your model.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astromodels.functions.function</span> <span class="kn">import</span> <span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.functions.function</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Function1D</span><span class="p">,</span>
     <span class="n">FunctionMeta</span><span class="p">,</span>
     <span class="n">ModelAssertionViolation</span><span class="p">,</span>
@@ -160,28 +155,25 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">00:08:38 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">48</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:28:23 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#48" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">48</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                         </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
-</pre>
-</div>
+</pre></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it  </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#69" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">69</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it  </span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/functions.py#69" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">69</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">will not be available.                                                            </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
-</pre>
-</div>
+</pre></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The ebltable package is not available. Models that depend on it will not be     </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">absorption.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py#33" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">33</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The ebltable package is not available. Models that depend on it will not be     </span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">absorption.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/functions_1D/absorption.py#33" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">33</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                        </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
-</pre>
-</div>
+</pre></div>
 </div>
 <p>Function1D is the base class for 1D spectral models and FunctionMeta is ABC class that ensures all the needed parts of a model are in the class as well as making the class function as it should.</p>
 <p>There are three basic parts to declaring a model:</p>
@@ -192,13 +184,11 @@
 </ul>
 <p>Let’s look at the simple case of the power law already define in astromodels.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Powerlaw</span><span class="p">(</span><span class="n">Function1D</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FunctionMeta</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Powerlaw</span><span class="p">(</span><span class="n">Function1D</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FunctionMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    description :</span>
 <span class="sd">        A simple power-law</span>
 <span class="sd">    latex : $ K~\frac{x}{piv}^{index} $</span>
@@ -221,9 +211,9 @@
 <span class="sd">            min : -10</span>
 <span class="sd">            max : 10</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_unit</span><span class="p">,</span> <span class="n">y_unit</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_unit</span><span class="p">,</span> <span class="n">y_unit</span><span class="p">):</span>
         <span class="c1"># The index is always dimensionless</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">astropy_units</span><span class="o">.</span><span class="n">dimensionless_unscaled</span>
 
@@ -235,7 +225,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">y_unit</span>
 
     <span class="c1"># noinspection PyPep8Naming</span>
-    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">piv</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">piv</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">piv</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">K</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -243,24 +233,20 @@
 </div>
 </div>
 <section id="The-docstring">
-<h3>The docstring<a class="headerlink" href="#The-docstring" title="Link to this heading"></a>
-</h3>
+<h3>The docstring<a class="headerlink" href="#The-docstring" title="Link to this heading"></a></h3>
 <p>We have used the docstring interface to provide a YAML description of the model. This sets up the important information used in the fitting process and record keeping. The docstring has three parts:</p>
 <ul class="simple">
-<li>
-<p>description</p>
+<li><p>description</p>
 <ul>
 <li><p>The description is a text string that provides readable info about the model. Nothing fancy, but good descriptions help to inform the user.</p></li>
 </ul>
 </li>
-<li>
-<p>latex</p>
+<li><p>latex</p>
 <ul>
 <li><p>If the model is analytic, a latex formula can be included</p></li>
 </ul>
 </li>
-<li>
-<p>parameters</p>
+<li><p>parameters</p>
 <ul>
 <li><p>For each parameter, a description and initial value must be included. Transformations for fitting, min/max values and fixing the parameter can also be described here.</p></li>
 </ul>
@@ -269,31 +255,26 @@
 <p>Keep in mind that this is in YAML format.</p>
 </section>
 <section id="Set-units">
-<h3>Set units<a class="headerlink" href="#Set-units" title="Link to this heading"></a>
-</h3>
+<h3>Set units<a class="headerlink" href="#Set-units" title="Link to this heading"></a></h3>
 <p>3ML and astromodels keep track of units for you. However, a model must be set up to properly describe the units with astropy’s unit system. Keep in mind that models are fit with a differential photon flux,</p>
 <div class="math notranslate nohighlight">
 \[\frac{d N_p}{dA dt dE}\]</div>
 <p>so your units should reflect this convention. Therefore, proper normalizations should be taken into account.</p>
 </section>
 <section id="Evaluate">
-<h3>Evaluate<a class="headerlink" href="#Evaluate" title="Link to this heading"></a>
-</h3>
+<h3>Evaluate<a class="headerlink" href="#Evaluate" title="Link to this heading"></a></h3>
 <p>This is where the function is evaluated. The first argumument <strong>must be called x</strong> and the parameter names and ordering must reflect what is in the docstring. Any number of operations can take place inside the evaluate call, but remember that the return must be in the form of a differential photon flux.</p>
 <p>A model is defined in a python session. If you save the results of a fit to an AnalysisResults file and try to load this file without loading this model, you will get a error,</p>
 </section>
 </section>
 <section id="Custom-models-in-other-langauges">
-<h2>Custom models in other langauges<a class="headerlink" href="#Custom-models-in-other-langauges" title="Link to this heading"></a>
-</h2>
+<h2>Custom models in other langauges<a class="headerlink" href="#Custom-models-in-other-langauges" title="Link to this heading"></a></h2>
 <p>What if your model is built from a C++ function and you want to fit that directly to the data? using Cython, pybind, f2py, etc, you can wrap these models and call them easily.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><br><br><span></span><span class="k">def</span> <span class="nf">cpp_function_wrapper</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><br/><span></span><span class="k">def</span><span class="w"> </span><span class="nf">cpp_function_wrapper</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
     <span class="c1"># we could wrap a c++ function here</span>
     <span class="c1"># with cython, pybind11, etc</span>
 
@@ -302,38 +283,32 @@
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">cpp_function_wrapper</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cpp_function_wrapper</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 2.0
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <p>Now we will define a spectral model that will handle both the unit and non-unit call.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">astropy_units</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">astropy_units</span>
 
 
-<span class="k">class</span> <span class="nc">CppModel</span><span class="p">(</span><span class="n">Function1D</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FunctionMeta</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CppModel</span><span class="p">(</span><span class="n">Function1D</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">FunctionMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    description :</span>
 <span class="sd">        A spectral model wrapping a cython function</span>
 <span class="sd">    latex : $$</span>
@@ -345,14 +320,14 @@
 <span class="sd">            min : 1e-30</span>
 <span class="sd">            max : 1e3</span>
 <span class="sd">            delta : 0.1</span>
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_unit</span><span class="p">,</span> <span class="n">y_unit</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_unit</span><span class="p">,</span> <span class="n">y_unit</span><span class="p">):</span>
         <span class="c1"># The normalization has the same units as the y</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">y_unit</span>
 
-    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
         <span class="c1"># check is the function is being called with units</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">astropy_units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
@@ -379,16 +354,14 @@
 </div>
 <p>We can check the unit and non-unit call by making a point source and evaluating it</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">cpp_spectrum</span> <span class="o">=</span> <span class="n">CppModel</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cpp_spectrum</span> <span class="o">=</span> <span class="n">CppModel</span><span class="p">()</span>
 
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">PointSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointSource</span>
 
-<span class="n">point_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"ps"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">cpp_spectrum</span><span class="p">)</span>
+<span class="n">point_source</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">&quot;ps&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">cpp_spectrum</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">point_source</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>
 <span class="n">point_source</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">astropy_units</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
@@ -401,40 +374,33 @@
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 1.0
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="math notranslate nohighlight">
-$1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
-</div>
+$1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div></div>
 </div>
 </section>
 <section id="Template-(Table)-Models">
-<h2>Template (Table) Models<a class="headerlink" href="#Template-(Table)-Models" title="Link to this heading"></a>
-</h2>
+<h2>Template (Table) Models<a class="headerlink" href="#Template-(Table)-Models" title="Link to this heading"></a></h2>
 <p>3ML (via astromodels) provides the ability to construct models in tabluated form. This is very useful for models that are from numerical simualtions. While in other software special care must be taken to construct table models into FITS files, in 3ML the construction of the table model is taken care of for you. Here is an example of how to build a template model from a pre-existing function.</p>
 <section id="Constructing-a-template">
-<h3>Constructing a template<a class="headerlink" href="#Constructing-a-template" title="Link to this heading"></a>
-</h3>
+<h3>Constructing a template<a class="headerlink" href="#Constructing-a-template" title="Link to this heading"></a></h3>
 <p>First, we grab a function and make an energy grid.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Band</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Band</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">Band</span><span class="p">()</span>
 
-<span class="c1"># we won't need to modify the normalization</span>
+<span class="c1"># we won&#39;t need to modify the normalization</span>
 <span class="n">model</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span>
 
 
@@ -445,15 +411,13 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 </div>
 <p>Now we define a template model factory. This takes a name, a description, the energy grid and an array of parameter names as input.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">TemplateModelFactory</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateModelFactory</span>
 
 <span class="n">tmf</span> <span class="o">=</span> <span class="n">TemplateModelFactory</span><span class="p">(</span>
-    <span class="s2">"my_template"</span><span class="p">,</span> <span class="s2">"A test template"</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="p">[</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="s2">"xp"</span><span class="p">,</span> <span class="s2">"beta"</span><span class="p">]</span>
+    <span class="s2">&quot;my_template&quot;</span><span class="p">,</span> <span class="s2">&quot;A test template&quot;</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;xp&quot;</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -462,37 +426,32 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">00:08:39 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#126" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">126</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:28:25 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/astromodels/functions/template_model.py#127" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">127</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">Using keV.                                                                  </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                     </span>
-</pre>
-</div>
+</pre></div>
 </div>
 <p>Now, define our grid in parameter space. While we are using a function here, this grid could be from a text file, a database of simulations, etc. We then assign these grid points to the template model factory.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">alpha_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 <span class="n">beta_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 <span class="n">xp_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 
 
-<span class="n">tmf</span><span class="o">.</span><span class="n">define_parameter_grid</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="n">alpha_grid</span><span class="p">)</span>
-<span class="n">tmf</span><span class="o">.</span><span class="n">define_parameter_grid</span><span class="p">(</span><span class="s2">"beta"</span><span class="p">,</span> <span class="n">beta_grid</span><span class="p">)</span>
-<span class="n">tmf</span><span class="o">.</span><span class="n">define_parameter_grid</span><span class="p">(</span><span class="s2">"xp"</span><span class="p">,</span> <span class="n">xp_grid</span><span class="p">)</span>
+<span class="n">tmf</span><span class="o">.</span><span class="n">define_parameter_grid</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">alpha_grid</span><span class="p">)</span>
+<span class="n">tmf</span><span class="o">.</span><span class="n">define_parameter_grid</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="n">beta_grid</span><span class="p">)</span>
+<span class="n">tmf</span><span class="o">.</span><span class="n">define_parameter_grid</span><span class="p">(</span><span class="s2">&quot;xp&quot;</span><span class="p">,</span> <span class="n">xp_grid</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>Finally, we loop over our grid and set the interpolation data to the template model factory. The units of the fluxes must be a differential photon flux!</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alpha_grid</span><span class="p">:</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alpha_grid</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beta_grid</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">xp</span> <span class="ow">in</span> <span class="n">xp_grid</span><span class="p">:</span>
             <span class="c1"># change our model parameters</span>
@@ -506,32 +465,27 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 </div>
 <p>We can now save our model to disk. The formal is an HDF5 file which is saved to the astromodel data directory (~/.astromodels/data). The HDF5 file can easily be passed around to other users as all information defining the model is stored in the file. The other user would place the file in thier astromodels data directory.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">tmf</span><span class="o">.</span><span class="n">save_data</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmf</span><span class="o">.</span><span class="n">save_data</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">TemplateModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateModel</span>
 
-<span class="n">reloaded_table_model</span> <span class="o">=</span> <span class="n">TemplateModel</span><span class="p">(</span><span class="s2">"my_template"</span><span class="p">)</span>
+<span class="n">reloaded_table_model</span> <span class="o">=</span> <span class="n">TemplateModel</span><span class="p">(</span><span class="s2">&quot;my_template&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">reloaded_table_model</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reloaded_table_model</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -549,23 +503,19 @@ array([1.49086966e+00, 1.43117010e+00, 1.37151134e+00, 1.31187019e+00,
        4.57977241e-03, 3.60381313e-03, 2.83583286e-03, 2.23151083e-03,
        1.75597111e-03, 1.38176992e-03, 1.08731180e-03, 8.55603333e-04,
        6.73272437e-04, 5.29796643e-04])
-</pre></div>
-</div>
+</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate">
-<div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
 </section>
 </section>
 </section>
-
 
 
            </div>
@@ -578,7 +528,7 @@ array([1.49086966e+00, 1.43117010e+00, 1.37151134e+00, 1.31187019e+00,
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

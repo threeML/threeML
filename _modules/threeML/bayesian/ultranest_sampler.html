@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.bayesian.ultranest_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,19 +108,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.bayesian.ultranest_sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
-<span class="kn">from</span> <span class="nn">threeML.bayesian.sampler_base</span> <span class="kn">import</span> <span class="n">UnitCubeSampler</span>
-<span class="kn">from</span> <span class="nn">threeML.config.config</span> <span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.sampler_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnitCubeSampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="kn">import</span> <span class="nn">ultranest</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ultranest</span>
 
 <span class="k">except</span><span class="p">:</span>
 
@@ -136,7 +135,7 @@
 
     <span class="c1"># see if we have mpi and/or are using parallel</span>
 
-    <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
 
     <span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># need parallel capabilities</span>
         <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">True</span>
@@ -160,8 +159,8 @@
 
 <div class="viewcode-block" id="UltraNestSampler">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.ultranest_sampler.UltraNestSampler">[docs]</a>
-<span class="k">class</span> <span class="nc">UltraNestSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UltraNestSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="n">has_ultranest</span><span class="p">,</span> <span class="s2">&quot;You must install UltraNest to use this sampler&quot;</span>
 
@@ -169,7 +168,7 @@
 
 <div class="viewcode-block" id="UltraNestSampler.setup">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.ultranest_sampler.UltraNestSampler.setup">[docs]</a>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">min_num_live_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
         <span class="n">dlogz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
@@ -181,28 +180,29 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        set up the Ultranest sampler. Consult the documentation:</span>
-<span class="sd">        https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</span>
+<span class="sd">                set up the Ultranest sampler. Consult the documentation:</span>
 
-<span class="sd">        :param min_num_live_points: minimum number of live points throughout the run</span>
-<span class="sd">        :type min_num_live_points: int</span>
-<span class="sd">        :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.</span>
-<span class="sd">        :type dlogz: float</span>
-<span class="sd">        :param chain_name: where to store output files</span>
-<span class="sd">        :type chain_name:</span>
-<span class="sd">        :param resume:  (&#39;resume&#39;, &#39;resume-similar&#39;, &#39;overwrite&#39; or &#39;subfolder&#39;) –</span>
+<span class="sd">                https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</span>
+
+<span class="sd">                :param min_num_live_points: minimum number of live points throughout the run</span>
+<span class="sd">                :type min_num_live_points: int</span>
+<span class="sd">                :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.</span>
+<span class="sd">                :type dlogz: float</span>
+<span class="sd">                :param chain_name: where to store output files</span>
+<span class="sd">                :type chain_name:</span>
+<span class="sd">                :param resume:  (&#39;resume&#39;, &#39;resume-similar&#39;, &#39;overwrite&#39; or &#39;subfolder&#39;) –</span>
 <span class="sd">        if ‘overwrite’, overwrite previous data.</span>
 <span class="sd">        if ‘subfolder’, create a fresh subdirectory in log_dir.</span>
 <span class="sd">        if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.</span>
 <span class="sd">        if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.</span>
-<span class="sd">        :type resume: str</span>
-<span class="sd">        :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).</span>
-<span class="sd">        :type wrapped_params:</span>
-<span class="sd">        :param stepsampler:</span>
-<span class="sd">        :type stepsampler:</span>
-<span class="sd">        :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</span>
-<span class="sd">        :type use_mlfriends: bool</span>
-<span class="sd">        :returns:</span>
+<span class="sd">                :type resume: str</span>
+<span class="sd">                :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).</span>
+<span class="sd">                :type wrapped_params:</span>
+<span class="sd">                :param stepsampler:</span>
+<span class="sd">                :type stepsampler:</span>
+<span class="sd">                :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).</span>
+<span class="sd">                :type use_mlfriends: bool</span>
+<span class="sd">                :returns:</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -231,7 +231,7 @@
 
 <div class="viewcode-block" id="UltraNestSampler.sample">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.ultranest_sampler.UltraNestSampler.sample">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        sample using the UltraNest numerical integration method</span>
 <span class="sd">        :rtype:</span>
@@ -428,7 +428,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

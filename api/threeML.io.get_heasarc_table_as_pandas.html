@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.get_heasarc_table_as_pandas module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -52,7 +52,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
@@ -113,40 +112,31 @@
            <div itemprop="articleBody">
              
   <section id="module-threeML.io.get_heasarc_table_as_pandas">
-<span id="threeml-io-get-heasarc-table-as-pandas-module"></span><h1>threeML.io.get_heasarc_table_as_pandas module<a class="headerlink" href="#module-threeML.io.get_heasarc_table_as_pandas" title="Link to this heading"></a>
-</h1>
+<span id="threeml-io-get-heasarc-table-as-pandas-module"></span><h1>threeML.io.get_heasarc_table_as_pandas module<a class="headerlink" href="#module-threeML.io.get_heasarc_table_as_pandas" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas">
-<span class="sig-prename descclassname"><span class="pre">threeML.io.get_heasarc_table_as_pandas.</span></span><span class="sig-name descname"><span class="pre">get_heasarc_table_as_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heasarc_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_time_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/get_heasarc_table_as_pandas.html#get_heasarc_table_as_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas" title="Link to this definition"></a>
-</dt>
-<dd>
-<p>Obtain a a VO table from the HEASARC archives and return it as a pandas table indexed
+<span class="sig-prename descclassname"><span class="pre">threeML.io.get_heasarc_table_as_pandas.</span></span><span class="sig-name descname"><span class="pre">get_heasarc_table_as_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heasarc_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_time_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/get_heasarc_table_as_pandas.html#get_heasarc_table_as_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas" title="Link to this definition"></a></dt>
+<dd><p>Obtain a a VO table from the HEASARC archives and return it as a pandas table indexed
 by object/trigger names. The heasarc_table_name values are the ones referenced at:</p>
 <p><a class="reference external" href="https://heasarc.gsfc.nasa.gov/docs/archive/vo/">https://heasarc.gsfc.nasa.gov/docs/archive/vo/</a></p>
 <p>In order to speed up the processing of the tables, 3ML can cache the XML table in a cache
 that is updated every cache_time_days. The cache can be forced to update, i.e, reload from
 the web, by setting update to True.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>heasarc_table_name</strong> – the name of a HEASARC browse table</p></li>
 <li><p><strong>update</strong> – force web read of the table and update cache</p></li>
 <li><p><strong>cache_time_days</strong> – number of days to hold the current cache</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>pandas DataFrame with results and astropy table</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas DataFrame with results and astropy table</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</dd></dl>
 
 </section>
-
 
 
            </div>
@@ -159,7 +149,7 @@ the web, by setting update to True.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.classicMLE.goodness_of_fit &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,20 +108,20 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.classicMLE.goodness_of_fit</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span>
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">threeML.classicMLE.joint_likelihood_set</span> <span class="kn">import</span> <span class="n">JointLikelihoodSet</span>
-<span class="kn">from</span> <span class="nn">threeML.data_list</span> <span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">silence_console_log</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">clone_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.classicMLE.joint_likelihood_set</span><span class="w"> </span><span class="kn">import</span> <span class="n">JointLikelihoodSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">silence_console_log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">clone_model</span>
 
 
 <div class="viewcode-block" id="GoodnessOfFit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit">[docs]</a>
-<span class="k">class</span> <span class="nc">GoodnessOfFit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">joint_likelihood_instance</span><span class="p">,</span> <span class="n">like_data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GoodnessOfFit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">joint_likelihood_instance</span><span class="p">,</span> <span class="n">like_data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span> <span class="o">=</span> <span class="n">joint_likelihood_instance</span>
 
@@ -145,7 +144,7 @@
 
 <div class="viewcode-block" id="GoodnessOfFit.get_simulated_data">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_simulated_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_simulated_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
 
         <span class="c1"># Make sure we start from the best fit model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_jl_instance</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
@@ -167,7 +166,7 @@
 
 <div class="viewcode-block" id="GoodnessOfFit.get_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.get_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
 
         <span class="c1"># Make a copy of the best fit model, so that we don&#39;t touch the original model during the fit, and we</span>
         <span class="c1"># also always restart from the best fit (instead of the last iteration)</span>
@@ -179,7 +178,7 @@
 
 <div class="viewcode-block" id="GoodnessOfFit.by_mc">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.by_mc">[docs]</a>
-    <span class="k">def</span> <span class="nf">by_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">by_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute goodness of fit by generating Monte Carlo datasets and fitting the current model on them. The fraction</span>
 <span class="sd">        of synthetic datasets which have a value for the likelihood larger or equal to the observed one is a measure</span>
@@ -241,7 +240,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

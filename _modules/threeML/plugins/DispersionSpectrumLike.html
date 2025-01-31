@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.DispersionSpectrumLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -49,7 +49,6 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
@@ -109,18 +108,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.plugins.DispersionSpectrumLike</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">astromodels</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
-<span class="kn">from</span> <span class="nn">threeML.io.logging</span> <span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">threeML.plugins.SpectrumLike</span> <span class="kn">import</span> <span class="n">SpectrumLike</span>
-<span class="kn">from</span> <span class="nn">threeML.plugins.XYLike</span> <span class="kn">import</span> <span class="n">XYLike</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.OGIP.response</span> <span class="kn">import</span> <span class="n">InstrumentResponse</span>
-<span class="kn">from</span> <span class="nn">threeML.utils.spectrum.binned_spectrum</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.SpectrumLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpectrumLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.XYLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.OGIP.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstrumentResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.spectrum.binned_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BinnedSpectrum</span><span class="p">,</span>
     <span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
     <span class="n">ChannelSet</span><span class="p">,</span>
@@ -133,8 +132,8 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike">[docs]</a>
-<span class="k">class</span> <span class="nc">DispersionSpectrumLike</span><span class="p">(</span><span class="n">SpectrumLike</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DispersionSpectrumLike</span><span class="p">(</span><span class="n">SpectrumLike</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">observation</span><span class="p">:</span> <span class="n">BinnedSpectrumWithDispersion</span><span class="p">,</span>
@@ -203,7 +202,7 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike.set_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihoodModel</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihoodModel</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model to be used in the joint minimization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -247,7 +246,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_response</span><span class="o">.</span><span class="n">set_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integral_flux</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_evaluate_model</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -259,7 +258,7 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike.set_model_integrate_method">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.set_model_integrate_method">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_model_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the integrate method for the model integration</span>
 <span class="sd">        :param method: (str) which method should be used (simpson or trapz)</span>
@@ -286,7 +285,7 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike.get_simulated_dataset">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.get_simulated_dataset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns another DispersionSpectrumLike instance where data have been obtained by randomizing the current expectation from the</span>
 <span class="sd">        model, as well as from the background (depending on the respective noise models)</span>
@@ -302,7 +301,7 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike.get_pha_files">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.get_pha_files">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_pha_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pha_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># we want to pass copies so that</span>
@@ -320,7 +319,7 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike.display_rsp">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.display_rsp">[docs]</a>
-    <span class="k">def</span> <span class="nf">display_rsp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_rsp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display the currently loaded full response matrix, i.e., RMF and ARF convolved</span>
 <span class="sd">        :return:</span>
@@ -330,10 +329,10 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InstrumentResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InstrumentResponse</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span>
 
-    <span class="k">def</span> <span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; pd.Series</span>
 
         <span class="n">super_out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span>
@@ -347,7 +346,7 @@
 
 <div class="viewcode-block" id="DispersionSpectrumLike.write_pha">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.write_pha">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_pha</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_pha</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -367,7 +366,7 @@
 
         <span class="c1"># a local import here because OGIPLike is dependent on this</span>
 
-        <span class="kn">from</span> <span class="nn">threeML.plugins.OGIPLike</span> <span class="kn">import</span> <span class="n">OGIPLike</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.OGIPLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">OGIPLike</span>
 
         <span class="n">ogiplike</span> <span class="o">=</span> <span class="n">OGIPLike</span><span class="o">.</span><span class="n">from_general_dispersion_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">ogiplike</span><span class="o">.</span><span class="n">write_pha</span><span class="p">(</span>
@@ -378,7 +377,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_build_fake_observation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_fake_observation</span><span class="p">(</span>
         <span class="n">fake_data</span><span class="p">,</span>
         <span class="n">channel_set</span><span class="p">,</span>
         <span class="n">source_errors</span><span class="p">,</span>
@@ -430,7 +429,7 @@
 <div class="viewcode-block" id="DispersionSpectrumLike.from_function">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.DispersionSpectrumLike.DispersionSpectrumLike.from_function">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_function</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_function</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">source_function</span><span class="p">,</span>
@@ -492,7 +491,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
