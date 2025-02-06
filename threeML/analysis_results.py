@@ -234,9 +234,8 @@ class ANALYSIS_RESULTS_HDF(object):
 
         hdf_obj.create_dataset(
             "UNIT",
-            data=np.array(data_frame["unit"].values, dtype=np.unicode_).astype(
-                h5py.string_dtype()
-            ),
+            data=np.array(data_frame["unit"].values, dtype=np.str_).astype(
+                h5py.string_dtype()),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
@@ -395,7 +394,7 @@ class ANALYSIS_RESULTS(FITSExtension):
             ("NEGATIVE_ERROR", data_frame["negative_error"].values),
             ("POSITIVE_ERROR", data_frame["positive_error"].values),
             ("ERROR", data_frame["error"].values),
-            ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
+            ("UNIT", np.array(data_frame["unit"].values, np.str_)),
             ("COVARIANCE", covariance_matrix),
             ("LOG_PROB", dummy),
             ("SAMPLES", samples),

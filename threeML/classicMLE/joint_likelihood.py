@@ -383,7 +383,8 @@ class JointLikelihood(object):
         statistical_measures["BIC"] = bic(
             -total, len(self._free_parameters), total_number_of_data_points
         )
-
+        log.debug('likelihood: %.f , Free Parameters: %d, Total number of datapoints: %d' %
+                  (-total, len(self._free_parameters), total_number_of_data_points))
         #Workaround for the case of a "fit" with no free parameters
         #This happens e.g. if you calculate the TS of the only source
         #in a one-source model.
