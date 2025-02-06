@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "b5006c32",
+   "id": "5ef7288c",
    "metadata": {},
    "source": [
     "# Building Custom Plugins\n"
@@ -11,13 +11,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "1eea5189",
+   "id": "11a3a56f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:31.181145Z",
-     "iopub.status.busy": "2025-02-06T00:12:31.180924Z",
-     "iopub.status.idle": "2025-02-06T00:12:31.240286Z",
-     "shell.execute_reply": "2025-02-06T00:12:31.239597Z"
+     "iopub.execute_input": "2025-02-06T02:53:19.357888Z",
+     "iopub.status.busy": "2025-02-06T02:53:19.357479Z",
+     "iopub.status.idle": "2025-02-06T02:53:19.416300Z",
+     "shell.execute_reply": "2025-02-06T02:53:19.415616Z"
     },
     "lines_to_next_cell": 2
    },
@@ -44,7 +44,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "4d5b0507",
+   "id": "06d6c4a7",
    "metadata": {},
    "source": [
     "The 3ML instrument/data philosophy focuses on the abstraction of the data to likelihood interface. Rather than placing square pegs in round holes by enforcing a common, restrictive data format, 3ML provides an interface that takes a model and returns the likelhood value of that model with its current parameter values.\n",
@@ -58,7 +58,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "af8ebe33",
+   "id": "d880f6e5",
    "metadata": {},
    "source": [
     "## The PluginPrototype class\n",
@@ -68,7 +68,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "4605aa82",
+   "id": "e9c73b00",
    "metadata": {},
    "source": [
     "```\n",
@@ -228,7 +228,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "cca53613",
+   "id": "59387ca2",
    "metadata": {},
    "source": [
     "### Unique Properties\n",
@@ -253,13 +253,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "1476fbd3",
+   "id": "431fb049",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:31.242610Z",
-     "iopub.status.busy": "2025-02-06T00:12:31.242373Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.327314Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.326641Z"
+     "iopub.execute_input": "2025-02-06T02:53:19.418449Z",
+     "iopub.status.busy": "2025-02-06T02:53:19.418059Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.419915Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.419170Z"
     },
     "lines_to_next_cell": 2
    },
@@ -271,7 +271,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "5ab688a2",
+   "id": "43be1328",
    "metadata": {
     "lines_to_next_cell": 2
    },
@@ -282,13 +282,13 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "10cf3175",
+   "id": "bed5a360",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.329654Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.329322Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.332605Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.332064Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.422647Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.422327Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.425614Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.425075Z"
     }
    },
    "outputs": [],
@@ -300,13 +300,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "54392492",
+   "id": "9a80382a",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.334719Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.334254Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.338242Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.337671Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.427421Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.427233Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.430632Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.430122Z"
     }
    },
    "outputs": [
@@ -328,7 +328,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "bf5630e8",
+   "id": "5c00104e",
    "metadata": {},
    "source": [
     "So, let's instead build a proper plugin"
@@ -337,13 +337,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "8f05b606",
+   "id": "77f294cc",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.340151Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.339936Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.345256Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.344687Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.432403Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.432218Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.437143Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.436617Z"
     }
    },
    "outputs": [],
@@ -389,13 +389,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "452084e7",
+   "id": "04d2a263",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.347205Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.346833Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.350044Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.349494Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.438824Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.438620Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.441724Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.441204Z"
     }
    },
    "outputs": [],
@@ -406,13 +406,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "32d88e5d",
+   "id": "26b13e34",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.351936Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.351556Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.355802Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.355278Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.443619Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.443249Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.447336Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.446679Z"
     }
    },
    "outputs": [
@@ -434,13 +434,13 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "5f96e000",
+   "id": "1f29a7c0",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.357657Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.357285Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.361373Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.360839Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.449285Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.448940Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.452777Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.452252Z"
     }
    },
    "outputs": [
@@ -462,13 +462,13 @@
   {
    "cell_type": "code",
    "execution_count": 9,
-   "id": "516ed88a",
+   "id": "2e6043df",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2025-02-06T00:12:34.363345Z",
-     "iopub.status.busy": "2025-02-06T00:12:34.362971Z",
-     "iopub.status.idle": "2025-02-06T00:12:34.367000Z",
-     "shell.execute_reply": "2025-02-06T00:12:34.366481Z"
+     "iopub.execute_input": "2025-02-06T02:53:22.454767Z",
+     "iopub.status.busy": "2025-02-06T02:53:22.454385Z",
+     "iopub.status.idle": "2025-02-06T02:53:22.458438Z",
+     "shell.execute_reply": "2025-02-06T02:53:22.457948Z"
     }
    },
    "outputs": [
@@ -491,7 +491,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "87ae56e5",
+   "id": "9c83dcbe",
    "metadata": {},
    "source": [
     "While our plugin is not very useful, we can now see how to build a plugin. Examine the source code of other plugins that are provided. Figure out how to interface your instrument's model evaluation and likelihood computation to python and place these methods inside your plugin class. We have taken care of the rest."
