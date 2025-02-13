@@ -1462,31 +1462,31 @@ class TimeSeriesBuilder(object):
 
         # self._default_unbinned = unbinned
 
-        # extract the polar varaibles
+        # extract the polarization variables
 
-        polar_data = PolData(
+        polarization_data = PolData(
             polevents, polrsp, specrsp, reference_time=trigger_time
         )
 
         # Create the the event list
 
         event_list = EventListWithDeadTimeFraction(
-            arrival_times=polar_data.time,
-            measurement=polar_data.pha,
-            n_channels=polar_data.n_channels,
-            start_time=polar_data.time.min(),
-            stop_time=polar_data.time.max(),
-            dead_time_fraction=polar_data.dead_time_fraction,
+            arrival_times=polarization_data.time,
+            measurement=polarization_data.pha,
+            n_channels=polarization_data.n_channels,
+            start_time=polarization_data.time.min(),
+            stop_time=polarization_data.time.max(),
+            dead_time_fraction=polarization_data.dead_time_fraction,
             verbose=verbose,
             first_channel=1,
-            mission=polar_data.mission,
-            instrument=polar_data.instrument,
+            mission=polarization_data.mission,
+            instrument=polarization_data.instrument,
         )
 
         return cls(
             name,
             event_list,
-            response=polar_data.rsp,
+            response=polarization_data.rsp,
             poly_order=poly_order,
             unbinned=unbinned,
             verbose=verbose,
@@ -1499,8 +1499,8 @@ class TimeSeriesBuilder(object):
         cls,
         name,
         polevents,
+        polrsp,
         specrsp=None,
-        polrsp=None,
         restore_background=None,
         trigger_time=0.0,
         poly_order=-1,
@@ -1517,23 +1517,26 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = PolData(
+        polarization_data = PolData(
             polevents, polrsp, specrsp, trigger_time)
+        
+        # get the pa offset
+        cls._pa_offset = polarization_data.get_pa_offset()
 
         # Create the the event list
 
         event_list = EventListWithDeadTimeFraction(
-            arrival_times=polar_data.scattering_angle_time,
-            measurement=polar_data.scattering_angles,
-            n_channels=polar_data.n_scattering_bins,
-            start_time=polar_data.scattering_angle_time.min(),
-            stop_time=polar_data.scattering_angle_time.max(),
-            dead_time_fraction=polar_data.scattering_angle_dead_time_fraction,
+            arrival_times=polarization_data.scattering_angle_time,
+            measurement=polarization_data.scattering_angles,
+            n_channels=polarization_data.n_scattering_bins,
+            start_time=polarization_data.scattering_angle_time.min(),
+            stop_time=polarization_data.scattering_angle_time.max(),
+            dead_time_fraction=polarization_data.scattering_angle_dead_time_fraction,
             verbose=verbose,
             first_channel=1,
-            mission=polar_data.mission,
-            instrument=polar_data.instrument,
-            edges=polar_data.scattering_edges,
+            mission=polarization_data.mission,
+            instrument=polarization_data.instrument,
+            edges=polarization_data.scattering_edges,
         )
 
         return cls(
@@ -1561,7 +1564,7 @@ class TimeSeriesBuilder(object):
 
         assert issubclass(
             self._container_type, BinnedModulationCurve
-        ), "You are attempting to create a POLARLike plugin from the wrong data type"
+        ), "You are attempting to create a PolarizationLike plugin from the wrong data type"
 
         if extract_measured_background:
 
@@ -1572,7 +1575,7 @@ class TimeSeriesBuilder(object):
             this_background_spectrum = self._background_spectrum
 
         if isinstance(self._response, str):
-            self._response = PolResponse(self._response, pa_offset)
+            self._response = PolResponse(self._response, self._pa_offset)
 
         if not from_bins:
 
@@ -1613,7 +1616,7 @@ class TimeSeriesBuilder(object):
 
             self._verbose = False
 
-            list_of_polarlikes = []
+            list_of_polarizationlikes = []
 
             # now we make one response to save time
 
@@ -1663,7 +1666,7 @@ class TimeSeriesBuilder(object):
                         #               tstop=self._tstop
                     )
 
-                    list_of_polarlikes.append(pl)
+                    list_of_polarizationlikes.append(pl)
 
                 except (NegativeBackground):
                     log.error(
@@ -1682,7 +1685,7 @@ class TimeSeriesBuilder(object):
 
             self._verbose = old_verbose
 
-            return list_of_polarlikes
+            return list_of_polarizationlikes
             # get the bins from the time series
             # for event lists, these are from created bins
             # for binned spectra sets, these are the native bines
@@ -1719,7 +1722,7 @@ class TimeSeriesBuilder(object):
 
                 try:
 
-                    pl = PolarLike(
+                    pl = PolarizationLike(
                         name="%s%s%d" % (self._name, interval_name, i),
                         observation=self._observed_spectrum,
                         background=this_background_spectrum,
@@ -1729,7 +1732,7 @@ class TimeSeriesBuilder(object):
                         #               tstop=self._tstop
                     )
 
-                    list_of_polarlikes.append(pl)
+                    list_of_polarizationlikes.append(pl)
 
                 except (NegativeBackground):
                     log.error(
@@ -1748,4 +1751,4 @@ class TimeSeriesBuilder(object):
 
             self._verbose = old_verbose
 
-            return list_of_polarlikes
+            return list_of_polarizationlikes
