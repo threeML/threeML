@@ -294,17 +294,32 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         except:
 
-            self._components = None
+            try:
+                self._components = self._point_source.components
+
+            except:
+
+                self._components = None
 
         if component is not None:
 
             if self._components is not None:
 
-                model = self._components[component]["function"].evaluate_at
-                parameters = self._components[component]["function"].parameters
-                test_model = self._components[component]["function"]
-                parameter_names = self._components[component]["parameter_names"]
-
+                if isinstance(self._components[component],dict):
+                    model = self._components[component]["function"].evaluate_at
+                    parameters = self._components[component]["function"].parameters
+                    test_model = self._components[component]["function"]
+                    parameter_names = self._components[component]["parameter_names"]
+                else:
+                    model = self._components[component].shape.evaluate_at
+                    parameters = self._components[component].shape.parameters
+                    test_model = self._components[component].shape
+                    parameter_names = [
+                        par.name
+                        for par in list(
+                                self._components[component].shape.parameters.values()
+                            )
+                    ]
             else:
 
                 raise NotCompositeModelError("This is not a composite model!")

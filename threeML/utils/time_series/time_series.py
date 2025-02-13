@@ -832,7 +832,7 @@ class TimeSeries(object):
         """
 
         min_grade = 0
-        max_grade = 4
+        max_grade = 3
         log_likelihoods = []
 
         log.debug("attempting to find best poly with binned data")

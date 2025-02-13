@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+from matplotlib import colormaps
 import numpy as np
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
@@ -7,9 +7,16 @@ import threeML.plugins.SpectrumLike as speclike
 try:
     from threeML.plugins.FermiLATLike import FermiLATLike
 
-    LATLike = True
+    FermiLATLike_flag = True
 except:
-    LATLike = False
+    FermiLATLike_flag = False
+
+try:
+    from threeML.plugins.FermipyLike import FermipyLike
+
+    FermipyLike_flag = True
+except:
+    FermipyLike_flag = False
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
@@ -87,11 +94,13 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             if isinstance(analysis.data_list[key], speclike.SpectrumLike):
                 new_data_keys.append(key)
-            elif LATLike and isinstance(analysis.data_list[key], FermiLATLike):
+            elif FermiLATLike_flag and isinstance(analysis.data_list[key], FermiLATLike):
+                new_data_keys.append(key)
+            elif FermipyLike_flag and isinstance(analysis.data_list[key], FermipyLike):
                 new_data_keys.append(key)
             else:
                 log.warning(
-                    "Dataset %s is not of the SpectrumLike or FermiLATLike  kind. Cannot be plotted by display_spectrum_model_counts"
+                    "Dataset %s is not of the SpectrumLike, FermiLATLike or FermipyLATLike kind. Cannot be plotted by display_spectrum_model_counts"
                     % key
                 )
 
@@ -583,7 +592,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         step = bool(kwargs.pop("step"))
 
     if "data_cmap" in kwargs:
-        data_cmap = cm.get_cmap(kwargs.pop("data_cmap"))
+        data_cmap = colormaps[kwargs.pop("data_cmap")]
         data_colors = cmap_intervals(len(data_keys), data_cmap)
 
     if "model_cmap" in kwargs:

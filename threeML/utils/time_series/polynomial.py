@@ -3,14 +3,15 @@ from typing import Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
-                         PointSource, Quadratic)
+                         PointSource, Quadratic, Quartic)
 
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value
 from threeML.data_list import DataList
-from threeML.exceptions.custom_exceptions import BadCovariance, FitFailed
+from threeML.exceptions.custom_exceptions import BadCovariance#, FitFailed
+from threeML.minimizer.minimization import FitFailed
 from threeML.io.logging import setup_logger, silence_console_log
 from threeML.minimizer.grid_minimizer import AllFitFailed
 from threeML.minimizer.minimization import (CannotComputeCovariance,
@@ -23,7 +24,7 @@ from threeML.plugins.XYLike import XYLike
 log = setup_logger(__name__)
 
 # we include the line twice to mimic a constant
-_grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
+_grade_model_lookup = (Line, Line, Quadratic, Cubic, Quartic)
 
 
 class Polynomial(object):
@@ -181,14 +182,13 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
     not a member to allow parallel computation
 
     :param x: the x coord of the data
-    :param y: teh y coord of the data
+    :param y: the y coord of the data
     :param grade: the polynomical order or grade
     :param expousure: the exposure of the interval
     :param bayes: to do a bayesian fit or not
 
 
     """
-
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
     log.debug(f"starting polyfit with grade {grade} ")
@@ -229,10 +229,11 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
     log.debug(f"starting polyfit with avg norm {avg}")
 
     with silence_console_log():
-
         xy = XYLike("series", x=x, y=y, exposure=exposure,
                     poisson_data=True, quiet=True)
-
+        #from matplotlib import pyplot as plt
+        #xy.plot()
+        #plt.plot(x,exposure)
         if not bayes:
 
             # make sure the model is positive
@@ -249,6 +250,7 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
                     v.value = 0.0
 
+                    #v.bounds = (-1e-3, 1e-3)
             # we actually use a line here
             # because a constant is returns a
             # single number
@@ -263,31 +265,38 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
             jl.set_minimizer("minuit")
 
             # if the fit falis, retry and then just accept
-
+            #print('polynomials grade:',grade)
+            #print('polynomials model:')
+            #model.display(complete=True)
             try:
+                #print ("=================>FIRST FIT!!!!")
 
                 jl.fit(quiet=True)
 
             except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
+                #print ("=================>FIRST FIT FAILED!!!!")
+
                 log.debug("1st fit failed")
 
                 try:
+                #    print ("=================>SECOND FIT!!!!")
 
                     jl.fit(quiet=True)
 
                 except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+                #    print ("=================>SECOND FIT FAILED!!!!")
 
                     log.debug("all MLE fits failed")
 
                     pass
+            #plt.plot(x,model._dummy.spectrum.main(x),'k:')
+            #plt.show()
 
             coeff = [v.value for _, v in model.free_parameters.items()]
-
             log.debug(f"got coeff: {coeff}")
 
             final_polynomial = Polynomial(coeff)
-
             try:
                 final_polynomial.set_covariace_matrix(
                     jl.results.covariance_matrix)
@@ -296,7 +305,6 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int,
 
                 log.exception(f"Fit failed in channel")
                 raise FitFailed()
-
             min_log_likelihood = xy.get_log_like()
 
         else:

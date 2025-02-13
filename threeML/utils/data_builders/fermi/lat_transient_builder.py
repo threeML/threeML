@@ -629,9 +629,13 @@ class TransientLATDataBuilder(object):
             os.path.join(gtapp_mp_dir, 'gtltcube_mp.py'),
             os.path.join(gtapp_mp_dir, 'gttsmap_mp.py'),
         ]
-        for _e in executables:
-            print ("Changing permission to %s" % _e)
-            os.chmod(_e, 0o755)
+
+        try:
+            for _e in executables:
+                log.info('Changing permission to %s' % _e)
+                os.chmod(_e, 0o755)
+        except PermissionError:
+            pass
 
         log.info('About to run the following command:\n%s' % cmd)
 

@@ -658,7 +658,7 @@ class LAT_dataset():
         pass
 
 
-    def extract_events(self,roi, zmax, irf, thetamax=180.0,strategy='time'):
+    def extract_events(self,roi, zmax, irf, thetamax=180.0,strategy='time',data_quality=True):
         from GtBurst import dataHandling
         global lastDisplay
 

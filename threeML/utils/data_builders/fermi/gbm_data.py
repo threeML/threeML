@@ -48,7 +48,7 @@ class GBMTTEFile(object):
         # sorting in time
         sort_idx = self._events.argsort()
 
-        if not np.alltrue(self._events[sort_idx] == self._events):
+        if not np.all(self._events[sort_idx] == self._events):
 
             # now sort both time and energy
             log.warning(

@@ -1,3 +1,5 @@
+# Analysis of GRB 190114C with Fermi-LAT
+
 ```python
 import matplotlib.pyplot as plt
 
@@ -109,18 +111,30 @@ zmax = 110.0
 thetamax = 180.0
 irfs = "p8_transient020e"
 strategy = "time"
-myLATdataset.extract_events(roi, zmax, irfs, thetamax, strategy="time")
+myLATdataset.extract_events(roi, zmax, irfs, thetamax, strategy=strategy)
 ```
 
 ```python
 %matplotlib inline
-event_file = pyfits.open(myLATdataset.filt_file)
-event_times = sorted(event_file["EVENTS"].data["TIME"] - myGRB["MET"])
-intervals = event_times[0::10]
-_ = plt.hist(event_times)
-_ = plt.hist(event_times, intervals, histtype="step")
-# plt.show()
+with pyfits.open(myLATdataset.filt_file) as event_file:
+    lat_events = event_file["EVENTS"].data
+event_times = lat_events["TIME"] - myGRB["MET"]
+
+intervals = [0, 10, 30, 80, 180]
+fig, axs = plt.subplots(2, 1, sharex=True)
+plt.sca(axs[0])
+plt.hist(event_times);
+plt.hist(event_times, intervals, histtype="step");
+plt.ylabel('Events')
+plt.sca(axs[1])
+plt.scatter(event_times, lat_events['ENERGY'], marker='o', c=lat_events['ENERGY'], norm='log',
+            alpha=0.5, zorder=20)
+plt.yscale('log')
+plt.ylabel('Energy [MeV]')
+plt.xlabel('Time - T0 [s]')
+plt.grid(True)
 ```
+
 tstarts and tstops are defined as strings, with somma separated values for the starts and the ends of the time bins: For example tsrats="0,1,10" and tstops="1,10,20". To convert arrays in string we use these few lines of code:
 
 
@@ -131,7 +145,9 @@ for t0, t1 in zip(intervals[:-1], intervals[1:]):
     tstops += "%.4f," % t1
     pass
 tstarts = tstarts[:-1].replace("-", "\\-")
+print(tstarts)
 tstops = tstops[:-1].replace("-", "\\-")
+print(tstops)
 ```
 
 We can now make an instance the LAT transient builder
@@ -153,9 +169,6 @@ analysis_builder = TransientLATDataBuilder(
 df = analysis_builder.display(get=True)
 ```
 
-```python
-tstops
-```
 The run method will run (using gtburst) all the fermitools needed to obtain the needed file for the likelihood analysis (livetimecubes, exposure maps. It will also perfom a simple likelihood analysis with the standard likelihood of the fermitools (pylikelihood). The dataproducts created here will be used by threeML to make the fit.
 
 
@@ -184,7 +197,7 @@ Now we can perform the fit in each bin. Note that we set the model, and we set s
 
 ```python
 results = {}
-update_logging_level("DEBUG")
+#update_logging_level("DEBUG")
 
 for T0, T1 in zip(intervals[:-1], intervals[1:]):
     GRB = PointSource(
@@ -215,13 +228,13 @@ for T0, T1 in zip(intervals[:-1], intervals[1:]):
 You can usethis function to graphically display the results of your fit (folded model, data and residuals)
 
 
-```python
-i = 3
+```python tags=["nbsphinx-thumbnail"]
+i = 0
 T0, T1 = intervals[i], intervals[i + 1]
 LAT_name = "LAT_%06.3f-%06.3f" % (T0, T1)
 jl = results[LAT_name]
 jl.results.display()
-display_spectrum_model_counts(jl, step=False, figsize=(10, 10))
+display_spectrum_model_counts(jl, figsize=(10,8));
 ```
 
 We can see the evolution of the spectrum with time (not all the bins are diplayed):
@@ -229,7 +242,7 @@ We can see the evolution of the spectrum with time (not all the bins are diplaye
 
 ```python
 fig = plot_spectra(
-    *[results[k].results for k in list(results.keys())[::2]],
+    *[a.results for a in results.values()],
     ene_min=100 * u.MeV,
     ene_max=10 * u.GeV,
     flux_unit="erg2/(cm2 s MeV)",
@@ -238,7 +251,7 @@ fig = plot_spectra(
     contour_cmap="viridis",
     contour_style_kwargs=dict(alpha=0.1)
 )
-fig.set_size_inches(10, 10)
+fig.set_size_inches(10, 8)
 ```
 
 
@@ -255,7 +268,6 @@ for n in variates:
 x = []
 dx = []
 
-
 for T0, T1 in zip(intervals[:-1], intervals[1:]):
     LAT_name = "LAT_%06.3f-%06.3f" % (T0, T1)
     x.append((T1 + T0) / 2)
@@ -270,10 +282,8 @@ for T0, T1 in zip(intervals[:-1], intervals[1:]):
         y[n].append(my_variate.median)
         y[n + "_p"].append(my_variate.equal_tail_interval()[1] - my_variate.median)
         y[n + "_n"].append(my_variate.median - my_variate.equal_tail_interval()[0])
-        pass
-    pass
 
-fig = plt.figure(figsize=(10, 15))
+fig = plt.figure(figsize=(8, 12))
 colors = ["r", "b"]
 ylabels = ["Flux [100MeV - 10GeV] \n $\gamma$ cm$^{-2}$ s$^{-1}$", "index"]
 for i, n in enumerate(variates):
@@ -281,7 +291,5 @@ for i, n in enumerate(variates):
     plt.errorbar(x, y[n], xerr=dx, yerr=(y[n + "_n"], y[n + "_p"]), ls="", c=colors[i])
     if i == 0:
         plt.yscale("log")
-    # plt.xscale('log')
     plt.ylabel(ylabels[i])
-    pass
 ```

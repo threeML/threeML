@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import astropy.io.fits as pyfits
 import astropy.units as u
-import matplotlib.cm as cm
+from matplotlib import colormaps
 import matplotlib.pyplot as plt
 import numba as nb
 import numpy as np
@@ -322,7 +322,7 @@ class InstrumentResponse(object):
         vmin = self._matrix[self._matrix > 0].min()
 
         cmap = copy.deepcopy(
-            cm.get_cmap(threeML_config.plugins.ogip.response_cmap.value)
+            colormaps[threeML_config.plugins.ogip.response_cmap.value]
         )
 
         cmap.set_under(threeML_config.plugins.ogip.response_zero_color)

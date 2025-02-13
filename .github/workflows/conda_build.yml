@@ -13,12 +13,17 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: ["ubuntu-latest", "macos-latest"]
+                os: [ubuntu-latest, macos-latest, macos-12]
                 python-version: [3.9]
-
+                include:
+                  - environment: ci/environment.yml
+                    channel: threeml
+                  - environment:  ci/environment_noxspec.yml
+                    channel: threeml/label/dev
+                    os: macos-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
             - name: XCode
@@ -27,28 +32,20 @@ jobs:
                   xcode-version: latest
               if: runner.os == 'macOS'
             - name: Set up Python
-              uses: actions/setup-python@v2
+              uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-version }}
-            - name: Cache conda
-              uses: actions/cache@v2
-              with:
-                  path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
-              uses: conda-incubator/setup-miniconda@v2
+              uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   miniforge-variant: Mambaforge
-                  architecture: "x64"
-                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
-                  environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
+                  environment-file: ${{ matrix.environment }}
+                  channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
                   use-only-tar-bz2: true
-                  
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -57,6 +54,7 @@ jobs:
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
                   echo "HOME= ${HOME}"
+                  echo "Conda installation path ${CONDA}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
                   echo "Running on development branch: ${ISDEV} "
@@ -66,7 +64,8 @@ jobs:
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
-                  pip install fermipy
+                  pip install --upgrade speclite
+                  pip install fermipy "matplotlib<3.9"
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -83,13 +82,14 @@ jobs:
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  conda install --use-local -c conda-forge threeml
+                  #conda install --use-local -c conda-forge threeml
+                  conda install -c ${CONDA}/envs/test_env/conda-bld/ threeml
 
             - name: Test conda build
               shell: bash -l {0}
               run: |
-                wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                #python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                 python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
@@ -105,35 +105,29 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-latest, macos-12]
                 python-version: [3.9]
-
+                include:
+                  - environment: ci/environment.yml
+                    channel: threeml
+                  - environment:  ci/environment_noxspec.yml
+                    channel: threeml/label/dev
+                    os: macos-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Cache conda
-              uses: actions/cache@v2
-              with:
-                  path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
-              uses: conda-incubator/setup-miniconda@v2
+              uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   miniforge-variant: Mambaforge
-                  architecture: "x64"
-                  #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
-                  environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
+                  environment-file: ${{ matrix.environment }}
+                  channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
                   use-only-tar-bz2: true
                   
             - name: Init Env
@@ -144,6 +138,7 @@ jobs:
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
                   echo "HOME= ${HOME}"
+                  echo "Conda installation path ${CONDA}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
 
@@ -174,11 +169,15 @@ jobs:
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+
+                  elif [[ ${{matrix.os}} == macos-latest ]]; then
+
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-64/*.tar.bz2 --force $LABEL
 
                   fi
 

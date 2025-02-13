@@ -34,7 +34,7 @@ class RandomVariates(np.ndarray):
 
         # This gets called at the end of any operation, where out_arr is the result of the operation
         # We need to update _orig_value so that the final results will have it
-
+        out_arr = RandomVariates(out_arr)
         out_arr._orig_value = out_arr.median
 
         # then just call the parent

@@ -14,7 +14,7 @@ import astromodels
 import astropy.units as u
 import h5py
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+from matplotlib import colormaps
 import numpy as np
 import pandas as pd
 import yaml
@@ -234,9 +234,8 @@ class ANALYSIS_RESULTS_HDF(object):
 
         hdf_obj.create_dataset(
             "UNIT",
-            data=np.array(data_frame["unit"].values, dtype=np.unicode_).astype(
-                h5py.string_dtype()
-            ),
+            data=np.array(data_frame["unit"].values, dtype=np.str_).astype(
+                h5py.string_dtype()),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
@@ -395,7 +394,7 @@ class ANALYSIS_RESULTS(FITSExtension):
             ("NEGATIVE_ERROR", data_frame["negative_error"].values),
             ("POSITIVE_ERROR", data_frame["positive_error"].values),
             ("ERROR", data_frame["error"].values),
-            ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
+            ("UNIT", np.array(data_frame["unit"].values, np.str_)),
             ("COVARIANCE", covariance_matrix),
             ("LOG_PROB", dummy),
             ("SAMPLES", samples),
@@ -1125,7 +1124,7 @@ class BayesianResults(_AnalysisResults):
 
         corner_style = threeML_config.bayesian.corner_style
 
-        cmap = cm.get_cmap(corner_style.cmap.value)
+        cmap = colormaps[corner_style.cmap.value]
 
         try:
             cmap.with_extremes(

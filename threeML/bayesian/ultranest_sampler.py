@@ -133,14 +133,9 @@ class UltraNestSampler(UnitCubeSampler):
 
         param_names = list(self._free_parameters.keys())
 
-
-        chain_name = self._kwargs.pop('log_dir')
-
         loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # UltraNest must be run parallel via an external method
-
-        loglike, ultranest_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # We need to check if the MCMC
         # chains will have a place on

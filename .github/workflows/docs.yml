@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: install latex
@@ -30,20 +30,30 @@ jobs:
           
           
           pip install zeus-mcmc
-          pip install git+https://github.com/desihub/speclite.git
-          pip install black
-          
+          #pip install git+https://github.com/desihub/speclite.git
+          pip install --upgrade speclite
+          pip install "black<24"
           pip install astromodels
           
           
       - name: Install the package
         shell: bash -l {0}
         run: |
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+            #pip install git+https://github.com/threeML/astromodels.git@dev
+          else
+            pip install --upgrade astromodels
+          fi
           pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -60,7 +70,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
@@ -68,12 +78,12 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -82,7 +92,7 @@ jobs:
           key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -96,8 +106,8 @@ jobs:
       - name: Init Environment
         shell: bash -l {0}
         run: |
-          set -e
           # Make sure we fail in case of error
+          set -e
 
           # miniconda_os=Linux
           # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
@@ -116,16 +126,23 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-
-          pip install -e .
-
-          pip install black
+          pip install "black<24"
+          pip install --upgrade speclite
           pip install git+https://github.com/threeml/hawc_hal.git
-
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+            #pip install git+https://github.com/threeML/astromodels.git@dev
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -139,19 +156,19 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -160,7 +177,7 @@ jobs:
           key: conda-fermi_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -189,21 +206,28 @@ jobs:
           #sudo apt-get install texlive
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-
-
+          
       - name: Install the package
         shell: bash -l {0}
         run: |
-
+          pip install "black<24" fermipy
+          pip install --upgrade speclite
+          
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+            #pip install git+https://github.com/threeML/astromodels.git@dev
+          else
+            pip install --upgrade astromodels
+          fi
           pip install -e .
-
-          pip install black
-          pip install fermipy
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -211,14 +235,7 @@ jobs:
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
 
-          # Update GtBurst:
-          #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
-          #python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
-
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
-
-          #jupytext --to py --pipe black docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
-          #python docs/md_docs/slow_execute/LAT_Transient_Builder_Example.py
 
           #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/optimizer_docs.md
 
@@ -231,21 +248,19 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
-
-
-          
+    
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -254,7 +269,7 @@ jobs:
           key: conda-xspec_notebooks-python-3.9-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -283,28 +298,27 @@ jobs:
           #sudo apt-get install texlive
 
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-          
-          if [[ "${ISDEV}" == "true" ]]; then
-
-          mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-          
-          fi
-        env:
-          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-
+          pip install zeus_mcmc dynesty "black<24" 
+          pip install --upgrade speclite
+          #pip install git+https://github.com/desihub/speclite.git
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+            #pip install git+https://github.com/threeML/astromodels.git@dev
+          else
+            pip install --upgrade astromodels
+          fi
           pip install -e .
-
-          pip install black
-          pip install git+https://github.com/desihub/speclite.git
-
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -315,26 +329,26 @@ jobs:
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
-          
-          
+
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
+  
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache conda
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
           CACHE_NUMBER: 0
@@ -343,7 +357,7 @@ jobs:
           key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           auto-activate-base: false
@@ -373,28 +387,29 @@ jobs:
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
 
-          # temporary fix for fermi tools
-
-
       - name: Install the package
         shell: bash -l {0}
         run: |
-
-          pip install -e .
-          pip install zeus_mcmc dynesty
-          pip install black
+          pip install zeus_mcmc dynesty "black<24"
+          pip install --upgrade speclite
+          #pip install git+https://github.com/desihub/speclite.git
           #pip install --no-binary :all: root_numpy
-          pip install git+https://github.com/desihub/speclite.git
+          
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre --no-deps astromodels
+            pip install --upgrade --pre astromodels
+            #pip install git+https://github.com/threeML/astromodels.git@dev
+          else
+            pip install --upgrade astromodels
           fi
+          pip install -e .
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
+          # Make sure we fail in case of error
+          set -e
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -419,7 +434,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -429,11 +444,11 @@ jobs:
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-latest
+    runs-on: macos-12
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
 
       - uses: actions/download-artifact@master
@@ -466,22 +481,16 @@ jobs:
         run: |
 
           ls docs/notebooks
-
           
-          
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
           
-
-      - name: Sleep for 5 min
+      - name: Sleep for 10 min
         uses: juliangruber/sleep-action@v1
         with:
-          time: 5m
-
-
-
+          time: 10m
           
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
@@ -493,15 +502,15 @@ jobs:
 
   api_doc:
     name: "Create the API stubs"
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
@@ -511,15 +520,16 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-
           pip3 install cython tempita
-          pip3 install numpy scipy numba astropy
+          pip3 install cython blosc2 h5py
+          pip3 install numpy scipy numba astropy pandas
+          pip3 install wheel pkgconfig numexpr
 
-          python setup.py develop
+          #python setup.py develop
+          pip3 install -e .
 
           brew install sphinx-doc pandoc
 
-          pip3 install wheel
           pip3 install mock recommonmark
           pip3 install sphinx-rtd-dark-mode
           pip3 install -U sphinx
@@ -528,7 +538,7 @@ jobs:
           sphinx-apidoc -f -o docs/api/ threeML
 
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: api-stubs-for-${{ github.sha }}
           path: docs/api
@@ -538,18 +548,18 @@ jobs:
 
   build_docs:
     name: "Build the Documentation"
-    runs-on: macos-latest
+    runs-on: macos-12
     needs: [upload_notebooks, api_doc]
     steps:
 
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
@@ -559,23 +569,29 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-          pip3 install wheel
+          pip3 install wheel pkgconfig
           pip3 install tempita
+          pip3 install cython blosc2 h5py
           pip3 install numpy scipy numba astropy
 
           brew install sphinx-doc pandoc
-
 
           pip3 install mock recommonmark
           pip3 install sphinx-rtd-dark-mode sphinx-math-dollar
           pip3 install -U sphinx
           pip3 install -r docs/requirements.txt
 
-          python3 setup.py develop
+          if [[ "${ISDEV}" == "true" ]]; then
+            pip install --upgrade --pre astromodels
+            #pip install git+https://github.com/threeML/astromodels.git@dev
+          else
+            pip install --upgrade astromodels
+          fi
+          pip install -e .
 
           rm -rf docs/md_docs/*
-
-
+        env:
+          ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
       - uses: actions/download-artifact@master
         with:

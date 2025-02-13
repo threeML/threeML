@@ -11,6 +11,10 @@ from threeML.utils.OGIP.response import (
 )
 from threeML.utils.time_interval import TimeInterval
 
+if np.lib.NumpyVersion(np.__version__) >= '2.0.0b1':
+    from numpy.exceptions import VisibleDeprecationWarning
+else:
+    from numpy import VisibleDeprecationWarning
 
 def get_matrix_elements():
 
@@ -287,7 +291,7 @@ def test_response_set_constructor():
 
     with warnings.catch_warnings():
 
-        warnings.simplefilter("error", np.VisibleDeprecationWarning)
+        warnings.simplefilter("error", VisibleDeprecationWarning)
 
         rsp_set = InstrumentResponseSet.from_rsp2_file(
             rsp2_file, exposure_getter, counts_getter

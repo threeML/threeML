@@ -5,7 +5,7 @@ import sys
 from builtins import object, range, zip
 
 import astromodels.core.model
-import matplotlib.cm as cm
+from matplotlib import colormaps
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -225,6 +225,7 @@ class JointLikelihood(object):
 
         :param quiet: If True, print the results (default), otherwise do not print anything
         :param compute_covariance:If True (default), compute and display the errors and the correlation matrix.
+        :param n_samples: Number of samples to scan the likelihood.
         :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum
                  for each dataset and the total one.
         """
@@ -382,7 +383,8 @@ class JointLikelihood(object):
         statistical_measures["BIC"] = bic(
             -total, len(self._free_parameters), total_number_of_data_points
         )
-
+        log.debug('likelihood: %.f , Free Parameters: %d, Total number of datapoints: %d' %
+                  (-total, len(self._free_parameters), total_number_of_data_points))
         #Workaround for the case of a "fit" with no free parameters
         #This happens e.g. if you calculate the TS of the only source
         #in a one-source model.
@@ -1254,8 +1256,7 @@ class JointLikelihood(object):
         bounds.append(cc.max())
 
         # Define the color palette
-        palette = cm.get_cmap(
-            threeML_config["mle"]["contour_cmap"].value)  # cm.Pastel1
+        palette = colormaps[threeML_config["mle"]["contour_cmap"].value] # cm.Pastel1
         palette.set_over(threeML_config["mle"]["contour_background"])
         palette.set_under(threeML_config["mle"]["contour_background"])
         palette.set_bad(threeML_config["mle"]["contour_background"])
@@ -1304,6 +1305,8 @@ class JointLikelihood(object):
 
         # Remove this source from the model
         _ = model_clone.remove_source(source_name)
+        #import copy
+        #data_list_clone = copy.deepcopy(self._data_list)
 
         # Fit
         another_jl = JointLikelihood(model_clone, self._data_list)

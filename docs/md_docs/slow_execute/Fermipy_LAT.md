@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.14.1
+      jupytext_version: 1.15.2
   kernelspec:
     display_name: Python 3 (ipykernel)
     language: python
@@ -189,7 +189,7 @@ We will fix the isotropic BG as we are not sensitive to it with this dataset. We
 
 ```python
 model.LAT_isodiff_Normalization.fix = True
-model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
+model.x4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
 model.display()
 ```
 
@@ -225,7 +225,7 @@ Or we might want to produce a contour plot
 
 ```python
 res = jl.get_contours(
-    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',1.6e-13,2.2e-13, 20,
+    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',2.1e-13,2.7e-13, 20,
     'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index',-2.0,-1.7, 20
 )
 ```

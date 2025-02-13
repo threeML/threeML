@@ -5,10 +5,10 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.15.2
   kernelspec:
-    display_name: Python 3
+    display_name: Python 3 (ipykernel)
     language: python
     name: python3
 ---
@@ -21,13 +21,11 @@ In this simple example we will generate some simulated data, and fit them with 3
 Let's start by generating our dataset:
 
 
-```python 
+```python
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
 np.seterr(all="ignore")
-
-
 ```
 
 
@@ -36,14 +34,12 @@ np.seterr(all="ignore")
 from threeML import *
 ```
 
-```python 
+```python
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 silence_warnings()
 set_threeML_style()
-
-
 ```
 
 
@@ -74,7 +70,7 @@ fit_function = Powerlaw()
 
 xyl = XYLike("data", x, y, y_err)
 
-parameters, like_values = xyl.fit(fit_function)
+results = xyl.fit(fit_function)
 ```
 
 Plot data and model:
@@ -95,6 +91,9 @@ The procedure outlined above works for any distribution for the data (Gaussian o
 
 ```python
 import scipy.stats
+
+# Retrieve the likelihood values
+like_values = results.get_statistic_frame()
 
 # Compute the number of degrees of freedom
 n_dof = len(xyl.x) - len(fit_function.free_parameters)

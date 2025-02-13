@@ -20,47 +20,35 @@ requirements:
     # - {{ compiler('cxx') }}
     # - {{ compiler('fortran') }}
     - python
-    #- setuptools
-    #- toolchain
     - numpy>=1.15
-    #- scipy >=0.18
     - emcee>=3
-    #- astropy >=1.0.3
-    #- matplotlib
     - uncertainties
     - pyyaml>=5.1
     - dill
     - iminuit>=2
     - astromodels>=2
-    - astroquery<0.4 # [py2k]
-    - astroquery # [py3k]
+    - astroquery
     - corner>=1.0.2
-    #- corner
-    #- pandas
     - requests
     - speclite
-    - multinest
-    - pymultinest
-    - ultranest # [py3k]
+    - multinest # [not arm64]
+    - pymultinest # [not arm64]
+    - ultranest # [not arm64]
     - dynesty>=1
-    #- pygmo>=2.4,<=2.11.4 # [py2k]
     - pygmo>=2.4
     - ipywidgets
     - numba
-    #- ipython
     - ipyparallel
     - py
-    #- tk==8.5.19 # [py2k]
-    - ipopt<3.13 # [py2k]
     - numdifftools
-    - interpolation>=2.1.5 # [py3k]
+    - interpolation>=2.1.5
     - tqdm>=4.56.0
     - colorama
     - omegaconf
     
   run:
     - python
-    - numpy>=1.15 # [py3k]
+    - numpy>=1.15
     - scipy>=0.18
     - emcee>=3
     - astropy>=1.0.3
@@ -70,17 +58,15 @@ requirements:
     - dill
     - iminuit>=2
     - astromodels>=2.3.8
-    - astroquery<0.4 # [py2k]
-    - astroquery # [py3k]
+    - astroquery 
     - corner>=1.0.2
     - pandas>=0.23
     - requests
     - speclite
-    - multinest
-    - pymultinest
-    - ultranest # [py3k]
+    - multinest # [not arm64]
+    - pymultinest # [not arm64]
+    - ultranest # [not arm64]
     - dynesty>=1
-    #- pygmo>=2.4,<=2.11.4 # [py2k]
     - pygmo>=2.4
     - ipywidgets
     - ipython
@@ -88,10 +74,8 @@ requirements:
     - numba
     - xz
     - py
-    - pytest<4 # [py2k]
-    - pytest # [py3k]
+    - pytest 
     - numexpr
-    - ipopt<3.13 # [py2k]
     - numdifftools
     - tqdm>=4.56.0
     - omegaconf

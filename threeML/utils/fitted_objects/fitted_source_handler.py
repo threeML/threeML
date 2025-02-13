@@ -187,7 +187,7 @@ class GenericFittedSourceHandler(object):
             variates = []
 
             # scroll through the independent variables
-            n_iterations = np.product(self._out_shape)
+            n_iterations = np.prod(self._out_shape)
 
             with use_astromodels_memoization(False):
 

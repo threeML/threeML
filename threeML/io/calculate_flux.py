@@ -89,7 +89,15 @@ def _setup_analysis_dictionaries(
 
                     except:
 
-                        comps = []
+                        try:
+
+                            comps = [
+                                c for c in source.components
+                            ]
+
+                        except:
+
+                            comps = []
 
                     # duplicate components
                     comps = [
@@ -129,7 +137,15 @@ def _setup_analysis_dictionaries(
 
                     except:
 
-                        comps = []
+                        try:
+
+                            comps = [
+                                c for c in source.components
+                            ]
+
+                        except:
+
+                            comps = []
 
                     # duplicate components
                     comps = [
@@ -157,11 +173,10 @@ def _setup_analysis_dictionaries(
         ):
 
             # if we want to use this source
-
             if (
                 not use_components
                 or ("total" in components_to_use)
-                or (not mle_analyses[key]["component_names"])
+                or ('main' in mle_analyses[key]["component_names"])
             ):
                 mle_analyses[key][
                     "fitted point source"
@@ -259,7 +274,7 @@ def _setup_analysis_dictionaries(
             if (
                 not use_components
                 or ("total" in components_to_use)
-                or (not bayesian_analyses[key]["component_names"])
+                or ('main' in bayesian_analyses[key]["component_names"])
             ):
                 bayesian_analyses[key][
                     "fitted point source"
@@ -385,11 +400,17 @@ def _collect_sums_into_dictionaries(
                 "total" in components_to_use
             ):
                 use_total = True
+            
+            if 'main' in list(analyses[key]["components"].keys()
+            ):
+                use_total = True
 
-            for component in list(analyses[key]["components"].keys()):
-                component_sum_dict.setdefault(component, []).append(
-                    analyses[key]["components"][component]
-                )
+            else:
+
+                for component in list(analyses[key]["components"].keys()):
+                    component_sum_dict.setdefault(component, []).append(
+                        analyses[key]["components"][component]
+                    )
 
         else:
 
@@ -453,23 +474,29 @@ def _compute_output(analyses, _defaults, out):
                 "total" in _defaults["components_to_use"]
             ):
                 get_total = True
+            
+            if 'main' in list(analyses[key]["components"].keys()
+            ):
+                get_total = True
 
-            for component in list(analyses[key]["components"].keys()):
-                # extract the information and plot it
+            else:
 
-                samples = analyses[key]["components"][component]
+                for component in list(analyses[key]["components"].keys()):
+                    # extract the information and plot it
+                    
+                    samples = analyses[key]["components"][component]
 
-                label = f"{key}: {component}"
+                    label = f"{key}: {component}"
 
-                _append_best_fit_and_errors(
-                    samples,
-                    _defaults,
-                    label,
-                    fluxes,
-                    p_errors,
-                    n_errors,
-                    labels,
-                )
+                    _append_best_fit_and_errors(
+                        samples,
+                        _defaults,
+                        label,
+                        fluxes,
+                        p_errors,
+                        n_errors,
+                        labels,
+                    )
 
         else:
 
@@ -478,14 +505,18 @@ def _compute_output(analyses, _defaults, out):
         if get_total:
             # it ends up that we need to plot the total spectrum
             # which is just a repeat of the process
+            
+            try:
+                samples = analyses[key]["fitted point source"]
+            except:
+                log.error("%s component(s) not available in source %s" %\
+                         (_defaults["components_to_use"], key))
+            else:
+                label = f"{key}: total"
 
-            samples = analyses[key]["fitted point source"]
-
-            label = f"{key}: total"
-
-            _append_best_fit_and_errors(
-                samples, _defaults, label, fluxes, p_errors, n_errors, labels
-            )
+                _append_best_fit_and_errors(
+                    samples, _defaults, label, fluxes, p_errors, n_errors, labels
+                )
 
     if fluxes:
         # now make a data frame
@@ -586,7 +617,7 @@ def calculate_point_source_flux(*args, **kwargs):
     log.error(
         "The use of calculate_point_source_flux is deprecated. Please use the .get_point_source_flux()"
         " method of the JointLikelihood.results or the BayesianAnalysis.results member. For example:"
-        " jl.results.get_point_source_flux()."
+        " jl.results.get_flux()."
     )
 
     return _calculate_point_source_flux(*args, **kwargs)
