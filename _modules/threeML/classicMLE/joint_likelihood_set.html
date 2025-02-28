@@ -139,6 +139,7 @@
         <span class="n">n_iterations</span><span class="p">,</span>
         <span class="n">iteration_name</span><span class="o">=</span><span class="s2">&quot;interval&quot;</span><span class="p">,</span>
         <span class="n">preprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">postprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="c1"># Store the data and model getter</span>
@@ -220,6 +221,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_preprocessor</span> <span class="o">=</span> <span class="n">preprocessor</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_postprocessor</span> <span class="o">=</span> <span class="n">postprocessor</span>
+
 <div class="viewcode-block" id="JointLikelihoodSet.set_minimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.joint_likelihood_set.JointLikelihoodSet.set_minimizer">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_minimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimizer</span><span class="p">):</span>
@@ -279,6 +282,10 @@
                 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
 
                 <span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">this_model</span><span class="p">,</span> <span class="n">this_data</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_postprocessor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_postprocessor</span><span class="p">(</span><span class="n">this_model</span><span class="p">,</span> <span class="n">this_data</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="n">this_parameter_frame</span><span class="p">,</span> <span class="n">this_like_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitter</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
 

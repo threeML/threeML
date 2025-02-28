@@ -178,7 +178,7 @@
 
 <div class="viewcode-block" id="GoodnessOfFit.by_mc">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.classicMLE.html#threeML.classicMLE.goodness_of_fit.GoodnessOfFit.by_mc">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">by_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">by_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">postprocessor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute goodness of fit by generating Monte Carlo datasets and fitting the current model on them. The fraction</span>
 <span class="sd">        of synthetic datasets which have a value for the likelihood larger or equal to the observed one is a measure</span>
@@ -195,6 +195,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">,</span>
             <span class="n">n_iterations</span><span class="p">,</span>
             <span class="n">iteration_name</span><span class="o">=</span><span class="s2">&quot;simulation&quot;</span><span class="p">,</span>
+            <span class="n">preprocessor</span><span class="o">=</span><span class="n">preprocessor</span><span class="p">,</span>
+            <span class="n">postprocessor</span><span class="o">=</span><span class="n">postprocessor</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Use the same minimizer as in the joint likelihood object</span>
