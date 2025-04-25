@@ -27,6 +27,7 @@ class JointLikelihoodSet(object):
         n_iterations,
         iteration_name="interval",
         preprocessor=None,
+        postprocessor=None,
     ):
 
         # Store the data and model getter
@@ -108,6 +109,8 @@ class JointLikelihoodSet(object):
 
         self._preprocessor = preprocessor
 
+        self._postprocessor = postprocessor
+
     def set_minimizer(self, minimizer):
 
         if isinstance(minimizer, _Minimization):
@@ -162,6 +165,10 @@ class JointLikelihoodSet(object):
                 warnings.simplefilter("ignore", RuntimeWarning)
 
                 jl = JointLikelihood(this_model, this_data)
+
+            if self._postprocessor is not None:
+
+                self._postprocessor(this_model, this_data, quiet=True)
 
             this_parameter_frame, this_like_frame = self._fitter(jl)
 

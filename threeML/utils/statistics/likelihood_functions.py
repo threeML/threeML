@@ -294,7 +294,9 @@ def half_chi2(y, yerr, expectation):
     #yerr[yerr<1]=np.sqrt(0.75)
 
     for n in range(N):
-
-        log_likes[n] = (y[n] - expectation[n]) ** 2 / (yerr[n] ** 2)
+        
+        log_likes[n] = 0
+        if yerr[n] > 0:
+            log_likes[n] = (y[n] - expectation[n]) ** 2 / (yerr[n] ** 2)
 
     return 0.5 * log_likes

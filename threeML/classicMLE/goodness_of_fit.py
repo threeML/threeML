@@ -58,7 +58,7 @@ class GoodnessOfFit(object):
 
         return new_model
 
-    def by_mc(self, n_iterations=1000, continue_on_failure=False):
+    def by_mc(self, n_iterations=1000, continue_on_failure=False, preprocessor=None, postprocessor=None):
         """
         Compute goodness of fit by generating Monte Carlo datasets and fitting the current model on them. The fraction
         of synthetic datasets which have a value for the likelihood larger or equal to the observed one is a measure
@@ -75,6 +75,8 @@ class GoodnessOfFit(object):
             self.get_model,
             n_iterations,
             iteration_name="simulation",
+            preprocessor=preprocessor,
+            postprocessor=postprocessor,
         )
 
         # Use the same minimizer as in the joint likelihood object

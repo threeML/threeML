@@ -65,7 +65,7 @@ jobs:
               ls heasoft*;
               ls;   
               echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev libx11-dev libxt-dev;
               ls heasoft*;
               XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
               
@@ -162,7 +162,7 @@ jobs:
               ls heasoft*;
               ls;
               echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev libx11-dev libxt-dev;
               ls heasoft*;
               XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
 
@@ -267,7 +267,7 @@ jobs:
               ls heasoft*;
               ls;
               echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev libx11-dev libxt-dev;
               ls heasoft*;
               XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
 
@@ -326,7 +326,7 @@ jobs:
             with:
                   activate-environment: "test_env"
                   auto-activate-base: false
-                  miniforge-variant: Mambaforge
+                  miniforge-variant: Miniforge3
                   architecture: "x64"
                   #conda-build-version: "*"
                   python-version: ${{ matrix.python-version }}
@@ -384,7 +384,7 @@ jobs:
               ls heasoft*;
               ls;
               echo "compiling xspec";
-              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev libx11-dev libxt-dev;
               ls heasoft*;
               XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
 
