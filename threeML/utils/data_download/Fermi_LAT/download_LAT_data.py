@@ -660,7 +660,7 @@ class LAT_dataset():
 
     def extract_events(self,roi, zmax, irf, thetamax=180.0,strategy='time',data_quality=True):
         from GtBurst import dataHandling
-        global lastDisplay
+        #global lastDisplay
 
         LATdata = dataHandling.LATData(self.ft1, self.rspfile, self.ft2)
 
