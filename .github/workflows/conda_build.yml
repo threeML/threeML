@@ -13,13 +13,13 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest, macos-latest, macos-13]
-                python-version: [3.9]
+                os: ["ubuntu-latest", "macos-13", "macos-latest"]
+                python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment.yml
-                    channel: threeml
+                    channel: threeml/label/dev #PRELIMINARY
                   - environment:  ci/environment_noxspec.yml
-                    channel: threeml/label/dev
+                    channel: threeml/label/dev #PRELIMINARY
                     os: macos-latest
         steps:
             - name: Checkout
@@ -45,7 +45,7 @@ jobs:
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
-                  use-only-tar-bz2: true
+                  use-only-tar-bz2: false
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -65,7 +65,7 @@ jobs:
                   
                   fi
                   pip install --upgrade speclite
-                  pip install fermipy "matplotlib<3.9"
+                  #pip install fermipy "matplotlib<3.9"
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -82,14 +82,21 @@ jobs:
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
+                  ls -l ${CONDA}/envs/test_env/conda-bld/*/*
+
+                  conda search threeml --use-local --info
+            - name: Install it
+              shell: bash -l {0}
+              run: |
                   #conda install --use-local -c conda-forge threeml
-                  conda install -c ${CONDA}/envs/test_env/conda-bld/ threeml
+                  conda install -c ${CONDA}/envs/test_env/conda-bld/ --strict-channel-priority threeml
 
             - name: Test conda build
               shell: bash -l {0}
               run: |
                 #wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                 #python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                
                 python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
@@ -105,13 +112,13 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest, macos-13]
-                python-version: [3.9]
+                os: ["ubuntu-latest", "macos-13", "macos-latest"]
+                python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment.yml
-                    channel: threeml
+                    channel: threeml/label/dev #PRELIMINARY
                   - environment:  ci/environment_noxspec.yml
-                    channel: threeml/label/dev
+                    channel: threeml/label/dev #PRELIMINARY
                     os: macos-latest
         steps:
             - name: Checkout
@@ -128,7 +135,7 @@ jobs:
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
-                  use-only-tar-bz2: true
+                  use-only-tar-bz2: false
                   
             - name: Init Env
               shell: bash -l {0}
