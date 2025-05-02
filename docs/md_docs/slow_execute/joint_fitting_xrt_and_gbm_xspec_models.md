@@ -145,7 +145,7 @@ Set all the normal parameters you would in XSPEC and build a model the normal **
 xspec_abund('angr')
 
 spectral_model =  XS_phabs()* XS_zphabs() * Powerlaw()
-
+spectral_model.set_units(u.keV, 1 / (u.keV * u.cm**2 * u.s))
 
 spectral_model.nh_1=0.101
 spectral_model.nh_1.bounds = (None, None)

@@ -61,7 +61,7 @@ export ASTRO_XSPEC_VERSION='12.12.1'
 
 ### xspec-modelsonly
 
-I{f using conda, it is possible to get access to XSPEC models without having to
+If using conda, it is possible to get access to XSPEC models without having to
 install HEASOFT. We thus recommend the following command to create your new
 conda environment:
 
@@ -88,7 +88,8 @@ will take care of everything:
 1. Download the script from
    [here](https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh)
 2. Run the script with `bash install_3ML.sh`. If you plan to use XSPEC models
-   use `bash install_3ML.sh --with-xspec`.
+   use `bash install_3ML.sh --with-xspec`. If you want to install from the dev 
+   branch add the `--dev` flag.
 3. The script will install 3ML and then create a `threeML_init.sh` script and a
 `threeML_init.csh` script. Source the former if you are using Bash (`source
 threeML_init.sh`) and the second one if you are using Csh/Tcsh (`source
@@ -122,6 +123,12 @@ channel. We are working to resolve this hassle and we apologize to our users.
 
 ```bash
 conda install -c conda-forge -c threeml astromodels threeml
+
+```
+
+If you want to install the dev version add the label dev:
+```bash
+conda install -c conda-forge -c threeml/label/dev astromodels threeml
 
 ```
 

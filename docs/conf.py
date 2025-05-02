@@ -73,6 +73,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_gallery.load_style",
     "sphinx_rtd_dark_mode",
+    "sphinxcontrib.email"
 ]
 
 napoleon_google_docstring = True
@@ -80,7 +81,7 @@ napoleon_use_param = False
 
 
 default_dark_mode = True
-
+email_automode = True
 
 if "GITHUB_TOKEN" in os.environ:
 
@@ -127,7 +128,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "The Multi-Mission Maximum Likelihood framework"
-copyright = "2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack"
+copyright = "(2024), the ThreeML developers"
 author = "G.Vianello"
 
 # This is also used if you do content translation via gettext catalogs.

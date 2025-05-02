@@ -270,9 +270,8 @@ class BayesianAnalysis:
     @property
     def log_marginal_likelihood(self) -> Optional[float]:
         """
-                Return the log marginal likelihood (evidence
-        ) if computed
-                :return:
+        Return the log marginal likelihood (evidence) if computed
+        :return: marginal_likelihood
         """
 
         return self._sampler.marginal_likelihood
