@@ -66,29 +66,28 @@ class UltraNestSampler(UnitCubeSampler):
         **kwargs,
     ):
         """
-                set up the Ultranest sampler. Consult the documentation:
+        set up the Ultranest sampler. Consult the documentation:
+        https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler
 
-                https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler
-
-                :param min_num_live_points: minimum number of live points throughout the run
-                :type min_num_live_points: int
-                :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.
-                :type dlogz: float
-                :param chain_name: where to store output files
-                :type chain_name:
-                :param resume:  ('resume', 'resume-similar', 'overwrite' or 'subfolder') –
+        :param min_num_live_points: minimum number of live points throughout the run
+        :type min_num_live_points: int
+        :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.
+        :type dlogz: float
+        :param chain_name: where to store output files
+        :type chain_name:
+        :param resume:  ('resume', 'resume-similar', 'overwrite' or 'subfolder') –
         if ‘overwrite’, overwrite previous data.
         if ‘subfolder’, create a fresh subdirectory in log_dir.
         if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.
         if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.
-                :type resume: str
-                :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).
-                :type wrapped_params:
-                :param stepsampler:
-                :type stepsampler:
-                :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).
-                :type use_mlfriends: bool
-                :returns:
+        :type resume: str
+        :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).
+        :type wrapped_params:
+        :param stepsampler:
+        :type stepsampler:
+        :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).
+        :type use_mlfriends: bool
+        :returns:
 
         """
 
