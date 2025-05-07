@@ -67,7 +67,7 @@ jobs:
                   #pip install --upgrade speclite
                   #pip install fermipy "matplotlib<3.9"
 
-                  if [[ ${matrix.python-version} == 3.9 ]];
+                  if [[ ${{matrix.python-version}} == 3.9 ]];
                   then
                     mamba install -c conda-forge "numpy<1.24"
                   fi
