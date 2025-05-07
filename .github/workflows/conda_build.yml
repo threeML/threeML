@@ -64,8 +64,13 @@ jobs:
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
-                  pip install --upgrade speclite
+                  #pip install --upgrade speclite
                   #pip install fermipy "matplotlib<3.9"
+
+                  if [[ ${matrix.python-version} == 3.9 ]];
+                  then
+                    mamba install -c conda-forge "numpy<1.24"
+                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -84,12 +89,12 @@ jobs:
 
                   ls -l ${CONDA}/envs/test_env/conda-bld/*/*
 
-                  conda search threeml --use-local --info
+                  conda search -c ${CONDA}/envs/test_env/conda-bld/ threeml --offline --use-local --info
             - name: Install it
               shell: bash -l {0}
               run: |
                   #conda install --use-local -c conda-forge threeml
-                  conda install -c ${CONDA}/envs/test_env/conda-bld/ --strict-channel-priority threeml
+                  conda install -c ${CONDA}/envs/test_env/conda-bld/ --strict-channel-priority --use-local threeml
 
             - name: Test conda build
               shell: bash -l {0}

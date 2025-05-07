@@ -198,8 +198,13 @@ jobs:
                   mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   
                   fi
-                  pip install --upgrade speclite
+                  #pip install --upgrade speclite
                   #pip install fermipy "matplotlib<3.9"
+
+                  if [[ ${matrix.python-version} == 3.9 ]];
+                  then
+                    mamba install -c conda-forge "numpy<1.24"
+                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list

@@ -20,7 +20,8 @@ requirements:
     # - {{ compiler('cxx') }}
     # - {{ compiler('fortran') }}
     - python
-    - numpy>=1.15
+    - numpy>=1.15 # [py==311]
+    - numpy>=1.15,<1.24 # [py==39]
     - emcee>=3
     - uncertainties
     - pyyaml>=5.1
