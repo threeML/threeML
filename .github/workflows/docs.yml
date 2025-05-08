@@ -99,7 +99,7 @@ jobs:
           miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
-          channels: conda-forge, threeml, defaults
+          channels: threeml, conda-forge, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
 
@@ -121,7 +121,7 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
       - name: Install the package
         shell: bash -l {0}
@@ -174,7 +174,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-fermi_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+          key: conda-fermi_notebooks-python-3.9-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -184,7 +184,7 @@ jobs:
           miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
-          channels: conda-forge, fermi, threeml, defaults
+          channels: fermi, threeml, conda-forge, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
 
@@ -205,13 +205,13 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
           
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install "black<24" fermipy
-          pip install --upgrade speclite
+          pip install "black<24" 
+          pip install --upgrade speclite fermipy
           
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -276,7 +276,7 @@ jobs:
           miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
-          channels: threeml, conda-forge, xspecmodels, defaults
+          channels: threeml, xspecmodels, conda-forge, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
 
@@ -354,7 +354,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_hal.yml') }}
+          key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -364,7 +364,7 @@ jobs:
           miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
-          channels: conda-forge, threeml, defaults
+          channels: threeml, conda-forge, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
 
@@ -385,7 +385,7 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
 
       - name: Install the package
         shell: bash -l {0}
