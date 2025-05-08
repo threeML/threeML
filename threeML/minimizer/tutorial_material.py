@@ -125,9 +125,13 @@ def plot_minimizer_path(jl, points=False):
     qx_ = np.array(
         jl.likelihood_model.test.spectrum.main.shape._traversed_points, dtype=float
     )
-    qy_ = np.array(
-        jl.likelihood_model.test.spectrum.main.shape._returned_values, dtype=float
-    )
+    # Horrible hack to get around a ValueError: setting an array element with a 
+    # sequence
+    values = jl.likelihood_model.test.spectrum.main.shape._returned_values
+    for idx, item in enumerate(values):
+        if np.isnan(item):
+            values[idx] = np.array([np.nan])
+    qy_ = np.asarray(values, dtype=float)
 
     fig, sub = plt.subplots(1, 1)
 

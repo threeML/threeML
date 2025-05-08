@@ -256,7 +256,7 @@ All the plots are saved in the output directory as png files:
 We can also plot the resulting model:
 
 ```python
-energies=sp.logspace(1,6,100) *u.MeV
+energies=np.logspace(1,6,100) *u.MeV
 fig, ax=plt.subplots()
 # we only want to visualize the relevant sources...
 src_to_plot=['Crab','PSR_J0534p2200']
