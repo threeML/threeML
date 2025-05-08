@@ -96,12 +96,12 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
           channels: conda-forge, threeml, defaults
           environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
 
       - name: Init Environment
         shell: bash -l {0}
@@ -181,12 +181,12 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
           channels: conda-forge, fermi, threeml, defaults
           environment-file: ci/environment_fermi.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
 
       - name: Init Environment
         shell: bash -l {0}
@@ -273,12 +273,12 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          miniforge-variant: Miniforge3
+          miniforge-version: latest
           activate-environment: test_env
           python-version: 3.9
           channels: threeml, conda-forge, xspecmodels, defaults
           environment-file: ci/environment_xspec.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
 
       - name: Init Environment
         shell: bash -l {0}
@@ -361,12 +361,12 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          miniforge-version: latest
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
           channels: conda-forge, threeml, defaults
           environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
 
       - name: Init Environment
         shell: bash -l {0}
