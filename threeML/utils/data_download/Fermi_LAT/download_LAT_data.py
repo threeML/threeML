@@ -24,7 +24,7 @@ from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 log = setup_logger(__name__)
 
 # Set default timeout for operations
-socket.setdefaulttimeout(120)
+socket.setdefaulttimeout(180)
 
 
 class DivParser(html.parser.HTMLParser):

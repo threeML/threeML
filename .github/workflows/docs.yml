@@ -212,6 +212,10 @@ jobs:
         run: |
           pip install "black<24" 
           pip install --upgrade speclite fermipy
+
+          # Update gtburst
+          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.9/site-packages/fermitools/GtBurst/updater.py
+          python $CONDA_PREFIX/lib/python3.9/site-packages/fermitools/GtBurst/updater.py
           
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
