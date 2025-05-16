@@ -112,6 +112,14 @@ def sqrt_sum_of_squares(arg):
 
     return np.sqrt(np.square(arg).sum())
 
+def sqrt_sum_of_squares_pairwise(arg1, arg2):
+    """
+    :param arg1: first array of numbers to be squared and summed
+    :param arg2: second array of numbers to be squared and summed
+    :return: the sqrt of the sum of the squares
+    """
+    return np.sqrt(np.square(arg1) + np.square(arg2))
+
 
 class PoissonResiduals:
     """

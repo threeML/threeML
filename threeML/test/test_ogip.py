@@ -4,7 +4,7 @@ import pytest
 import os
 import numpy.testing as npt
 from astropy.io import fits
-from .conftest import get_test_datasets_directory
+from threeML.test.conftest import get_test_datasets_directory
 from threeML import *
 from threeML.io.file_utils import within_directory
 from threeML.plugins.OGIPLike import OGIPLike
@@ -437,6 +437,58 @@ def test_xrt():
         data = DataList(xrt)
 
         jl = JointLikelihood(model, data, verbose=False)
+
+
+def test_swift_bat():
+
+    with within_directory(__example_dir):
+        bat_dir = "bat"
+
+        bat1 = OGIPLike(
+            "BAT1",
+            observation=os.path.join(bat_dir, "gbm_bat_joint_BAT.pha"),
+            response=os.path.join(bat_dir, "gbm_bat_joint_BAT.rsp"),
+        )
+
+        bat1.set_active_measurements("15-150")
+        bat1.view_count_spectrum()
+
+        pl = Powerlaw()
+        pl.K = 0.04
+        pl.index = 1.0
+        model = Model(PointSource("joint_fit", 0, 0, spectral_shape=pl))
+
+        data_list = DataList(bat1)
+        jl = JointLikelihood(model, data_list)
+
+        df1, _ = jl.fit()
+        _ = display_spectrum_model_counts(jl, step=False)
+
+        new_spectrum = bat1.observed_spectrum + bat1.observed_spectrum
+        assert new_spectrum.has_systematic_errors() == True
+
+        assert np.allclose(bat1.observed_count_errors, bat1.observed_spectrum.combined_count_errors)
+        assert np.allclose(bat1.observed_count_errors, bat1.observed_spectrum.errors * bat1.observed_spectrum.exposure)
+        combined_rate_errors = np.sqrt(bat1.observed_spectrum.rate_errors**2 + (bat1.observed_spectrum.sys_errors * bat1.observed_spectrum.rates)**2)
+        assert np.allclose(bat1.observed_count_errors, combined_rate_errors * bat1.observed_spectrum.exposure)
+
+        new_spectrum = bat1.observed_spectrum.clone(new_sys_errors=np.zeros_like(bat1.observed_spectrum.sys_errors))
+        bat2 = OGIPLike(
+            "BAT2",
+            observation=new_spectrum,
+            response=os.path.join(bat_dir, "gbm_bat_joint_BAT.rsp"),
+        )
+        bat2.set_active_measurements("15-150")
+        bat2.view_count_spectrum()
+
+        data_list = DataList(bat2)
+        jl = JointLikelihood(model, data_list)
+
+        df2, _ = jl.fit()
+        _ = display_spectrum_model_counts(jl, step=False)
+
+        assert df1["error"][0] > df2["error"][0]
+        assert df1["error"][1] > df2["error"][1]
 
 
 def test_swift_gbm():

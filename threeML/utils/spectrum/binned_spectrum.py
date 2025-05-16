@@ -279,7 +279,7 @@ class BinnedSpectrum(Histogram):
         super(BinnedSpectrum, self).__init__(
             list_of_intervals=ebounds,
             contents=rates,
-            errors=rate_errors,
+            stat_errors=rate_errors,
             sys_errors=sys_errors,
             is_poisson=is_poisson,
         )
@@ -315,7 +315,7 @@ class BinnedSpectrum(Histogram):
 
             raise RuntimeError()
 
-        return sqrt_sum_of_squares(self._errors)
+        return sqrt_sum_of_squares(self.stat_errors)
 
     @property
     def counts(self) -> np.ndarray:
@@ -336,7 +336,20 @@ class BinnedSpectrum(Histogram):
             return None
 
         else:
-            return self._errors * self.exposure
+            return self.stat_errors * self.exposure
+
+    @property
+    def combined_count_errors(self) -> Optional[np.ndarray]:
+        """
+        :return: count error per channel combining statistical and systematic 
+        errors
+        """
+
+        if self.is_poisson:
+            return None
+
+        else:
+            return self.combined_rate_errors * self.exposure
 
     @property
     def total_count(self) -> float:
@@ -385,7 +398,21 @@ class BinnedSpectrum(Histogram):
             return None
         else:
 
-            return self._errors
+            return self.stat_errors
+    
+    @property
+    def combined_rate_errors(self) -> Optional[np.ndarray]:
+        """
+        If the spectrum has no Poisson error (POISSER is False in the header),
+        this will return the combination of the STAT_ERR and SYS_ERR columns
+        [ STAT_ERR^2 + (COUNT_RATE * SYS_ERR)^2 ]^(1/2)
+        :return: combined errors on the rates
+        """
+        if self.is_poisson:
+            return None
+        else:
+
+            return self.errors
 
     @property
     def n_channels(self) -> int:
@@ -395,7 +422,8 @@ class BinnedSpectrum(Histogram):
     @property
     def sys_errors(self) -> np.ndarray:
         """
-        Systematic errors per channel. This is nonzero only if the SYS_ERR column is present in the input file.
+        Systematic errors per channel expressed as relative error. This is
+        nonzero only if the SYS_ERR column is present in the input file.
 
         :return: the systematic errors stored in the input spectrum
         """
@@ -435,6 +463,7 @@ class BinnedSpectrum(Histogram):
         new_count_errors=None,
         new_exposure=None,
         new_scale_factor=None,
+        new_sys_errors=None,
     ):
         """
         make a new spectrum with new counts and errors and all other
@@ -443,6 +472,9 @@ class BinnedSpectrum(Histogram):
 
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
+        :param new_exposure: new exposure for the spectrum
+        :param new_scale_factor: new scale factor for the spectrum
+        :param new_sys_errors: new systematic errors for the spectrum
         :return:
         """
 
@@ -454,15 +486,17 @@ class BinnedSpectrum(Histogram):
             new_exposure = self.exposure
 
         if new_scale_factor is None:
-
             new_scale_factor = self._scale_factor
+        
+        if new_sys_errors is None:
+            new_sys_errors = self._sys_errors
 
         return BinnedSpectrum(
             counts=new_counts,
             ebounds=ChannelSet.from_list_of_edges(self.edges),
             exposure=new_exposure,
             count_errors=new_count_errors,
-            sys_errors=self._sys_errors,
+            sys_errors=new_sys_errors,
             quality=self._quality,
             scale_factor=new_scale_factor,
             is_poisson=self._is_poisson,
@@ -622,11 +656,7 @@ class BinnedSpectrum(Histogram):
     def __add__(self, other):
         assert self == other, "The bins are not equal"
 
-        new_sys_errors = self.sys_errors
-        if new_sys_errors is None:
-            new_sys_errors = other.sys_errors
-        elif other.sys_errors is not None:
-            new_sys_errors += other.sys_errors
+        new_counts = self.counts + other.counts
 
         new_exposure = self.exposure + other.exposure
 
@@ -638,12 +668,32 @@ class BinnedSpectrum(Histogram):
             ), "only one of the two spectra have errors, can not add!"
             new_count_errors = (self.count_errors ** 2 + other.count_errors ** 2) ** 0.5
 
-        new_counts = self.counts + other.counts
+        if self.sys_errors is not None and other.sys_errors is not None:
+
+            new_sys_errors = np.array(
+                [
+                    sqrt_sum_of_squares([e1, e2])
+                    for e1, e2 in zip(self.sys_errors * self.counts, other.sys_errors * other.counts)
+                ]
+            ) / new_counts
+
+        elif self.sys_errors is not None:
+
+            new_sys_errors = self.sys_errors * self.counts / new_counts
+
+        elif other.sys_errors is not None:
+
+            new_sys_errors = other.sys_errors * other.counts / new_counts
+
+        else:
+
+            new_sys_errors = None
 
         new_spectrum = self.clone(
             new_counts=new_counts,
             new_count_errors=new_count_errors,
             new_exposure=new_exposure,
+            new_sys_errors=new_sys_errors,
         )
 
         if self.tstart is None:
@@ -684,18 +734,12 @@ class BinnedSpectrum(Histogram):
         if self.is_poisson or other.is_poisson:
             raise Exception("Inverse_variance_weighting not implemented for poisson")
 
-        new_sys_errors = self.sys_errors
-        if new_sys_errors is None:
-            new_sys_errors = other.sys_errors
-        elif other.sys_errors is not None:
-            new_sys_errors += other.sys_errors
-
         new_exposure = self.exposure + other.exposure
 
         new_rate_errors = np.array(
             [
                 (e1 ** -2 + e2 ** -2) ** -0.5
-                for e1, e2 in zip(self.rate_errors, other._errors)
+                for e1, e2 in zip(self.rate_errors, other.rate_errors)
             ]
         )
         new_rates = (
@@ -703,7 +747,7 @@ class BinnedSpectrum(Histogram):
                 [
                     (c1 * e1 ** -2 + c2 * e2 ** -2)
                     for c1, e1, c2, e2 in zip(
-                        self.rates, self._errors, other.rates, other._errors
+                        self.rates, self.rate_errors, other.rates, other.rate_errors
                     )
                 ]
             )
@@ -716,8 +760,34 @@ class BinnedSpectrum(Histogram):
         new_counts[np.isnan(new_counts)] = 0
         new_count_errors[np.isnan(new_count_errors)] = 0
 
+        # FIX THIS (we should propagate the errors correctly)
+        mask = new_counts > 0
+        new_sys_errors = np.zeros_like(new_counts)
+        if self.sys_errors is not None and other.sys_errors is not None:
+
+            new_sys_errors[mask] = np.array(
+                [
+                    sqrt_sum_of_squares([e1, e2])
+                    for e1, e2 in zip(self.sys_errors[mask] * self.counts[mask], other.sys_errors[mask] * other.counts[mask])
+                ]
+            ) / new_counts[mask]
+
+        elif self.sys_errors is not None:
+
+            new_sys_errors[mask] = self.sys_errors[mask] * self.counts[mask] / new_counts[mask]
+
+        elif other.sys_errors is not None:
+
+            new_sys_errors[mask] = other.sys_errors[mask] * other.counts[mask] / new_counts[mask]
+
+        else:
+
+            new_sys_errors = None
+
         new_spectrum = self.clone(
-            new_counts=new_counts, new_count_errors=new_count_errors
+            new_counts=new_counts, 
+            new_count_errors=new_count_errors, 
+            new_sys_errors=new_sys_errors
         )
 
         new_spectrum._exposure = new_exposure
@@ -905,8 +975,8 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         )
 
     def __add__(self, other):
-        # TODO implement equality in InstrumentResponse class
-        assert self.response is other.response
+        # TODO check implementation of equality in InstrumentResponse class
+        assert self.response == other.response
 
         new_spectrum = super(BinnedSpectrumWithDispersion, self).__add__(other)
 

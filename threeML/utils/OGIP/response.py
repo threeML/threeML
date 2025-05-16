@@ -144,6 +144,18 @@ class InstrumentResponse(object):
                 #   RuntimeWarning,
             )
 
+    def __eq__(self, other):
+
+        if not np.allclose(self._matrix, other._matrix):
+            return False
+        if not np.allclose(self._ebounds, other._ebounds):
+            return False
+        if not np.allclose(self._monte_carlo_energies, other._monte_carlo_energies):
+            return False
+        if not self._coverage_interval == other._coverage_interval:
+            return False
+        return True
+
     # This will be overridden by subclasses
     @property
     def rsp_filename(self) -> None:
