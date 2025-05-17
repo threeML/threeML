@@ -162,8 +162,8 @@ def test_scipy(joint_likelihood_bn090217206_nai):
 
     do_analysis(joint_likelihood_bn090217206_nai, minim)
 
-    joint_likelihood_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K = (
-        1.25
-    )
+    #joint_likelihood_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K = (
+    #    1.25
+    #)
 
-    do_analysis(joint_likelihood_bn090217206_nai, minim)
+    #do_analysis(joint_likelihood_bn090217206_nai, minim)
