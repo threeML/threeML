@@ -21,15 +21,15 @@ except ImportError:
 
 from pathlib import Path
 
-from threeML.io.logging import setup_logger
-
 # Import everything from astromodels
 from astromodels import *
 
+from threeML.io.logging import setup_logger
+
 from .config import (
-    threeML_config,
-    show_configuration,
     get_current_configuration_copy,
+    show_configuration,
+    threeML_config,
 )
 
 log = setup_logger(__name__)
@@ -38,9 +38,7 @@ log.propagate = False
 if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
     log.warning("WARNINGs here are [red]NOT[/red] errors")
-    log.warning(
-        "but are inform you about optional packages that can be installed"
-    )
+    log.warning("but are inform you about optional packages that can be installed")
     log.warning(
         "[red] to disable these messages, turn off start_warning in your config file[/red]"
     )
@@ -165,9 +163,7 @@ for i, module_full_path in enumerate(found_plugins):
 
         # Now import the plugin itself
 
-        import_command = (
-            f"from threeML.plugins.{plugin_name} import {plugin_name}"
-        )
+        import_command = f"from threeML.plugins.{plugin_name} import {plugin_name}"
 
         try:
 
@@ -186,8 +182,7 @@ for i, module_full_path in enumerate(found_plugins):
 
 
 def get_available_plugins():
-    """
-    Print a list of available plugins
+    """Print a list of available plugins.
 
     :return:
     """
@@ -200,20 +195,15 @@ def get_available_plugins():
 
 def _display_plugin_traceback(plugin):
     if threeML_config.logging.startup_warnings:
-        log.warning(
-            "#############################################################"
-        )
+        log.warning("#############################################################")
         log.warning("\nCouldn't import plugin %s" % plugin)
         log.warning("\nTraceback:\n")
         log.warning(_not_working_plugins[plugin])
-        log.warning(
-            "#############################################################"
-        )
+        log.warning("#############################################################")
 
 
 def is_plugin_available(plugin):
-    """
-    Test whether the plugin for the provided instrument is available
+    """Test whether the plugin for the provided instrument is available.
 
     :param plugin: the name of the plugin class
     :return: True or False
@@ -272,23 +262,22 @@ from threeML.catalogs import (
     FermiGBMBurstCatalog,
     FermiGBMTriggerCatalog,
     FermiLATSourceCatalog,
-    FermiPySourceCatalog,
     FermiLLEBurstCatalog,
+    FermiPySourceCatalog,
     SwiftGRBCatalog,
 )
-
 from threeML.io import (
+    activate_logs,
+    activate_progress_bars,
     activate_warnings,
-    silence_warnings,
-    update_logging_level,
+    debug_mode,
+    loud_mode,
+    quiet_mode,
     silence_logs,
     silence_progress_bars,
-    activate_progress_bars,
+    silence_warnings,
     toggle_progress_bars,
-    quiet_mode,
-    loud_mode,
-    debug_mode,
-    activate_logs,
+    update_logging_level,
 )
 from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
 from threeML.io.plotting.model_plot import (
@@ -306,8 +295,8 @@ from threeML.io.uncertainty_formatter import interval_to_errors
 # import time series builder, soon to replace the Fermi plugins
 from threeML.utils.data_builders import *
 from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
-    download_GBM_trigger_data,
     download_GBM_daily_data,
+    download_GBM_trigger_data,
 )
 
 # Import the LAT data downloader
@@ -331,20 +320,18 @@ from .classicMLE.joint_likelihood_set import (
     JointLikelihoodSetAnalyzer,
 )
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
-
-# Now read the configuration and make it available as threeML_config
-
 from .data_list import DataList
+from .io import get_threeML_style, set_threeML_style
 from .io.calculate_flux import calculate_point_source_flux
-
-# Import the plot_style context manager and the function to create new styles
-
 from .parallel.parallel_client import parallel_computation
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
-from .io import get_threeML_style, set_threeML_style
+# Now read the configuration and make it available as threeML_config
+
+
+# Import the plot_style context manager and the function to create new styles
 
 
 # Import optical filters
@@ -395,3 +382,6 @@ del os
 del Path
 del warnings
 del SourceFileLoader
+
+from . import _version
+__version__ = _version.get_versions()['version']
