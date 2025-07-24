@@ -104,7 +104,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         # go to HEASARC and get the requested table
         heasarc_url = (
-            "http://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=%s"
+            "https://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=%s"
             % heasarc_table_name
         )
 
