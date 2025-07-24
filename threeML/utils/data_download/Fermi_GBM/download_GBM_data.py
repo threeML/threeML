@@ -129,7 +129,7 @@ def download_GBM_trigger_data(
 
     url = threeML_config.GBM.public_http_location
     year = f"20{sanitized_trigger_name_[:2]}"
-    directory = f"/triggers/{year}/bn{sanitized_trigger_name_}/current"
+    directory = f"triggers/{year}/bn{sanitized_trigger_name_}/current/"
 
     heasarc_web_page_url = f"{url}/{directory}"
 
@@ -152,6 +152,7 @@ def download_GBM_trigger_data(
 
     # Get the list of remote files
     remote_file_list = downloader.files
+    log.debug(remote_file_list)
 
     # This is the dictionary to keep track of the classification
     remote_files_info = DictWithPrettyPrint([(det, {}) for det in detectors])
@@ -307,9 +308,10 @@ def download_GBM_daily_data(
 
     url = threeML_config.GBM.public_http_location
     year = f"20{year}"
-    directory = f"/daily/{year}/{month}/{day}/current"
+    directory = f"/daily/{year}/{month}/{day}/current/"
 
     heasarc_web_page_url = f"{url}/{directory}"
+    print(heasarc_web_page_url)
 
     log.debug(f"going to look in {heasarc_web_page_url}")
 

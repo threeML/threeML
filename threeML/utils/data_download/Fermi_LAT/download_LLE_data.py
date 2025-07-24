@@ -42,7 +42,7 @@ def download_LLE_trigger_data(trigger_name, destination_directory="."):
     url = threeML_config["LAT"]["public_http_location"]
 
     year = "20%s" % sanitized_trigger_name_[:2]
-    directory = "triggers/%s/bn%s/current" % (year, sanitized_trigger_name_)
+    directory = "triggers/%s/bn%s/current/" % (year, sanitized_trigger_name_)
 
     heasarc_web_page_url = "%s/%s" % (url, directory)
 
