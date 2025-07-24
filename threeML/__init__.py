@@ -103,7 +103,7 @@ except ImportError:
 
 def is_module_importable(module_full_path):
     try:
-        _ = SourceFileLoader("__", str(module_full_path)).load_module()
+        _ = SourceFileLoader("__", str(module_full_path)).exec_module()
 
     except:
         return False, traceback.format_exc()
