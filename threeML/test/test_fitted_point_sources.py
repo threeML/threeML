@@ -4,11 +4,19 @@ from builtins import zip
 import astropy.units as u
 import matplotlib.pyplot as plt
 import pytest
+from astromodels import (
+    Blackbody,
+    Constant,
+    Log_uniform_prior,
+    Model,
+    PointSource,
+    Powerlaw,
+    Uniform_prior,
+)
 
-from threeML import *
+from threeML import BayesianAnalysis, JointLikelihood, plot_spectra
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.package_data import get_path_of_data_dir
-from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 
 # Init some globals
@@ -29,7 +37,6 @@ bad_flux_units = ["g"]
 
 
 def make_simple_model():
-
     triggerName = "bn090217206"
     ra = 204.9
     dec = -8.4
@@ -45,7 +52,6 @@ def make_simple_model():
 
 
 def make_components_model():
-
     triggerName = "bn090217206"
     ra = 204.9
     dec = -8.4
@@ -64,7 +70,6 @@ def make_components_model():
 
 
 def make_dless_components_model():
-
     triggerName = "bn090217206"
     ra = 204.9
     dec = -8.4
@@ -83,7 +88,6 @@ def make_dless_components_model():
 
 @pytest.fixture
 def analysis_to_test(data_list_bn090217206_nai6):
-
     simple_model = make_simple_model()
 
     complex_model = make_components_model()
@@ -138,7 +142,6 @@ def analysis_to_test(data_list_bn090217206_nai6):
 
 
 def test_fitted_point_source_plotting(analysis_to_test):
-
     plot_keywords = {
         "use_components": True,
         "components_to_use": ["Powerlaw", "total"],
@@ -158,14 +161,9 @@ def test_fitted_point_source_plotting(analysis_to_test):
     }
 
     for u1, u2 in zip(good_d_flux_units, good_i_flux_units):
-
         for e_unit in good_energy_units:
-
             for x in analysis_to_test:
-
-                _ = plot_spectra(
-                    x, flux_unit=u1, energy_unit=e_unit, num_ene=5
-                )
+                _ = plot_spectra(x, flux_unit=u1, energy_unit=e_unit, num_ene=5)
 
                 _ = plot_spectra(x, **plot_keywords)
 
@@ -176,7 +174,6 @@ def test_fitted_point_source_plotting(analysis_to_test):
 
 
 def test_fitted_point_source_flux_calculations(analysis_to_test):
-
     flux_keywords = {
         "use_components": True,
         "components_to_use": ["total", "Powerlaw"],
@@ -194,10 +191,7 @@ def test_fitted_point_source_flux_calculations(analysis_to_test):
 
 
 def test_units_on_energy_range(analysis_to_test):
-
-    _ = plot_spectra(
-        analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1 * u.MeV
-    )
+    _ = plot_spectra(analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1 * u.MeV)
 
     with pytest.raises(RuntimeError):
         plot_spectra(analysis_to_test[0], ene_min=1.0, ene_max=1 * u.MeV)

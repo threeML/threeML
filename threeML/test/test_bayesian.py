@@ -1,10 +1,13 @@
-from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 import numpy as np
 import pytest
 
+from threeML import BayesianAnalysis, Log_uniform_prior, Uniform_prior
+
 try:
     import ultranest
-except:
+
+    print(ultranest.__doc__)
+except ModuleNotFoundError:
     has_ultranest = False
 else:
     has_ultranest = True
@@ -15,7 +18,9 @@ skip_if_ultranest_is_not_available = pytest.mark.skipif(
 
 try:
     import autoemcee
-except:
+
+    print(autoemcee.__doc__)
+except ModuleNotFoundError:
     has_autoemcee = False
 else:
     has_autoemcee = True
@@ -24,10 +29,11 @@ skip_if_autoemcee_is_not_available = pytest.mark.skipif(
 )
 
 
-
 try:
     import dynesty
-except:
+
+    print(dynesty.__doc__)
+except ModuleNotFoundError:
     has_dynesty = False
 else:
     has_dynesty = True
@@ -38,7 +44,9 @@ skip_if_dynesty_is_not_available = pytest.mark.skipif(
 
 try:
     import pymultinest
-except:
+
+    print(pymultinest.__doc__)
+except ModuleNotFoundError:
     has_pymultinest = False
 else:
     has_pymultinest = True
@@ -48,7 +56,9 @@ skip_if_pymultinest_is_not_available = pytest.mark.skipif(
 
 try:
     import zeus
-except:
+
+    print(zeus.__doc__)
+except ModuleNotFoundError:
     has_zeus = False
 else:
     has_zeus = True
@@ -58,14 +68,11 @@ skip_if_zeus_is_not_available = pytest.mark.skipif(
 
 
 def remove_priors(model):
-
     for parameter in model:
-
         parameter.prior = None
 
 
 def set_priors(model):
-
     powerlaw = model.bn090217206.spectrum.main.Powerlaw
 
     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
@@ -73,7 +80,6 @@ def set_priors(model):
 
 
 def check_results(fit_results):
-
     expected_results = [2.531028, -1.1831566000728451]
 
     assert np.isclose(
@@ -89,9 +95,8 @@ def check_results(fit_results):
     )
 
 
-def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
-
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+def test_bayes_constructor(fitted_jl_bn090217206_nai):
+    jl, fit_results, like_frame = fitted_jl_bn090217206_nai
     datalist = jl.data_list
     model = jl.likelihood_model
 
@@ -101,7 +106,6 @@ def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
     # removed so we can test the error
     remove_priors(model)
     with pytest.raises(RuntimeError):
-
         _ = BayesianAnalysis(model, datalist)
 
     set_priors(model)
@@ -117,14 +121,12 @@ def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
 
 
 def test_emcee(bayes_fitter):
-
     pass
     # This has been already tested in the fixtures (see conftest.py)
 
 
 @skip_if_pymultinest_is_not_available
 def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
-
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("multinest")
@@ -140,7 +142,6 @@ def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
 @skip_if_ultranest_is_not_available
 def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
-
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("ultranest")
@@ -156,7 +157,6 @@ def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
 @skip_if_autoemcee_is_not_available
 def test_autoemcee(bayes_fitter, completed_bn090217206_bayesian_analysis):
-
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("autoemcee")
@@ -169,11 +169,9 @@ def test_autoemcee(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     check_results(res)
 
-    
 
 @skip_if_dynesty_is_not_available
 def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
-
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("dynesty_nested")
@@ -187,11 +185,8 @@ def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
-
-
 @skip_if_dynesty_is_not_available
 def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
-
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("dynesty_dynamic")
@@ -205,11 +200,8 @@ def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
-    
-
 @skip_if_zeus_is_not_available
 def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
-
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("zeus")
@@ -226,7 +218,6 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
 
 def test_bayes_plots(completed_bn090217206_bayesian_analysis):
-
     bayes, samples = completed_bn090217206_bayesian_analysis
 
     with pytest.raises(AssertionError):
@@ -238,9 +229,9 @@ def test_bayes_plots(completed_bn090217206_bayesian_analysis):
 
     bayes.restore_median_fit()
 
-def test_bayes_shared(fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1):
 
-    jl, _, _ = fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1
+def test_bayes_shared(fitted_jl_bn090217206_nai6_nai9_bgo1):
+    jl, _, _ = fitted_jl_bn090217206_nai6_nai9_bgo1
 
     jl.restore_best_fit()
 
@@ -255,7 +246,7 @@ def test_bayes_shared(fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1):
 
     bayes.set_sampler("emcee", share_spectrum=True)
     bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
-    samples = bayes.sample()
+    _ = bayes.sample()
 
     res_shared = bayes.results.get_data_frame()
 
@@ -263,10 +254,10 @@ def test_bayes_shared(fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1):
 
     bayes.set_sampler("emcee", share_spectrum=False)
     bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
-    samples = bayes.sample()
+    _ = bayes.sample()
 
     res_not_shared = bayes.results.get_data_frame()
-    
+
     assert np.isclose(
         res_shared["value"]["bn090217206.spectrum.main.Powerlaw.K"],
         res_not_shared["value"]["bn090217206.spectrum.main.Powerlaw.K"],

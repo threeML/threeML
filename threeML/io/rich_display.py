@@ -4,14 +4,11 @@ from __future__ import print_function
 
 
 def fallback_display(x):
-
     print(x)
 
 
 try:
-
     from IPython.display import display
 
 except ImportError:
-
     display = fallback_display

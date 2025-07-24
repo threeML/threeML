@@ -1,16 +1,19 @@
 import pytest
 
-from threeML import *
+from threeML.catalogs.FermiGBM import FermiGBMBurstCatalog
+from threeML.catalogs.FermiLAT import FermiLATSourceCatalog
+from threeML.catalogs.FermiLLE import FermiLLEBurstCatalog
+from threeML.catalogs.Swift import SwiftGRBCatalog
 from threeML.io.network import internet_connection_is_active
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
 
-#@pytest.mark.xfail
+
+# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_gbm_catalog():
-
     gbm_catalog = FermiGBMBurstCatalog()
 
     _ = gbm_catalog.cone_search(0.0, 0.0, 300.0)
@@ -25,7 +28,6 @@ def test_gbm_catalog():
 
     for model in models:
         for interval in intervals:
-
             _ = gbm_catalog.get_model(model=model, interval=interval)
 
     gbm_catalog.query("t90 >2")
@@ -33,17 +35,15 @@ def test_gbm_catalog():
     # test model building assertions
 
     with pytest.raises(AssertionError):
-
         _ = gbm_catalog.get_model(model="not_a_model")
 
     with pytest.raises(AssertionError):
-
         _ = gbm_catalog.get_model(interval="not_an_interval")
 
     _ = gbm_catalog.query_sources("GRB080916009")
 
 
-#@pytest.mark.xfail
+# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_LAT_catalog():
     lat_catalog = FermiLATSourceCatalog()
@@ -58,7 +58,7 @@ def test_LAT_catalog():
     assert lat_catalog.dec_center == dec
 
 
-#@pytest.mark.xfail
+# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_LLE_catalog():
     lle_catalog = FermiLLEBurstCatalog()
@@ -78,7 +78,6 @@ def test_LLE_catalog():
 @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_swift_catalog():
-
     swift_catalog = SwiftGRBCatalog()
 
     _ = swift_catalog.cone_search(0.0, 0.0, 15.0)
@@ -95,11 +94,9 @@ def test_swift_catalog():
     _ = swift_catalog.query_sources("GRB 050525A")
 
     for mission in swift_catalog.other_observing_instruments:
-
         _ = swift_catalog.query_other_observing_instruments(mission)
 
     with pytest.raises(AssertionError):
-
         _ = swift_catalog.query_other_observing_instruments("not_a_mission")
 
     _ = swift_catalog.get_other_instrument_information()

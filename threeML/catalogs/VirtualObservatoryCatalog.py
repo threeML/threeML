@@ -1,21 +1,18 @@
-import astropy
+import warnings
 
-# from astropy.vo.client.vos_catalog import VOSCatalog
-from astroquery.vo_conesearch.vos_catalog import VOSCatalog
+import astropy
+import astropy.table as astro_table
+import astropy.units as u
+from astropy.coordinates import SkyCoord
+from astropy.coordinates.name_resolve import get_icrs_coordinates
 from astroquery.vo_conesearch import conesearch
 from astroquery.vo_conesearch.exceptions import VOSError
 
-import warnings
+# from astropy.vo.client.vos_catalog import VOSCatalog
+from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 
-from astropy.coordinates.name_resolve import get_icrs_coordinates
-from astropy.coordinates import SkyCoord
-
-import astropy.table as astro_table
-
-import astropy.units as u
-
-from threeML.io.network import internet_connection_is_active
 from threeML.io.logging import setup_logger
+from threeML.io.network import internet_connection_is_active
 
 log = setup_logger(__name__)
 
@@ -24,8 +21,9 @@ astropy_old = True
 astropy_version = astropy.__version__
 if int(astropy_version[0]) == 4 and int(astropy_version[2]) >= 1:
     astropy_old = False
-elif int(astropy_version[0]) >=5:
+elif int(astropy_version[0]) >= 5:
     astropy_old = False
+
 
 class ConeSearchFailed(RuntimeError):
     pass
@@ -33,7 +31,6 @@ class ConeSearchFailed(RuntimeError):
 
 class VirtualObservatoryCatalog(object):
     def __init__(self, name, url, description):
-
         self.catalog = VOSCatalog.create(name, url, description=description)
 
         self._get_vo_table_from_source()
@@ -41,14 +38,15 @@ class VirtualObservatoryCatalog(object):
         self._last_query_results = None
 
     def search_around_source(self, source_name, radius):
-        """
-        Search for sources around the named source. The coordinates of the provided source are resolved using the
-        astropy.coordinates.name_resolve facility.
+        """Search for sources around the named source. The coordinates of the
+        provided source are resolved using the astropy.coordinates.name_resolve
+        facility.
 
         :param source_name: name of the source, like "Crab"
         :param radius: radius of the search, in degrees
-        :return: (ra, dec, table), where ra,dec are the coordinates of the source as resolved by astropy, and table is
-        a table with the list of sources
+        :return: (ra, dec, table), where ra,dec are the coordinates of
+            the source as resolved by astropy, and table is a table with
+            the list of sources
         """
 
         sky_coord = get_icrs_coordinates(source_name)
@@ -58,8 +56,7 @@ class VirtualObservatoryCatalog(object):
         return ra, dec, self.cone_search(ra, dec, radius)
 
     def cone_search(self, ra, dec, radius):
-        """
-        Searches for sources in a cone of given radius and center
+        """Searches for sources in a cone of given radius and center.
 
         :param ra: decimal degrees, R.A. of the center of the cone
         :param dec: decimal degrees, Dec. of the center of the cone
@@ -71,19 +68,17 @@ class VirtualObservatoryCatalog(object):
 
         # First check that we have an active internet connection
         if not internet_connection_is_active():  # pragma: no cover
-
             raise ConeSearchFailed(
-                "It looks like you don't have an active internet connection. Cannot continue."
+                "It looks like you don't have an active internet connection. Cannot "
+                "continue."
             )
 
         with warnings.catch_warnings():
-
             # Ignore all warnings, which are many from the conesearch module
 
             warnings.simplefilter("ignore")
 
             try:
-
                 votable = conesearch.conesearch(
                     skycoord,
                     radius,
@@ -94,13 +89,11 @@ class VirtualObservatoryCatalog(object):
                 )
 
             except VOSError as exc:  # Pragma: no cover
-
                 # Download failed
 
                 raise ConeSearchFailed("Cone search failed. Reason: %s" % exc.message)
 
             else:
-
                 # Download successful
                 table = votable
                 # Workaround to comply with newer versions of astroquery
@@ -108,11 +101,10 @@ class VirtualObservatoryCatalog(object):
                     table = votable.to_table()
 
                 if table is None:
-
                     log.error("Your search returned nothing")
-                    
+
                     return None
-                    
+
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (
@@ -120,10 +112,10 @@ class VirtualObservatoryCatalog(object):
                 )
 
                 str_df = pandas_df.select_dtypes([object])
-                
+
                 if astropy_old:
                     str_df = str_df.stack().str.decode("utf-8").unstack()
-                
+
                 for col in str_df:
                     pandas_df[col] = str_df[col]
 
@@ -132,7 +124,7 @@ class VirtualObservatoryCatalog(object):
                     pandas_df.index = new_index
 
                 self._last_query_results = pandas_df
-                
+
                 out = self.apply_format(table)
 
                 # This is needed to avoid strange errors
@@ -156,21 +148,20 @@ class VirtualObservatoryCatalog(object):
         return self._dec
 
     def apply_format(self, table):
-
         raise NotImplementedError("You have to override this!")
 
     def get_model(self):
-
         raise NotImplementedError("You have to override this!")
 
     def _get_vo_table_from_source(self):
-
         raise NotImplementedError("You have to override this!")
 
     def query(self, query):
         """
-        query the entire VO table for the given logical argument. Queries are in the form of pandas
-        queries: http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.query.html
+        query the entire VO table for the given logical argument. Queries are in the
+        form of pandas queries:
+        https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quer
+        y.html
 
         To obtain a preview of the availble columns, try catalog.variables
 
@@ -179,7 +170,7 @@ class VirtualObservatoryCatalog(object):
         :return:
         """
 
-        assert type(query) == str, "query must be a string"
+        assert type(query) is str, "query must be a string"
 
         query_results = self._vo_dataframe.query(query)
 
@@ -194,8 +185,7 @@ class VirtualObservatoryCatalog(object):
         return out
 
     def query_sources(self, *sources):
-        """
-        query for the specific source names.
+        """Query for the specific source names.
 
         :param sources: source(s) to search for
         :return:
@@ -204,13 +194,10 @@ class VirtualObservatoryCatalog(object):
         valid_sources = []
 
         for source in sources:
-
             if self._source_is_valid(source):
-
                 valid_sources.append(source)
 
         if valid_sources:
-
             query_string = " | ".join(['(index == "%s")' % x for x in valid_sources])
 
             query_results = self._vo_dataframe.query(query_string)
@@ -227,17 +214,15 @@ class VirtualObservatoryCatalog(object):
             return out
 
         else:
-
             RuntimeError("There were not valid sources in your search")
 
     def _source_is_valid(self, source):
-
         raise NotImplementedError("You have to override this!")
 
     @property
     def result(self):
-        """
-        return a searchable pandas dataframe of results from the last query.
+        """Return a searchable pandas dataframe of results from the last query.
+
         :return:
         """
 

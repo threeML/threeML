@@ -1,15 +1,15 @@
-from builtins import zip
-from builtins import range
-import ROOT
-import numpy as np
 import ctypes
+from builtins import range, zip
 
-from threeML.minimizer.minimization import (
-    LocalMinimizer,
-    FitFailed,
-    CannotComputeCovariance,
-)
+import numpy as np
+import ROOT
+
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.minimizer.minimization import (
+    CannotComputeCovariance,
+    FitFailed,
+    LocalMinimizer,
+)
 
 # These are the status returned by Minuit
 #     status = 1    : Covariance was made pos defined
@@ -36,14 +36,14 @@ _hesse_status_translation = {
     300: "Covariance matrix is not positive defined",
 }
 
-#root_class = None
-#try:
+# root_class = None
+# try:
 #    root_class = ROOT.TPyMultiGenFunction
-#except AttributeError:
+# except AttributeError:
 #    root_class = ROOT.Math.IMultiGenFunction
 
+
 class FuncWrapper(ROOT.Math.IMultiGenFunction):
-    
     def setup(self, function, dimensions):
         self.function = function
         self.dimensions = int(dimensions)
@@ -54,7 +54,7 @@ class FuncWrapper(ROOT.Math.IMultiGenFunction):
     def DoEval(self, args):
         new_args = [args[i] for i in range(self.dimensions)]
         return self.function(*new_args)
-    
+
     def Clone(self):
         f = FuncWrapper()
         f.setup(f.function, f.dimensions)
@@ -63,24 +63,19 @@ class FuncWrapper(ROOT.Math.IMultiGenFunction):
 
 
 class ROOTMinimizer(LocalMinimizer):
-
     valid_setup_keys = ("ftol", "max_function_calls", "strategy")
 
     def __init__(self, function, parameters, verbosity=0, setup_dict=None):
-
         super(ROOTMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
 
     def _setup(self, user_setup_dict):
-
         # Defaults
 
         setup_dict = {"ftol": 1.0, "max_function_calls": 100000, "strategy": 1}
 
         # Update defaults if needed
         if user_setup_dict is not None:
-
             for key in user_setup_dict:
-
                 setup_dict[key] = user_setup_dict[key]
 
         # Setup the minimizer algorithm
@@ -103,9 +98,7 @@ class ROOTMinimizer(LocalMinimizer):
         for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(
             self._internal_parameters.items()
         ):
-
             if cur_min is not None and cur_max is not None:
-
                 # Variable with lower and upper limit
 
                 self.minimizer.SetLimitedVariable(
@@ -113,48 +106,41 @@ class ROOTMinimizer(LocalMinimizer):
                 )
 
             elif cur_min is not None and cur_max is None:
-
                 # Lower limited
                 self.minimizer.SetLowerLimitedVariable(
                     i, par_name, cur_value, cur_delta, cur_min
                 )
 
             elif cur_min is None and cur_max is not None:
-
                 # upper limited
                 self.minimizer.SetUpperLimitedVariable(
                     i, par_name, cur_value, cur_delta, cur_max
                 )
 
             else:
-
                 # No limits
                 self.minimizer.SetVariable(i, par_name, cur_value, cur_delta)
 
     def _minimize(self, compute_covar=True):
-
         # Minimize with MIGRAD
 
         success = self.minimizer.Minimize()
 
         if not success:
-
             # Get status
             status = self.minimizer.Status()
 
             if status in _status_translation:
-
                 msg = "MIGRAD did not converge. Reason: %s (status: %i)" % (
                     _status_translation[status],
                     status,
                 )
 
             else:
-
                 msg = (
                     "MIGRAD failed with status %i "
-                    "(see https://root.cern.ch/root/html/ROOT__Minuit2__Minuit2Minimizer.html)"
-                    % status
+                    "(see "
+                    "https://root.cern.ch/doc/master/Minuit2Page.html)" % status
                 )
 
             raise FitFailed(msg)
@@ -170,7 +156,6 @@ class ROOTMinimizer(LocalMinimizer):
         return best_fit_values, minimum
 
     def _compute_covariance_matrix(self, best_fit_values):
-
         # Gather the current status so we can offset it later
         status_before_hesse = self.minimizer.Status()
 
@@ -178,11 +163,11 @@ class ROOTMinimizer(LocalMinimizer):
 
         self.minimizer.Hesse()
 
-        # Gather the current status and remove the offset so that we get the HESSE status
+        # Gather the current status and remove the offset so that we get the HESSE
+        # status
         status_after_hesse = self.minimizer.Status() - status_before_hesse
 
         if status_after_hesse > 0:
-
             failure_reason = _hesse_status_translation[status_after_hesse]
 
             raise CannotComputeCovariance(
@@ -195,21 +180,17 @@ class ROOTMinimizer(LocalMinimizer):
         covariance_matrix = np.zeros((self.Npar, self.Npar))
 
         for i in range(self.Npar):
-
             for j in range(self.Npar):
-
                 covariance_matrix[i, j] = self.minimizer.CovMatrix(i, j)
 
         return covariance_matrix
 
     def _get_errors(self):
-
         # Re-implement this in order to use MINOS
 
         errors = DictWithPrettyPrint()
 
         for i, par_name in enumerate(self.parameters):
-
             err_low = ctypes.c_double(0)
             err_up = ctypes.c_double(0)
 

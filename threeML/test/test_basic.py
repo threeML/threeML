@@ -2,18 +2,22 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from threeML import *
+
+from threeML.catalogs.FermiGBM import FermiGBMBurstCatalog
 from threeML.io.network import internet_connection_is_active
 from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
+    download_GBM_trigger_data,
+)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
 
 
-def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
-
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+def test_basic_analysis_results(fitted_jl_bn090217206_nai):
+    jl, fit_results, like_frame = fitted_jl_bn090217206_nai
 
     jl.restore_best_fit()
 
@@ -22,9 +26,8 @@ def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
     assert np.allclose(fit_results["value"], expected, rtol=0.1)
 
 
-def test_basic_analysis_get_errors(fitted_joint_likelihood_bn090217206_nai):
-
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+def test_basic_analysis_get_errors(fitted_jl_bn090217206_nai):
+    jl, fit_results, like_frame = fitted_jl_bn090217206_nai
 
     jl.restore_best_fit()
 
@@ -33,9 +36,8 @@ def test_basic_analysis_get_errors(fitted_joint_likelihood_bn090217206_nai):
     assert np.allclose(err["negative_error"], [-0.197511, -0.0148], rtol=1e-1)
 
 
-def test_basic_analysis_contour_1d(fitted_joint_likelihood_bn090217206_nai):
-
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+def test_basic_analysis_contour_1d(fitted_jl_bn090217206_nai):
+    jl, fit_results, like_frame = fitted_jl_bn090217206_nai
 
     jl.restore_best_fit()
 
@@ -71,9 +73,8 @@ def test_basic_analysis_contour_1d(fitted_joint_likelihood_bn090217206_nai):
     assert np.allclose(res[0], expected_result, rtol=0.1)
 
 
-def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
-
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+def test_basic_analysis_contour_2d(fitted_jl_bn090217206_nai):
+    jl, fit_results, like_frame = fitted_jl_bn090217206_nai
 
     jl.restore_best_fit()
 
@@ -157,7 +158,6 @@ def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
 
 
 def test_basic_bayesian_analysis_results(completed_bn090217206_bayesian_analysis):
-
     bayes, samples = completed_bn090217206_bayesian_analysis
 
     expected = (2.3224550250817337, 2.73429304662902)
@@ -170,10 +170,9 @@ def test_basic_bayesian_analysis_results(completed_bn090217206_bayesian_analysis
 
 
 def test_basic_analsis_multicomp_results(
-    fitted_joint_likelihood_bn090217206_nai_multicomp,
+    fitted_jl_bn090217206_nai_multicomp,
 ):
-
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai_multicomp
+    jl, fit_results, like_frame = fitted_jl_bn090217206_nai_multicomp
 
     jl.restore_best_fit()
 
@@ -185,7 +184,6 @@ def test_basic_analsis_multicomp_results(
 def test_basic_bayesian_analysis_results_multicomp(
     completed_bn090217206_bayesian_analysis_multicomp,
 ):
-
     bayes, samples = completed_bn090217206_bayesian_analysis_multicomp
 
     frame = bayes.results.get_data_frame()
@@ -197,7 +195,7 @@ def test_basic_bayesian_analysis_results_multicomp(
         [-2.91016381e-01, -3.29625316e-02, -1.59072260e-06, -4.83703088e00]
     )
     expected_positive_errors = np.array(
-        [3.50705889e-01, 3.53797125e-02, 2.41408813e-06, 4.29616142e+00]
+        [3.50705889e-01, 3.53797125e-02, 2.41408813e-06, 4.29616142e00]
     )
 
     assert np.allclose(frame["value"].values, expected_central_values, rtol=0.1)
@@ -212,7 +210,6 @@ def test_basic_bayesian_analysis_results_multicomp(
 
 @skip_if_internet_is_not_available
 def test_gbm_workflow():
-
     import warnings
 
     warnings.simplefilter("ignore")
@@ -226,7 +223,7 @@ def test_gbm_workflow():
     source_interval = grb_info["source"]["fluence"]
     background_interval = grb_info["background"]["full"]
     best_fit_model = grb_info["best fit model"]["fluence"]
-    model = gbm_catalog.get_model(best_fit_model, "fluence")["GRB080916009"]
+    _ = gbm_catalog.get_model(best_fit_model, "fluence")["GRB080916009"]
 
     dload = download_GBM_trigger_data("bn080916009", detectors=gbm_detectors)
 
@@ -234,7 +231,6 @@ def test_gbm_workflow():
     time_series = {}
 
     for det in gbm_detectors:
-
         ts_cspec = TimeSeriesBuilder.from_gbm_cspec_or_ctime(
             det, cspec_or_ctime_file=dload[det]["cspec"], rsp_file=dload[det]["rsp"]
         )
@@ -262,11 +258,9 @@ def test_gbm_workflow():
         fluence_plugin = ts_tte.to_spectrumlike()
 
         if det.startswith("b"):
-
             fluence_plugin.set_active_measurements("250-30000")
 
         else:
-
             fluence_plugin.set_active_measurements("9-900")
 
         fluence_plugin.rebin_on_background(1.0)
@@ -292,7 +286,6 @@ def test_gbm_workflow():
 
 
 def test_uncertainty_formatter():
-
     assert "1.0 -2.0 +1.0" == uncertainty_formatter(1, -1, 2)
 
     assert "(1.0 +/- 1.0) x 10^3" == uncertainty_formatter(1e3, -1, 2)

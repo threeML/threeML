@@ -1,32 +1,35 @@
-import shutil
 import os
+import shutil
+
 import pytest
 
-from threeML import *
+from threeML import download_LLE_trigger_data
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 from threeML.io.network import internet_connection_is_active
+from threeML.utils.data_download.Fermi_LAT import download_LAT_data
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
 
 try:
-
     import GtApp
 
-except ImportError:
+    # dummy call
+    GtApp.GtApp("gtltcubesun", "Likelihood")
 
+except ImportError:
     has_Fermi = False
 
 else:
-
     has_Fermi = True
 
 # This defines a decorator which can be applied to single tests to
 # skip them if the condition is not met
-skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
-                                                  reason="Fermi Science Tools not installed",
-                                                  )
+skip_if_LAT_is_not_available = pytest.mark.skipif(
+    not has_Fermi,
+    reason="Fermi Science Tools not installed",
+)
 
 
 @skip_if_internet_is_not_available
@@ -66,7 +69,6 @@ def test_download_LLE_data():
     temp_dir = "_download_temp"
 
     for i, trigger in enumerate(good_triggers):
-
         dl_info = download_LLE_trigger_data(
             trigger_name=trigger, destination_directory=temp_dir
         )
@@ -82,24 +84,19 @@ def test_download_LLE_data():
     # Now test that bad names block us
 
     with pytest.raises(NameError):
-
         download_LLE_trigger_data(
             trigger_name="blah080916009", destination_directory=temp_dir
         )
 
     with pytest.raises(TypeError):
-
-        download_LLE_trigger_data(
-            trigger_name=80916009, destination_directory=temp_dir)
+        download_LLE_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
 
     with pytest.raises(NameError):
-
         download_LLE_trigger_data(
             trigger_name="bn08a916009", destination_directory=temp_dir
         )
 
     with pytest.raises(TriggerDoesNotExist):
-
         download_LLE_trigger_data(
             trigger_name="080916008", destination_directory=temp_dir
         )

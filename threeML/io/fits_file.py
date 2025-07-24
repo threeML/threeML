@@ -1,8 +1,8 @@
-from astropy.io import fits
-import numpy as np
 import astropy.units as u
+import numpy as np
 import pkg_resources
 import six
+from astropy.io import fits
 
 from threeML.io.logging import setup_logger
 
@@ -49,32 +49,28 @@ _NUMPY_TO_FITS_CODE = {
 
 class FITSFile:
     def __init__(self, primary_hdu=None, fits_extensions=None):
-
         hdu_list = []
 
         if primary_hdu is None:
-
             primary_hdu = fits.PrimaryHDU()
 
         else:
-
             assert isinstance(primary_hdu, fits.PrimaryHDU)
 
         hdu_list.append(primary_hdu)
 
         if fits_extensions is not None:
-
             fits_extensions = list(fits_extensions)
 
             hdu_list.extend([x.hdu for x in fits_extensions])
 
-        # We embed instead of subclassing because the HDUList class has some weird interaction with the
-        # __init__ and __new__ methods which makes difficult to do so (we couldn't figure it out)
+        # We embed instead of subclassing because the HDUList class has some weird
+        # interaction with the __init__ and __new__ methods which makes difficult to do
+        # so (we couldn't figure it out)
 
         self._hdu_list = fits.HDUList(hdus=hdu_list)
 
     def writeto(self, *args, **kwargs):
-
         self._hdu_list.writeto(*args, **kwargs)
 
     # Update the docstring to be the same as the method we are wrapping
@@ -82,29 +78,24 @@ class FITSFile:
     writeto.__doc__ = fits.HDUList.writeto.__doc__
 
     def __getitem__(self, item):
-
         return self._hdu_list.__getitem__(item)
 
     def info(self, output=None):
-
         self._hdu_list.info(output)
 
     info.__doc__ = fits.HDUList.info.__doc__
 
     def index_of(self, key):
-
         return self._hdu_list.index_of(key)
 
     index_of.__doc__ = fits.HDUList.index_of.__doc__
 
 
 class FITSExtension(object):
-
-    # I use __new__ instead of __init__ because I need to use the classmethod .from_columns instead of the
-    # constructor of fits.BinTableHDU
+    # I use __new__ instead of __init__ because I need to use the classmethod
+    # .from_columns instead of the constructor of fits.BinTableHDU
 
     def __init__(self, data_tuple, header_tuple):
-
         # Generate the header from the dictionary
 
         header = fits.Header(header_tuple)
@@ -113,7 +104,6 @@ class FITSExtension(object):
         fits_columns = []
 
         for column_name, column_data in data_tuple:
-
             # Get type of column
             # NOTE: we assume the type is the same for the entire column
 
@@ -121,30 +111,28 @@ class FITSExtension(object):
 
             # Generate FITS column
 
-            # By default a column does not have units, unless the content is an astropy.Quantity
+            # By default a column does not have units, unless the content is an
+            # astropy.Quantity
 
             units = None
 
             if isinstance(test_value, u.Quantity):
-
                 # Probe the format
 
                 try:
-
                     # Use the one already defined, if possible
 
                     format = _NUMPY_TO_FITS_CODE[column_data.dtype.type]
 
                 except AttributeError:
-
-                    # Try to infer it. Note that this could unwillingly upscale a float16 to a float32, for example
+                    # Try to infer it. Note that this could unwillingly upscale a
+                    # float16 to a float32, for example
 
                     format = _NUMPY_TO_FITS_CODE[np.array(test_value.value).dtype.type]
 
                 # check if this is a vector of quantities
 
                 if test_value.shape:
-
                     format = "%i%s" % (test_value.shape[0], format)
 
                 # Store the unit as text
@@ -152,31 +140,26 @@ class FITSExtension(object):
                 units = str(test_value.unit)
 
             elif isinstance(test_value, six.string_types):
-
-                # Get maximum length, but make 1 as minimum length so if the column is completely made up of empty
-                # string we still can work
+                # Get maximum length, but make 1 as minimum length so if the column is
+                # completely made up of empty string we still can work
 
                 max_string_length = max(len(max(column_data, key=len)), 1)
 
                 format = "%iA" % max_string_length
 
             elif np.isscalar(test_value):
-
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
 
             elif isinstance(test_value, list) or isinstance(test_value, np.ndarray):
-
                 # Probably a column array
                 # Check that we can convert it to a proper numpy type
 
                 try:
-
                     # Get type of first number
 
                     col_type = np.array(test_value[0]).dtype.type
 
-                except:
-
+                except Exception:
                     raise RuntimeError(
                         "Could not understand type of column %s" % column_name
                     )
@@ -185,35 +168,29 @@ class FITSExtension(object):
                 assert col_type != object and col_type != np.object_
 
                 try:
-
                     _ = np.array(test_value, col_type)
 
-                except:
-
+                except Exception:
                     raise RuntimeError(
                         "Column %s contain data which cannot be coerced to %s"
                         % (column_name, col_type)
                     )
 
                 else:
-
                     # see if it is a string array
 
                     if test_value.dtype.type == np.bytes_:
-
                         max_string_length = max(column_data, key=len).dtype.itemsize
 
                         format = "%iA" % max_string_length
 
                     else:
-
                         # All good. Check the length
                         # NOTE: variable length arrays are not supported
                         line_length = len(test_value)
                         format = "%i%s" % (line_length, _NUMPY_TO_FITS_CODE[col_type])
 
             else:
-
                 # Something we do not know
 
                 raise RuntimeError(
@@ -242,18 +219,15 @@ class FITSExtension(object):
 
     @property
     def hdu(self):
-
         return self._hdu
 
     @classmethod
     def from_fits_file_extension(cls, fits_extension):
-
         data = fits_extension.data
 
         data_tuple = []
 
         for name in data.columns.names:
-
             data_tuple.append((name, data[name]))
 
         header_tuple = list(fits_extension.header.items())

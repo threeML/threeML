@@ -14,7 +14,6 @@ import astromodels
 import astropy.units as u
 import h5py
 import matplotlib.pyplot as plt
-from matplotlib import colormaps
 import numpy as np
 import pandas as pd
 import yaml
@@ -22,6 +21,7 @@ from astromodels.core.model_parser import ModelParser
 from astromodels.core.my_yaml import my_yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
+from matplotlib import colormaps
 from past.utils import old_div
 from rich.console import Console
 
@@ -31,8 +31,10 @@ from threeML.exceptions.custom_exceptions import BadCovariance
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile, fits
-from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
-                                   recursively_save_dict_contents_to_group)
+from threeML.io.hdf5_utils import (
+    recursively_load_dict_contents_from_group,
+    recursively_save_dict_contents_to_group,
+)
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
@@ -42,7 +44,6 @@ from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.random_variates import RandomVariates
 
 if threeML_config.plotting.use_threeml_style:
-
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 log = setup_logger(__name__)
@@ -50,23 +51,21 @@ log = setup_logger(__name__)
 _rich_console = Console()
 
 try:
-
     import chainconsumer
 
-except:
-
+except Exception:
     has_chainconsumer = False
 
     log.debug("chainconsumer is NOT installed")
 
 else:
-
     has_chainconsumer = True
 
     log.debug("chainconsumer is installed")
 
-# These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
-# them with normal characters when we write the keyword, and we substitute them back when we read it back
+# These are special characters which cannot be safely saved in the keyword of a FITS
+# file. We substitute them with normal characters when we write the keyword, and we
+# substitute them back when we read it back
 _subs = (
     ("\n", "_NEWLINE_"),
     ("'", "_QUOTE1_"),
@@ -91,10 +90,8 @@ def _escape_back_yaml_from_fits(yaml_code):
 
 
 class SEQUENCE(FITSExtension):
-    """
-    Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis
-
-    """
+    """Represents the SEQUENCE extension of a FITS file containing a set of
+    results from a set of analysis."""
 
     _HEADER_KEYWORDS = [
         ("EXTNAME", "SEQUENCE", "Extension name"),
@@ -113,7 +110,6 @@ class SEQUENCE(FITSExtension):
 
 class ANALYSIS_RESULTS_HDF(object):
     def __init__(self, analysis_results, hdf_obj):
-
         optimized_model = analysis_results.optimized_model
 
         # Gather the dictionary with free parameters
@@ -125,9 +121,7 @@ class ANALYSIS_RESULTS_HDF(object):
         # Gather covariance matrix (if any)
 
         if analysis_results.analysis_type == "MLE":
-
             if not isinstance(analysis_results, MLEResults):
-
                 log.error("this is not and MLEREsults")
 
                 raise RuntimeError()
@@ -140,7 +134,6 @@ class ANALYSIS_RESULTS_HDF(object):
                 n_parameters,
                 n_parameters,
             ):
-
                 log.error(
                     "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
                     % (
@@ -160,9 +153,7 @@ class ANALYSIS_RESULTS_HDF(object):
             log_probability = np.zeros(n_parameters)
 
         else:
-
             if not isinstance(analysis_results, BayesianResults):
-
                 log.error("This is not a BayesiResults")
 
                 raise RuntimeError()
@@ -235,14 +226,14 @@ class ANALYSIS_RESULTS_HDF(object):
         hdf_obj.create_dataset(
             "UNIT",
             data=np.array(data_frame["unit"].values, dtype=np.str_).astype(
-                h5py.string_dtype()),
+                h5py.string_dtype()
+            ),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
         )
 
         if analysis_results.analysis_type == "MLE":
-
             hdf_obj.create_dataset(
                 "COVARIANCE",
                 data=covariance_matrix,
@@ -252,7 +243,6 @@ class ANALYSIS_RESULTS_HDF(object):
             )
 
         elif analysis_results.analysis_type == "Bayesian":
-
             hdf_obj.create_dataset(
                 "SAMPLES",
                 data=samples,
@@ -270,14 +260,12 @@ class ANALYSIS_RESULTS_HDF(object):
             )
 
         else:
-
             raise RuntimeError("This AR is invalid!")
 
         # Now add two keywords for each instrument
         stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
         for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
-
             hdf_obj.attrs["STAT%i" % i] = stat_value
             hdf_obj.attrs["PN%i" % i] = plugin_instance_name
 
@@ -291,8 +279,8 @@ class ANALYSIS_RESULTS_HDF(object):
 
 
 class ANALYSIS_RESULTS(FITSExtension):
-    """
-    Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis
+    """Represents the ANALYSIS_RESULTS extension of a FITS file encoding the
+    results of an analysis.
 
     :param analysis_results:
     :type analysis_results: _AnalysisResults
@@ -306,7 +294,6 @@ class ANALYSIS_RESULTS(FITSExtension):
     ]
 
     def __init__(self, analysis_results):
-
         optimized_model = analysis_results.optimized_model
 
         # Gather the dictionary with free parameters
@@ -318,9 +305,7 @@ class ANALYSIS_RESULTS(FITSExtension):
         # Gather covariance matrix (if any)
 
         if analysis_results.analysis_type == "MLE":
-
             if not isinstance(analysis_results, MLEResults):
-
                 log.error("This is not a MLEResults")
 
                 raise RuntimeError()
@@ -336,7 +321,6 @@ class ANALYSIS_RESULTS(FITSExtension):
                 n_parameters,
                 n_parameters,
             ):
-
                 log.error(
                     "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
                     % (
@@ -353,9 +337,7 @@ class ANALYSIS_RESULTS(FITSExtension):
             samples = np.zeros(n_parameters)
 
         else:
-
             if not isinstance(analysis_results, BayesianResults):
-
                 log.error("This is not a BayesianResults")
 
                 raise RuntimeError()
@@ -379,7 +361,8 @@ class ANALYSIS_RESULTS(FITSExtension):
         # Serialize the model so it can be placed in the header
         yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
-        # Replace characters which cannot be contained in a FITS header with other characters
+        # Replace characters which cannot be contained in a FITS header with other
+        # characters
         yaml_model_serialization = _escape_yaml_for_fits(yaml_model_serialization)
 
         # Get data frame with parameters (always use equal tail errors)
@@ -435,13 +418,9 @@ class ANALYSIS_RESULTS(FITSExtension):
 
 
 class AnalysisResultsFITS(FITSFile):
-    """
-    A FITS file for storing one or more results from 3ML analysis
-
-    """
+    """A FITS file for storing one or more results from 3ML analysis."""
 
     def __init__(self, *analysis_results, **kwargs):
-
         # This will contain the list of extensions we want to write in the file
 
         extensions = []
@@ -481,19 +460,22 @@ class AnalysisResultsFITS(FITSFile):
 
 
 class _AnalysisResults(object):
-    """
-    A unified class to store results from a maximum likelihood or a Bayesian analysis, which provides a unique interface
-    and allows for "error propagation" (which means different things in the two contexts) in arbitrary expressions.
+    """A unified class to store results from a maximum likelihood or a Bayesian
+    analysis, which provides a unique interface and allows for "error
+    propagation" (which means different things in the two contexts) in
+    arbitrary expressions.
 
-    This class is not intended for public consumption. Use either the MLEResults or the BayesianResults subclasses.
+    This class is not intended for public consumption. Use either the
+    MLEResults or the BayesianResults subclasses.
 
-    :param optimized_model: a Model instance with the optimized values of the parameters. A clone will be stored within
-    the class, so there is no need to clone it before hand
+    :param optimized_model: a Model instance with the optimized values
+        of the parameters. A clone will be stored within the class, so
+        there is no need to clone it before hand
     :type optimized_model: astromodels.Model
     :param samples: the samples for the parameters
     :type samples: np.ndarray
-    :param statistic_values: a dictionary containing the statistic (likelihood or posterior) values for the different
-    datasets
+    :param statistic_values: a dictionary containing the statistic
+        (likelihood or posterior) values for the different datasets
     :type statistic_values: dict
     """
 
@@ -505,7 +487,6 @@ class _AnalysisResults(object):
         analysis_type,
         statistical_measures,
     ):
-
         # Safety checks
 
         self._n_free_parameters = len(optimized_model.free_parameters)
@@ -515,8 +496,8 @@ class _AnalysisResults(object):
             "do not agree." % (samples.shape[1], self._n_free_parameters)
         )
 
-        # NOTE: we clone the model so that whatever happens outside or after, this copy of the model will not be
-        # changed
+        # NOTE: we clone the model so that whatever happens outside or after, this copy
+        # of the model will not be changed
 
         self._optimized_model = astromodels.clone_model(optimized_model)
 
@@ -532,8 +513,9 @@ class _AnalysisResults(object):
 
         self._statistical_measures = pd.Series(statistical_measures)
 
-        # The .free_parameters property of the model is pretty costly because it needs to update all the parameters
-        # to see if they are free. Since the saved model will not be touched we can cache that
+        # The .free_parameters property of the model is pretty costly because it needs
+        # to update all the parameters to see if they are free. Since the saved model
+        # will not be touched we can cache that
         self._free_parameters = self._optimized_model.free_parameters
 
         # Gather also the optimized values of the parameters
@@ -544,8 +526,7 @@ class _AnalysisResults(object):
 
     @property
     def samples(self):
-        """
-        Returns the matrix of the samples
+        """Returns the matrix of the samples.
 
         :return:
         """
@@ -554,12 +535,10 @@ class _AnalysisResults(object):
 
     @property
     def analysis_type(self):
-
         return self._analysis_type
 
     def write_to(self, filename: str, overwrite: bool = False, as_hdf: bool = False):
-        """
-        Write results to a FITS or HDF5 file
+        """Write results to a FITS or HDF5 file.
 
         :param filename: the file name
         :param overwrite: overwrite the file?
@@ -568,15 +547,12 @@ class _AnalysisResults(object):
         """
 
         if not as_hdf:
-
             fits_file = AnalysisResultsFITS(self)
 
             fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
 
         else:
-
             with h5py.File(sanitize_filename(filename), "w") as f:
-
                 f.attrs["n_results"] = 1
 
                 grp = f.create_group("AnalysisResults_0")
@@ -584,9 +560,8 @@ class _AnalysisResults(object):
                 ANALYSIS_RESULTS_HDF(self, grp)
 
     def get_variates(self, param_path):
-
         assert param_path in self._optimized_model.free_parameters, (
-            "Parameter %s is not a " "free parameters of the model" % param_path
+            "Parameter %s is not a free parameters of the model" % param_path
         )
 
         param_index = list(self._free_parameters.keys()).index(param_path)
@@ -601,10 +576,10 @@ class _AnalysisResults(object):
 
     @staticmethod
     def propagate(function, **kwargs):
-        """
-        Allow for propagation of uncertainties on arbitrary functions. It returns a function which is a wrapper around
-        the provided input function. Using the wrapper with RandomVariates instances as arguments will return a
-        RandomVariates result, with the errors propagated.
+        """Allow for propagation of uncertainties on arbitrary functions. It
+        returns a function which is a wrapper around the provided input
+        function. Using the wrapper with RandomVariates instances as arguments
+        will return a RandomVariates result, with the errors propagated.
 
         Example:
 
@@ -626,9 +601,10 @@ class _AnalysisResults(object):
         equal-tail: (4.11 -0.16 +0.15) x 10, hpd: (4.11 -0.05 +0.08) x 10
 
         :param function: function to be wrapped
-        :param **kwargs: keyword arguments specifying which random variates should substitute which argument in the
-        function (see example above)
-        :return: a new function, wrapping function, which can be used to propagate errors
+        :param **kwargs: keyword arguments specifying which random variates should
+        substitute which argument in the function (see example above)
+        :return: a new function, wrapping function, which can be used to propagate
+        errors
         """
 
         # Get calling sequence of input function
@@ -648,14 +624,14 @@ class _AnalysisResults(object):
         wrapper = functools.partial(vectorized, **kwargs)
 
         # Finally make so that the result is always a RandomVariate
-        wrapper2 = lambda *args, **kwargs: RandomVariates(wrapper(*args, **kwargs))
+        def wrapper2(*args, **kwargs):
+            return RandomVariates(wrapper(*args, **kwargs))
 
         return wrapper2
 
     @property
     def optimized_model(self):
-        """
-        Returns a copy of the optimized model
+        """Returns a copy of the optimized model.
 
         :return: a copy of the optimized model
         """
@@ -663,8 +639,7 @@ class _AnalysisResults(object):
         return astromodels.clone_model(self._optimized_model)
 
     def estimate_covariance_matrix(self):
-        """
-        Estimate the covariance matrix from the samples
+        """Estimate the covariance matrix from the samples.
 
         :return: a covariance matrix estimated from the samples
         """
@@ -672,62 +647,52 @@ class _AnalysisResults(object):
         return np.cov(self._samples_transposed)
 
     def get_correlation_matrix(self):
-
         raise NotImplementedError("You need to implement this")
 
     @property
     def optimal_statistic_values(self):
-
         return self._optimal_statistic_values
 
     @property
     def statistical_measures(self):
-
         return self._statistical_measures
 
     def _get_correlation_matrix(self, covariance):
-        """
-        Compute the correlation matrix
+        """Compute the correlation matrix.
 
         :return: correlation matrix
         """
 
-        # NOTE: we compute this on-the-fly because it is of less frequent use, and contains essentially the same
-        # information of the covariance matrix.
+        # NOTE: we compute this on-the-fly because it is of less frequent use, and
+        # contains essentially the same information of the covariance matrix.
 
         # Compute correlation matrix
 
         correlation_matrix = np.zeros_like(covariance)
 
         for i in range(self._n_free_parameters):
-
             variance_i = covariance[i, i]
 
             for j in range(self._n_free_parameters):
-
                 variance_j = covariance[j, j]
 
                 if variance_i * variance_j > 0:
-
                     correlation_matrix[i, j] = old_div(
                         covariance[i, j], (math.sqrt(variance_i * variance_j))
                     )
 
                 else:
-
-                    # This should not happen, but it might because a fit failed or the numerical differentiation
-                    # failed
+                    # This should not happen, but it might because a fit failed or the
+                    # numerical differentiation failed
 
                     correlation_matrix[i, j] = np.nan
 
         return correlation_matrix
 
     def get_statistic_frame(self):
-
         raise NotImplementedError("You have to implement this")
 
     def _get_statistic_frame(self, name):
-
         logl_results = {}
 
         # Create a new ordered dict so we can add the total
@@ -747,11 +712,10 @@ class _AnalysisResults(object):
         return loglike_dataframe
 
     def get_statistic_measure_frame(self):
-        """
-        Returns a panadas DataFrame with additional statistical information including
-        point and posterior based information criteria as well as their effective number
-        of free parameters. To use these properly, it is vital you consult the statsitical
-        literature.
+        """Returns a panadas DataFrame with additional statistical information
+        including point and posterior based information criteria as well as
+        their effective number of free parameters. To use these properly, it is
+        vital you consult the statsitical literature.
 
         :return: a pandas DataFrame instance
         """
@@ -759,17 +723,13 @@ class _AnalysisResults(object):
         return self._statistical_measures.to_frame(name="statistical measures")
 
     def _get_results_table(self, error_type, cl, covariance=None):
-
         if error_type == "equal tail":
-
             errors_gatherer = RandomVariates.equal_tail_interval
 
         elif error_type == "hpd":
-
             errors_gatherer = RandomVariates.highest_posterior_density_interval
 
         elif error_type == "covariance":
-
             assert (
                 covariance is not None
             ), "If you use error_type='covariance' you have to provide a cov. matrix"
@@ -777,7 +737,6 @@ class _AnalysisResults(object):
             errors_gatherer = None
 
         else:
-
             raise ValueError(
                 "error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type
             )
@@ -790,7 +749,6 @@ class _AnalysisResults(object):
         units_dict = []
 
         for i, this_par in enumerate(self._free_parameters.values()):
-
             parameter_paths.append(this_par.path)
 
             this_phys_q = self.get_variates(parameter_paths[-1])
@@ -800,7 +758,6 @@ class _AnalysisResults(object):
             units_dict.append(this_par.unit)
 
             if error_type != "covariance":
-
                 low_bound, hi_bound = errors_gatherer(this_phys_q, cl)
 
                 negative_errors.append(low_bound - values[-1])
@@ -808,11 +765,9 @@ class _AnalysisResults(object):
                 positive_errors.append(hi_bound - values[-1])
 
             else:
-
                 std_dev = np.sqrt(covariance[i, i])
 
                 if this_par.has_transformation():
-
                     best_fit_internal = this_par.transformation.forward(values[-1])
 
                     _, neg_error = this_par.internal_to_external_delta(
@@ -826,7 +781,6 @@ class _AnalysisResults(object):
                     positive_errors.append(pos_error)
 
                 else:
-
                     negative_errors.append(-std_dev)
                     positive_errors.append(std_dev)
 
@@ -841,13 +795,15 @@ class _AnalysisResults(object):
         return results_table
 
     def get_data_frame(self, error_type="equal tail", cl=0.68):
-        """
-        Returns a pandas DataFrame with the parameters and their errors, computed as specified in "error_type" and
-        with the confidence/credibility level specified in cl.
+        """Returns a pandas DataFrame with the parameters and their errors,
+        computed as specified in "error_type" and with the
+        confidence/credibility level specified in cl.
 
-        Using "equal_tail" and cl=0.68 corresponds to the usual frequentist 1-sigma confidence interval
+        Using "equal_tail" and cl=0.68 corresponds to the usual
+        frequentist 1-sigma confidence interval
 
-        :param error_type: "equal tail" or "hpd" (highest posterior density)
+        :param error_type: "equal tail" or "hpd" (highest posterior
+            density)
         :type error_type: str
         :param cl: confidence/credibility level (0 < cl < 1)
         :return: a pandas DataFrame instance
@@ -858,7 +814,6 @@ class _AnalysisResults(object):
         return self._get_results_table(error_type, cl).frame
 
     def get_point_source_flux(self, *args, **kwargs):
-
         log.error("get_point_source_flux() has been replaced by get_flux()")
         return self.get_flux(*args, **kwargs)
 
@@ -877,18 +832,21 @@ class _AnalysisResults(object):
     ):
         """
 
-        :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can also use a frequency, like
-        1 * u.Hz)
-        :param ene_max: maximum energy (an astropy quantity, like 10 * u.keV. You can also use a frequency, like
-        10 * u.Hz)
-        :param sources: Use this to specify the name of the source or a tuple/list of source names to be plotted.
-        If you don't use this, all sources will be plotted.
+        :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can
+        also use a frequency, like 1 * u.Hz)
+        :param ene_max: maximum energy (an astropy quantity, like 10 * u.keV. You can
+        also use a frequency, like 10 * u.Hz)
+        :param sources: Use this to specify the name of the source or a tuple/list of
+        source names to be plotted. If you don't use this, all sources will be plotted.
         :param confidence_level: the confidence level for the error (default: 0.68)
         :param flux_unit: (optional) astropy flux unit in string form (can be
         :param use_components: plot the components of each source (default: False)
-        :param components_to_use: (optional) list of string names of the components to plot: including 'total'
-        :param sum_sources: (optional) if True, also the sum of all sources will be plotted
-        :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.
+        :param components_to_use: (optional) list of string names of the components to
+        plot: including 'total'
+        :param sum_sources: (optional) if True, also the sum of all sources will be
+        plotted
+        :param include_extended: (optional) if True, plot extended source spectra
+        (spatially integrated) as well.
 
         :return:
         """
@@ -916,7 +874,6 @@ class _AnalysisResults(object):
 
         # The output contains one source per row
         def _format_error(row):
-
             rep = uncertainty_formatter(
                 row["flux"].value, row["low bound"].value, row["hi bound"].value
             )
@@ -927,7 +884,6 @@ class _AnalysisResults(object):
             return pd.Series({"flux": "%s %s" % (rep, unit_rep)})
 
         if mle_results is not None:
-
             # Format the errors and display the resulting data frame
 
             if verbose:
@@ -937,7 +893,6 @@ class _AnalysisResults(object):
             return mle_results
 
         elif bayes_results is not None:
-
             # Format the errors and display the resulting data frame
             if verbose:
                 display(bayes_results.apply(_format_error, axis=1))
@@ -946,21 +901,18 @@ class _AnalysisResults(object):
             return bayes_results
 
     def get_equal_tailed_interval(self, parameter, cl=0.68):
-        """
+        """Returns the equal tailed interval for the parameter.
 
-        returns the equal tailed interval for the parameter
-
-        :param parameter_path: path of the parameter or parameter instance
+        :param parameter_path: path of the parameter or parameter
+            instance
         :param cl: credible interval to obtain
         :return: (low bound, high bound)
         """
 
         if isinstance(parameter, Parameter):
-
             path = parameter.path
 
         else:
-
             path = parameter
 
         variates = self.get_variates(path)
@@ -969,15 +921,17 @@ class _AnalysisResults(object):
 
 
 class BayesianResults(_AnalysisResults):
-    """
-    Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and "error propagation"
+    """Store results of a Bayesian analysis (i.e., the samples) and allow for
+    computation with them and "error propagation".
 
-    :param optimized_model: a Model instance with the MAP values of the parameters. A clone will be stored within
-    the class, so there is no need to clone it before hand
+    :param optimized_model: a Model instance with the MAP values of the
+        parameters. A clone will be stored within the class, so there is
+        no need to clone it before hand
     :type optimized_model: astromodels.Model
     :param samples: the samples for the parameters
     :type samples: np.ndarray
-    :param posterior_values: a dictionary containing the posterior values for the different datasets at the HPD
+    :param posterior_values: a dictionary containing the posterior
+        values for the different datasets at the HPD
     :type posterior_values: dict
     """
 
@@ -989,7 +943,6 @@ class BayesianResults(_AnalysisResults):
         statistical_measures,
         log_probabilty,
     ):
-
         super(BayesianResults, self).__init__(
             optimized_model,
             samples,
@@ -1001,51 +954,52 @@ class BayesianResults(_AnalysisResults):
         self._log_probability = log_probabilty
 
     def get_correlation_matrix(self):
-        """
-        Estimate the covariance matrix from the samples
+        """Estimate the covariance matrix from the samples.
 
         :return: the correlation matrix
         """
 
-        # Here we need to estimate the covariance from the samples, then compute the correlation matrix
+        # Here we need to estimate the covariance from the samples, then compute the
+        # correlation matrix
 
         covariance = self.estimate_covariance_matrix()
 
         return self._get_correlation_matrix(covariance)
 
     def get_statistic_frame(self):
-
         return self._get_statistic_frame(name="-log(posterior)")
 
     def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
-
         best_fit_table = self._get_results_table(error_type, cl)
 
         if threeML_config.bayesian.use_median_fit:
-
-            _rich_console.print("[medium_spring_green bold underline] Median posterior point:")
+            _rich_console.print(
+                "[medium_spring_green bold underline] Median posterior point:"
+            )
 
         else:
-
             _rich_console.print(
-                "[medium_spring_green bold underline]Maximum a posteriori probability (MAP) point:\n"
+                "[medium_spring_green bold underline]Maximum a posteriori probability "
+                "(MAP) point:\n"
             )
 
         best_fit_table.display()
 
         if display_correlation:
-
             corr_matrix = NumericMatrix(self.get_correlation_matrix())
 
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
+            _rich_console.print(
+                "[medium_spring_green bold underline]\nCorrelation matrix:\n"
+            )
 
             display(corr_matrix)
 
         _rich_console.print(
-            "[medium_spring_green bold underline]\nValues of -log(posterior) at the minimum:\n"
+            "[medium_spring_green bold underline]\nValues of -log(posterior) at the "
+            "minimum:\n"
         )
 
         display(self.get_statistic_frame())
@@ -1062,13 +1016,16 @@ class BayesianResults(_AnalysisResults):
         components: Optional[List] = None,
         **kwargs,
     ):
-        """
-        Produce the corner plot showing the marginal distributions in one and two directions.
+        """Produce the corner plot showing the marginal distributions in one
+        and two directions.
 
-        :param renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}, where 'old label' is the full path of the parameter
-        :param components: a python list of parameter paths to use in the corner plot
+        :param renamed_parameters: a python dictionary of parameters to
+            rename. Useful when e.g. spectral indices in models have
+            different names but you wish to compare them. Format is
+            {'old label': 'new label'}, where 'old label' is the full
+            path of the parameter
+        :param components: a python list of parameter paths to use in
+            the corner plot
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
@@ -1077,9 +1034,7 @@ class BayesianResults(_AnalysisResults):
             assert (
                 len(list(self._free_parameters.keys()))
                 == self._samples_transposed.T[0].shape[0]
-            ), (
-                "Mismatch between sample" " dimensions and number of free" " parameters"
-            )
+            ), "Mismatch between sample dimensions and number of free parameters"
 
             components = self._free_parameters.keys()
             samples = self._samples_transposed.T
@@ -1104,7 +1059,6 @@ class BayesianResults(_AnalysisResults):
         # priors = []
 
         for i, parameter_name in enumerate(components):
-
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
@@ -1112,11 +1066,9 @@ class BayesianResults(_AnalysisResults):
             # If the user has provided custom names, use them
 
             if renamed_parameters is not None:
-
                 # Hopefully this doesn't break backward compatibility --
                 # parameter.path == keys in _free_parameters
                 if parameter_name in renamed_parameters:
-
                     labels[-1] = renamed_parameters[parameter_name]
 
             # priors.append(
@@ -1137,7 +1089,7 @@ class BayesianResults(_AnalysisResults):
                 over=corner_style.extremes,
                 bad=corner_style.extremes,
             )
-        except:
+        except Exception:
             pass
 
         contourf_kwargs = dict(corner_style.contourf_kwargs)
@@ -1155,9 +1107,9 @@ class BayesianResults(_AnalysisResults):
             "levels": corner_style.levels,
         }
 
-        # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
-        # if they weren't present in the original dictionary, so you can use any option in kwargs, not just
-        # the one in default_args
+        # Update the default arguents with the one provided (if any). Note that .update
+        # also adds new keywords, if they weren't present in the original dictionary, so
+        # you can use any option in kwargs, not just the one in default_args
         default_args.update(kwargs)
 
         fig = corner(samples, **default_args)
@@ -1166,11 +1118,9 @@ class BayesianResults(_AnalysisResults):
 
     @property
     def log_probability(self):
-        """
-        The log probability values
+        """The log probability values.
 
         :returns:
-
         """
         return self._log_probability
 
@@ -1178,17 +1128,21 @@ class BayesianResults(_AnalysisResults):
         """
         Corner plots using chainconsumer which allows for nicer plotting of
         marginals
-        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure
+        see: https://samreay.github.io/ChainConsumer/chain_api.html
+        #chainconsumer.ChainConsumer.configure
         for all options
         :param parameters: list of parameters to plot
-        :param renamed_parameters: a python dictionary of parameters to rename. Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is {'old label': 'new label'}
+        :param renamed_parameters: a python dictionary of parameters to rename. Useful
+        when e.g. spectral indices in models have different names but you wish to
+        compare them. Format is {'old label': 'new label'}
         :param **cc_kwargs: chainconsumer general keyword arguments
         :return fig:
         """
 
         if not has_chainconsumer:
             raise RuntimeError(
-                "You must have chainconsumer installed to use this function: pip install chainconsumer"
+                "You must have chainconsumer installed to use this function: pip "
+                "install chainconsumer"
             )
 
         # these are the keywords for the plot command
@@ -1202,7 +1156,6 @@ class BayesianResults(_AnalysisResults):
         }
         keys = list(cc_kwargs.keys())
         for key in keys:
-
             if key in _default_plot_args:
                 _default_plot_args[key] = cc_kwargs.pop(key)
 
@@ -1219,11 +1172,8 @@ class BayesianResults(_AnalysisResults):
         # Rename the parameters if needed.
 
         if renamed_parameters is not None:
-
             for old_label, new_label in renamed_parameters.items():
-
                 for i, _ in enumerate(labels):
-
                     if labels[i] == old_label:
                         labels[i] = new_label
 
@@ -1233,7 +1183,6 @@ class BayesianResults(_AnalysisResults):
             i,
             val,
         ) in enumerate(labels):
-
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", "")
 
@@ -1250,20 +1199,20 @@ class BayesianResults(_AnalysisResults):
         return fig
 
     def comparison_corner_plot(self, *other_fits, **kwargs):
-        """
-        Create a corner plot from many different fits which allow for co-plotting of parameters marginals.
+        """Create a corner plot from many different fits which allow for co-
+        plotting of parameters marginals.
 
         :param other_fits: other fitted results
         :param parameters: parameters to plot
         :param renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
-        :param names: (optional) name for each chain first name is this chain followed by each added chain
+         Useful when e.g. spectral indices in models have different names but you wish
+         to compare them. Format is {'old label': 'new label'}
+        :param names: (optional) name for each chain first name is this chain followed
+        by each added chain
         :param kwargs: chain consumer kwargs
         :return:
 
         Returns:
-
         """
 
         if not has_chainconsumer:
@@ -1287,14 +1236,12 @@ class BayesianResults(_AnalysisResults):
         keys = list(kwargs.keys())
 
         for key in keys:
-
             if key in _default_plot_args:
                 _default_plot_args[key] = kwargs.pop(key)
 
         # allows us to name chains
 
         if "names" in kwargs:
-
             names = kwargs.pop("names")
 
             assert (
@@ -1305,28 +1252,20 @@ class BayesianResults(_AnalysisResults):
             )
 
         else:
-
             names = None
 
         if "renamed_parameters" in kwargs:
-
             renamed_parameters = kwargs.pop("renamed_parameters")
 
         else:
-
             renamed_parameters = None
 
         for j, other_fit in enumerate(other_fits):
-
             if other_fit.samples is not None:
                 assert (
                     len(list(other_fit._free_parameters.keys()))
                     == other_fit.samples.T[0].shape[0]
-                ), (
-                    "Mismatch between sample"
-                    " dimensions and number of free"
-                    " parameters"
-                )
+                ), "Mismatch between sample dimensions and number of free parameters"
 
             labels_other = []
             # priors_other = []
@@ -1338,17 +1277,15 @@ class BayesianResults(_AnalysisResults):
 
                 labels_other.append(short_name)
 
-                # priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+                # priors_other.append(
+                #     other_fit._likelihood_model.parameters[parameter_name].prior)
 
             # Rename any parameters so that they can be plotted together.
             # A dictionary is passed with keys = old label values = new label.
 
             if renamed_parameters is not None:
-
                 for old_label, new_label in renamed_parameters.items():
-
                     for i, _ in enumerate(labels_other):
-
                         if labels_other[i] == old_label:
                             labels_other[i] = new_label
 
@@ -1358,12 +1295,10 @@ class BayesianResults(_AnalysisResults):
                 i,
                 val,
             ) in enumerate(labels_other):
-
                 if "$" not in labels_other[i]:
                     labels_other[i] = val.replace("_", " ")
 
             if names is not None:
-
                 cc.add_chain(
                     other_fit.samples.T,
                     parameters=labels_other,
@@ -1371,7 +1306,6 @@ class BayesianResults(_AnalysisResults):
                 )
 
             else:
-
                 cc.add_chain(other_fit.samples.T, parameters=labels_other)
 
         labels = []
@@ -1385,11 +1319,8 @@ class BayesianResults(_AnalysisResults):
             # priors.append(self._optimized_model.parameters[parameter_name].prior)
 
         if renamed_parameters is not None:
-
             for old_label, new_label in renamed_parameters.items():
-
                 for i, _ in enumerate(labels):
-
                     if labels[i] == old_label:
                         labels[i] = new_label
 
@@ -1399,16 +1330,13 @@ class BayesianResults(_AnalysisResults):
             i,
             val,
         ) in enumerate(labels):
-
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", " ")
 
         if names is not None:
-
             cc.add_chain(self._samples_transposed.T, parameters=labels, name=names[0])
 
         else:
-
             cc.add_chain(self._samples_transposed.T, parameters=labels)
 
         # should only be the cc kwargs
@@ -1419,8 +1347,7 @@ class BayesianResults(_AnalysisResults):
         return fig
 
     def plot_chains(self, thin=None):
-        """
-        Produce a plot of the series of samples for each parameter
+        """Produce a plot of the series of samples for each parameter.
 
         :parameter thin: use only one sample every 'thin' samples
         :return: a list of matplotlib.figure instances
@@ -1428,17 +1355,14 @@ class BayesianResults(_AnalysisResults):
 
         figures = []
         for i, parameter_name in enumerate(self._free_parameters.keys()):
-
             figure, subplot = plt.subplots(1, 1)
 
             if thin is None:
-
                 # Use all samples
 
                 subplot.plot(self.samples[i, :])
 
             else:
-
                 assert isinstance(thin, int), "Thin must be a integer number"
 
                 subplot.plot(self.samples[i, ::thin])
@@ -1456,12 +1380,13 @@ class BayesianResults(_AnalysisResults):
         return figures
 
     def convergence_plots(self, n_samples_in_each_subset, n_subsets):
-        """
-        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
-        values if the MCMC has converged to the posterior distribution.
+        """Compute the mean and variance for subsets of the samples, and plot
+        them. They should all be around the same values if the MCMC has
+        converged to the posterior distribution.
 
-        The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
-        is to take random samples from the chain (bootstrap)
+        The subsamples are taken with two different strategies: the first is to slide a
+        fixed-size window, the second is to take random samples from the chain
+        (bootstrap)
 
         :param n_samples_in_each_subset: number of samples in each subset
         :param n_subsets: number of subsets to take for each strategy
@@ -1485,7 +1410,6 @@ class BayesianResults(_AnalysisResults):
         log.info("Stepsize for sliding window is %s" % stepsize)
 
         for j, parameter_name in enumerate(self._free_parameters.keys()):
-
             this_samples = self.samples[j, :]
 
             # First compute averages and variances using the sliding window
@@ -1494,7 +1418,6 @@ class BayesianResults(_AnalysisResults):
             this_variances = []
 
             for i in range(n_subsets):
-
                 idx1 = i * stepsize
                 idx2 = idx1 + n_samples_in_each_subset
 
@@ -1525,7 +1448,6 @@ class BayesianResults(_AnalysisResults):
         # Now plot all these things
 
         def plot_one_histogram(subplot, data, label):
-
             nbins = int(self.freedman_diaconis_rule(data))
 
             subplot.hist(data, nbins, label=label)
@@ -1561,8 +1483,8 @@ class BayesianResults(_AnalysisResults):
 
     @staticmethod
     def freedman_diaconis_rule(data):
-        """
-        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
+        """Returns the number of bins from the Freedman-Diaconis rule for a
+        histogram of the given data.
 
         :param data: an array of data
         :return: the optimal number of bins
@@ -1578,21 +1500,18 @@ class BayesianResults(_AnalysisResults):
         return nbins
 
     def get_highest_density_posterior_interval(self, parameter, cl=0.68):
-        """
+        """Returns the highest density posterior interval for that parameter.
 
-        returns the highest density posterior interval for that parameter
-
-        :param parameter_path: path of the parameter or parameter instance
+        :param parameter_path: path of the parameter or parameter
+            instance
         :param cl: credible interval to obtain
         :return: (low bound, high bound)
         """
 
         if isinstance(parameter, Parameter):
-
             path = parameter.path
 
         else:
-
             path = parameter
 
         variates = self.get_variates(path)
@@ -1600,16 +1519,15 @@ class BayesianResults(_AnalysisResults):
         return variates.highest_posterior_density_interval(cl)
 
     def get_median_fit_model(self):
-        """
-        Sets the model parameters to the mean of the marginal distributions
-        """
+        """Sets the model parameters to the mean of the marginal
+        distributions."""
 
         new_model = astromodels.clone_model(self._optimized_model)
 
         if self._log_probability is None:
-
             log.error(
-                "this is an older analysis results file and does not contain the log probability"
+                "this is an older analysis results file and does not contain the log "
+                "probability"
             )
 
             raise RuntimeError()
@@ -1619,7 +1537,6 @@ class BayesianResults(_AnalysisResults):
         for i, (parameter_name, parameter) in enumerate(
             new_model.free_parameters.items()
         ):
-
             par = self._samples_transposed[i, idx]
 
             parameter.value = par
@@ -1628,12 +1545,10 @@ class BayesianResults(_AnalysisResults):
 
 
 class MLEResults(_AnalysisResults):
-    """
-    Build the _AnalysisResults object starting from a covariance matrix.
-
+    """Build the _AnalysisResults object starting from a covariance matrix.
 
     :param optimized_model: best fit model
-    :type optimized_model:astromodels.Model
+    :type optimized_model: astromodels.Model
     :param covariance_matrix:
     :type covariance_matrix: np.ndarray
     :param likelihood_values:
@@ -1651,7 +1566,6 @@ class MLEResults(_AnalysisResults):
         n_samples=5000,
         statistical_measures=None,
     ):
-
         # Generate samples for each parameter accounting for their covariance
 
         # Force covariance into proper type
@@ -1668,7 +1582,6 @@ class MLEResults(_AnalysisResults):
         expected_shape = (len(values), len(values))
 
         if covariance_matrix.shape != ():
-
             assert (
                 covariance_matrix.shape == expected_shape
             ), "Covariance matrix has wrong shape. " "Got %s, should be %s" % (
@@ -1677,27 +1590,26 @@ class MLEResults(_AnalysisResults):
             )
 
             if not np.all(np.isfinite(covariance_matrix)):
-
                 log.error("Covariance matrix contains Nan or inf. Cannot continue.")
 
                 raise BadCovariance()
 
-            # Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the
-            # parameters
+            # Generate samples from the multivariate normal distribution, i.e.,
+            # accounting for the covariance of the parameters
 
             samples = np.random.multivariate_normal(
                 np.array(values).T, covariance_matrix, n_samples
             )
 
         else:
-
             # No error information, just make duplicates of the values
             samples = np.ones((n_samples, len(values))) * np.array(values)
 
             # Make a fake covariance matrix
             covariance_matrix = np.zeros(expected_shape)
 
-        # Now reject the samples outside of the boundaries. If we reject more than 1% we warn the user
+        # Now reject the samples outside of the boundaries. If we reject more than 1% we
+        # warn the user
 
         # Gather boundaries
         # NOTE: every None boundary will become nan thanks to the casting to float
@@ -1723,7 +1635,6 @@ class MLEResults(_AnalysisResults):
         to_be_kept_mask = np.ones(samples.shape[0], bool)
 
         for i, sample in enumerate(samples):
-
             if np.any(sample > hi_bounds) or np.any(sample < low_bounds):
                 # Remove this sample
                 to_be_kept_mask[i] = False
@@ -1735,9 +1646,10 @@ class MLEResults(_AnalysisResults):
 
         if n_removed_samples > samples.shape[0] / 100.0:
             log.warning(
-                "%s percent of samples have been thrown away because they failed the constraints "
-                "on the parameters. This results might not be suitable for error propagation. "
-                "Enlarge the boundaries until you loose less than 1 percent of the samples."
+                "%s percent of samples have been thrown away because they failed the "
+                "constraints on the parameters. This results might not be suitable for "
+                "error propagation. Enlarge the boundaries until you loose less than 1 "
+                "percent of the samples."
                 % (float(n_removed_samples) / samples.shape[0] * 100.0)
             )
 
@@ -1746,9 +1658,7 @@ class MLEResults(_AnalysisResults):
 
         # Now transform in the external space
         for i, parameter in enumerate(optimized_model.free_parameters.values()):
-
             if parameter.has_transformation():
-
                 samples[:, i] = parameter.transformation.backward(samples[:, i])
 
         # Finally build the class
@@ -1767,18 +1677,16 @@ class MLEResults(_AnalysisResults):
 
     @property
     def covariance_matrix(self):
-        """
-        Returns the covariance matrix.
+        """Returns the covariance matrix.
 
-        :return: covariance matrix or None (if the class was built from samples.
-                 Use estimate_covariance_matrix in that case)
+        :return: covariance matrix or None (if the class was built from
+            samples. Use estimate_covariance_matrix in that case)
         """
 
         return self._covariance_matrix
 
     def get_correlation_matrix(self):
-        """
-        Compute correlation matrix
+        """Compute correlation matrix.
 
         :return: the correlation matrix
         """
@@ -1786,11 +1694,9 @@ class MLEResults(_AnalysisResults):
         return self._get_correlation_matrix(self._covariance_matrix)
 
     def get_statistic_frame(self):
-
         return self._get_statistic_frame(name="-log(likelihood)")
 
     def display(self, display_correlation=True, cl=0.68):
-
         best_fit_table = self._get_results_table(
             error_type="covariance", cl=cl, covariance=self.covariance_matrix
         )
@@ -1800,53 +1706,59 @@ class MLEResults(_AnalysisResults):
         best_fit_table.display()
 
         if display_correlation:
-
             corr_matrix = NumericMatrix(self.get_correlation_matrix())
 
             for col in corr_matrix.colnames:
                 corr_matrix[col].format = "2.2f"
 
-            _rich_console.print("[medium_spring_green bold underline]\nCorrelation matrix:\n")
+            _rich_console.print(
+                "[medium_spring_green bold underline]\nCorrelation matrix:\n"
+            )
 
             display(corr_matrix)
 
-        _rich_console.print("[medium_spring_green bold underline]\nValues of -log(likelihood) at the minimum:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of -log(likelihood) at the "
+            "minimum:\n"
+        )
 
         display(self.get_statistic_frame())
 
-        _rich_console.print("[medium_spring_green bold underline]\nValues of statistical measures:\n")
+        _rich_console.print(
+            "[medium_spring_green bold underline]\nValues of statistical measures:\n"
+        )
 
         display(self.get_statistic_measure_frame())
 
 
 class AnalysisResultsSet(collections.abc.Sequence):
-    """
-    A container for results which behaves like a list (but you cannot add/remove elements).
+    """A container for results which behaves like a list (but you cannot
+    add/remove elements).
 
-    You can index (analysis_set[0]), iterate (for item in analysis_set) and measure with len()
+    You can index (analysis_set[0]), iterate (for item in analysis_set)
+    and measure with len()
     """
 
     def __init__(self, results):
-
         self._results = results
 
     def __getitem__(self, item):
-
         return self._results[item]
 
     def __len__(self):
-
         return len(self._results)
 
     def set_x(self, name, x, unit=None):
-        """
-        Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when
-        saving these results to a FITS file.
+        """Associate the provided x with these results. The values in x will be
+        written in the SEQUENCE extension when saving these results to a FITS
+        file.
 
-        :param name: a name for this sequence (for example, "time" or "energy"). Please use only letters and numbers
-        (no special characters)
+        :param name: a name for this sequence (for example, "time" or
+            "energy"). Please use only letters and numbers (no special
+            characters)
         :param x:
-        :param unit: unit for x (like "s" for seconds, or a astropy.units.Unit instance)
+        :param unit: unit for x (like "s" for seconds, or a
+            astropy.units.Unit instance)
         :return:
         """
 
@@ -1856,27 +1768,27 @@ class AnalysisResultsSet(collections.abc.Sequence):
         )
 
         if unit is not None:
-
             unit = u.Unit(unit)
 
             data_tuple = (("VALUE", x * unit),)
 
         else:
-
             data_tuple = (("VALUE", x),)
 
         self.characterize_sequence(name, data_tuple)
 
     def set_bins(self, name, lower_bounds, upper_bounds, unit=None):
-        """
-        Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when
-        saving these results to a FITS file
+        """Associate the provided bins with these results. These bins will be
+        written in the SEQUENCE extension when saving these results to a FITS
+        file.
 
-        :param name: a name for these bins (for example, "time" or "energy"). Please use only letters and numbers
-        (no special characters)
+        :param name: a name for these bins (for example, "time" or
+            "energy"). Please use only letters and numbers (no special
+            characters)
         :param lower_bounds:
         :param upper_bounds:
-        :param unit: unit for the boundaries (like "s" for seconds, or a astropy.units.Unit instance)
+        :param unit: unit for the boundaries (like "s" for seconds, or a
+            astropy.units.Unit instance)
         :return:
         """
 
@@ -1892,7 +1804,6 @@ class AnalysisResultsSet(collections.abc.Sequence):
         )
 
         if unit is not None:
-
             unit = u.Unit(unit)
 
             data_tuple = (
@@ -1901,7 +1812,6 @@ class AnalysisResultsSet(collections.abc.Sequence):
             )
 
         else:
-
             data_tuple = (
                 ("LOWER_BOUND", lower_bounds),
                 ("UPPER_BOUND", upper_bounds),
@@ -1910,16 +1820,18 @@ class AnalysisResultsSet(collections.abc.Sequence):
         self.characterize_sequence(name, data_tuple)
 
     def characterize_sequence(self, name, data_tuple):
-        """
-        Characterize the sequence of these results. The provided data frame will be saved along with the results
-        in the "SEQUENCE" extension to allow the interpretation of the results.
+        """Characterize the sequence of these results. The provided data frame
+        will be saved along with the results in the "SEQUENCE" extension to
+        allow the interpretation of the results.
 
-        This method is completely general, and allow for a lot of flexibility.
+        This method is completely general, and allow for a lot of
+        flexibility.
 
-        If this is a binned analysis and you only want to save the lower and upper bound of the bins, use
-        set_bins instead.
+        If this is a binned analysis and you only want to save the lower
+        and upper bound of the bins, use set_bins instead.
 
-        If you only want to associate one quantity for each entry, use set_x.
+        If you only want to associate one quantity for each entry, use
+        set_x.
         """
 
         self._sequence_name = str(name)
@@ -1936,8 +1848,7 @@ class AnalysisResultsSet(collections.abc.Sequence):
         self._sequence_tuple = data_tuple
 
     def write_to(self, filename, overwrite=False, as_hdf=False):
-        """
-        Write this set of results to a FITS file.
+        """Write this set of results to a FITS file.
 
         :param filename: name for the output file
         :param overwrite: True or False
@@ -1953,7 +1864,6 @@ class AnalysisResultsSet(collections.abc.Sequence):
             self.characterize_sequence("unspecified", frame_tuple)
 
         if not as_hdf:
-
             fits = AnalysisResultsFITS(
                 *self,
                 sequence_tuple=self._sequence_tuple,
@@ -1962,93 +1872,84 @@ class AnalysisResultsSet(collections.abc.Sequence):
 
             fits.writeto(sanitize_filename(filename), overwrite=overwrite)
         else:
-
             with h5py.File(sanitize_filename(filename), "w") as f:
-
                 f.attrs["n_results"] = len(self)
 
                 f.attrs["SEQ_TYPE"] = self._sequence_name
                 seq_grp = f.create_group("SEQUENCE")
 
                 for name, value in self._sequence_tuple:
-
                     sub_grp = seq_grp.create_group(name)
 
                     try:
-
                         sub_grp.attrs["UNIT"] = value.unit.to_string()
 
                         sub_grp.create_dataset("DATA", data=value.value)
 
-                    except:
-
+                    except Exception:
                         sub_grp.attrs["UNIT"] = "NONE_TYPE"
 
                         sub_grp.create_dataset("DATA", data=value)
 
                 for i, ar in enumerate(self):
-
                     grp = f.create_group("AnalysisResults_%d" % i)
 
                     ANALYSIS_RESULTS_HDF(ar, grp)
 
 
 def load_analysis_results(fits_file: str) -> _AnalysisResults:
-    """
-    Load the results of one or more analysis from a FITS file produced by 3ML
+    """Load the results of one or more analysis from a FITS file produced by
+    3ML.
 
-    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
-    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    :param fits_file: path to the FITS file containing the results, as
+        output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results
+        dending on the type of the input FITS file
     """
 
     fits_file: Path = fits_file
 
     with fits.open(fits_file) as f:
-
         n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
 
         if n_results == 1:
-
             log.debug(f"{fits_file} AR opened with 1 result")
 
             return _load_one_results(f["ANALYSIS_RESULTS", 1])
 
         else:
-
             log.debug(f"{fits_file} AR opened with {n_results} results")
 
             return _load_set_of_results(f, n_results)
 
 
 def load_analysis_results_hdf(hdf_file: str) -> _AnalysisResults:
-    """
-    Load the results of one or more analysis from a FITS file produced by 3ML
+    """Load the results of one or more analysis from a FITS file produced by
+    3ML.
 
-    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
-    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    :param fits_file: path to the FITS file containing the results, as
+        output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results
+        dending on the type of the input FITS file
     """
 
     hdf_file: Path = sanitize_filename(hdf_file)
 
     with h5py.File(hdf_file, "r") as f:
-
         n_results = f.attrs["n_results"]
 
         if n_results == 1:
-
             log.debug(f"{hdf_file} AR opened with {n_results} result")
 
             return _load_one_results_hdf(f["AnalysisResults_0"])
 
         else:
-
             log.debug(f"{hdf_file} AR opened with {n_results} results")
 
             return _load_set_of_results_hdf(f, n_results)
 
 
 def convert_fits_analysis_result_to_hdf(fits_result_file: str):
-
     ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
 
     new_file_name_base, _ = os.path.splitext(fits_result_file)
@@ -2076,7 +1977,6 @@ def _load_one_results(fits_extension):
     measure_values = collections.OrderedDict()
 
     for key in list(fits_extension.header.keys()):
-
         if key.find("STAT") == 0:
             # Found a keyword with a statistic for a plugin
             # Gather info about it
@@ -2096,7 +1996,6 @@ def _load_one_results(fits_extension):
             measure_values[name] = value
 
     if analysis_type == "MLE":
-
         # Get covariance matrix
 
         covariance_matrix = np.atleast_2d(fits_extension.data.field("COVARIANCE").T)
@@ -2111,7 +2010,6 @@ def _load_one_results(fits_extension):
         )
 
     elif analysis_type == "Bayesian":
-
         # Gather samples
         samples = fits_extension.data.field("SAMPLES")
 
@@ -2119,8 +2017,7 @@ def _load_one_results(fits_extension):
             # Gather log probability
             log_probability = fits_extension.data.field("LOG_PROB")[0]
 
-        except:
-
+        except Exception:
             log_probability = None
 
         # Instance and return
@@ -2149,7 +2046,6 @@ def _load_one_results_hdf(hdf_obj):
     measure_values = collections.OrderedDict()
 
     for key in list(hdf_obj.attrs.keys()):
-
         if key.find("STAT") == 0:
             # Found a keyword with a statistic for a plugin
             # Gather info about it
@@ -2169,7 +2065,6 @@ def _load_one_results_hdf(hdf_obj):
             measure_values[name] = value
 
     if analysis_type == "MLE":
-
         # Get covariance matrix
 
         covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
@@ -2184,7 +2079,6 @@ def _load_one_results_hdf(hdf_obj):
         )
 
     elif analysis_type == "Bayesian":
-
         # Gather samples
         samples = hdf_obj["SAMPLES"][()]
 
@@ -2192,8 +2086,7 @@ def _load_one_results_hdf(hdf_obj):
             # Gather log probabiltiy
             log_probability = hdf_obj["LOG_PROB"][()]
 
-        except:
-
+        except Exception:
             log_probability = None
 
         # Instance and return
@@ -2212,7 +2105,6 @@ def _load_set_of_results_hdf(hdf_obj, n_results):
     all_results = []
 
     for i in range(n_results):
-
         grp = hdf_obj["AnalysisResults_%d" % i]
 
         all_results.append(_load_one_results_hdf(grp))
@@ -2229,13 +2121,10 @@ def _load_set_of_results_hdf(hdf_obj, n_results):
     data_list = []
 
     for name, grp in seq_grp.items():
-
         if grp.attrs["UNIT"] == "NONE_TYPE":
-
             this_tuple = (name, grp["DATA"][()])
 
         else:
-
             this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
 
         data_list.append(this_tuple)
@@ -2266,13 +2155,10 @@ def _load_set_of_results(open_fits_file, n_results):
     data_list = []
 
     for column in record.columns:
-
         if column.unit is None:
-
             this_tuple = (column.name, record[column.name])
 
         else:
-
             this_tuple = (
                 column.name,
                 record[column.name] * u.Unit(column.unit),

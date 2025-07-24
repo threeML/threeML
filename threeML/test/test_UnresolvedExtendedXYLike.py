@@ -1,8 +1,14 @@
-from threeML import *
-from threeML.plugins.UnresolvedExtendedXYLike import UnresolvedExtendedXYLike
-from astromodels.functions.functions_2D import Gaussian_on_sphere
 import os
+
 import numpy as np
+from astromodels import ExtendedSource, Model, PointSource
+from astromodels.functions import Gaussian, Line
+from astromodels.functions.functions_2D import Gaussian_on_sphere
+
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.data_list import DataList
+from threeML.plugins.UnresolvedExtendedXYLike import UnresolvedExtendedXYLike
+
 
 def get_signal():
     # Generate a test signal
@@ -184,7 +190,6 @@ poiss_sig = [
 
 
 def test_UnresolvedExtendedXYLike_chi2():
-
     # Get fake data with Gaussian noise
 
     yerr = np.array(gauss_sigma)
@@ -202,9 +207,9 @@ def test_UnresolvedExtendedXYLike_chi2():
 
     # Verify that the fit converged where it should have
     assert np.allclose(
-        #res[0]["value"].values,
+        # res[0]["value"].values,
         res.get_data_frame()["value"].values,
-        [40.20269202, 0.82896119,  62.80359114, 5.04080011, 0.27286713],
+        [40.20269202, 0.82896119, 62.80359114, 5.04080011, 0.27286713],
         rtol=0.05,
     )
 
@@ -222,7 +227,6 @@ def test_UnresolvedExtendedXYLike_chi2():
 
 
 def test_UnresolvedExtendedXYLike_poisson():
-
     # Now Poisson case
     y = np.array(poiss_sig)
 
@@ -242,14 +246,14 @@ def test_UnresolvedExtendedXYLike_poisson():
 
     # print res[0]['value']
     assert np.allclose(
-        #res[0]["value"],
+        # res[0]["value"],
         res.get_data_frame()["value"],
-        [40.344599, 0.783748,  71.560055, 4.989727, 0.330570], rtol=0.05
+        [40.344599, 0.783748, 71.560055, 4.989727, 0.330570],
+        rtol=0.05,
     )
 
 
 def test_UnresolvedExtendedXYLike_assign_to_source():
-
     # Get fake data with Gaussian noise
 
     yerr = np.array(gauss_sigma)
@@ -287,7 +291,7 @@ def test_UnresolvedExtendedXYLike_assign_to_source():
     _ = jl.fit()
 
     predicted_parameters = np.array(
-        [40.20269202, 0.82896119,  62.80359114, 5.04080011, 0.27286713]
+        [40.20269202, 0.82896119, 62.80359114, 5.04080011, 0.27286713]
     )
 
     assert np.allclose(
@@ -302,7 +306,8 @@ def test_UnresolvedExtendedXYLike_assign_to_source():
         rtol=0.05,
     )
 
-    # Test that the likelihood does not change by changing the parameters of the other source
+    # Test that the likelihood does not change by changing the parameters of the other
+    # source
     log_like_before = jl.minus_log_like_profile(*predicted_parameters)
 
     fitfun2.F_2 = 120.0
@@ -311,10 +316,12 @@ def test_UnresolvedExtendedXYLike_assign_to_source():
 
     assert log_like_before == log_like_after
 
-    # Now test that if we do not assign a source, then the log likelihood value will change
+    # Now test that if we do not assign a source, then the log likelihood value will
+    # change
     xy.assign_to_source(None)
 
-    # Test that the likelihood this time changes by changing the parameters of the other source
+    # Test that the likelihood this time changes by changing the parameters of the other
+    # source
     log_like_before = jl.minus_log_like_profile(*predicted_parameters)
 
     fitfun2.F_2 = 60.0
@@ -325,7 +332,6 @@ def test_UnresolvedExtendedXYLike_assign_to_source():
 
 
 def test_UnresolvedExtendedXYLike_dataframe():
-
     yerr = np.array(gauss_sigma)
     y = np.array(gauss_signal)
 
@@ -337,7 +343,7 @@ def test_UnresolvedExtendedXYLike_dataframe():
 
     # read back in dataframe
 
-    new_xy = UnresolvedExtendedXYLike.from_dataframe("df", df)
+    _ = UnresolvedExtendedXYLike.from_dataframe("df", df)
 
     assert not xy.is_poisson
 
@@ -349,13 +355,12 @@ def test_UnresolvedExtendedXYLike_dataframe():
 
     # read back in dataframe
 
-    new_xy = UnresolvedExtendedXYLike.from_dataframe("df", df, poisson=True)
+    _ = UnresolvedExtendedXYLike.from_dataframe("df", df, poisson=True)
 
     assert xy.is_poisson
 
 
 def test_UnresolvedExtendedXYLike_txt():
-
     yerr = np.array(gauss_sigma)
     y = np.array(gauss_signal)
 
@@ -408,6 +413,6 @@ def test_UnresolvedExtendedxy_plot():
     fitfun.F_2 = 60.0
     fitfun.mu_2 = 4.5
 
-    res = xy.fit(fitfun)
+    _ = xy.fit(fitfun)
 
     xy.plot()

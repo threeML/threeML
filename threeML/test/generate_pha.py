@@ -1,6 +1,10 @@
 import os
-from threeML import *
 
+from astromodels.functions import Powerlaw
+
+from threeML import FermiGBMTTELike, Model, PointSource
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.data_list import DataList
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 

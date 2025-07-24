@@ -1,30 +1,18 @@
-from threeML import *
+from astromodels.functions.functions_1D.powerlaws import Powerlaw
 
-# from threeML.utils.cartesian import cartesian
 from threeML.utils.statistics.stats_tools import PoissonResiduals, Significance
+from threeML.utils.step_parameter_generator import step_generator
 
 
 def test_step_generator_setup():
-    ra, dec = 0, 0
-    name = "test"
-
     powerlaw = Powerlaw()
 
-    line = Line()
+    _ = step_generator([1, 2, 3, 4, 5], powerlaw.K)
 
-    ps = PointSource(name, ra, dec, spectral_shape=powerlaw)
-
-    model = Model(ps)
-
-    # test with
-
-    step = step_generator([1, 2, 3, 4, 5], powerlaw.K)
-
-    step = step_generator([[1, 2], [3, 4]], powerlaw.K)
+    _ = step_generator([[1, 2], [3, 4]], powerlaw.K)
 
 
 def test_poisson_classes():
-
     net = 100
     Noff = 1000
     Non = Noff + net
@@ -37,7 +25,7 @@ def test_poisson_classes():
     assert pr.net == Non - expected
     assert pr.expected == expected
 
-    one_side = pr.significance_one_side()
+    _ = pr.significance_one_side()
 
     net = 0
     Noff = 1000
@@ -51,13 +39,13 @@ def test_poisson_classes():
     assert pr.net == Non - expected
     assert pr.expected == expected
 
-    one_side = pr.significance_one_side()
+    _ = pr.significance_one_side()
 
     sig = Significance(Non=Non, Noff=Noff)
 
-    res = sig.known_background()
-    res = sig.li_and_ma()
-    res = sig.li_and_ma_equivalent_for_gaussian_background(1)
+    _ = sig.known_background()
+    _ = sig.li_and_ma()
+    _ = sig.li_and_ma_equivalent_for_gaussian_background(1)
 
 
 # def test_cartesian():

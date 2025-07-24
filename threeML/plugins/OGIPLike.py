@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
+
 from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -30,9 +31,7 @@ class OGIPLike(DispersionSpectrumLike):
         spectrum_number: Optional[int] = None,
         verbose: bool = True,
     ):
-
-        """
-        Create a DisperionSpectrumLike plugin from OGIP data. This is the
+        """Create a DisperionSpectrumLike plugin from OGIP data. This is the
         main plugin to use for 'XSPEC' style data from FITS files.
 
         Basic usage:
@@ -69,7 +68,6 @@ class OGIPLike(DispersionSpectrumLike):
         :param verbose:
         :type verbose: bool
         :returns:
-
         """
 
         # Read the pha file (or the PHAContainer instance)
@@ -78,9 +76,9 @@ class OGIPLike(DispersionSpectrumLike):
             if isinstance(observation, t):
                 break
         else:
-
             log.error(
-                f"observation must be a FITS file name or PHASpectrum, not {type(observation)}"
+                "observation must be a FITS file name or PHASpectrum, not "
+                f"{type(observation)}"
             )
             raise RuntimeError()
 
@@ -89,15 +87,14 @@ class OGIPLike(DispersionSpectrumLike):
                 break
 
         else:
-
             log.error(
-                f"background must be a FITS file name, PHASpectrum, a Plugin or None, not {type(background)}"
+                "background must be a FITS file name, PHASpectrum, a Plugin or None, "
+                f"not {type(background)}"
             )
 
             raise RuntimeError()
 
         if not isinstance(observation, PHASpectrum):
-
             pha = PHASpectrum(
                 observation,
                 spectrum_number=spectrum_number,
@@ -107,46 +104,39 @@ class OGIPLike(DispersionSpectrumLike):
             )
 
         else:
-
             pha = observation
 
-        # Get the required background file, response and (if present) arf_file either from the
-        # calling sequence or the file.
-        # NOTE: if one of the file is specified in the calling sequence, it will be used whether or not there is an
-        # equivalent specification in the header. This allows the user to override the content of the header of the
-        # PHA file, if needed
+        # Get the required background file, response and (if present) arf_file either
+        # from the calling sequence or the file.
+        # NOTE: if one of the file is specified in the calling sequence, it will be used
+        # whether or not there is an equivalent specification in the header. This allows
+        # the user to override the content of the header of the PHA file, if needed
 
         if background is None:
-
             log.debug(f"{name} has no bkg set")
 
             background = pha.background_file
 
             if background is not None:
-
                 log.warning(f"Using background from FIT header: {background}")
 
-            # assert background is not None, "No background file provided, and the PHA file does not specify one."
+            # assert background is not None, "No background file provided, and the PHA
+            # file does not specify one."
 
-        # Get a PHA instance with the background, we pass the response to get the energy bounds in the
-        # histogram constructor. It is not saved to the background class
+        # Get a PHA instance with the background, we pass the response to get the energy
+        # bounds in the histogram constructor. It is not saved to the background class
 
         if background is None:
-
             # in the case there is no background file
 
             bak = None
 
-        elif isinstance(background, SpectrumLike) or isinstance(
-            background, XYLike
-        ):
-
+        elif isinstance(background, SpectrumLike) or isinstance(background, XYLike):
             # this will be a background
 
             bak = background
 
         elif not isinstance(background, PHASpectrum):
-
             bak = PHASpectrum(
                 background,
                 spectrum_number=spectrum_number,
@@ -155,11 +145,10 @@ class OGIPLike(DispersionSpectrumLike):
             )
 
         else:
-
             bak = background
 
-        # we do not need to pass the response as it is contained in the observation (pha) spectrum
-        # already.
+        # we do not need to pass the response as it is contained in the observation
+        # (pha) spectrum already.
 
         super(OGIPLike, self).__init__(
             name=name, observation=pha, background=bak, verbose=verbose
@@ -168,9 +157,9 @@ class OGIPLike(DispersionSpectrumLike):
     def get_simulated_dataset(
         self, new_name: Optional[str] = None, spectrum_number: int = 1, **kwargs
     ) -> "OGIPLike":
-        """
-        Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
-        model, as well as from the background (depending on the respective noise models)
+        """Returns another OGIPLike instance where data have been obtained by
+        randomizing the current expectation from the model, as well as from the
+        background (depending on the respective noise models)
 
         :param new_name: name of the simulated plugin
         :param spectrum_number: spectrum number (default is 1)
@@ -188,7 +177,6 @@ class OGIPLike(DispersionSpectrumLike):
 
     @property
     def grouping(self):
-
         return self._observed_spectrum.grouping
 
     def write_pha(
@@ -197,14 +185,11 @@ class OGIPLike(DispersionSpectrumLike):
         overwrite: bool = False,
         force_rsp_write: bool = False,
     ) -> None:
-        """
-        Create a pha file of the current pha selections
-
+        """Create a pha file of the current pha selections.
 
         :param file_name: output file name (excluding extension)
         :param overwrite: overwrite the files
         :param force_rsp_write: for an rsp to be saved
-
         :return: None
         """
 
@@ -231,16 +216,14 @@ class OGIPLike(DispersionSpectrumLike):
 
         this_df = pd.Series(this_out)
 
-        #return this_df.append(superout)
+        # return this_df.append(superout)
         return pd.concat([this_df, superout])
 
     @classmethod
     def from_general_dispersion_spectrum(cls, dispersion_like):
         # type: (DispersionSpectrumLike) -> OGIPLike
-        """
-        Build on OGIPLike from a dispersion like.
-        This makes it easy to write a dispersion like to a
-        pha file
+        """Build on OGIPLike from a dispersion like. This makes it easy to
+        write a dispersion like to a pha file.
 
         :param dispersion_like:
         :return:
@@ -250,11 +233,9 @@ class OGIPLike(DispersionSpectrumLike):
         observed = pha_files["pha"]
 
         if "bak" in pha_files:
-
             background = pha_files["bak"]
 
         else:
-
             background = None
 
         observed_pha = PHASpectrum.from_dispersion_spectrum(
@@ -264,7 +245,6 @@ class OGIPLike(DispersionSpectrumLike):
         if background is None:
             background_pha = None
         else:
-
             # we need to pass the response from the observations
             # to figure out the bounds of the background
 

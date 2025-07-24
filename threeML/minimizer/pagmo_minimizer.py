@@ -1,19 +1,18 @@
 from __future__ import print_function
-from builtins import range
-from builtins import object
-import numpy as np
+
 import os
-from threeML.utils.progress_bar import tqdm, trange
+from builtins import object, range
+
+import numpy as np
+import pygmo as pg
 
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.parallel.parallel_client import is_parallel_computation_active
-
-import pygmo as pg
+from threeML.utils.progress_bar import trange
 
 
 class PAGMOWrapper(object):
     def __init__(self, function, parameters, dim):
-
         self._dim_ = dim
 
         self._objective_function = function
@@ -22,12 +21,10 @@ class PAGMOWrapper(object):
         maxima = []
 
         for param, (cur_value, cur_delta, cur_min, cur_max) in parameters.items():
-
             if cur_min is None or cur_max is None:
-
                 raise RuntimeError(
-                    "In order to use the PAGMO minimizer, you have to provide a minimum and a "
-                    "maximum for all parameters in the model."
+                    "In order to use the PAGMO minimizer, you have to provide a minimum"
+                    " and a maximum for all parameters in the model."
                 )
 
             minima.append(cur_min)
@@ -38,24 +35,20 @@ class PAGMOWrapper(object):
         self._parameters = parameters
 
     def fitness(self, x):
-
         val = self._objective_function(*x)
 
-        # Note that we return a tuple with one element only. In PyGMO the objective functions
-        # return tuples so that multi-objective optimization is also possible.
+        # Note that we return a tuple with one element only. In PyGMO the objective
+        # functions return tuples so that multi-objective optimization is also possible.
         return (val,)
 
     def get_bounds(self):
-
         return (self._minima, self._maxima)
 
     def get_name(self):
-
         return "JointLikelihood"
 
 
 class PAGMOMinimizer(GlobalMinimizer):
-
     valid_setup_keys = (
         "islands",
         "population_size",
@@ -65,15 +58,12 @@ class PAGMOMinimizer(GlobalMinimizer):
     )
 
     def __init__(self, function, parameters, verbosity=10, setup_dict=None):
-
         super(PAGMOMinimizer, self).__init__(
             function, parameters, verbosity, setup_dict
         )
 
     def _setup(self, user_setup_dict):
-
         if user_setup_dict is None:
-
             default_setup = {
                 "islands": 8,
                 "population_size": self._Npar * 20,
@@ -83,7 +73,6 @@ class PAGMOMinimizer(GlobalMinimizer):
             self._setup_dict = default_setup
 
         else:
-
             assert "algorithm" in user_setup_dict, (
                 "You have to provide a pygmo.algorithm instance using "
                 "the algorithm keyword"
@@ -95,15 +84,15 @@ class PAGMOMinimizer(GlobalMinimizer):
                 algorithm_instance, pg.algorithm
             ), "The algorithm must be an instance of a PyGMO algorithm"
 
-            # We can assume that the setup has been already checked against the setup_keys
+            # We can assume that the setup has been already checked against the
+            # setup_keys
             for key in user_setup_dict:
-
                 self._setup_dict[key] = user_setup_dict[key]
 
-    # This cannot be part of a class, unfortunately, because of how PyGMO serialize objects
+    # This cannot be part of a class, unfortunately, because of how PyGMO serialize
+    # objects
 
     def _minimize(self):
-
         # Gather the setup
         islands = self._setup_dict["islands"]
         pop_size = self._setup_dict["population_size"]
@@ -119,7 +108,6 @@ class PAGMOMinimizer(GlobalMinimizer):
         Npar = len(self._internal_parameters)
 
         if is_parallel_computation_active():
-
             wrapper = PAGMOWrapper(
                 function=self.function, parameters=self._internal_parameters, dim=Npar
             )
@@ -147,9 +135,7 @@ class PAGMOMinimizer(GlobalMinimizer):
             # not exist, being a Windows module). Let's mock it with an empty module'
             mocked = False
             if os.path.exists("_winreg.py") is False:
-
                 with open("_winreg.py", "w+") as f:
-
                     f.write("pass")
 
                 mocked = True
@@ -162,7 +148,6 @@ class PAGMOMinimizer(GlobalMinimizer):
 
             # Now remove _winreg.py if needed
             if mocked:
-
                 os.remove("_winreg.py")
 
             # Find best and worst islands
@@ -171,7 +156,6 @@ class PAGMOMinimizer(GlobalMinimizer):
             xOpts = archi.get_champions_x()
 
         else:
-
             # do not use ipyparallel. Evolve populations on islands serially
 
             wrapper = PAGMOWrapper(
@@ -182,19 +166,15 @@ class PAGMOMinimizer(GlobalMinimizer):
             fOpts = np.zeros(islands)
 
             for island_id in trange(islands, desc="pygmo minimization"):
-
                 pop = pg.population(prob=wrapper, size=pop_size)
 
                 for i in range(evolution_cycles):
-
                     pop = self._setup_dict["algorithm"].evolve(pop)
 
                 # Gather results
 
                 xOpts.append(pop.champion_x)
                 fOpts[island_id] = pop.champion_f[0]
-
-
 
         # Find best and worst islands
 

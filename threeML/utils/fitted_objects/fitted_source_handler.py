@@ -6,6 +6,7 @@ import itertools
 import numpy as np
 from astromodels import use_astromodels_memoization
 from joblib import Parallel, delayed
+
 from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient
@@ -23,17 +24,19 @@ class GenericFittedSourceHandler(object):
         parameters,
         confidence_level,
         equal_tailed,
-        *independent_variable_range
+        *independent_variable_range,
     ):
-        """
-        A generic 3ML fitted source  post-processor. This should be sub-classed in general
+        """A generic 3ML fitted source  post-processor. This should be sub-
+        classed in general.
 
         :param analysis_result: a 3ML analysis result
-        :param new_function: the function to use the fitted values to compute new values
+        :param new_function: the function to use the fitted values to
+            compute new values
         :param parameter_names: a list of parameter names
         :param parameters: astromodels parameter dictionary
         :param confidence_level: the confidence level to compute error
-        :param independent_variable_range: the range(s) of independent values to compute the new function over
+        :param independent_variable_range: the range(s) of independent
+            values to compute the new function over
         """
 
         # bind the class properties
@@ -51,9 +54,7 @@ class GenericFittedSourceHandler(object):
         # keep from confusing itertools
 
         if len(self._independent_variable_range) == 1:
-            self._independent_variable_range = (
-                self._independent_variable_range[0],
-            )
+            self._independent_variable_range = (self._independent_variable_range[0],)
 
         # figure out the output shape of the best fit and errors
 
@@ -67,11 +68,9 @@ class GenericFittedSourceHandler(object):
         self._evaluate()
 
     def __add__(self, other):
-        """
-        The basics of adding are handled in the VariatesContainer
-        :param other: another fitted source handler
-        :return: a VariatesContainer with the summed values
-        """
+        """The basics of adding are handled in the VariatesContainer :param
+        other: another fitted source handler :return: a VariatesContainer with
+        the summed values."""
 
         # assure that the shapes will be the same
         if other._out_shape != self._out_shape:
@@ -84,31 +83,25 @@ class GenericFittedSourceHandler(object):
         return self.values + other.values
 
     def __radd__(self, other):
-
         if other == 0:
-
             return self
 
         else:
-
             return self.values + other.values
 
     def _transform(self, value):
-        """
-        dummy transform to be overridden in a subclass
-        :param value:
+        """Dummy transform to be overridden in a subclass :param value:
+
         :return: transformed value
         """
 
         return value
 
     def update_tag(self, tag, value):
-
         pass
 
     def _build_propagated_function(self):
-        """
-        builds a propagated function using RandomVariates propagation
+        """Builds a propagated function using RandomVariates propagation.
 
         :return:
         """
@@ -118,15 +111,12 @@ class GenericFittedSourceHandler(object):
         # first test a parameters to check the number of samples
 
         for par in list(self._parameters.values()):
-
             if par.free:
-
                 test_par = par
 
                 break
 
         else:
-
             log.error("There are no free parameters in the model!")
 
             raise RuntimeError()
@@ -134,7 +124,6 @@ class GenericFittedSourceHandler(object):
         test_variate = self._analysis_results.get_variates(test_par.path)
 
         if len(test_variate) > threeML_config.point_source.max_number_samples:
-
             choices = np.random.choice(
                 range(len(test_variate)),
                 size=threeML_config.point_source.max_number_samples,
@@ -142,27 +131,19 @@ class GenericFittedSourceHandler(object):
 
         # because we might be using composite functions,
         # we have to keep track of parameter names in a non-elegant way
-        for par, name in zip(
-            list(self._parameters.values()), self._parameter_names
-        ):
-
+        for par, name in zip(list(self._parameters.values()), self._parameter_names):
             if par.free:
-
                 this_variate = self._analysis_results.get_variates(par.path)
 
-                # Do not use more than 1000 values (would make computation too slow for nothing)
+                # Do not use more than 1000 values (would make computation too slow for
+                # nothing)
 
-                if (
-                    len(this_variate)
-                    > threeML_config.point_source.max_number_samples
-                ):
-
+                if len(this_variate) > threeML_config.point_source.max_number_samples:
                     this_variate = this_variate[choices]
 
                 arguments[name] = this_variate
 
             else:
-
                 # use the fixed value rather than a variate
 
                 arguments[name] = par.value
@@ -174,29 +155,21 @@ class GenericFittedSourceHandler(object):
         )
 
     def _evaluate(self):
-        """
-
-        calculate the best or mean fit of the new function or
-        quantity
+        """Calculate the best or mean fit of the new function or quantity.
 
         :return:
         """
         # if there are independent variables
         if self._independent_variable_range:
-
             variates = []
 
             # scroll through the independent variables
-            n_iterations = np.prod(self._out_shape)
+            # n_iterations = np.prod(self._out_shape)
 
             with use_astromodels_memoization(False):
-
-                variables = list(
-                    itertools.product(*self._independent_variable_range)
-                )
+                variables = list(itertools.product(*self._independent_variable_range))
 
                 if len(variables) > 1:
-
                     if threeML_config.parallel.use_parallel:
 
                         def execute(v):
@@ -214,20 +187,15 @@ class GenericFittedSourceHandler(object):
                         )
 
                     else:
-
                         for v in tqdm(variables, desc="Propagating errors"):
-
                             variates.append(self._propagated_function(*v))
 
                 else:
-
                     for v in variables:
-
                         variates.append(self._propagated_function(*v))
 
         # otherwise just evaluate
         else:
-
             variates = self._propagated_function()
 
         # create a variates container
@@ -296,9 +264,9 @@ class GenericFittedSourceHandler(object):
 
 
 def transform(method):
-    """
-    A wrapper to call the _transform method for outputs of Variates container class
-    :param method:
+    """A wrapper to call the _transform method for outputs of Variates
+    container class :param method:
+
     :return:
     """
 
@@ -311,24 +279,25 @@ def transform(method):
 
 class VariatesContainer(object):
     def __init__(self, values, out_shape, cl, transform, equal_tailed=True):
-        """
-        A container to store an *List* of RandomVariates and transform their outputs
-        to the appropriate shape. This cannot be done with normal numpy array operations
-        because an array of RandomVariates becomes a normal ndarray. Therefore, we calculate
-        the averages, errors, etc, and transform those.
+        """A container to store an *List* of RandomVariates and transform their
+        outputs to the appropriate shape. This cannot be done with normal numpy
+        array operations because an array of RandomVariates becomes a normal
+        ndarray. Therefore, we calculate the averages, errors, etc, and
+        transform those.
 
-        Additionally, any unit association must be done post calculation as well because the
-        numpy array constructor sees a unit array as a regular array and again loses the RandomVariates
-        properties. Therefore, the transform method is used which applies a function to the output properties,
-        e.g., a unit association and or conversion.
-
-
+        Additionally, any unit association must be done post calculation
+        as well because the numpy array constructor sees a unit array as
+        a regular array and again loses the RandomVariates properties.
+        Therefore, the transform method is used which applies a function
+        to the output properties, e.g., a unit association and or
+        conversion.
 
         :param values: a flat List of RandomVariates
         :param out_shape: the array shape for the output variables
         :param cl: the confidence level to calculate error intervals on
         :param transform: a method to transform the outputs
-        :param equal_tailed: whether to use equal-tailed error intervals or not
+        :param equal_tailed: whether to use equal-tailed error intervals
+            or not
         """
 
         self._values = values  # type: list
@@ -359,19 +328,15 @@ class VariatesContainer(object):
 
         # if equal tailed errors requested
         if equal_tailed:
-
             for val in self._values:
-
                 error = val.equal_tail_interval(self._cl)
                 upper_error.append(error[1])
                 lower_error.append(error[0])
 
         else:
-
             # else use the hdp
 
             for val in self._values:
-
                 error = val.highest_posterior_density_interval(self._cl)
                 upper_error.append(error[1])
                 lower_error.append(error[0])
@@ -384,7 +349,6 @@ class VariatesContainer(object):
         samples = []
 
         for val in self._values:
-
             samples.append(val.samples)
 
         n_samples = len(samples[0])
@@ -479,18 +443,13 @@ class VariatesContainer(object):
         )
 
     def __radd__(self, other):
-
         if other == 0:
-
             return self
 
         else:
-
             other_values = other.values
 
-            summed_values = [
-                v + vo for v, vo in zip(self._values, other_values)
-            ]
+            summed_values = [v + vo for v, vo in zip(self._values, other_values)]
 
             return VariatesContainer(
                 summed_values,

@@ -1,25 +1,11 @@
 # We import matplotlib first, because we need control on the backend
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
-import pandas as pd
-
-pd.set_option("display.max_columns", None)
-
 import os
 import traceback
 import warnings
-
-# Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue
-# LEAVE THESE HERE BEFORE ANY THREEML IMPORT
-try:
-    import ROOT
-except ImportError:
-    pass
-try:
-    import pyLikelihood
-except ImportError:
-    pass
-
 from pathlib import Path
+
+import pandas as pd
 
 # Import everything from astromodels
 from astromodels import *
@@ -31,6 +17,25 @@ from .config import (
     show_configuration,
     threeML_config,
 )
+
+pd.set_option("display.max_columns", None)
+
+
+# Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue
+# LEAVE THESE HERE BEFORE ANY THREEML IMPORT
+try:
+    import ROOT
+
+    ROOT.__doc__
+except ImportError:
+    pass
+try:
+    import pyLikelihood
+
+    pyLikelihood.__doc__
+except ImportError:
+    pass
+
 
 log = setup_logger(__name__)
 log.propagate = False
@@ -55,11 +60,9 @@ if os.environ.get("DISPLAY") is None:
 
 # Import version (this has to be placed before the import of serialization
 # since __version__ needs to be defined at that stage)
-from ._version import get_versions
+from . import _version
 
-__version__ = get_versions()["version"]
-del get_versions
-
+__version__ = _version.get_versions()["version"]
 
 import traceback
 from importlib.machinery import SourceFileLoader
@@ -99,17 +102,13 @@ except ImportError:
 
 
 def is_module_importable(module_full_path):
-
     try:
-
         _ = SourceFileLoader("__", str(module_full_path)).load_module()
 
     except:
-
         return False, traceback.format_exc()
 
     else:
-
         return True, "%s imported ok" % module_full_path
 
 
@@ -132,7 +131,6 @@ _not_working_plugins = {}
 # Loop over each candidates plugins and check if it is importable
 
 for i, module_full_path in enumerate(found_plugins):
-
     plugin_name = module_full_path.stem
 
     is_importable, failure_traceback = is_module_importable(module_full_path)
@@ -150,14 +148,11 @@ for i, module_full_path in enumerate(found_plugins):
         continue
 
     else:
-
         # First get the instrument name
         try:
-
             exec(f"from threeML.plugins.{plugin_name} import __instrument_name")
 
         except ImportError:
-
             # This module does not contain a plugin, continue
             continue
 
@@ -166,15 +161,12 @@ for i, module_full_path in enumerate(found_plugins):
         import_command = f"from threeML.plugins.{plugin_name} import {plugin_name}"
 
         try:
-
             exec(import_command)
 
         except ImportError:
-
             pass
 
         else:
-
             _working_plugins[__instrument_name] = plugin_name
 
 
@@ -189,7 +181,6 @@ def get_available_plugins():
     print("Available plugins:\n")
 
     for instrument, class_name in _working_plugins.items():
-
         print(f"{class_name} for {instrument}")
 
 
@@ -210,16 +201,12 @@ def is_plugin_available(plugin):
     """
 
     if plugin in _working_plugins.values():
-
         # FIXME
         if plugin == "FermipyLike":
-
             try:
-
                 _ = FermipyLike.__new__(FermipyLike, test=True)
 
             except:
-
                 # Do not register it
 
                 _not_working_plugins[plugin] = traceback.format_exc()
@@ -231,15 +218,12 @@ def is_plugin_available(plugin):
         return True
 
     else:
-
         if plugin in _not_working_plugins:
-
             _display_plugin_traceback(plugin)
 
             return False
 
         else:
-
             log.error(f"Plugin {plugin} is not known")
             raise RuntimeError()
 
@@ -351,13 +335,10 @@ var_to_check = ["OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"]
 
 
 for var in var_to_check:
-
     num_threads = os.environ.get(var)
 
     if num_threads is not None:
-
         try:
-
             num_threads = int(num_threads)
 
         except ValueError:
@@ -369,7 +350,6 @@ for var in var_to_check:
                 )
 
     else:
-
         if threeML_config.logging.startup_warnings:
             log.warning(
                 "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
@@ -382,6 +362,3 @@ del os
 del Path
 del warnings
 del SourceFileLoader
-
-from . import _version
-__version__ = _version.get_versions()['version']

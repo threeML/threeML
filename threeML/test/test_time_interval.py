@@ -1,13 +1,14 @@
 from __future__ import print_function
+
 from builtins import zip
+
 import pytest
 
-from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 from threeML.utils.interval import IntervalsDoNotOverlap, IntervalsNotContiguous
+from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
 
 def test_time_interval_constructor():
-
     t = TimeInterval(-10.0, 10.0)
 
     assert t.start_time == -10.0
@@ -16,35 +17,31 @@ def test_time_interval_constructor():
     assert t.half_time == 0.0
 
     with pytest.raises(RuntimeError):
-
         _ = TimeInterval(10.0, -10.0, swap_if_inverted=False)
 
     _ = TimeInterval(-10.0, 10.0, swap_if_inverted=True)
 
 
 def test_time_interval_repr():
-
     t = TimeInterval(-10.0, 10.0)
 
     print(t)
 
 
 def test_time_interval_overlaps_with():
-
     t1 = TimeInterval(-10.0, 10.0)
     t2 = TimeInterval(0.0, 30.0)
     t3 = TimeInterval(-100, 100.0)
     t4 = TimeInterval(-100, -10)
     t5 = TimeInterval(100.0, 200.0)
 
-    assert t1.overlaps_with(t2) == True
-    assert t1.overlaps_with(t3) == True
-    assert t1.overlaps_with(t4) == False
-    assert t1.overlaps_with(t5) == False
+    assert t1.overlaps_with(t2) is True
+    assert t1.overlaps_with(t3) is True
+    assert t1.overlaps_with(t4) is False
+    assert t1.overlaps_with(t5) is False
 
 
 def test_time_interval_intersect():
-
     t1 = TimeInterval(-10.0, 10.0)
     t2 = TimeInterval(0.0, 30.0)
 
@@ -54,7 +51,6 @@ def test_time_interval_intersect():
     assert t.stop_time == 10.0
 
     with pytest.raises(IntervalsDoNotOverlap):
-
         t1 = TimeInterval(-10.0, 10.0)
         t2 = TimeInterval(20.0, 30.0)
 
@@ -71,7 +67,6 @@ def test_time_interval_merge():
     assert t.stop_time == 30.0
 
     with pytest.raises(IntervalsDoNotOverlap):
-
         t1 = TimeInterval(-10.0, 10.0)
         t2 = TimeInterval(20.0, 30.0)
 
@@ -79,7 +74,6 @@ def test_time_interval_merge():
 
 
 def test_time_interval_add():
-
     t = TimeInterval(-10.0, 10.0)
 
     new_t = t + 10.0  # type: TimeInterval
@@ -89,7 +83,6 @@ def test_time_interval_add():
 
 
 def test_time_interval_sub():
-
     t = TimeInterval(-10.0, 10.0)
 
     new_t = t - 10.0  # type: TimeInterval
@@ -99,7 +92,6 @@ def test_time_interval_sub():
 
 
 def test_time_interval_constructor_set():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
 
@@ -145,8 +137,7 @@ def test_time_interval_constructor_set():
     assert ts5[2].stop_time == 1
 
     with pytest.raises(AssertionError):
-
-        ts6 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1])
+        _ = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1])
 
     # test display
 
@@ -154,25 +145,20 @@ def test_time_interval_constructor_set():
 
 
 def test_time_interval_iterator_set():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
 
     ts = TimeIntervalSet([t1, t2])
 
     for i, tt in enumerate(ts):
-
         if i == 0:
-
             assert tt == t1
 
         else:
-
             assert tt == t2
 
 
 def test_time_interval_extend_set():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
 
@@ -191,7 +177,6 @@ def test_time_interval_extend_set():
 
 
 def test_time_interval_add_sub_set():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
 
@@ -209,7 +194,6 @@ def test_time_interval_add_sub_set():
 
 
 def test_time_interval_argsort_set():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
     t3 = TimeInterval(-30.0, 50.0)
@@ -222,7 +206,6 @@ def test_time_interval_argsort_set():
 
 
 def test_time_interval_sort_set():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
     t3 = TimeInterval(-30.0, 50.0)
@@ -237,16 +220,14 @@ def test_time_interval_sort_set():
 
 
 def test_time_interval_equivalence():
-
     t1 = TimeInterval(10.523, 20.32)
 
     assert t1 == TimeInterval(10.523, 20.32)
 
-    assert not t1 == None
+    assert t1 is not None
 
 
 def test_time_interval_set_pop():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
     t3 = TimeInterval(-30.0, 50.0)
@@ -259,14 +240,13 @@ def test_time_interval_set_pop():
 
 
 def test_time_interval_set_is_contiguous():
-
     t1 = TimeInterval(-10.0, 20.0)
     t2 = TimeInterval(10.0, 30.0)
     t3 = TimeInterval(-30.0, 50.0)
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == False
+    assert ts.is_contiguous() is False
 
     t1 = TimeInterval(0.0, 1.0)
     t2 = TimeInterval(1.0, 2.0)
@@ -274,7 +254,7 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == True
+    assert ts.is_contiguous() is True
 
     t1 = TimeInterval(0.0, 1.0)
     t2 = TimeInterval(1.1, 2.0)
@@ -282,7 +262,7 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == False
+    assert ts.is_contiguous() is False
 
     t1 = TimeInterval(0.0, 1.0)
     t2 = TimeInterval(2.0, 3.0)
@@ -290,15 +270,14 @@ def test_time_interval_set_is_contiguous():
 
     ts = TimeIntervalSet([t1, t2, t3])
 
-    assert ts.is_contiguous() == False
+    assert ts.is_contiguous() is False
 
     new_ts = ts.sort()
 
-    assert new_ts.is_contiguous() == True
+    assert new_ts.is_contiguous() is True
 
 
 def test_merging_set_intervals():
-
     # test that non overlapping intervals
     # do not result in a merge
 
@@ -417,7 +396,6 @@ def test_merging_set_intervals():
 
 
 def test_interval_set_to_string():
-
     # also tests the time interval to string
 
     t1 = TimeInterval(-10.0, 0.0)
@@ -440,7 +418,6 @@ def test_interval_set_to_string():
 
 
 def test_time_interval_sets_starts_stops():
-
     t1 = TimeInterval(-10.0, 0.0)
     t2 = TimeInterval(5.0, 10.0)
     t3 = TimeInterval(15.0, 20.0)
@@ -448,13 +425,11 @@ def test_time_interval_sets_starts_stops():
     ts1 = TimeIntervalSet([t1, t2, t3])
 
     for start, stop, interval in zip(ts1.start_times, ts1.stop_times, [t1, t2, t3]):
-
         assert interval.start_time == start
         assert interval.stop_time == stop
 
 
 def test_time_edges():
-
     t1 = TimeInterval(-10.0, 0.0)
     t2 = TimeInterval(0.0, 10.0)
     t3 = TimeInterval(10.0, 20.0)
