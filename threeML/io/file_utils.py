@@ -51,13 +51,7 @@ def if_directory_not_existing_then_make(directory) -> None:
 
     sanitized_directory: Path = sanitize_filename(directory)
 
-    try:
-        sanitized_directory.mkdir(parents=True, exist_ok=False)
-
-    except FileExistsError:
-        # should add logging here!
-
-        pass
+    sanitized_directory.mkdir(parents=True, exist_ok=True)
 
 
 def get_random_unique_name():
