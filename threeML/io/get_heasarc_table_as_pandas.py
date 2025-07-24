@@ -57,7 +57,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     file_name = cache_directory / f"{heasarc_table_name}_votable.xml"
 
-    file_name_sanatized = sanitize_filename(file_name)
+    file_name_sanatized = sanitize_filename(file_name, abspath=True)
 
     if not file_existing_and_readable(cache_file_sanatized):
         log.info(
