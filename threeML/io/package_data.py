@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-import pkg_resources
+from importlib import resources
 
 
 def get_path_of_data_file(data_file) -> Path:
@@ -12,7 +12,7 @@ def get_path_of_data_file(data_file) -> Path:
     :returns:
     """
 
-    file_path = pkg_resources.resource_filename("threeML", "data/%s" % data_file)
+    file_path = resources.files("threeML.data") / data_file
 
     p: Path = Path(file_path)
 
@@ -33,7 +33,7 @@ def get_path_of_data_dir() -> Path:
     :returns:
     """
 
-    file_path = pkg_resources.resource_filename("threeML", "data")
+    file_path = resources.files("threeML") / "data"
 
     return Path(file_path)
 

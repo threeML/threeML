@@ -1,8 +1,8 @@
 import astropy.units as u
 import numpy as np
-import pkg_resources
 import six
 from astropy.io import fits
+from importlib.metadata import version
 
 from threeML.io.logging import setup_logger
 
@@ -213,7 +213,7 @@ class FITSExtension(object):
         # update the header to indicate that the file was created by 3ML
         self._hdu.header.set(
             "CREATOR",
-            "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
+            "3ML v.%s" % (version("threeML")),
             "(G.Vianello, giacomov@slac.stanford.edu)",
         )
 
