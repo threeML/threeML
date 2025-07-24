@@ -109,7 +109,12 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
         )
 
         try:
+            log.debug(
+                f"Trying to urlretrieve {heasarc_url} and safe it to "
+                f"{file_name_sanatized}"
+            )
             urllib.request.urlretrieve(heasarc_url, filename=file_name_sanatized)
+            log.debug("Succcess")
 
         except IOError:
             log.warning(
