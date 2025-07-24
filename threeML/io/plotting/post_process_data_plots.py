@@ -311,7 +311,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     if "source_only" in kwargs:
         source_only = kwargs.pop("source_only")
 
-        if type(source_only) is bool:
+        if type(source_only) is not bool:
             log.error("source_only must be a boolean")
             raise TypeError()
 
@@ -321,7 +321,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     if "show_background" in kwargs:
         show_background = kwargs.pop("show_background")
 
-        if type(show_background) is bool:
+        if type(show_background) is not bool:
             log.error("show_background must be a boolean")
             raise TypeError()
 
