@@ -2,7 +2,8 @@ import os
 import shutil
 
 import pytest
-
+import requests
+from threeML.config import threeML_config
 from threeML import download_LLE_trigger_data
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 from threeML.io.network import internet_connection_is_active
@@ -43,6 +44,9 @@ def test_download_LAT_data():
     tstop = "2010-01-02 00:00:00"
 
     temp_dir = "_download_temp"
+    resp = requests.get(threeML_config.LAT.query_form)
+    if "<title>FSSC LAT Data Server Maintenance page</title>" in resp.text:
+        pytest.xfail()
 
     ft1, ft2 = download_LAT_data(
         ra,
@@ -61,7 +65,6 @@ def test_download_LAT_data():
 
 
 @skip_if_internet_is_not_available
-@pytest.mark.xfail
 def test_download_LLE_data():
     # test good trigger names
     good_triggers = ["080916009", "bn080916009", "GRB080916009"]
