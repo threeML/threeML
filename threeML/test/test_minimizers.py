@@ -114,13 +114,11 @@ def test_grid(jl_bn090217206_nai):
     grid = GlobalMinimization("GRID")
     minuit = LocalMinimization("minuit")
     grid.setup(
-        grid=(
-            {
-                jl.likelihood_model.bn090217206.spectrum.main.Powerlaw.K: np.linspace(
-                    0.1, 10, 10
-                )
-            },
-        ),
+        grid={
+            jl.likelihood_model.bn090217206.spectrum.main.Powerlaw.K: np.linspace(
+                0.1, 10, 10
+            )
+        },
         second_minimization=minuit,
     )
 
