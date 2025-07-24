@@ -84,7 +84,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
             # now we will compare it to the current time in UTC
             current_time = astro_time.Time(
-                datetime.datetime.now(datetime.UTC), scale="utc"
+                datetime.datetime.now(datetime.timezone.utc), scale="utc"
             )
 
             delta_time = current_time - cached_time
@@ -142,7 +142,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
                 yaml_dict = {}
 
                 current_time = astro_time.Time(
-                    datetime.datetime.now(datetime.UTC), scale="utc"
+                    datetime.datetime.now(datetime.timezone.utc), scale="utc"
                 )
 
                 yaml_dict["last save"] = current_time.datetime.strftime(
