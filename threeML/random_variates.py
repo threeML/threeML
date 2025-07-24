@@ -31,7 +31,7 @@ class RandomVariates(np.ndarray):
         # Add the value
         self._orig_value = getattr(obj, "_orig_value", None)
 
-    def __array_wrap__(self, out_arr, context=None):
+    def __array_wrap__(self, out_arr, context=None, return_scalar=False):
         # This gets called at the end of any operation, where out_arr is the result of
         # the operation. We need to update _orig_value so that the final results will
         # have it
