@@ -291,12 +291,12 @@ jobs:
               python -c 'import xspec' || true;
 
               python -m pip install --upgrade pip wheel
-              python -m pip install numpy numba
+              python -m pip install numpy numba packaging
 
               git clone https://github.com/threeML/astromodels
               cd astromodels
               git checkout dev
-              pip install -e .
+              pip install git+
 
               cd ..
 
