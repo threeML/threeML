@@ -817,6 +817,6 @@ class SpectralContourPlot:
 
             self._ax.set_xlim([eemin, eemax])
 
-            self._ax.xaxis.set_converter(None)
+            # self._ax.xaxis.set_converter(None)
 
         return self._fig
