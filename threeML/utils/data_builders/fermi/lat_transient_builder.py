@@ -18,7 +18,6 @@ pd.reset_option("display.float_format")
 
 log = setup_logger(__name__)
 
-
 try:
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
@@ -35,8 +34,11 @@ try:
 
     has_fermitools = True
 
-except ImportError:
+except Exception as e:
+    log.debug(f"Importing fermitools failed with {e}")
     has_fermitools = False
+    irfs = None
+    spectra = None
 
     if threeML_config.logging.startup_warnings:
         log.warning("No fermitools installed")
@@ -180,6 +182,9 @@ class TransientLATDataBuilder(object):
         :returns:
         :rtype:
         """
+        assert (
+            has_fermitools
+        ), "You do not have the fermitools installed and cannot run GtBurst"
 
         self._triggername = triggername
 
