@@ -188,12 +188,7 @@ jobs:
               python -m pip install --upgrade pip wheel
               python -m pip install numpy numba
 
-              git clone https://github.com/threeML/astromodels
-              cd astromodels
-
-              pip install -e .
-
-              cd ..
+              pip install -e git+https://github.com/threeML/astromodels.git@master#egg=astromodels
 
               pip install --upgrade flake8 coverage pytest-cov cython
               pip install -e .
@@ -293,12 +288,7 @@ jobs:
               python -m pip install --upgrade pip wheel
               python -m pip install numpy numba packaging
 
-              git clone https://github.com/threeML/astromodels
-              cd astromodels
-              git checkout dev
-              pip install git+
-
-              cd ..
+              pip install -e git+https://github.com/threeML/astromodels.git@dev#egg=astromodels
 
               pip install --upgrade flake8 coverage pytest-cov cython
               pip install -e .
