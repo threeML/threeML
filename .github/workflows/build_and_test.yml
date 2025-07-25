@@ -115,14 +115,8 @@ jobs:
                     brew install hdf5
                   fi
 
-                  git clone https://github.com/threeML/astromodels
-                  cd astromodels
-                  git checkout dev
-
-                  python -m pip install -e .
-
-                  cd ..
-
+                  # install astromodels dev directly without cloning
+                  pip install git+https://github.com/threeML/astromodels.git@dev
                   pip install --upgrade flake8 coverage pytest-cov cython
 
                   pip install -e .
