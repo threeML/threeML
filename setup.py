@@ -88,8 +88,13 @@ setup(
     # NOTE: we use '' as package name because the extra_files already contain the full
     # path from here
     package_data={
-        "": extra_files,
+        "threeML/": [
+            "data/*",
+        ],
     },
+    #     package_data={
+    #         "": extra_files,
+    #     },
 )  # End of setup()
 
 # Check for optional dependencies

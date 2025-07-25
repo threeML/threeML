@@ -12,19 +12,23 @@ def get_path_of_data_file(data_file) -> Path:
     :returns:
     """
 
-    file_path = resources.files("threeML.data") / data_file
+    data_file = Path(data_file)
 
-    p: Path = Path(file_path)
+    try:
+        resource_path = resources.files("threeML").joinpath("data", *data_file.parts)
 
-    if p.is_file():
-        return p
+        if not resource_path.is_file():
+            raise FileNotFoundError
+
+    except Exception:
+        raise IOError(
+            f"Could not read or find data file {data_file}. "
+            "Try reinstalling astromodels. "
+            f"If this does not fix your problem, open an issue on github."
+        )
 
     else:
-        raise RuntimeError(
-            f" the file {data_file} is not in the threeml/data directory "
-            "it is possible you are using this function incorrectly "
-            "as it is only meant for internal files"
-        )
+        return Path(resource_path).resolve()
 
 
 def get_path_of_data_dir() -> Path:
@@ -33,9 +37,9 @@ def get_path_of_data_dir() -> Path:
     :returns:
     """
 
-    file_path = resources.files("threeML") / "data"
+    file_path = resources.files("threeML").joinpath("data")
 
-    return Path(file_path)
+    return Path(file_path).resolve()
 
 
 def get_path_of_user_dir() -> Path:
