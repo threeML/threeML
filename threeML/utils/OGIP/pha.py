@@ -10,6 +10,7 @@ from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
 from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 
+
 log = setup_logger(__name__)
 
 
@@ -360,8 +361,7 @@ def _atleast_1d_with_dtype(value, dtype=None):
             # convert None to NONE
             # which is needed for None Type args
             # to string arrays
-
-            idx = np._core.defchararray.lower(value) == "none"
+            idx = np.char.lower(value) == "none"
 
             value[idx] = "NONE"
 
