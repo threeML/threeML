@@ -10,6 +10,7 @@ from threeML.io.logging import setup_logger
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_builders.fermi.lat_transient_builder import (
     TransientLATDataBuilder,
+    has_fermitools,
 )
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import LAT_dataset
 
@@ -21,15 +22,23 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
 
 try:
     import GtApp
+    import GtBurst
 
     log.debug(GtApp.__doc__)
+    log.debug(GtBurst.__doc__)
 
 
-except ImportError:
+except Exception:
     has_Fermi = False
 
 else:
     has_Fermi = True
+
+if has_Fermi is not has_fermitools:
+    log.warning(
+        f"has_Fermi ({has_Fermi}) is not the same as has_fermitools ({has_fermitools})"
+    )
+    has_Fermi = False
 
 # This defines a decorator which can be applied to single tests to
 # skip them if the condition is not met
