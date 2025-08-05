@@ -65,7 +65,7 @@ from . import _version
 __version__ = _version.get_versions()["version"]
 
 import traceback
-from importlib.machinery import SourceFileLoader
+import importlib.util
 
 # Finally import the serialization machinery
 from .io.serialization import *
@@ -103,27 +103,23 @@ except ImportError:
 
 def is_module_importable(module_full_path):
     try:
-        _ = SourceFileLoader("__", str(module_full_path)).exec_module()
-
-    except:
+        spec = importlib.util.spec_from_file_location(
+            module_full_path.stem, module_full_path
+        )
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Cannot load {module_full_path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return True, module
+    except Exception:
         return False, traceback.format_exc()
-
-    else:
-        return True, "%s imported ok" % module_full_path
 
 
 plugins_dir = Path(__file__).parent / "plugins"
 
 found_plugins = plugins_dir.glob("*.py")
 
-# Filter out __init__
-
-# found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
-
-# Filter out __init__
-
-found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
-
+found_plugins = [f for f in plugins_dir.glob("*.py") if f.name != "__init__.py"]
 
 _working_plugins = {}
 _not_working_plugins = {}
@@ -133,7 +129,7 @@ _not_working_plugins = {}
 for i, module_full_path in enumerate(found_plugins):
     plugin_name = module_full_path.stem
 
-    is_importable, failure_traceback = is_module_importable(module_full_path)
+    is_importable, result = is_module_importable(module_full_path)
 
     if not is_importable:
         if threeML_config.logging.startup_warnings:
@@ -143,32 +139,22 @@ for i, module_full_path in enumerate(found_plugins):
                 # custom_exceptions.CannotImportPlugin,
             )
 
-        _not_working_plugins[plugin_name] = failure_traceback
+        _not_working_plugins[plugin_name] = result
 
         continue
 
-    else:
-        # First get the instrument name
-        try:
-            exec(f"from threeML.plugins.{plugin_name} import __instrument_name")
+    # First get the instrument name
+    module = result
+    instrument_name = getattr(module, "__instrument_name", None)
+    if not instrument_name:
+        continue
 
-        except ImportError:
-            # This module does not contain a plugin, continue
-            continue
-
-        # Now import the plugin itself
-
-        import_command = f"from threeML.plugins.{plugin_name} import {plugin_name}"
-
-        try:
-            exec(import_command)
-
-        except ImportError:
-            pass
-
-        else:
-            _working_plugins[__instrument_name] = plugin_name
-
+    try:
+        imported_plugin = importlib.import_module(f"threeML.plugins.{plugin_name}")
+        getattr(imported_plugin, plugin_name)
+    except ImportError:
+        continue
+    _working_plugins[instrument_name] = plugin_name
 
 # Now some convenience functions
 
@@ -361,4 +347,3 @@ for var in var_to_check:
 del os
 del Path
 del warnings
-del SourceFileLoader
