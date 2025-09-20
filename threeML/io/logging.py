@@ -108,7 +108,7 @@ _theme["logging.level.warning"] = f"{astromodels_config.logging.warn_style}"
 # mytheme = Theme().read(_get_data_file_path("log_theme.ini"))
 mytheme = Theme(_theme)
 
-console = Console(theme=mytheme)
+console = Console(theme=mytheme, stderr=True)
 
 
 threeML_console_log_handler = RichHandler(

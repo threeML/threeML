@@ -3,20 +3,8 @@
 import os
 import traceback
 import warnings
-from pathlib import Path
 
 import pandas as pd
-
-# Import everything from astromodels
-from astromodels import *
-
-from threeML.io.logging import setup_logger
-
-from .config import (
-    get_current_configuration_copy,
-    show_configuration,
-    threeML_config,
-)
 
 pd.set_option("display.max_columns", None)
 
@@ -36,6 +24,18 @@ try:
 except ImportError:
     pass
 
+from pathlib import Path
+
+# Import everything from astromodels
+from astromodels import *
+
+from .io.logging import setup_logger
+
+from .config import (
+    threeML_config,
+    show_configuration,
+    get_current_configuration_copy,
+)
 
 log = setup_logger(__name__)
 log.propagate = False
