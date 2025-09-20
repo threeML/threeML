@@ -21,10 +21,10 @@ except ImportError:
 
 from pathlib import Path
 
-from threeML.io.logging import setup_logger
-
 # Import everything from astromodels
 from astromodels import *
+
+from .io.logging import setup_logger
 
 from .config import (
     threeML_config,
