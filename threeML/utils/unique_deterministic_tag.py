@@ -2,8 +2,8 @@ import hashlib
 
 
 def get_unique_deterministic_tag(string):
-    """
-    Return a hex string with a one to one correspondence with the given string
+    """Return a hex string with a one to one correspondence with the given
+    string.
 
     :param string: a string
     :return: a hex unique digest
@@ -12,6 +12,7 @@ def get_unique_deterministic_tag(string):
     try:
         return hashlib.md5(string.encode("utf-8")).hexdigest()
 
-    except:
+    except AttributeError:
+        # onyl instance when ther above will fail is when string is not a str
 
         return hashlib.md5(string).hexdigest()

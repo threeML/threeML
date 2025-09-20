@@ -1,17 +1,14 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from builtins import object
-from past.utils import old_div
+from __future__ import division, print_function
+
 import collections
+from builtins import object, range, zip
 
-import ROOT
 import numpy as np
-
+import ROOT
 import scipy.integrate
-import astromodels
+from past.utils import old_div
 
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import (
     tgraph_to_arrays,
@@ -19,8 +16,6 @@ from threeML.io.cern_root_utils.tobject_to_numpy import (
     tree_to_ndarray,
 )
 from threeML.plugin_prototype import PluginPrototype
-from threeML.exceptions.custom_exceptions import custom_warnings
-
 from threeML.utils.statistics.likelihood_functions import (
     poisson_observed_poisson_background,
 )
@@ -28,9 +23,9 @@ from threeML.utils.statistics.likelihood_functions import (
 __instrument_name = "VERITAS"
 
 
-# Integrate the interpolation of the effective area for each bin in the residstribution matrix, then sum over the MC
-# energies for the same bin, then renormalize the latter to be the same. The factor should be the same for all
-# channels
+# Integrate the interpolation of the effective area for each bin in the residstribution
+# matrix, then sum over the MC energies for the same bin, then renormalize the latter to
+# be the same. The factor should be the same for all channels
 
 
 # This is the data format v 1.0 agreed with Udara:
@@ -64,21 +59,15 @@ _columns_in_data_tree = [
 
 class VERITASRun(object):
     def __init__(self, root_file, run_name):
-
         self._run_name = run_name
 
         # Read the data from the ROOT file
 
         with open_ROOT_file(root_file) as f:
-
             # Read first the TTrees as pandas DataFrame
 
-            self._data_on = tree_to_ndarray(
-                f.Get(run_name + "/data_on")
-            )  # type: np.ndarray
-            self._data_off = tree_to_ndarray(
-                f.Get(run_name + "/data_off")
-            )  # type: np.ndarray
+            self._data_on = tree_to_ndarray(f.Get(run_name + "/data_on"))
+            self._data_off = tree_to_ndarray(f.Get(run_name + "/data_off"))
             self._tRunSummary = np.squeeze(
                 tree_to_ndarray(f.Get(run_name + "/tRunSummary"))
             )  # type: np.ndarray
@@ -124,7 +113,8 @@ class VERITASRun(object):
             # Transform energies to keV
             self._log_eff_area_energies += 9
 
-        # Now use the effective area provided in the file to renormalize the migration matrix appropriately
+        # Now use the effective area provided in the file to renormalize the migration
+        # matrix appropriately
         self._renorm_hMigration()
 
         # Exposure is tOn*(1-tDeadtimeFrac)
@@ -159,7 +149,8 @@ class VERITASRun(object):
             )
         )
 
-        # Read in the background renormalization (ratio between source and background region)
+        # Read in the background renormalization (ratio between source and background
+        # region)
 
         self._bkg_renorm = float(self._tRunSummary["OffNorm"])
 
@@ -171,19 +162,14 @@ class VERITASRun(object):
         self._last_chan = (np.abs(self._log_recon_energies - self._end_energy)).argmin()
 
     def _renorm_hMigration(self):
-
         # Get energies where the effective area is given
 
-        energies_eff = 10 ** self._log_eff_area_energies
+        energies_eff = 10**self._log_eff_area_energies
 
-        # Get the unnormalized effective area x photon flux contained in the migration matrix
-
-        v = np.sum(self._hMigration, axis=0)
+        # Get the unnormalized effective area x photon flux contained in the migration
+        # matrix
 
         # Get the expected photon flux using the simulated spectrum
-
-        mc_e1 = 10 ** self._log_mc_energies[:-1]
-        mc_e2 = 10 ** self._log_mc_energies[1:]
 
         rc_e1 = 10 ** self._log_recon_energies[:-1]
         rc_e2 = 10 ** self._log_recon_energies[1:]
@@ -193,9 +179,6 @@ class VERITASRun(object):
         # Get the unnormalized effective area
 
         # Compute the renormalization based on the energy range from 200 GeV to 1 TeV
-
-        emin = 0.2 * 1e9
-        emax = 1 * 1e9
 
         # idx = (self._mc_energies_c > emin) & (self._mc_energies_c < emax)
         # avg1 = np.average(new_v[idx])
@@ -218,7 +201,6 @@ class VERITASRun(object):
 
     @staticmethod
     def _bin_counts_log(counts, log_bins):
-
         energies_on_log = np.log10(np.array(counts))
 
         # Substitute nans (due to negative energies in unreconstructed events)
@@ -229,21 +211,17 @@ class VERITASRun(object):
 
     @property
     def migration_matrix(self):
-
         return self._hMigration
 
     @property
     def total_counts(self):
-
         return np.sum(self._counts)
 
     @property
     def total_background_counts(self):
-
         return np.sum(self._bkg_counts)
 
     def display(self):
-
         repr = "%s:\n" % self._run_name
 
         repr += "%s src counts, %s bkg counts\n" % (
@@ -267,10 +245,10 @@ class VERITASRun(object):
         print(repr)
 
     def _get_diff_flux_and_integral(self, like_model):
-
         n_point_sources = like_model.get_number_of_point_sources()
 
-        # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+        # Make a function which will stack all point sources (OGIP do not support
+        # spatial dimension)
 
         def differential_flux(energies):
             fluxes = like_model.get_point_source_fluxes(0, energies)
@@ -306,33 +284,30 @@ class VERITASRun(object):
 
     @staticmethod
     def _simulated_spectrum(x):
-
         return (x) ** (-2.45)
 
     @staticmethod
     def _simulated_spectrum_f(e1, e2):
-
-        integral_f = lambda x: old_div(-3.0, (x ** 0.5))
+        def integral_f(x):
+            return old_div(-3.0, (x**0.5))
 
         return integral_f(e2) - integral_f(e1)
 
     @staticmethod
     def _integrate(function, e1, e2):
-
         integrals = []
 
         for ee1, ee2 in zip(e1, e2):
-
             grid = np.linspace(ee1, ee2, 30)
 
             integrals.append(scipy.integrate.simps(function(grid), grid))
 
-        # integrals = map(lambda x:scipy.integrate.quad(function, x[0], x[1], epsrel=1e-2)[0], zip(e1, e2))
+        # integrals = map(lambda x:scipy.integrate.quad(function, x[0], x[1],
+        # epsrel=1e-2)[0], zip(e1, e2))
 
         return np.array(integrals)
 
     def get_log_like(self, like_model, fast=True):
-
         # Reweight the response matrix
         diff_flux, integral = self._get_diff_flux_and_integral(like_model)
 
@@ -342,7 +317,6 @@ class VERITASRun(object):
         dE = e2 - e1
 
         if not fast:
-
             this_spectrum = old_div(
                 self._integrate(diff_flux, e1, e2), dE
             )  # 1 / keV cm2 s
@@ -363,41 +337,36 @@ class VERITASRun(object):
         n_pred = np.zeros(self._n_chan)
 
         for i in range(n_pred.shape[0]):
-
             n_pred[i] = np.sum(self._hMigration[i, :] * weight) * self._exposure
 
         log_like, _ = poisson_observed_poisson_background(
             self._counts, self._bkg_counts, self._bkg_renorm, n_pred
         )
-        log_like_tot = np.sum(
-            log_like[self._first_chan : self._last_chan + 1]
-        )  # type: float
+        log_like_tot = np.sum(log_like[self._first_chan : self._last_chan + 1])
 
-        # print("%s: obs: %s, npred: %s, bkg: %s (%s), npred + bkg: %s -> %.2f" % (self._run_name,
-        #                                                              np.sum(self._counts),
-        #                                                              np.sum(n_pred),
-        #                                                              np.sum(self._bkg_counts),
-        #                                                              np.sum(self._bkg_counts) * self._bkg_renorm,
-        #                                             np.sum(n_pred)+ np.sum(self._bkg_counts) * self._bkg_renorm,
-        #                                                                        log_like_tot))
+        # print("%s: obs: %s, npred: %s, bkg: %s (%s), npred + bkg: %s -> %.2f" % (
+        #                   self._run_name,
+        #                   np.sum(self._counts),
+        #                   np.sum(n_pred),
+        #                   np.sum(self._bkg_counts),
+        #                   np.sum(self._bkg_counts) * self._bkg_renorm,
+        #                   np.sum(n_pred)+ np.sum(self._bkg_counts) * self._bkg_renorm,
+        #                                    log_like_tot))
 
         return log_like_tot, locals()
 
 
 class VERITASLike(PluginPrototype):
     def __init__(self, name, veritas_root_data):
-
         # Open file
 
         f = ROOT.TFile(veritas_root_data)
 
         try:
-
             # Loop over the runs
             keys = get_list_of_keys(f)
 
         finally:
-
             f.Close()
 
         # Get the names of all runs included
@@ -407,21 +376,18 @@ class VERITASLike(PluginPrototype):
         self._runs_like = collections.OrderedDict()
 
         for run_name in run_names:
-
             # Build the VERITASRun class
             this_run = VERITASRun(veritas_root_data, run_name)
 
             this_run.display()
 
             if this_run.total_counts == 0 or this_run.total_background_counts == 0:
-
                 custom_warnings.warn(
                     "%s has 0 source or bkg counts, cannot use it." % run_name
                 )
                 continue
 
             else:
-
                 # Get background spectrum and observation spectrum (with response)
                 # this_observation = this_run.get_spectrum()
                 # this_background = this_run.get_background_spectrum()
@@ -436,20 +402,17 @@ class VERITASLike(PluginPrototype):
         super(VERITASLike, self).__init__(name, {})
 
     def rebin_on_background(self, *args, **kwargs):
-
         for run in list(self._runs_like.values()):
-
             run.rebin_on_background(*args, **kwargs)
 
     def rebin_on_source(self, *args, **kwargs):
-
         for run in list(self._runs_like.values()):
-
             run.rebin_on_source(*args, **kwargs)
 
     def set_model(self, likelihood_model_instance):
-        """
-        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
+        """Set the model to be used in the joint minimization.
+
+        Must be a LikelihoodModel instance.
         """
 
         # Set the model for all runs
@@ -460,27 +423,25 @@ class VERITASLike(PluginPrototype):
         #     run.set_model(likelihood_model_instance)
 
     def get_log_like(self):
-        """
-        Return the value of the log-likelihood with the current values for the
-        parameters
-        """
+        """Return the value of the log-likelihood with the current values for
+        the parameters."""
 
         # Collect the likelihood from each run
         total = 0
 
         for run in list(self._runs_like.values()):
-
             total += run.get_log_like(self._likelihood_model)[0]
 
         return total
 
     def inner_fit(self):
-        """
-        This is used for the profile likelihood. Keeping fixed all parameters in the
-        LikelihoodModel, this method minimize the logLike over the remaining nuisance
-        parameters, i.e., the parameters belonging only to the model for this
-        particular detector. If there are no nuisance parameters, simply return the
-        logLike value.
+        """This is used for the profile likelihood.
+
+        Keeping fixed all parameters in the LikelihoodModel, this method
+        minimize the logLike over the remaining nuisance parameters,
+        i.e., the parameters belonging only to the model for this
+        particular detector. If there are no nuisance parameters, simply
+        return the logLike value.
         """
 
         return self.get_log_like()

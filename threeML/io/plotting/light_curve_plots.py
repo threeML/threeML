@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from past.utils import old_div
+
 from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.step_plot import step_plot
 
 if threeML_config.plotting.use_threeml_style:
-
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
@@ -44,9 +44,7 @@ def binned_light_curve_plot(
     light_curve_color = threeML_config.time_series.light_curve_color
     selection_color = threeML_config.time_series.selection_color
     background_color = threeML_config.time_series.background_color
-    background_selection_color = (
-        threeML_config.time_series.background_selection_color
-    )
+    background_selection_color = threeML_config.time_series.background_selection_color
 
     # first plot the full lightcurve
 
@@ -59,20 +57,16 @@ def binned_light_curve_plot(
     )
 
     if selection is not None:
-
         # now plot the temporal selections
 
         np.round(selection, decimals=4, out=selection)
 
         for tmin, tmax in selection:
-            tmp_mask = np.logical_and(
-                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax
-            )
+            tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
 
             all_masks.append(tmp_mask)
 
         if len(all_masks) > 1:
-
             for mask in all_masks[1:]:
                 step_plot(
                     time_bins[mask],
@@ -96,19 +90,15 @@ def binned_light_curve_plot(
     # now plot the background selections
 
     if bkg_selections is not None:
-
         np.round(bkg_selections, decimals=4, out=bkg_selections)
 
         all_masks = []
         for tmin, tmax in bkg_selections:
-            tmp_mask = np.logical_and(
-                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax
-            )
+            tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
 
             all_masks.append(tmp_mask)
 
         if len(all_masks) > 1:
-
             for mask in all_masks[1:]:
                 step_plot(
                     time_bins[mask],
@@ -133,7 +123,6 @@ def binned_light_curve_plot(
         )
 
     if bkg is not None:
-
         # now plot the estimated background
         # the bkg is a rate
         ax.plot(mean_time, bkg, background_color, lw=2.0, label="Background")
@@ -162,9 +151,7 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
 
 def disjoint_patch_plot(ax, bin_min, bin_max, top, bottom, mask, **kwargs):
     # type: (plt.Axes, np.array, np.array, float, float, np.array, dict) -> None
-    """
-
-    plots patches that are disjoint given by the mask
+    """Plots patches that are disjoint given by the mask.
 
     :param ax: matplotlib Axes to plot to
     :param bin_min: bin starts
@@ -182,7 +169,6 @@ def disjoint_patch_plot(ax, bin_min, bin_max, top, bottom, mask, **kwargs):
     non_zero = (mask).nonzero()[0]
 
     if len(non_zero) > 0:
-
         slices = slice_disjoint(non_zero)
 
         for region in slices:
@@ -194,12 +180,9 @@ def disjoint_patch_plot(ax, bin_min, bin_max, top, bottom, mask, **kwargs):
 
 
 def slice_disjoint(arr):
-    """
-    Returns an array of disjoint indices from a bool array
+    """Returns an array of disjoint indices from a bool array.
 
     :param arr: and array of bools
-
-
     """
 
     slices = []

@@ -1,15 +1,15 @@
 from builtins import map
-import pytest
-import numpy as np
 
-from astromodels import *
-from threeML.plugins.XYLike import XYLike
-from threeML.data_list import DataList
+import astropy.units as u
+import numpy as np
+from astromodels import IndependentVariable, Model, PointSource, Powerlaw
+
 from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.data_list import DataList
+from threeML.plugins.XYLike import XYLike
 
 
 def test_energy_time_fit():
-
     # Let's generate our dataset of 4 spectra with a normalization that follows
     # a powerlaw in time
 

@@ -1,31 +1,20 @@
 from __future__ import division
 
-import re
-from builtins import map, str
-
-import numpy
-from astromodels import *
-from astromodels.utils.angular_distance import angular_distance
-from past.utils import old_div
-
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
-from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from .catalog_utils import _gbm_and_lle_valid_source_check
-
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 log = setup_logger(__name__)
 
 
 class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
-        """
-        The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger
-        number, location, trigger type and date range.
+        """The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs
+        and solar flares by trigger number, location, trigger type and date
+        range.
 
         :param update: force update the XML VO table
         """
@@ -51,11 +40,9 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         return new_table.group_by("trigger_time")
 
     def _get_vo_table_from_source(self):
-
         self._vo_dataframe = get_heasarc_table_as_pandas(
             "fermille", update=self._update, cache_time_days=5.0
         )
 
     def _source_is_valid(self, source):
-
         return _gbm_and_lle_valid_source_check(source)

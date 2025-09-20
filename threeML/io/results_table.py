@@ -1,7 +1,9 @@
 from builtins import object
-import pandas as pd
+
 import numpy as np
-from threeML.io.table import long_path_formatter
+import pandas as pd
+from astromodels.utils.long_path_formatter import long_path_formatter
+
 from threeML.io.rich_display import display
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 
@@ -10,28 +12,24 @@ class ResultsTable(object):
     def __init__(
         self, parameter_paths, values, negative_errors, positive_errors, units
     ):
-
         values_s = pd.Series([], dtype=np.float64)
         negative_error_s = pd.Series([], dtype=np.float64)
         positive_error_s = pd.Series([], dtype=np.float64)
         units_s = pd.Series([], dtype=np.float64)
 
         for i, this_path in enumerate(parameter_paths):
-
             # Check if this parameter has a dex() unit, i.e., if it is in log10 scale
             # If it is, we display the transformed value, not the logarithm
 
             units_s[this_path] = units[i]
 
             if units_s[this_path].to_string().find("dex") < 0:
-
                 # A normal parameter
                 values_s[this_path] = values[i]
                 negative_error_s[this_path] = negative_errors[i]
                 positive_error_s[this_path] = positive_errors[i]
 
             else:
-
                 # A dex() parameter (logarithmic parameter)
                 values_s[this_path] = 10 ** values[i]
                 negative_error_s[this_path] = (
@@ -52,12 +50,10 @@ class ResultsTable(object):
 
     @property
     def frame(self):
-
         return self._data_frame
 
     def display(self, key_formatter=long_path_formatter):
         def row_formatter(row):
-
             value = row["value"]
             lower_bound = value + row["negative_error"]
             upper_bound = value + row["positive_error"]

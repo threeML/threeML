@@ -1,17 +1,20 @@
 import numpy as np
 
+from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.io.logging import setup_logger
+
 log = setup_logger(__name__)
 
 
 class ShareSpectrum(object):
     def __init__(self, datalist):
-        """
-        Object to check which plugins in datalist can share their spectrum calculation, because
-        they have the same input energy bins and integration method. Can save a lot of time if the
-        calculation of the spectrum is slow.
+        """Object to check which plugins in datalist can share their spectrum
+        calculation, because they have the same input energy bins and
+        integration method.
+
+        Can save a lot of time if the calculation of the spectrum is
+        slow.
         """
 
         # List with different Ebin edges of the plugins
@@ -20,9 +23,10 @@ class ShareSpectrum(object):
         # List with the information which plugins have the same spectrum integration
         # with same input energy bins
         self._data_ebin_connect = []
-        #TODO add check if same integration method is set
-        for j, (key, d) in enumerate(zip(list(datalist.keys()),
-                                         list(datalist.values()))):
+        # TODO add check if same integration method is set
+        for j, (key, d) in enumerate(
+            zip(list(datalist.keys()), list(datalist.values()))
+        ):
             if isinstance(d, DispersionSpectrumLike):
                 e = d.response.monte_carlo_energies
                 share_spec_possible = True
@@ -30,10 +34,11 @@ class ShareSpectrum(object):
                 e = d.observed_spectrum.edges
                 share_spec_possible = True
             else:
-                log.debug(f"Plugin {j} can not share spectrum calculation (Not SpectrumLike or DispersionSpectrumLike)")
-                self._data_ein_edges.append(
-                    None
+                log.debug(
+                    f"Plugin {j} can not share spectrum calculation (Not SpectrumLike"
+                    " or DispersionSpectrumLike)"
                 )
+                self._data_ein_edges.append(None)
                 self._base_plugin_key.append(key)
                 self._data_ebin_connect.append(j)
                 share_spec_possible = False
@@ -46,7 +51,10 @@ class ShareSpectrum(object):
                     if self._data_ein_edges[i] is not None:
                         if len(e) == len(self._data_ein_edges[i]):
                             if np.all(np.equal(e, self._data_ein_edges[i])):
-                                log.debug(f"Plugin {j} shares the spectrum calculation with plugin {i}")
+                                log.debug(
+                                    f"Plugin {j} shares the spectrum calculation with"
+                                    f" plugin {i}"
+                                )
                                 self._data_ebin_connect.append(i)
                                 found = True
                                 break

@@ -1,13 +1,15 @@
 from __future__ import division
-from past.utils import old_div
+
 import os
 
 import numpy as np
 import pytest
-from .conftest import get_test_datasets_directory
-from threeML.io.file_utils import within_directory
+from past.utils import old_div
+
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
+from threeML.utils.time_series.event_list import EventList, EventListWithDeadTime
+
+from .conftest import get_test_datasets_directory
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 datasets_dir = get_test_datasets_directory()
@@ -17,11 +19,9 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
     if abs(old_div((truth - value), truth)) <= relative_tolerance:
-
         return True
 
     else:
-
         return False
 
 
@@ -65,10 +65,7 @@ def test_event_list_constructor():
 
 
 def test_unbinned_fit(event_time_series):
-
     start, stop = 0, 50
-
-    poly = [1]
 
     arrival_times = event_time_series
 
@@ -81,11 +78,9 @@ def test_unbinned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=True
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=True)
 
-    results = evt_list.get_poly_info()["coefficients"]
+    _ = evt_list.get_poly_info()["coefficients"]
 
     evt_list.set_active_time_intervals("0-1")
 
@@ -97,10 +92,7 @@ def test_unbinned_fit(event_time_series):
 
 
 def test_binned_fit(event_time_series):
-    
     start, stop = 0, 50
-
-    poly = [1]
 
     arrival_times = event_time_series
 
@@ -113,13 +105,11 @@ def test_binned_fit(event_time_series):
         dead_time=np.zeros_like(arrival_times),
     )
 
-    evt_list.set_background_interval(
-        "%f-%f" % (start + 1, stop - 1), unbinned=False
-    )
+    evt_list.set_background_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
     evt_list.set_active_time_intervals("0-1")
 
-    results = evt_list.get_poly_info()["coefficients"]
+    _ = evt_list.get_poly_info()["coefficients"]
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 

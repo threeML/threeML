@@ -5,26 +5,23 @@ from typing import Optional
 import numpy as np
 from astromodels import use_astromodels_memoization
 from astromodels.core.model import Model
+
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
 
 try:
-
     import pymultinest
 
-except:
-
+except Exception:
     has_pymultinest = False
 
 else:
-
     has_pymultinest = True
 
 
 try:
-
     # see if we have mpi and/or are using parallel
 
     from mpi4py import MPI
@@ -36,10 +33,8 @@ try:
         rank = comm.Get_rank()
 
     else:
-
         using_mpi = False
-except:
-
+except Exception:
     using_mpi = False
 
 log = setup_logger(__name__)
@@ -90,9 +85,9 @@ class MultiNestSampler(UnitCubeSampler):
 
         """
         log.debug(
-            f"Setup for MultiNest sampler: n_live_points:{n_live_points}, chain_name:{chain_name},"
-            f"resume: {resume}, importance_nested_sampling: {importance_nested_sampling}."
-            f"Other input: {kwargs}"
+            f"Setup for MultiNest sampler: n_live_points:{n_live_points}, chain_name:"
+            f"{chain_name}, resume: {resume}, importance_nested_sampling: "
+            f"{importance_nested_sampling}. Other input: {kwargs}"
         )
         self._kwargs = {}
         self._kwargs["n_live_points"] = n_live_points
@@ -102,7 +97,6 @@ class MultiNestSampler(UnitCubeSampler):
         self._kwargs["resume"] = resume
 
         for k, v in kwargs.items():
-
             self._kwargs[k] = v
 
         self._auto_clean = auto_clean
@@ -110,21 +104,19 @@ class MultiNestSampler(UnitCubeSampler):
         self._is_setup = True
 
     def sample(self, quiet: bool = False):
-        """
-        sample using the MultiNest numerical integration method
+        """Sample using the MultiNest numerical integration method.
 
         :returns:
         :rtype:
-
         """
         if not self._is_setup:
-
             log.info("You forgot to setup the sampler!")
             return
 
-        assert (
-            has_pymultinest
-        ), "You don't have pymultinest installed, so you cannot run the Multinest sampler"
+        assert has_pymultinest, (
+            "You don't have pymultinest installed, so you cannot run the Multinest "
+            "sampler"
+        )
 
         loud = not quiet
 
@@ -146,7 +138,6 @@ class MultiNestSampler(UnitCubeSampler):
         chain_dir = chain_name.parent
 
         if using_mpi:
-
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
@@ -160,26 +151,22 @@ class MultiNestSampler(UnitCubeSampler):
                     chain_dir.mkdir()
 
         else:
-
             if not chain_dir.exists():
                 log.debug(f"Create {chain_dir} for multinest output")
                 chain_dir.mkdir()
-
-
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
         if threeML_config["parallel"]["use_parallel"]:
-
             log.error(
-                "If you want to run multinest in parallell you need to use an ad-hoc method"
+                "If you want to run multinest in parallell you need to use an ad-hoc"
+                " method"
             )
 
             raise RuntimeError()
 
         else:
-
             with use_astromodels_memoization(False):
                 log.debug("Start multinest run")
                 sampler = pymultinest.run(
@@ -192,29 +179,22 @@ class MultiNestSampler(UnitCubeSampler):
         process_fit = False
 
         if using_mpi:
-
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
             comm.Barrier()
 
             if rank != 0:
-
                 # these engines do not need to read
                 process_fit = False
 
             else:
-
                 process_fit = True
 
-
-
         else:
-
             process_fit = True
 
         if process_fit:
-
             multinest_analyzer = pymultinest.analyse.Analyzer(
                 n_params=n_dim, outputfiles_basename=chain_name
             )
@@ -251,7 +231,6 @@ class MultiNestSampler(UnitCubeSampler):
             # now clean up the chains if requested
 
             if self._auto_clean:
-
                 log.info(f"deleting the chain directory {chain_dir}")
 
                 shutil.rmtree(chain_dir)

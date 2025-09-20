@@ -1,25 +1,28 @@
-from __future__ import division
-from __future__ import print_function
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-import pytest
+from __future__ import division, print_function
+
 import os
+
+import astropy.units as u
 import numpy as np
+import pytest
+from astromodels import (
+    Cutoff_powerlaw,
+    Disk_on_sphere,
+    ExtendedSource,
+    Model,
+    PointSource,
+)
+from past.utils import old_div
 
-from threeML import *
-
+from threeML import DataList, JointLikelihood, is_plugin_available
 
 try:
-
     from threeML.plugins.HAWCLike import HAWCLike
 
 except ImportError:
-
     has_HAWC = False
 
 else:
-
     has_HAWC = True
 
 from threeML.io.file_utils import sanitize_filename
@@ -36,11 +39,9 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
     if abs(old_div((truth - value), truth)) <= relative_tolerance:
-
         return True
 
     else:
-
         return False
 
 
@@ -57,7 +58,6 @@ _response_name = "detector_response.root"
 
 @pytest.fixture(scope="session")
 def hawc_point_source_fitted_joint_like():
-
     data_path = sanitize_filename(
         os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
     )
@@ -78,7 +78,7 @@ def hawc_point_source_fitted_joint_like():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm**2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
 
     spectrum.piv = 1 * u.TeV
@@ -119,7 +119,6 @@ def hawc_point_source_fitted_joint_like():
 
 @skip_if_hawc_is_not_available
 def test_set_active_measurements():
-
     data_path = sanitize_filename(
         os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
     )
@@ -140,7 +139,6 @@ def test_set_active_measurements():
 
 @skip_if_hawc_is_not_available
 def test_hawc_fullsky_options():
-
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
     data_path = sanitize_filename(
@@ -163,7 +161,7 @@ def test_hawc_fullsky_options():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm**2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
 
     spectrum.piv = 1 * u.TeV
@@ -184,7 +182,8 @@ def test_hawc_fullsky_options():
     # response.
     lm = Model(source)
 
-    # Test with fullsky=True, and try to perform a fit to verify that we throw an exception
+    # Test with fullsky=True, and try to perform a fit to verify that we throw an
+    # exception
 
     llh = HAWCLike("HAWC", maptree, response, fullsky=True)
     llh.set_active_measurements(1, 9)
@@ -198,13 +197,12 @@ def test_hawc_fullsky_options():
     datalist = DataList(llh)
 
     with pytest.raises(RuntimeError):
-
-        jl = JointLikelihood(lm, datalist, verbose=False)
+        _ = JointLikelihood(lm, datalist, verbose=False)
 
     # Now we use set_ROI and this should work
     llh.set_ROI(100.0, 22.0, 2.0)
 
-    jl = JointLikelihood(lm, datalist, verbose=False)
+    _ = JointLikelihood(lm, datalist, verbose=False)
 
     # Now test that we can use set_ROI even though fullsky=False
     llh = HAWCLike("HAWC", maptree, response, fullsky=False)
@@ -219,7 +217,7 @@ def test_hawc_fullsky_options():
     print("Performing likelihood fit...\n")
     datalist = DataList(llh)
 
-    jl = JointLikelihood(lm, datalist, verbose=False)
+    _ = JointLikelihood(lm, datalist, verbose=False)
 
 
 @skip_if_hawc_is_not_available
@@ -263,7 +261,7 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
-    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm ** 2 * u.s)))
+    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm**2 * u.s)))
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
@@ -377,7 +375,7 @@ def test_hawc_extended_source_fit():
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
-    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm ** 2 * u.s)))
+    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm**2 * u.s)))
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
@@ -411,7 +409,6 @@ def test_hawc_display_residuals(hawc_point_source_fitted_joint_like):
 
 @skip_if_hawc_is_not_available
 def test_null_hyp_prob(hawc_point_source_fitted_joint_like):
-
     # Ensure test environment is valid
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
@@ -476,8 +473,6 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
     ]
 
     correct_bins = ["4", "5", "6", "7", "8", "9"]
-
-    subtracted_data = [d - m for m, d in zip(correct_model, correct_data)]
 
     max_radius = 2.0
     n_bins = 10
@@ -572,7 +567,7 @@ def test_CommonNorm_fit():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm**2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
     spectrum.K.fix = True
 
@@ -618,7 +613,6 @@ def test_CommonNorm_fit():
 
 @skip_if_hawc_is_not_available
 def test_hawc_get_number_of_data_points(hawc_point_source_fitted_joint_like):
-
     # Ensure test environment is valid
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
@@ -631,7 +625,6 @@ def test_hawc_get_number_of_data_points(hawc_point_source_fitted_joint_like):
 
 @skip_if_hawc_is_not_available
 def test_hawc_write_map(hawc_point_source_fitted_joint_like):
-
     # Ensure test environment is valid
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"

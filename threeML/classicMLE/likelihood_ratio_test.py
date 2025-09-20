@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from astromodels import clone_model
+
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.config import threeML_config
@@ -13,7 +14,6 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.OGIP.pha import PHAWrite
 
 if threeML_config.plotting.use_threeml_style:
-
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
@@ -26,7 +26,6 @@ class LikelihoodRatioTest:
         joint_likelihood_instance0: JointLikelihood,
         joint_likelihood_instance1: JointLikelihood,
     ) -> None:
-
         self._joint_likelihood_instance0: JointLikelihood = (
             joint_likelihood_instance0
         )  # type: JointLikelihood
@@ -45,18 +44,12 @@ class LikelihoodRatioTest:
 
         # Safety check that the user has provided the models in the right order
         if self._reference_TS < 0:
-
             log.warning(
-                "The reference TS is negative, either you specified the likelihood objects "
-            )
-            log.warning(
-                "in the wrong order, or the fit for the alternative hyp. has failed. Since the "
-            )
-            log.warning(
-                "two hyp. are nested, by definition the more complex hypothesis should give a "
-            )
-            log.warning(
-                "better or equal fit with respect to the null hypothesis."
+                "The reference TS is negative, either you specified the likelihood "
+                "objects in the wrong order, or the fit for the alternative hyp. has "
+                "failed. Since the two hyp. are nested, by definition the more complex "
+                "hypothesis should give a better or equal fit with respect to the null "
+                "hypothesis."
             )
 
         # Check that the dataset is the same
@@ -65,38 +58,28 @@ class LikelihoodRatioTest:
             self._joint_likelihood_instance1.data_list
             != self._joint_likelihood_instance0.data_list
         ):
+            # Since this check might fail if the user loaded twice the same data, only
+            # issue a warning, instead of an exception.
 
-            # Since this check might fail if the user loaded twice the same data, only issue a warning, instead of
-            # an exception.
-
             log.warning(
-                "The data lists for the null hyp. and for the alternative hyp. seems to be different."
+                "The data lists for the null hyp. and for the alternative hyp. seems to"
+                " be different. If you loaded twice the same data and made the same "
+                "data selections, disregard this message. Otherwise, consider the fact "
+                "that the LRT is meaningless if the two data sets are not exactly the "
+                "same. We will use the data loaded as part of the null hypothesis "
+                "JointLikelihood object"
             )
-            log.warning(
-                " If you loaded twice the same data and made the same data selections, disregard this "
-            )
-            log.warning(
-                "message. Otherwise, consider the fact that the LRT is meaningless if the two data "
-            )
-            log.warning(
-                "sets are not exactly the same. We will use the data loaded as part of the null "
-            )
-            log.warning("hypothesis JointLikelihood object")
 
         # For saving pha files
         self._save_pha = False
         self._data_container = []
 
     def get_simulated_data(self, id: int):
-
         # Generate a new data set for each plugin contained in the data list
 
         new_datas = []
 
-        for dataset in list(
-            self._joint_likelihood_instance0.data_list.values()
-        ):
-
+        for dataset in list(self._joint_likelihood_instance0.data_list.values()):
             # Make sure that the active likelihood model is the null hypothesis
             # This is needed if the user has used the same DataList instance for both
             # JointLikelihood instances
@@ -109,39 +92,36 @@ class LikelihoodRatioTest:
         new_data_list = DataList(*new_datas)
 
         if self._save_pha:
-
             self._data_container.append(new_data_list)
 
         return new_data_list
 
     def get_models(self, id):
+        # Make a copy of the best fit models, so that we don't touch the original models
+        # during the fit, and we also always restart from the best fit (instead of the
+        # last iteration)
 
-        # Make a copy of the best fit models, so that we don't touch the original models during the fit, and we
-        # also always restart from the best fit (instead of the last iteration)
-
-        new_model0 = clone_model(
-            self._joint_likelihood_instance0.likelihood_model
-        )
-        new_model1 = clone_model(
-            self._joint_likelihood_instance1.likelihood_model
-        )
+        new_model0 = clone_model(self._joint_likelihood_instance0.likelihood_model)
+        new_model1 = clone_model(self._joint_likelihood_instance1.likelihood_model)
 
         return new_model0, new_model1
 
-    def by_mc(
-        self, n_iterations=1000, continue_on_failure=False, save_pha=False
-    ):
-        """
-        Compute the Likelihood Ratio Test by generating Monte Carlo datasets and fitting the current models on them.
-        The fraction of synthetic datasets which have a value for the TS larger or equal to the observed one gives
-        the null-hypothesis probability (i.e., the probability that the observed TS is obtained by chance from the
-        null hypothesis)
+    def by_mc(self, n_iterations=1000, continue_on_failure=False, save_pha=False):
+        """Compute the Likelihood Ratio Test by generating Monte Carlo datasets
+        and fitting the current models on them. The fraction of synthetic
+        datasets which have a value for the TS larger or equal to the observed
+        one gives the null-hypothesis probability (i.e., the probability that
+        the observed TS is obtained by chance from the null hypothesis)
 
-        :param n_iterations: number of MC iterations to perform (default: 1000)
-        :param continue_of_failure: whether to continue in the case a fit fails (False by default)
-        :param save_pha: Saves pha files for reading into XSPEC as a cross check.
-         Currently only supports OGIP data. This can become slow! (False by default)
-        :return: tuple (null. hyp. probability, TSs, frame with all results, frame with all likelihood values)
+        :param n_iterations: number of MC iterations to perform
+            (default: 1000)
+        :param continue_of_failure: whether to continue in the case a
+            fit fails (False by default)
+        :param save_pha: Saves pha files for reading into XSPEC as a
+            cross check. Currently only supports OGIP data. This can
+            become slow! (False by default)
+        :return: tuple (null. hyp. probability, TSs, frame with all
+            results, frame with all likelihood values)
         """
 
         self._save_pha = save_pha
@@ -162,9 +142,7 @@ class LikelihoodRatioTest:
         jl_set.set_minimizer(self._joint_likelihood_instance0.minimizer_in_use)
 
         # Run the set
-        data_frame, like_data_frame = jl_set.go(
-            continue_on_failure=continue_on_failure
-        )
+        data_frame, like_data_frame = jl_set.go(continue_on_failure=continue_on_failure)
 
         # Get the TS values
 
@@ -186,7 +164,6 @@ class LikelihoodRatioTest:
 
         # Save the sims to phas if requested
         if self._save_pha:
-
             self._process_saved_data()
 
         return null_hyp_prob, TS, data_frame, like_data_frame
@@ -203,16 +180,12 @@ class LikelihoodRatioTest:
         fig, ax = plt.subplots()
 
         counts, bins, _ = ax.hist(
-            self._TS_distribution,
-            density=True,
-            label="monte carlo",
-            **hist_kwargs
+            self._TS_distribution, density=True, label="monte carlo", **hist_kwargs
         )
 
         ax.axvline(self._reference_TS, color="r", ls="--", label="Ref. TS")
 
         if show_chi2:
-
             x_plot = np.linspace(
                 bins[0],
                 bins[-1],
@@ -223,21 +196,18 @@ class LikelihoodRatioTest:
 
             dof = len(
                 self._joint_likelihood_instance1.likelihood_model.free_parameters
-            ) - len(
-                self._joint_likelihood_instance0.likelihood_model.free_parameters
-            )
+            ) - len(self._joint_likelihood_instance0.likelihood_model.free_parameters)
 
-            assert (
-                dof >= 0
-            ), "The difference in the number of parameters between the alternative and null models is negative!"
+            assert dof >= 0, (
+                "The difference in the number of parameters between the alternative and"
+                " null models is negative!"
+            )
 
             chi2 = stats.chi2.pdf(x_plot, dof)
 
             if scale == 1.0:
-
                 _scale = ""
             else:
-
                 _scale = "%.1f" % scale
 
             label = r"$%s\chi^{2}_{%d}$" % (_scale, dof)
@@ -253,30 +223,23 @@ class LikelihoodRatioTest:
 
     @property
     def reference_TS(self):
-
         return self._reference_TS
 
     @property
     def TS_distribution(self):
-
         return self._TS_distribution
 
     @property
     def null_hypothesis_probability(self):
-
         return self._null_hyp_prob
 
     def _process_saved_data(self):
-        """
-
-        Saves data sets for each plugin to PHAs for OGIP data.
-
+        """Saves data sets for each plugin to PHAs for OGIP data.
 
         :return:
         """
 
         for plugin in list(self._data_container[0].values()):
-
             assert isinstance(
                 plugin, OGIPLike
             ), "Saving simulations is only supported for OGIP plugins currently"
@@ -285,11 +248,9 @@ class LikelihoodRatioTest:
         # so we do not use it
 
         for key in list(self._data_container[0].keys()):
-
             per_plugin_list = []
 
             for data in self._data_container[1:]:
-
                 per_plugin_list.append(data[key])
 
             # Now write them

@@ -1,26 +1,27 @@
-
 from pathlib import Path
 from typing import Optional
 
 import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np
+
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
 from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
+
 
 log = setup_logger(__name__)
 
 
 class PHAWrite:
     def __init__(self, *ogiplike):
-        """
-        This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as
-        input. While OGIPLike provides a write_pha method, it is only for writing the given instance to disk. The class
-         in general can be used to save an entire series of OGIPLikes to PHAs which can be used for time-resolved style
-         plugins. An example implentation is given in FermiGBMTTELike.
-
+        """This class handles writing of PHA files from OGIPLike style plugins.
+        It takes an arbitrary number of plugins as input. While OGIPLike
+        provides a write_pha method, it is only for writing the given instance
+        to disk. The class in general can be used to save an entire series of
+        OGIPLikes to PHAs which can be used for time-resolved style plugins. An
+        example implentation is given in FermiGBMTTELike.
 
         :param ogiplike: OGIPLike plugin(s) to be written to disk
         """
@@ -64,11 +65,11 @@ class PHAWrite:
 
         self._spec_iterator = 1
 
-    def write(self, outfile_name: str, overwrite: bool = True, force_rsp_write: bool = False) -> None:
-        """
-        Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
-        if BAK files should be generated.
-
+    def write(
+        self, outfile_name: str, overwrite: bool = True, force_rsp_write: bool = False
+    ) -> None:
+        """Write a PHA Type II and BAK file for the given OGIP plugin.
+        Automatically determines if BAK files should be generated.
 
         :param outfile_name: string (excluding .pha) of the PHA to write
         :param overwrite: (optional) bool to overwrite existing file
@@ -80,7 +81,6 @@ class PHAWrite:
 
         # Remove the .pha extension if any
         if outfile_name.suffix.lower() == ".pha":
-
             log.debug(f"stripping {outfile_name} of its suffix")
 
             outfile_name = outfile_name.stem
@@ -95,14 +95,12 @@ class PHAWrite:
         self._out_rsp = []
 
         for ogip in self._ogiplike:
-
             self._append_ogip(ogip, force_rsp_write)
 
         self._write_phaII(overwrite)
 
     def _append_ogip(self, ogip, force_rsp_write: bool) -> None:
-        """
-        Add an ogip instance's data into the data list
+        """Add an ogip instance's data into the data list.
 
         :param ogip: and OGIPLike instance
         :param force_rsp_write: force the writing of an rsp
@@ -119,18 +117,18 @@ class PHAWrite:
                 continue
 
             if key == "pha" and "bak" in pha_info:
-
                 if pha_info[key].background_file is not None:
-
                     log.debug(
-                        f" keeping original bak file: {pha_info[key].background_file}")
+                        f" keeping original bak file: {pha_info[key].background_file}"
+                    )
 
                     self._backfile[key].append(pha_info[key].background_file)
 
                 else:
-
                     log.debug(
-                        f"creating new bak file: {self._outfile_basename}_bak.pha" + "{%d}" % self._spec_iterator)
+                        f"creating new bak file: {self._outfile_basename}_bak.pha"
+                        + "{%d}" % self._spec_iterator
+                    )
 
                     self._backfile[key].append(
                         f"{self._outfile_basename}_bak.pha"
@@ -142,47 +140,41 @@ class PHAWrite:
                     self._write_bak_file = True
 
             else:
-
                 log.debug("not creating a bak file")
 
                 self._backfile[key] = None
 
             if pha_info[key].ancillary_file is not None:
-
                 log.debug("appending the ancillary file")
 
                 self._ancrfile[key].append(pha_info[key].ancillary_file)
 
             else:
-
                 # There is no ancillary file, so we need to flag it.
 
                 self._ancrfile[key].append("NONE")
 
             if pha_info["rsp"].rsp_filename is not None and not force_rsp_write:
-
                 log.debug(
-                    f"not creating a new response and keeping {pha_info['rsp'].rsp_filename}")
+                    "not creating a new response and keeping "
+                    f"{pha_info['rsp'].rsp_filename}"
+                )
 
                 self._respfile[key].append(pha_info["rsp"].rsp_filename)
 
             else:
-
-                # This will be reached in the case that a response was generated from a plugin
-                # e.g. if we want to use weighted DRMs from GBM.
+                # This will be reached in the case that a response was generated from a
+                # plugin e.g. if we want to use weighted DRMs from GBM.
 
                 rsp_file_name = (
-                    f"{self._outfile_basename}.rsp" +
-                    "{%d}" % self._spec_iterator
+                    f"{self._outfile_basename}.rsp" + "{%d}" % self._spec_iterator
                 )
 
-                log.debug(
-                    f"creating a new response and saving it to {rsp_file_name}")
+                log.debug(f"creating a new response and saving it to {rsp_file_name}")
 
                 self._respfile[key].append(rsp_file_name)
 
                 if key == "pha":
-
                     self._out_rsp.append(pha_info["rsp"])
 
             self._rate[key].append(pha_info[key].rates.tolist())
@@ -190,7 +182,6 @@ class PHAWrite:
             self._backscal[key].append(pha_info[key].scale_factor)
 
             if not pha_info[key].is_poisson:
-
                 log.debug("this file is not Poisson and we save the errors")
 
                 self._is_poisson[key] = pha_info[key].is_poisson
@@ -198,7 +189,6 @@ class PHAWrite:
                 self._stat_err[key].append(pha_info[key].rate_errors.tolist())
 
             else:
-
                 log.debug("this file is Poisson and we do not save the errors")
 
                 self._stat_err[key] = None
@@ -211,38 +201,32 @@ class PHAWrite:
             if (
                 pha_info[key].sys_errors.tolist() is not None
             ):  # It returns an array which does not work!
-
                 self._sys_err[key].append(pha_info[key].sys_errors.tolist())
 
             else:
-
                 self._sys_err[key].append(
-                    np.zeros_like(pha_info[key].rates,
-                                  dtype=np.float32).tolist()
+                    np.zeros_like(pha_info[key].rates, dtype=np.float32).tolist()
                 )
 
             self._exposure[key].append(pha_info[key].exposure)
             self._quality[key].append(ogip.quality.to_ogip().tolist())
             self._grouping[key].append(ogip.grouping.tolist())
             self._channel[key].append(
-                np.arange(pha_info[key].n_channels,
-                          dtype=np.int32) + first_channel
+                np.arange(pha_info[key].n_channels, dtype=np.int32) + first_channel
             )
             self._instrument[key] = pha_info[key].instrument
             self._mission[key] = pha_info[key].mission
 
             if ogip.tstart is not None:
-
                 self._tstart[key].append(ogip.tstart)
 
                 if ogip.tstop is not None:
-
                     self._tstop[key].append(ogip.tstop)
 
                 else:
-
                     log.error(
-                        "OGIP TSTART is a number but TSTOP is None. This is a bug.")
+                        "OGIP TSTART is a number but TSTOP is None. This is a bug."
+                    )
 
                     RuntimeError()
 
@@ -250,7 +234,6 @@ class PHAWrite:
             # and assign starts and stops accordingly. This means
             # we are most likely are dealing with a simulation.
             else:
-
                 log.debug("setting duration to exposure")
 
                 self._tstart[key].append(self._pseudo_time)
@@ -262,7 +245,6 @@ class PHAWrite:
         self._spec_iterator += 1
 
     def _write_phaII(self, overwrite):
-
         # Fix this later... if needed.
         trigger_time = None
 
@@ -270,50 +252,46 @@ class PHAWrite:
             # Assuming background and pha files have the same
             # number of channels
 
-            if len(self._rate["pha"][0]) != len(
-                self._rate["bak"][0]
-            ):
-
+            if len(self._rate["pha"][0]) != len(self._rate["bak"][0]):
                 log.error(
-                    "PHA and BAK files do not have the same number of channels. Something is wrong.")
+                    "PHA and BAK files do not have the same number of channels. "
+                    "Something is wrong."
+                )
                 raise RuntimeError()
 
             if self._instrument["pha"] != self._instrument["bak"]:
-
-                log.error("Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
-                          % (self._instrument["pha"], self._instrument["bak"])
-                          )
+                log.error(
+                    f"Instrument for PHA and BAK ({self._instrument['pha']}, "
+                    f"{self._instrument['bak']}) are not the same. Something is "
+                    "wrong with the files. "
+                )
 
                 raise RuntimeError()
 
             if self._mission["pha"] != self._mission["bak"]:
-
-                log.error("Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
-                          % (self._mission["pha"], self._mission["bak"])
-                          )
+                log.error(
+                    f"Mission for PHA and BAK ({self._mission['pha']}, "
+                    f"{self._mission['bak']}) are not the same. Something is "
+                    "wrong with the files. "
+                )
 
                 raise RuntimeError()
 
         if self._write_bak_file:
-
             log.debug("will attempt to also write a BAK file")
-            
+
             keys = ["pha", "bak"]
 
         else:
-
             log.debug("not attempting to write a BAK file")
 
             keys = ["pha"]
 
         for key in keys:
-
             if trigger_time is not None:
-
                 tstart = self._tstart[key] - trigger_time
 
             else:
-
                 tstart = self._tstart[key]
 
             # build a PHAII instance
@@ -342,7 +320,6 @@ class PHAWrite:
             fits_file.writeto(self._outfile_name[key], overwrite=overwrite)
 
         if self._out_rsp:
-
             # add the various responses needed
 
             extensions = [EBOUNDS(self._out_rsp[0].ebounds)]
@@ -357,7 +334,6 @@ class PHAWrite:
             )
 
             for i, ext in enumerate(extensions[1:]):
-
                 # Set telescope and instrument name
                 ext.hdu.header.set("TELESCOP", self._mission["pha"])
                 ext.hdu.header.set("INSTRUME", self._instrument["pha"])
@@ -369,7 +345,6 @@ class PHAWrite:
 
 
 def _atleast_2d_with_dtype(value, dtype=None):
-
     if dtype is not None:
         value = np.array(value, dtype=dtype)
 
@@ -379,17 +354,14 @@ def _atleast_2d_with_dtype(value, dtype=None):
 
 
 def _atleast_1d_with_dtype(value, dtype=None):
-
     if dtype is not None:
         value = np.array(value, dtype=dtype)
 
         if dtype == str:
-
             # convert None to NONE
             # which is needed for None Type args
             # to string arrays
-
-            idx = np.core.defchararray.lower(value) == "none"
+            idx = np.char.lower(value) == "none"
 
             value[idx] = "NONE"
 
@@ -399,7 +371,6 @@ def _atleast_1d_with_dtype(value, dtype=None):
 
 
 class SPECTRUM(FITSExtension):
-
     _HEADER_KEYWORDS = (
         ("EXTNAME", "SPECTRUM", "Extension name"),
         ("CONTENT", "OGIP PHA data", "File content"),
@@ -441,8 +412,7 @@ class SPECTRUM(FITSExtension):
         stat_err=None,
         is_poisson=False,
     ):
-        """
-        Represents the SPECTRUM extension of a PHAII file.
+        """Represents the SPECTRUM extension of a PHAII file.
 
         :param tstart: array of interval start times
         :param telapse: array of times elapsed since start
@@ -456,7 +426,8 @@ class SPECTRUM(FITSExtension):
         :param ancrfile: array of associate ancillary file names
         :param back_file: array of associated background file names
         :param sys_err: array of optional systematic errors
-        :param stat_err: array of optional statistical errors (required of non poisson!)
+        :param stat_err: array of optional statistical errors (required
+            of non poisson!)
         """
 
         n_spectra = len(tstart)
@@ -476,21 +447,16 @@ class SPECTRUM(FITSExtension):
         ]
 
         if back_file is not None:
-
             data_list.append(("BACKFILE", back_file))
 
         if stat_err is not None:
-
             if is_poisson:
-
-                log.error(
-                    "Tying to enter STAT_ERR error but have POISSERR set true")
+                log.error("Tying to enter STAT_ERR error but have POISSERR set true")
 
                 raise RuntimeError()
             data_list.append(("STAT_ERR", stat_err))
 
         if sys_err is not None:
-
             data_list.append(("SYS_ERR", sys_err))
 
         super(SPECTRUM, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
@@ -518,9 +484,7 @@ class PHAII(FITSFile):
         stat_err: Optional[np.ndarray] = None,
         is_poisson: bool = False,
     ):
-        """
-
-        A generic PHAII fits file
+        """A generic PHAII fits file.
 
         :param instrument_name: name of the instrument
         :param telescope_name: name of the telescope
@@ -536,7 +500,8 @@ class PHAII(FITSFile):
         :param ancrfile: array of associate ancillary file names
         :param back_file: array of associated background file names
         :param sys_err: array of optional systematic errors
-        :param stat_err: array of optional statistical errors (required of non poisson!)
+        :param stat_err: array of optional statistical errors (required
+            of non poisson!)
         """
 
         # collect the data so that we can have a general
@@ -554,26 +519,20 @@ class PHAII(FITSFile):
         self._ancrfile = _atleast_1d_with_dtype(ancrfile, str)
 
         if sys_err is not None:
-
             self._sys_err = _atleast_2d_with_dtype(sys_err, np.float32)
 
         else:
-
             self._sys_err = sys_err
 
         if stat_err is not None:
-
             self._stat_err = _atleast_2d_with_dtype(stat_err, np.float32)
 
         else:
-
             self._stat_err = stat_err
 
         if back_file is not None:
-
             self._back_file = _atleast_1d_with_dtype(back_file, str)
         else:
-
             self._back_file = np.array(["NONE"] * self._tstart.shape[0])
 
         # Create the SPECTRUM extension
@@ -605,13 +564,11 @@ class PHAII(FITSFile):
 
     @classmethod
     def from_time_series(cls, time_series, use_poly=False) -> "PHAII":
-
         pha_information = time_series.get_information_dict(use_poly)
 
         is_poisson = True
 
         if use_poly:
-
             is_poisson = False
 
         return PHAII(
@@ -633,9 +590,7 @@ class PHAII(FITSFile):
 
     @classmethod
     def from_fits_file(cls, fits_file) -> FITSFile:
-
         with fits.open(fits_file) as f:
-
             if "SPECTRUM" in f:
                 spectrum_extension = f["SPECTRUM"]
             else:
@@ -650,17 +605,15 @@ class PHAII(FITSFile):
                     if hduclass == "OGIP" and hduclas1 == "SPECTRUM":
                         spectrum_extension = extension
                         log.warning(
-                            "File has no SPECTRUM extension, but found a spectrum in extension %s"
-                            % (spectrum_extension.header.get("EXTNAME"))
+                            "File has no SPECTRUM extension, but found a spectrum in "
+                            "extension %s" % (spectrum_extension.header.get("EXTNAME"))
                         )
                         spectrum_extension.header["EXTNAME"] = "SPECTRUM"
                         break
 
-            spectrum = FITSExtension.from_fits_file_extension(
-                spectrum_extension)
+            spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
-            out = FITSFile(primary_hdu=f["PRIMARY"],
-                           fits_extensions=[spectrum])
+            out = FITSFile(primary_hdu=f["PRIMARY"], fits_extensions=[spectrum])
 
         return out
 

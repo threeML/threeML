@@ -6,24 +6,17 @@ from past.utils import old_div
 
 __author__ = "grburgess"
 
-import collections
 import copy
-import os
 
-import numpy as np
-import pandas as pd
-from pandas import HDFStore
 import matplotlib.pyplot as plt
-from threeML.utils.progress_bar import tqdm, trange
+import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import sanitize_filename
-from threeML.io.logging import setup_logger, silence_console_log
+from threeML.io.logging import setup_logger
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
-from threeML.io.rich_display import display
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.binner import TemporalBinner
+from threeML.utils.progress_bar import tqdm
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit
 from threeML.utils.time_series.time_series import TimeSeries
@@ -65,22 +58,23 @@ class EventList(TimeSeries):
         verbose=True,
         edges=None,
     ):
-        """
-        The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
-        temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
-        and/or polynomials are fit, the selections can be extracted via a PHAContainer which is can be read by an OGIPLike
+        """The EventList is a container for event data that is tagged in time
+        and in PHA/energy. It handles event selection, temporal polynomial
+        fitting, temporal binning, and exposure calculations (in subclasses).
+        Once events are selected and/or polynomials are fit, the selections can
+        be extracted via a PHAContainer which is can be read by an OGIPLike
         instance and translated into a PHA instance.
-
 
         :param  n_channels: Number of detector channels
         :param  start_time: start time of the event list
         :param  stop_time: stop time of the event list
         :param  first_channel: where detchans begin indexing
-        :param  rsp_file: the response file corresponding to these events
+        :param rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  measurement: list of event energies or pha channels
         :param native_quality: native pha quality flags
-        :param edges: The histogram boundaries if not specified by a response
+        :param edges: The histogram boundaries if not specified by a
+            response
         :param mission:
         :param instrument:
         :param verbose:
@@ -118,12 +112,10 @@ class EventList(TimeSeries):
 
     @property
     def n_events(self):
-
         return self._arrival_times.shape[0]
 
     @property
     def arrival_times(self):
-
         return self._arrival_times
 
     @property
@@ -132,48 +124,44 @@ class EventList(TimeSeries):
 
     @property
     def bins(self):
-
         if self._temporal_binner is not None:
-
             return self._temporal_binner
         else:
-
             raise RuntimeError("This EventList has no binning specified")
 
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
-        """
+        """Interface to the temporal binner's significance binning model.
 
-        Interface to the temporal binner's significance binning model
-
-         :param start: start of the interval to bin on
-         :param stop:  stop of the interval ot bin on
-         :param sigma: sigma-level of the bins
-         :param mask: (bool) use the energy mask to decide on ,significance
-         :param min_counts:  minimum number of counts per bin
-         :return:
+        :param start: start of the interval to bin on
+        :param stop: stop of the interval ot bin on
+        :param sigma: sigma-level of the bins
+        :param mask: (bool) use the energy mask to decide on
+            ,significance
+        :param min_counts: minimum number of counts per bin
+        :return:
         """
 
         if mask is not None:
-
             # create phas to check
             phas = np.arange(self._first_channel, self._n_channels)[mask]
 
             this_mask = np.zeros_like(self._arrival_times, dtype=bool)
 
             for channel in phas:
-                this_mask = np.logical_or(
-                    this_mask, self._measurement == channel)
+                this_mask = np.logical_or(this_mask, self._measurement == channel)
 
             events = self._arrival_times[this_mask]
 
         else:
-
             events = copy.copy(self._arrival_times)
 
         events = events[np.logical_and(events <= stop, events >= start)]
 
-        def tmp_bkg_getter(a, b): return self.get_total_poly_count(a, b, mask)
-        def tmp_err_getter(a, b): return self.get_total_poly_error(a, b, mask)
+        def tmp_bkg_getter(a, b):
+            return self.get_total_poly_count(a, b, mask)
+
+        def tmp_err_getter(a, b):
+            return self.get_total_poly_error(a, b, mask)
 
         # self._temporal_binner.bin_by_significance(tmp_bkg_getter,
         #                                           background_error_getter=tmp_err_getter,
@@ -189,8 +177,7 @@ class EventList(TimeSeries):
         )
 
     def bin_by_constant(self, start, stop, dt=1):
-        """
-        Interface to the temporal binner's constant binning mode
+        """Interface to the temporal binner's constant binning mode.
 
         :param start: start time of the bins
         :param stop: stop time of the bins
@@ -199,19 +186,16 @@ class EventList(TimeSeries):
         """
 
         events = self._arrival_times[
-            np.logical_and(self._arrival_times >= start,
-                           self._arrival_times <= stop)
+            np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)
         ]
 
         self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
 
     def bin_by_custom(self, start, stop):
-        """
-        Interface to temporal binner's custom bin mode
-
+        """Interface to temporal binner's custom bin mode.
 
         :param start: start times of the bins
-        :param stop:  stop times of the bins
+        :param stop: stop times of the bins
         :return:
         """
 
@@ -219,35 +203,32 @@ class EventList(TimeSeries):
         # self._temporal_binner.bin_by_custom(start, stop)
 
     def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
-
         events = self._arrival_times[
-            np.logical_and(self._arrival_times >= start,
-                           self._arrival_times <= stop)
+            np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)
         ]
 
         # self._temporal_binner = TemporalBinner(events)
 
         if use_background:
 
-            def integral_background(
-                t): return self.get_total_poly_count(start, t)
+            def integral_background(t):
+                return self.get_total_poly_count(start, t)
 
             self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
                 events, p0, bkg_integral_distribution=integral_background
             )
 
         else:
+            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events, p0)
 
-            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
-                events, p0)
-
-    def view_lightcurve(self,
-                        start: float = -10,
-                        stop: float = 20.0,
-                        dt: float = 1.0,
-                        use_binner: bool = False,
-                        use_echans_start: int = 0,
-                        use_echans_stop: int = -1
+    def view_lightcurve(
+        self,
+        start: float = -10,
+        stop: float = 20.0,
+        dt: float = 1.0,
+        use_binner: bool = False,
+        use_echans_start: int = 0,
+        use_echans_stop: int = -1,
     ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
@@ -260,48 +241,60 @@ class EventList(TimeSeries):
 
         # validate echan mask input
         if not isinstance(use_echans_start, int):
-            log.error(f"The use_echans_start variable must be a integer."
-                      f" Input is {use_echans_start}.")
+            log.error(
+                f"The use_echans_start variable must be a integer."
+                f" Input is {use_echans_start}."
+            )
             raise AssertionError()
 
-        if not (use_echans_start > (-1)*(self.n_channels)-1 and
-                use_echans_start < (self.n_channels)):
-            log.error(f"The use_echans_start variable must be"
-                      f"between {(-1)*(self.n_channels)} and {self.n_channels-1}."
-                      f" Input is {use_echans_start}.")
+        if not (
+            use_echans_start > (-1) * (self.n_channels) - 1
+            and use_echans_start < (self.n_channels)
+        ):
+            log.error(
+                f"The use_echans_start variable must be"
+                f"between {(-1) * (self.n_channels)} and {self.n_channels - 1}."
+                f" Input is {use_echans_start}."
+            )
             raise AssertionError()
 
         if not isinstance(use_echans_stop, int):
-            log.error(f"The use_echans_stop variable must be a integer."
-                      f" Input is {use_echans_stop}.")
+            log.error(
+                f"The use_echans_stop variable must be a integer."
+                f" Input is {use_echans_stop}."
+            )
             raise AssertionError()
 
-        if not (use_echans_stop > (-1)*(self.n_channels)-1 and
-                use_echans_stop < (self.n_channels)):
-            log.error(f"The use_echans_stop variable must be"
-                      f"between {(-1)*(self.n_channels)} and {self.n_channels-1}."
-                      f" Input is {use_echans_stop}.")
+        if not (
+            use_echans_stop > (-1) * (self.n_channels) - 1
+            and use_echans_stop < (self.n_channels)
+        ):
+            log.error(
+                f"The use_echans_stop variable must be"
+                f"between {(-1) * (self.n_channels)} and {self.n_channels - 1}."
+                f" Input is {use_echans_stop}."
+            )
             raise AssertionError()
 
         if use_echans_start < 0:
-            use_echans_start = self.n_channels+use_echans_start
+            use_echans_start = self.n_channels + use_echans_start
 
         if use_echans_stop < 0:
-            use_echans_stop = self.n_channels+use_echans_stop
+            use_echans_stop = self.n_channels + use_echans_stop
 
         if not use_echans_stop >= use_echans_start:
-            log.error(f"The use_echans_stop variable must be larger"
-                      f" or equal than the use_echans_start variable"
-                      f" Input is use_echans_start: {use_echans_start}"
-                      f" > use_echans_stop: {use_echans_stop}")
+            log.error(
+                f"The use_echans_stop variable must be larger"
+                f" or equal than the use_echans_start variable"
+                f" Input is use_echans_start: {use_echans_start}"
+                f" > use_echans_stop: {use_echans_stop}"
+            )
             raise AssertionError()
 
         # get echan bins
-        echan_bins = np.arange(use_echans_start, use_echans_stop+2, 1)-0.5
-
+        echan_bins = np.arange(use_echans_start, use_echans_stop + 2, 1) - 0.5
 
         if use_binner:
-
             # we will use the binner object to bin the
             # light curve and ignore the normal linear binning
 
@@ -321,35 +314,31 @@ class EventList(TimeSeries):
                 bins.extend(post_bins[1:])
 
         else:
-
             # otherwise, just use regular linear binning
 
             bins = np.arange(start, stop + dt, dt)
 
-        cnts, bins, _ = np.histogram2d(self.arrival_times, self.measurement,
-                                       bins=(bins, echan_bins))
+        cnts, bins, _ = np.histogram2d(
+            self.arrival_times, self.measurement, bins=(bins, echan_bins)
+        )
         cnts = np.sum(cnts, axis=1)
 
-        time_bins = np.array([[bins[i], bins[i + 1]]
-                              for i in range(len(bins) - 1)])
+        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         # now we want to get the estimated background from the polynomial fit
 
         if self.poly_fit_exists:
-
             # we will store the bkg rate for each time bin
 
             bkg = []
 
             for j, tb in enumerate(time_bins):
-
                 # zero out the bkg
                 tmpbkg = 0.0
 
                 # sum up the counts over this interval
 
-                for poly in self.polynomials[use_echans_start:use_echans_stop+1]:
-
+                for poly in self.polynomials[use_echans_start : use_echans_stop + 1]:
                     tmpbkg += poly.integral(tb[0], tb[1])
 
                 # capture the bkg *rate*
@@ -358,10 +347,9 @@ class EventList(TimeSeries):
                 # We do not use the dead time corrected exposure here
                 # because the integration is done over the full time bin
                 # and not the dead time corrected exposure
-                bkg.append(old_div(tmpbkg, tb[1]-tb[0]))
+                bkg.append(old_div(tmpbkg, tb[1] - tb[0]))
 
         else:
-
             bkg = None
 
         width = []
@@ -376,19 +364,15 @@ class EventList(TimeSeries):
         # pass all this to the light curve plotter
 
         if self.time_intervals is not None:
-
             selection = self.time_intervals.bin_stack
 
         else:
-
             selection = None
 
         if self.bkg_intervals is not None:
-
             bkg_selection = self.bkg_intervals.bin_stack
 
         else:
-
             bkg_selection = None
 
         return binned_light_curve_plot(
@@ -401,10 +385,10 @@ class EventList(TimeSeries):
         )
 
     def counts_over_interval(self, start, stop):
-        """
-        return the number of counts in the selected interval
-        :param start: start of interval
-        :param stop:  stop of interval
+        """Return the number of counts in the selected interval :param start:
+
+        start of interval
+        :param stop: stop of interval
         :return:
         """
 
@@ -414,7 +398,6 @@ class EventList(TimeSeries):
         return self._select_events(start, stop).sum()
 
     def count_per_channel_over_interval(self, start, stop):
-
         channels = list(
             range(self._first_channel, self._n_channels + self._first_channel)
         )
@@ -431,22 +414,14 @@ class EventList(TimeSeries):
         return counts_per_channel
 
     def _select_events(self, start, stop):
-        """
-        return an index of the selected events
-        :param start: start time
-        :param stop: stop time
-        :return:
-        """
+        """Return an index of the selected events :param start: start time
+        :param stop: stop time :return:"""
 
         return np.logical_and(start <= self._arrival_times, self._arrival_times <= stop)
 
     def _fit_polynomials(self, bayes=False):
-        """
-
-        Binned fit to each channel. Sets the polynomial array that will be used to compute
-        counts over an interval
-
-
+        """Binned fit to each channel. Sets the polynomial array that will be
+        used to compute counts over an interval.
 
         :return:
         """
@@ -483,8 +458,8 @@ class EventList(TimeSeries):
         total_poly_energies = self._measurement[poly_mask]
 
         # This calculation removes the unselected portion of the light curve
-        # so that we are not fitting zero counts. It will be used in the channel calculations
-        # as well
+        # so that we are not fitting zero counts. It will be used in the channel
+        # calculitions as well
 
         bin_width = 1.0  # seconds
         these_bins = np.arange(self._start_time, self._stop_time, bin_width)
@@ -498,8 +473,7 @@ class EventList(TimeSeries):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
-            exposure_per_bin.append(
-                self.exposure_over_interval(bins[i], bins[i + 1]))
+            exposure_per_bin.append(self.exposure_over_interval(bins[i], bins[i + 1]))
 
         mean_time = np.array(mean_time)
 
@@ -523,15 +497,12 @@ class EventList(TimeSeries):
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
         if self._user_poly_order == -1:
-
-            
-
             self._optimal_polynomial_grade = (
                 self._fit_global_and_determine_optimum_grade(
                     cnts[non_zero_mask],
                     mean_time[non_zero_mask],
                     exposure_per_bin[non_zero_mask],
-                    bayes=bayes
+                    bayes=bayes,
                 )
             )
 
@@ -540,7 +511,6 @@ class EventList(TimeSeries):
             )
 
         else:
-
             self._optimal_polynomial_grade = self._user_poly_order
 
         channels = list(
@@ -550,7 +520,6 @@ class EventList(TimeSeries):
         if threeML_config["parallel"]["use_parallel"]:
 
             def worker(channel):
-
                 channel_mask = total_poly_energies == channel
 
                 # Mask background events and current channel
@@ -566,26 +535,23 @@ class EventList(TimeSeries):
                     cnts[non_zero_mask],
                     self._optimal_polynomial_grade,
                     exposure_per_bin[non_zero_mask],
-                    bayes=bayes
+                    bayes=bayes,
                 )
 
                 return polynomial
 
             client = ParallelClient()
 
-
-
             polynomials = client.execute_with_progress_bar(
-                    worker, channels, name=f"Fitting {self._instrument} background")
+                worker, channels, name=f"Fitting {self._instrument} background"
+            )
 
         else:
-
             polynomials = []
 
-            
-
-            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
-
+            for channel in tqdm(
+                channels, desc=f"Fitting {self._instrument} background"
+            ):
                 channel_mask = total_poly_energies == channel
 
                 # Mask background events and current channel
@@ -605,7 +571,7 @@ class EventList(TimeSeries):
                     cnts[non_zero_mask],
                     self._optimal_polynomial_grade,
                     exposure_per_bin[non_zero_mask],
-                    bayes=bayes
+                    bayes=bayes,
                 )
 
                 polynomials.append(polynomial)
@@ -615,7 +581,6 @@ class EventList(TimeSeries):
         self._polynomials = polynomials
 
     def _unbinned_fit_polynomials(self, bayes=False):
-
         self._poly_fit_exists = True
 
         # Select all the events that are in the background regions
@@ -661,7 +626,6 @@ class EventList(TimeSeries):
         # The total cnts (over channels) is binned to .1 sec intervals
 
         if self._user_poly_order == -1:
-
             self._optimal_polynomial_grade = (
                 self._unbinned_fit_global_and_determine_optimum_grade(
                     total_poly_events, poly_exposure, bayes=bayes
@@ -669,12 +633,10 @@ class EventList(TimeSeries):
             )
 
             log.info(
-                "Auto-determined polynomial order: "
-                f"{self._optimal_polynomial_grade}"
+                f"Auto-determined polynomial order: {self._optimal_polynomial_grade}"
             )
 
         else:
-
             self._optimal_polynomial_grade = self._user_poly_order
 
         channels = list(
@@ -703,22 +665,23 @@ class EventList(TimeSeries):
                     t_start,
                     t_stop,
                     poly_exposure,
-                    bayes=bayes
+                    bayes=bayes,
                 )
 
                 return polynomial
 
             client = ParallelClient()
 
-
             polynomials = client.execute_with_progress_bar(
-                    worker, channels, name=f"Fitting {self._instrument} background")
+                worker, channels, name=f"Fitting {self._instrument} background"
+            )
 
         else:
-
             polynomials = []
 
-            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+            for channel in tqdm(
+                channels, desc=f"Fitting {self._instrument} background"
+            ):
                 channel_mask = total_poly_energies == channel
 
                 # Mask background events and current channel
@@ -733,7 +696,7 @@ class EventList(TimeSeries):
                     t_start,
                     t_stop,
                     poly_exposure,
-                    bayes=bayes
+                    bayes=bayes,
                 )
 
                 polynomials.append(polynomial)
@@ -782,13 +745,15 @@ class EventList(TimeSeries):
             tmax = interval.stop_time
             this_exposure = self.exposure_over_interval(tmin, tmax)
             # check that the exposure is not larger than the total time
-            if this_exposure > (tmax-tmin):
-                log.error("The exposure in the active time bin is larger "
-                          "than the total active time. "
-                          "Something must be wrong!")
+            if this_exposure > (tmax - tmin):
+                log.error(
+                    "The exposure in the active time bin is larger "
+                    "than the total active time. "
+                    "Something must be wrong!"
+                )
                 raise RuntimeError()
             exposure += this_exposure
-            dead_time += (tmax-tmin)-this_exposure
+            dead_time += (tmax - tmin) - this_exposure
 
         self._exposure = exposure
         self._active_dead_time = dead_time
@@ -796,7 +761,6 @@ class EventList(TimeSeries):
         tmp_counts = []  # Temporary list to hold the total counts per chan
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
-
             channel_mask = self._measurement == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
             total_counts = len(self._arrival_times[counts_mask])
@@ -809,13 +773,10 @@ class EventList(TimeSeries):
         tmp_err = []  # Temporary list to hold the err counts per chan
 
         if self._poly_fit_exists:
-
             if not self._poly_fit_exists:
-                raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!")
+                raise RuntimeError("A polynomial fit to the channels does not exist!")
 
             for chan in range(self._n_channels):
-
                 total_counts = 0
                 counts_err = 0
 
@@ -823,8 +784,7 @@ class EventList(TimeSeries):
                     self._time_intervals.start_times, self._time_intervals.stop_times
                 ):
                     # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(
-                        tmin, tmax)
+                    total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (
                         self._polynomials[chan].integral_error(tmin, tmax)
                     ) ** 2
@@ -839,7 +799,7 @@ class EventList(TimeSeries):
 
             # apply the dead time correction to the background counts
             # and errors
-            corr = self._exposure/(self._active_dead_time+self._exposure)
+            corr = self._exposure / (self._active_dead_time + self._exposure)
 
             self._poly_counts *= corr
 
@@ -864,8 +824,10 @@ class EventListWithDeadTime(EventList):
         verbose=True,
         edges=None,
     ):
-        """
-        An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an
+        """An EventList where the exposure is calculated via and array of dead
+        times per.
+
+        event. Summing these dead times over an
         interval => live time = interval - dead time
 
 
@@ -904,7 +866,6 @@ class EventListWithDeadTime(EventList):
         )
 
         if dead_time is not None:
-
             self._dead_time = np.asarray(dead_time)
 
             assert (
@@ -915,26 +876,22 @@ class EventListWithDeadTime(EventList):
             )
 
         else:
-
             self._dead_time = None
 
     def exposure_over_interval(self, start, stop):
-        """
-        calculate the exposure over the given interval
+        """Calculate the exposure over the given interval.
 
         :param start: start time
-        :param stop:  stop time
+        :param stop: stop time
         :return:
         """
 
         mask = self._select_events(start, stop)
 
         if self._dead_time is not None:
-
             interval_deadtime = (self._dead_time[mask]).sum()
 
         else:
-
             interval_deadtime = 0
 
         return (stop - start) - interval_deadtime
@@ -958,8 +915,9 @@ class EventListWithDeadTimeFraction(EventList):
         verbose=True,
         edges=None,
     ):
-        """
-        An EventList where the exposure is calculated via and array dead time fractions per event .
+        """An EventList where the exposure is calculated via and array dead
+        time fractions per event .
+
         Summing these dead times over an
         interval => live time = interval - dead time
 
@@ -999,7 +957,6 @@ class EventListWithDeadTimeFraction(EventList):
         )
 
         if dead_time_fraction is not None:
-
             self._dead_time_fraction = np.asarray(dead_time_fraction)
 
             assert (
@@ -1010,15 +967,13 @@ class EventListWithDeadTimeFraction(EventList):
             )
 
         else:
-
             self._dead_time_fraction = None
 
     def exposure_over_interval(self, start, stop):
-        """
-        calculate the exposure over the given interval
+        """Calculate the exposure over the given interval.
 
         :param start: start time
-        :param stop:  stop time
+        :param stop: stop time
         :return:
         """
 
@@ -1027,12 +982,9 @@ class EventListWithDeadTimeFraction(EventList):
         interval = stop - start
 
         if self._dead_time_fraction is not None:
-
-            interval_deadtime = (
-                self._dead_time_fraction[mask]).mean() * interval
+            interval_deadtime = (self._dead_time_fraction[mask]).mean() * interval
 
         else:
-
             interval_deadtime = 0
 
         return interval - interval_deadtime
@@ -1059,16 +1011,14 @@ class EventListWithLiveTime(EventList):
         verbose=True,
         edges=None,
     ):
-        """
-        An EventList where the exposure is calculated via and array of livetimes per interval.
-
-
+        """An EventList where the exposure is calculated via and array of
+        livetimes per interval.
 
         :param  arrival_times: list of event arrival times
         :param  measurement: list of event energies or pha channels
         :param live_time: array of livetime fractions
         :param live_time_starts: start of livetime fraction bins
-        :param live_time_stops:  stop of livetime fraction bins
+        :param live_time_stops: stop of livetime fraction bins
         :param mission: mission name
         :param instrument: instrument name
         :param  n_channels: Number of detector channels
@@ -1076,8 +1026,9 @@ class EventListWithLiveTime(EventList):
         :param  stop_time: stop time of the event list
         :param quality: native pha quality flags
         :param  first_channel: where detchans begin indexing
-        :param edges: The histogram boundaries if not specified by a response
-        :param  rsp_file: the response file corresponding to these events
+        :param edges: The histogram boundaries if not specified by a
+            response
+        :param rsp_file: the response file corresponding to these events
         :param verbose:
         :param  ra:
         :param  dec:
@@ -1138,21 +1089,19 @@ class EventListWithLiveTime(EventList):
         # see if it contains elements
 
         if self._live_time[inside_idx].size > 0:
-
             # we want to take a fraction of the live time covered
 
-            dt = self._live_time_stops[inside_idx] - \
-                self._live_time_starts[inside_idx]
+            dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
             fraction = old_div((stop - start), dt)
 
             total_livetime = self._live_time[inside_idx] * fraction
 
         else:
-
-            # First we get the live time of bins that are fully contained in the given interval
-            # We now go for the closed interval because it is possible to have overlap with other intervals
-            # when a closed interval exists... but not when there is only an open interval
+            # First we get the live time of bins that are fully contained in the given
+            # interval. We now go for the closed interval because it is possible to have
+            # overlap with other intervals when a closed interval exists...
+            # but not when there is only an open interval
 
             full_inclusion_idx = np.logical_and(
                 start <= self._live_time_starts, stop >= self._live_time_stops
@@ -1194,8 +1143,7 @@ class EventListWithLiveTime(EventList):
 
             # we want the distance from the last full bin
 
-            distance_from_next_bin = stop - \
-                self._live_time_starts[right_remainder_idx]
+            distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
 
             fraction = old_div(distance_from_next_bin, dt)
 

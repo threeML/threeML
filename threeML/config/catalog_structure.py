@@ -3,6 +3,8 @@ from typing import Dict, Optional
 
 from omegaconf import MISSING
 
+heasarc_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table"
+
 
 @dataclass(frozen=True)
 class PublicDataServer:
@@ -20,16 +22,22 @@ class CatalogServer:
 class InstrumentCatalog:
     catalogs: Dict[str, CatalogServer] = MISSING
 
+
 @dataclass(frozen=True)
 class Catalogs:
-    Fermi: InstrumentCatalog = field(default_factory=lambda: InstrumentCatalog(
-        {"LAT FGL": CatalogServer("https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&"),
-         "GBM burst catalog": CatalogServer(
-             "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigbrst&"),
-         "GBM trigger catalog": CatalogServer(
-             "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigtrig&"),
-         "LLE catalog": CatalogServer("https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermille&")
-         }))
+    Fermi: InstrumentCatalog = field(
+        default_factory=lambda: InstrumentCatalog(
+            {
+                "LAT FGL": CatalogServer(heasarc_url + "=fermilpsc&"),
+                "GBM burst catalog": CatalogServer(heasarc_url + "=fermigbrst&"),
+                "GBM trigger catalog": CatalogServer(heasarc_url + "=fermigtrig&"),
+                "LLE catalog": CatalogServer(heasarc_url + "=fermille&"),
+            }
+        )
+    )
 
-    Swift: InstrumentCatalog = field(default_factory=lambda: InstrumentCatalog({"Swift GRB catalog": CatalogServer(
-        "https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=swiftgrb&")}))
+    Swift: InstrumentCatalog = field(
+        default_factory=lambda: InstrumentCatalog(
+            {"Swift GRB catalog": CatalogServer(heasarc_url + "=swiftgrb&")}
+        )
+    )
