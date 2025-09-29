@@ -12,7 +12,6 @@ import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Truncated_gaussian, Uniform_prior
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
@@ -3625,31 +3624,18 @@ class SpectrumLike(PluginPrototype):
 
         if source_only:
             y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
-            weighted_data = old_div(
+            weighted_data = (
                 rebinned_quantities["new_observed_rate"]
-                - rebinned_quantities["new_background_rate"],
-                rebinned_quantities["new_chan_width"],
-            )
-            weighted_error = old_div(
+                - rebinned_quantities["new_background_rate"]
+            ) / rebinned_quantities["new_chan_width"]
+            weighted_error = (
                 np.sqrt(
                     rebinned_quantities["new_observed_rate_err"] ** 2
                     + rebinned_quantities["new_background_rate_err"] ** 2
-                ),
-                rebinned_quantities["new_chan_width"],
+                )
+                / rebinned_quantities["new_chan_width"]
             )
-        else:
-            y_label = "Observed rate\n(counts s$^{-1}$ keV$^{-1}$)"
-            weighted_data = old_div(
-                rebinned_quantities["new_observed_rate"],
-                rebinned_quantities["new_chan_width"],
-            )
-            weighted_error = old_div(
-                rebinned_quantities["new_observed_rate_err"],
-                rebinned_quantities["new_chan_width"],
-            )
-        # weighted_data = old_div(
-        #    rebinned_quantities["new_rate"], rebinned_quantities["new_chan_width"]
-        # )
+
         # weighted_error = old_div(
         #    rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
         # )
@@ -3712,10 +3698,8 @@ class SpectrumLike(PluginPrototype):
             # y = expected_model_rate / chan_width
             y = np.ma.masked_where(
                 ~self._mask,
-                old_div(
-                    rebinned_quantities["expected_model_rate"],
-                    rebinned_quantities["chan_width"],
-                ),
+                rebinned_quantities["expected_model_rate"]
+                / rebinned_quantities["chan_width"],
             )
 
             x = np.mean(

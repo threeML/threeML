@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import collections
 import sys
 from builtins import object, range, zip
@@ -11,7 +9,6 @@ import scipy.optimize
 import scipy.stats
 from astromodels import Model, ModelAssertionViolation, clone_model
 from matplotlib import colormaps
-from past.utils import old_div
 
 from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
@@ -800,13 +797,11 @@ class JointLikelihood(object):
                     do_log = (True,)
                     lower = (
                         center
-                        * (1.0 + old_div(res["negative_error"][param], center))
-                        ** n_sigma
+                        * (1.0 + res["negative_error"][param] / center) ** n_sigma
                     )
                     upper = (
                         center
-                        * (1.0 + old_div(res["positive_error"][param], center))
-                        ** n_sigma
+                        * (1.0 + res["positive_error"][param] / center) ** n_sigma
                     )
 
                 lower = max(self.likelihood_model[param].bounds[0], lower)
@@ -837,13 +832,11 @@ class JointLikelihood(object):
                     do_log = (True, False)
                     lower_1 = (
                         center_1
-                        * (1.0 + old_div(res["negative_error"][param_1], center_1))
-                        ** n_sigma
+                        * (1.0 + res["negative_error"][param_1] / center_1) ** n_sigma
                     )
                     upper_1 = (
                         center_1
-                        * (1.0 + old_div(res["positive_error"][param_1], center_1))
-                        ** n_sigma
+                        * (1.0 + res["positive_error"][param_1] / center_1) ** n_sigma
                     )
 
                 lower_1 = max(self.likelihood_model[param_1].bounds[0], lower_1)
@@ -866,12 +859,12 @@ class JointLikelihood(object):
                         do_log = (do_log[0], True)
                         lower_2 = (
                             center_2
-                            * (1.0 + old_div(res["negative_error"][param_2], center_2))
+                            * (1.0 + res["negative_error"][param_2] / center_2)
                             ** n_sigma
                         )
                         upper_2 = (
                             center_2
-                            * (1.0 + old_div(res["positive_error"][param_2], center_2))
+                            * (1.0 + res["positive_error"][param_2] / center_2)
                             ** n_sigma
                         )
 

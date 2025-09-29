@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 from builtins import range, zip
 
 import matplotlib.pyplot as plt

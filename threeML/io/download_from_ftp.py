@@ -4,11 +4,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from future import standard_library
-
 from threeML.utils.progress_bar import tqdm
-
-standard_library.install_aliases()
 
 
 def download_file_from_ftp(ftp_url, destination_directory):

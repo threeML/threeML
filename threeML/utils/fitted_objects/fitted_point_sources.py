@@ -1,7 +1,3 @@
-from __future__ import division
-
-from past.utils import old_div
-
 __author__ = "grburgess"
 
 import collections
@@ -128,8 +124,8 @@ class DifferentialFluxConversion(FluxConversion):
 
         self._flux_lookup = {
             "photon_flux": 1.0 / (u.keV * u.cm**2 * u.s),
-            "energy_flux": old_div(u.erg, (u.keV * u.cm**2 * u.s)),
-            "nufnu_flux": old_div(u.erg**2, (u.keV * u.cm**2 * u.s)),
+            "energy_flux": u.erg / (u.keV * u.cm**2 * u.s),
+            "nufnu_flux": u.erg**2 / (u.keV * u.cm**2 * u.s),
         }
 
         self._model_converter = {
@@ -176,8 +172,8 @@ class IntegralFluxConversion(FluxConversion):
 
         self._flux_lookup = {
             "photon_flux": 1.0 / (u.cm**2 * u.s),
-            "energy_flux": old_div(u.erg, (u.cm**2 * u.s)),
-            "nufnu_flux": old_div(u.erg**2, (u.cm**2 * u.s)),
+            "energy_flux": u.erg / (u.cm**2 * u.s),
+            "nufnu_flux": u.erg**2 / (u.cm**2 * u.s),
         }
 
         self._model_converter = {

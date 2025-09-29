@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colormaps
 from matplotlib.colors import SymLogNorm
-from past.utils import old_div
 
 from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -690,9 +689,9 @@ class OGIPResponse(InstrumentResponse):
 
         idx = self.monte_carlo_energies > 0
 
-        diff = old_div(
-            (self.monte_carlo_energies[idx] - arf_mc_channels[idx]),
-            self.monte_carlo_energies[idx],
+        diff = np.array(
+            (self.monte_carlo_energies[idx] - arf_mc_channels[idx])
+            / self.monte_carlo_energies[idx],
         )
 
         if diff.max() > 0.01:

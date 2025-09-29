@@ -1,5 +1,3 @@
-from __future__ import division
-
 import numpy
 from astromodels import (
     Band,
@@ -9,7 +7,6 @@ from astromodels import (
     Powerlaw,
     SmoothlyBrokenPowerLaw,
 )
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
@@ -314,7 +311,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         amp = row[primary_string + "ampl"]
 
         # need to correct epeak to e cut
-        ecut = old_div(epeak, (2 - index))
+        ecut = epeak / (2 - index)
 
         cpl = Cutoff_powerlaw()
 

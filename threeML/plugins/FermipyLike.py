@@ -1,5 +1,3 @@
-from __future__ import division
-
 import collections
 import os
 from typing import Any, Dict, List, Optional, Union
@@ -12,7 +10,6 @@ from astromodels import Parameter
 from astromodels.core import parameter_transformation
 from astropy import units as u
 from astropy.stats import circmean
-from past.utils import old_div
 
 from threeML.config.config import threeML_config as tc
 from threeML.config.plotting_structure import FermiSpectrumPlot
@@ -113,7 +110,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     dec_center = float(configuration["selection"]["dec"])
 
     roi_width = float(configuration["binning"]["roiwidth"])
-    roi_radius = old_div(roi_width, np.sqrt(2.0))
+    roi_radius = roi_width / np.sqrt(2.0)
 
     # Get IRFS
     irfs = evclass_irf[int(configuration["selection"]["evclass"])]
@@ -1197,8 +1194,8 @@ class FermipyLike(PluginPrototype):
         significance_calc = Significance(Non=y, Noff=sum_model)
 
         if ratio_residuals:
-            resid = old_div((y - sum_model), sum_model)
-            resid_err = old_div(y_err, sum_model)
+            resid = (y - sum_model) / sum_model
+            resid_err = y_err, sum_model
         else:
             # resid     = significance_calc.li_and_ma()
             resid = significance_calc.known_background()

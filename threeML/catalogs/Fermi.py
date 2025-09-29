@@ -1,5 +1,3 @@
-from __future__ import division
-
 import math
 import re
 from builtins import map, str
@@ -16,7 +14,6 @@ from astromodels.functions import (
     Super_cutoff_powerlaw,
 )
 from astromodels.utils.angular_distance import angular_distance
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
@@ -347,7 +344,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         amp = row[primary_string + "ampl"]
 
         # need to correct epeak to e cut
-        ecut = old_div(epeak, (2 - index))
+        ecut = epeak / (2 - index)
 
         cpl = Cutoff_powerlaw()
 
@@ -638,7 +635,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
             this_spectrum.K.value / 1000.0,
             this_spectrum.K.value * 1000,
         )
-        this_spectrum.xc = a ** (old_div(-1.0, b)) * u.MeV
+        this_spectrum.xc = a ** (-1.0 / b) * u.MeV
         this_spectrum.xc.fix = fix
 
     else:

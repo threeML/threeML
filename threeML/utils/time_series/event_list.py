@@ -1,8 +1,4 @@
-from __future__ import division, print_function
-
 from builtins import range, zip
-
-from past.utils import old_div
 
 __author__ = "grburgess"
 
@@ -347,7 +343,7 @@ class EventList(TimeSeries):
                 # We do not use the dead time corrected exposure here
                 # because the integration is done over the full time bin
                 # and not the dead time corrected exposure
-                bkg.append(old_div(tmpbkg, tb[1] - tb[0]))
+                bkg.append(tmpbkg / (tb[1] - tb[0]))
 
         else:
             bkg = None
@@ -1093,7 +1089,7 @@ class EventListWithLiveTime(EventList):
 
             dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
-            fraction = old_div((stop - start), dt)
+            fraction = (stop - start) / dt
 
             total_livetime = self._live_time[inside_idx] * fraction
 
@@ -1126,7 +1122,7 @@ class EventListWithLiveTime(EventList):
 
             distance_from_next_bin = self._live_time_stops[left_remainder_idx] - start
 
-            fraction = old_div(distance_from_next_bin, dt)
+            fraction = distance_from_next_bin / dt
 
             left_fractional_livetime = self._live_time[left_remainder_idx] * fraction
 
@@ -1145,7 +1141,7 @@ class EventListWithLiveTime(EventList):
 
             distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
 
-            fraction = old_div(distance_from_next_bin, dt)
+            fraction = distance_from_next_bin / dt
 
             right_fractional_livetime = self._live_time[right_remainder_idx] * fraction
 

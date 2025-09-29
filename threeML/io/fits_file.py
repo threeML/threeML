@@ -1,6 +1,5 @@
 import astropy.units as u
 import numpy as np
-import six
 from astropy.io import fits
 from importlib.metadata import version
 
@@ -139,7 +138,7 @@ class FITSExtension(object):
 
                 units = str(test_value.unit)
 
-            elif isinstance(test_value, six.string_types):
+            elif isinstance(test_value, str):
                 # Get maximum length, but make 1 as minimum length so if the column is
                 # completely made up of empty string we still can work
 

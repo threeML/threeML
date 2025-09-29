@@ -1,11 +1,8 @@
-from __future__ import division
-
 import os
 
 import numpy as np
 import pytest
 from astromodels import Model, PointSource, Powerlaw
-from past.utils import old_div
 
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -117,6 +114,14 @@ def addition_proof_simple(x, y, z):
 
 
 def addition_proof_weighted(x, y, z):
+    assert (
+        (x.rates[3] / x.rate_errors[3] ** 2) + (y.rates[3] / y.rate_errors[3] ** 2)
+    ) / ((1 / x.rate_errors[3] ** 2) + (1 / y.rate_errors[3] ** 2)) == (
+        z.rates[3] / z.exposure
+    )
+
+
+"""
     assert old_div(
         (
             old_div(x.rates[3], x.rate_errors[3] ** 2)
@@ -124,6 +129,7 @@ def addition_proof_weighted(x, y, z):
         ),
         (old_div(1, x.rate_errors[3] ** 2) + old_div(1, y.rate_errors[3] ** 2)),
     ) == old_div(z.rates[3], z.exposure)
+"""
 
 
 def spectrum_addition(
