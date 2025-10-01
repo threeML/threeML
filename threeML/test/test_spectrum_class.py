@@ -121,17 +121,6 @@ def addition_proof_weighted(x, y, z):
     )
 
 
-"""
-    assert old_div(
-        (
-            old_div(x.rates[3], x.rate_errors[3] ** 2)
-            + old_div(y.rates[3], y.rate_errors[3] ** 2)
-        ),
-        (old_div(1, x.rate_errors[3] ** 2) + old_div(1, y.rate_errors[3] ** 2)),
-    ) == old_div(z.rates[3], z.exposure)
-"""
-
-
 def spectrum_addition(
     obs_spectrum_1, obs_spectrum_2, obs_spectrum_incompatible, addition, addition_proof
 ):

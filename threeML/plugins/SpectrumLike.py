@@ -3635,10 +3635,8 @@ class SpectrumLike(PluginPrototype):
                 )
                 / rebinned_quantities["new_chan_width"]
             )
-
-        # weighted_error = old_div(
-        #    rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
-        # )
+        else:
+            y_label = "Observed rate\n(counts s$^{-1}$ keV$^{-1}$)"
 
         residual_plot.add_data(
             rebinned_quantities["mean_energy"],
