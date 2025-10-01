@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
@@ -145,7 +144,7 @@ class ResidualPlot:
 
         step_plot(
             np.asarray(list(zip(xmin, xmax))),
-            old_div(y, xwidth),
+            y / xwidth,
             self._data_axis,
             label=label,
             **kwargs,

@@ -1,12 +1,9 @@
-from __future__ import division, print_function
-
 import os
 from builtins import zip
 
 import astropy.units as u
 import numpy as np
 from astromodels import Powerlaw
-from past.utils import old_div
 
 from threeML import (
     Model,
@@ -254,10 +251,10 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
     res = p1 + p2
 
-    assert old_div(abs(res.value - (p1.value + p2.value)), (p1.value + p2.value)) < 0.01
+    assert abs(res.value - (p1.value + p2.value)) / (p1.value + p2.value) < 0.01
 
     # Make ratio with error 0
-    res = old_div(p1, p1)
+    res = p1 / p1
 
     low_b, hi_b = res.equal_tail_interval()
 

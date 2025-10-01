@@ -12,7 +12,6 @@ import UnbinnedAnalysis
 from astromodels import Model, Parameter
 from GtBurst import FuncFactory, LikelihoodComponent
 from matplotlib import gridspec
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
@@ -644,8 +643,8 @@ class FermiLATLike(PluginPrototype):
 
         # Using model variance to account for low statistic
 
-        resid = old_div((self.like.nobs - sum_model), sum_model)
-        resid_err = old_div(numpy.sqrt(self.like.nobs), sum_model)
+        resid = (self.like.nobs - sum_model) / sum_model
+        resid_err = numpy.sqrt(self.like.nobs) / sum_model
 
         sub1.axhline(0, linestyle="--")
         sub1.errorbar(
@@ -865,8 +864,8 @@ class FermiLATLike(PluginPrototype):
         significance_calc = Significance(Non=y, Noff=sum_backgrounds)
 
         if False:
-            resid = old_div((self.like.nobs - sum_model), sum_model)
-            resid_err = old_div(y_err, sum_model)
+            resid = (self.like.nobs - sum_model) / sum_model
+            resid_err = y_err / sum_model
         else:
             # resid     = significance_calc.li_and_ma()
             resid = significance_calc.known_background()

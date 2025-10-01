@@ -1,12 +1,9 @@
-from __future__ import division, print_function
-
 import collections
 from builtins import object, range, zip
 
 import numpy as np
 import ROOT
 import scipy.integrate
-from past.utils import old_div
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
@@ -190,11 +187,11 @@ class VERITASRun(object):
 
         # Added by for bin by bin normalization
         v_new = np.sum(self._hMigration, axis=1)
-        new_v = old_div(v_new, expectation)
+        new_v = v_new / expectation
         avg1_new = new_v
         avg2_new = np.interp(self._recon_energies_c, energies_eff, self._eff_area)
-        renorm_new = old_div(avg1_new, avg2_new)
-        hMigration_new = old_div(self._hMigration, renorm_new[:, None])
+        renorm_new = avg1_new / avg2_new
+        hMigration_new = self._hMigration / renorm_new[:, None]
         hMigration_new[~np.isfinite(hMigration_new)] = 0
 
         self._hMigration = hMigration_new
@@ -289,7 +286,7 @@ class VERITASRun(object):
     @staticmethod
     def _simulated_spectrum_f(e1, e2):
         def integral_f(x):
-            return old_div(-3.0, (x**0.5))
+            return -3.0 / (x**0.5)
 
         return integral_f(e2) - integral_f(e1)
 
@@ -317,20 +314,18 @@ class VERITASRun(object):
         dE = e2 - e1
 
         if not fast:
-            this_spectrum = old_div(
-                self._integrate(diff_flux, e1, e2), dE
-            )  # 1 / keV cm2 s
+            this_spectrum = self._integrate(diff_flux, e1, e2) / dE
+            # 1 / keV cm2 s
 
-            sim_spectrum = old_div(
-                self._simulated_spectrum_f(e1, e2), dE
-            )  # 1 / keV cm2 s
+            sim_spectrum = self._simulated_spectrum_f(e1, e2) / dE
+            # 1 / keV cm2 s
 
         else:
             this_spectrum = diff_flux(self._mc_energies_c)
 
             sim_spectrum = self._simulated_spectrum(self._mc_energies_c)
 
-        weight = old_div(this_spectrum, sim_spectrum)  # type: np.ndarray
+        weight = this_spectrum / sim_spectrum  # type: np.ndarray
 
         # print("Sum of weight: %s" % np.sum(weight))
 

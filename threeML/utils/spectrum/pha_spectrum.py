@@ -4,8 +4,6 @@ from typing import Any, Dict, Iterable, Optional, Union
 
 import astropy.io.fits as fits
 import numpy as np
-import six
-from past.utils import old_div
 
 from threeML.io.fits_file import FITSFile
 from threeML.io.logging import setup_logger
@@ -416,7 +414,7 @@ def _read_pha_or_pha2_file(
                 # Read in the response
 
         if (
-            isinstance(rsp_file, six.string_types)
+            isinstance(rsp_file, str)
             or isinstance(rsp_file, str)
             or isinstance(rsp_file, Path)
         ):
@@ -482,8 +480,8 @@ def _read_pha_or_pha2_file(
                 rate_errors = None
 
                 if not is_poisson:
-                    rate_errors = old_div(
-                        data.field("STAT_ERR")[spectrum_number - 1, :], exposure
+                    rate_errors = (
+                        data.field("STAT_ERR")[spectrum_number - 1, :] / exposure
                     )
 
             else:
@@ -494,9 +492,7 @@ def _read_pha_or_pha2_file(
                 rate_errors = None
 
                 if not is_poisson:
-                    rate_errors = old_div(
-                        data.field("STAT_ERR"), np.atleast_2d(exposure).T
-                    )
+                    rate_errors = data.field("STAT_ERR") / np.atleast_2d(exposure).T
 
         if "SYS_ERR" in data.columns.names:
             if not treat_as_time_series:
@@ -605,7 +601,7 @@ def _read_pha_or_pha2_file(
             rate_errors = None
 
             if not is_poisson:
-                rate_errors = old_div(data.field("STAT_ERR"), exposure)
+                rate_errors = data.field("STAT_ERR") / exposure
 
         if "SYS_ERR" in data.columns.names:
             sys_errors = data.field("SYS_ERR")
@@ -893,7 +889,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             stat_err = None
 
         else:
-            stat_err = old_div(new_count_errors, new_exposure)
+            stat_err = new_count_errors / new_exposure
 
         if self._tstart is None:
             tstart = 0
@@ -918,7 +914,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             tstart=tstart,
             telapse=telapse,
             channel=list(range(1, len(self) + 1)),
-            rate=old_div(new_counts, self.exposure),
+            rate=new_counts / self.exposure,
             stat_err=stat_err,
             quality=self.quality.to_ogip(),
             grouping=self.grouping,
@@ -1243,7 +1239,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
             stat_err = None
 
         else:
-            stat_err = old_div(new_count_errors, self.exposure)
+            stat_err = new_count_errors / self.exposure
 
         # create a new PHAII instance
 
@@ -1253,7 +1249,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
             tstart=0,
             telapse=self.exposure,
             channel=list(range(1, len(self) + 1)),
-            rate=old_div(new_counts, self.exposure),
+            rate=new_counts / self.exposure,
             stat_err=stat_err,
             quality=self.quality.to_ogip(),
             grouping=self.grouping,

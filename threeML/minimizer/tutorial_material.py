@@ -1,5 +1,3 @@
-from __future__ import division
-
 from builtins import map, range, zip
 
 import matplotlib.pyplot as plt
@@ -13,7 +11,6 @@ from astromodels import (
     use_astromodels_memoization,
 )
 from matplotlib import colormaps
-from past.utils import old_div
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
@@ -288,7 +285,7 @@ class Complex(Simple):
 
         for i in range(3):
             self._gau += Gaussian(
-                F=100.0 / (i + 1), mu=10 + (i * 25), sigma=old_div(5, (i + 1))
+                F=100.0 / (i + 1), mu=10 + (i * 25), sigma=5 / (i + 1)
             )
 
         self._returned_values = []

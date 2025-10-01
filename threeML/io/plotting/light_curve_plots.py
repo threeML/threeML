@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_data_file
@@ -30,9 +29,9 @@ def binned_light_curve_plot(
     """
     fig, ax = plt.subplots()
 
-    top = max(old_div(cnts[width > 0], width[width > 0])) * 1.2
+    top = max(cnts[width > 0] / width[width > 0]) * 1.2
 
-    min_cnts = min(old_div(cnts[cnts > 0], width[cnts > 0])) * 0.95
+    min_cnts = min(cnts[cnts > 0] / width[cnts > 0]) * 0.95
     bottom = min_cnts
     mean_time = np.mean(time_bins, axis=1)
 
@@ -70,7 +69,7 @@ def binned_light_curve_plot(
             for mask in all_masks[1:]:
                 step_plot(
                     time_bins[mask],
-                    old_div(cnts[mask], width[mask]),
+                    cnts[mask] / width[mask],
                     ax,
                     color=selection_color,
                     fill=True,
@@ -79,7 +78,7 @@ def binned_light_curve_plot(
 
         step_plot(
             time_bins[all_masks[0]],
-            old_div(cnts[all_masks[0]], width[all_masks[0]]),
+            cnts[all_masks[0]] / width[all_masks[0]],
             ax,
             color=selection_color,
             fill=True,
@@ -102,7 +101,7 @@ def binned_light_curve_plot(
             for mask in all_masks[1:]:
                 step_plot(
                     time_bins[mask],
-                    old_div(cnts[mask], width[mask]),
+                    cnts[mask] / width[mask],
                     ax,
                     color=background_selection_color,
                     fill=True,
@@ -112,7 +111,7 @@ def binned_light_curve_plot(
 
         step_plot(
             time_bins[all_masks[0]],
-            old_div(cnts[all_masks[0]], width[all_masks[0]]),
+            cnts[all_masks[0]] / width[all_masks[0]],
             ax,
             color=background_selection_color,
             fill=True,
@@ -142,7 +141,7 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.vstack([chan_min, chan_max]).T
     width = chan_max - chan_min
 
-    step_plot(chans, old_div(counts, width), ax, **kwargs)
+    step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale("log")
     ax.set_yscale("log")
 

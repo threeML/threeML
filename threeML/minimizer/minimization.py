@@ -1,5 +1,3 @@
-from __future__ import division
-
 import collections
 import math
 from builtins import object, range, str, zip
@@ -7,7 +5,6 @@ from builtins import object, range, str, zip
 import numpy as np
 import pandas as pd
 import scipy.optimize
-from past.utils import old_div
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -473,9 +470,7 @@ class Minimizer(object):
                 else:
                     # Bounded only in the negative direction. Make sure we are not at
                     # the boundary
-                    if np.isclose(
-                        current_value, current_min, old_div(abs(current_value), 20)
-                    ):
+                    if np.isclose(current_value, current_min, abs(current_value) / 20):
                         log.warning(
                             "The current value of parameter %s is very close to "
                             "its lower bound when starting the fit. Fixing it"
@@ -496,9 +491,7 @@ class Minimizer(object):
                     # Bounded only in the positive direction
                     # Bounded only in the negative direction. Make sure we are not at
                     # the boundary
-                    if np.isclose(
-                        current_value, current_max, old_div(abs(current_value), 20)
-                    ):
+                    if np.isclose(current_value, current_max, abs(current_value) / 20):
                         log.warnings(
                             "The current value of parameter %s is very close to "
                             "its upper bound when starting the fit. Fixing it"
@@ -677,9 +670,9 @@ class Minimizer(object):
                     variance_j = self._covariance_matrix[j, j]
 
                     if variance_i * variance_j > 0:
-                        self._correlation_matrix[i, j] = old_div(
-                            self._covariance_matrix[i, j],
-                            (math.sqrt(variance_i * variance_j)),
+                        self._correlation_matrix[i, j] = float(
+                            self._covariance_matrix[i, j]
+                            / (math.sqrt(variance_i * variance_j)),
                         )
 
                     else:

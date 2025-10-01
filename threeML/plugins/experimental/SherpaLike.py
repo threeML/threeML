@@ -1,10 +1,7 @@
-from __future__ import division
-
 from builtins import object, range, zip
 
 import matplotlib.pyplot as plt
 import numpy as np
-from past.utils import old_div
 from sherpa.astro import datastack
 from sherpa.models import TableModel
 
@@ -205,9 +202,9 @@ class SherpaLike(PluginPrototype):
         axarr[0].legend()
         axarr[1].errorbar(
             energies[counts > 0],
-            (old_div((counts - tot), tot))[counts > 0],
+            ((counts - tot) / tot)[counts > 0],
             xerr=np.zeros(len(energies[counts > 0])),
-            yerr=(old_div(np.sqrt(counts), tot))[counts > 0],
+            yerr=(np.sqrt(counts) / tot)[counts > 0],
             fmt="ko",
             capsize=0,
         )

@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import collections
 import os
 from builtins import range, str
@@ -11,7 +9,6 @@ from astromodels import Parameter
 from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
-from past.utils import old_div
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -614,14 +611,14 @@ class HAWCLike(PluginPrototype):
 
         # Using model variance to account for low statistic
 
-        resid = old_div((signal - model), (error if pulls else model))
+        resid = (signal - model) / (error if pulls else model)
 
         sub1.axhline(0, linestyle="--")
 
         sub1.errorbar(
             bin_index,
             resid,
-            yerr=np.zeros(error.shape) if pulls else old_div(error, model),
+            yerr=np.zeros(error.shape) if pulls else error / model,
             capsize=0,
             fmt=".",
         )
@@ -704,7 +701,7 @@ class HAWCLike(PluginPrototype):
 
         list_of_bin_names = set(bin_list) & set(self._bin_list)
 
-        delta_r = old_div(1.0 * max_radius, n_radial_bins)
+        delta_r = 1.0 * max_radius / n_radial_bins
         radii = np.array([delta_r * (i + 0.5) for i in range(0, n_radial_bins)])
 
         # Use GetTopHatAreas to get the area of all pixels in a given circle.
@@ -782,7 +779,7 @@ class HAWCLike(PluginPrototype):
             self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, max_radius)
         )[good_bins]
         w = np.divide(total_model, total_bkg)
-        weight = np.array([old_div(w, np.sum(w)) for r in radii])
+        weight = np.array([w / np.sum(w) for r in radii])
 
         # restrict profiles to the user-specified analysis bins.
         area = area[:, good_bins]
@@ -793,11 +790,9 @@ class HAWCLike(PluginPrototype):
 
         # average over the analysis bins
 
-        excess_data = np.average(old_div(signal, area), weights=weight, axis=1)
-        excess_error = np.sqrt(
-            np.sum(old_div(counts * weight * weight, (area * area)), axis=1)
-        )
-        excess_model = np.average(old_div(model, area), weights=weight, axis=1)
+        excess_data = np.average(signal / area, weights=weight, axis=1)
+        excess_error = np.sqrt(np.sum(counts * weight * weight / (area * area), axis=1))
+        excess_model = np.average(model / area, weights=weight, axis=1)
 
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
 

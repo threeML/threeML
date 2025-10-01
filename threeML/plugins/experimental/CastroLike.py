@@ -1,5 +1,3 @@
-from __future__ import division
-
 from builtins import object
 
 import matplotlib.pyplot as plt
@@ -7,7 +5,6 @@ import numpy as np
 import scipy.integrate
 import scipy.interpolate
 import scipy.optimize
-from past.utils import old_div
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.plugin_prototype import PluginPrototype
@@ -241,7 +238,7 @@ class CastroLike(PluginPrototype):
 
             length = interval_container.stop - interval_container.start
 
-            expected_flux = old_div(scipy.integrate.simps(yy, xx), length)
+            expected_flux = scipy.integrate.simps(yy, xx) / length
 
             this_log_l = interval_container(expected_flux)
 

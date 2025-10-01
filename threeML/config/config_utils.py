@@ -10,10 +10,11 @@ from threeML.io.package_data import get_path_of_user_config
 from .config import threeML_config
 
 # FIXME: These lines were moved to local imports withing functions since
-#  they were causing a circular import. The config module needs the logging setup,
-#  and the logging setup needs the config module.
-#from threeML.io.logging import setup_logger
-#log = setup_logger(__name__)
+# they were causing a circular import. The config module needs the logging setup,
+# and the logging setup needs the config module.
+# from threeML.io.logging import setup_logger
+# log = setup_logger(__name__)
+
 
 def recurse_dict(d, tree):
     for k, v in d.items():
@@ -54,9 +55,9 @@ def show_configuration(sub_menu: Optional[str] = None):
 
         else:
             msg = f"{sub_menu} is not in the threeml configuration"
-            
+
             from threeML.io.logging import setup_logger
-  
+
             log = setup_logger(__name__)
             log.error(msg)
 

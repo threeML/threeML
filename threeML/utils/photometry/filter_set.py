@@ -1,5 +1,3 @@
-from __future__ import division
-
 from builtins import object, zip
 
 import astropy.constants as constants

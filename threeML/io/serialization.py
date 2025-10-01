@@ -1,17 +1,9 @@
-from future import standard_library
-
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 
-standard_library.install_aliases()
 __all__ = []
 
-# copyreg is called copy_reg in python2
-try:
-    import copyreg  # py3
-
-except ImportError:
-    import copyreg as copyreg  # py2
+import copyreg  # py3
 
 
 # Serialization for JointLikelihood object

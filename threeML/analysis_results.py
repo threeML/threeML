@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 import collections
 import datetime
 import functools
@@ -22,7 +20,6 @@ from astromodels.core.my_yaml import my_yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
 from matplotlib import colormaps
-from past.utils import old_div
 from rich.console import Console
 
 from threeML import __version__
@@ -677,8 +674,8 @@ class _AnalysisResults(object):
                 variance_j = covariance[j, j]
 
                 if variance_i * variance_j > 0:
-                    correlation_matrix[i, j] = old_div(
-                        covariance[i, j], (math.sqrt(variance_i * variance_j))
+                    correlation_matrix[i, j] = covariance[i, j] / (
+                        math.sqrt(variance_i * variance_j)
                     )
 
                 else:
@@ -1495,7 +1492,7 @@ class BayesianResults(_AnalysisResults):
 
         binsize = 2 * iqr * pow(len(data), -1 / 3.0)
 
-        nbins = np.ceil(old_div((max(data) - min(data)), binsize))
+        nbins = np.ceil((np.max(data) - min(data)) / binsize)
 
         return nbins
 

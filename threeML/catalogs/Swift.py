@@ -7,15 +7,12 @@ from builtins import map, range, str
 import astropy.table as astro_table
 import numpy as np
 import pandas as pd
-from future import standard_library
 
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 from threeML.io.rich_display import display
-
-standard_library.install_aliases()
 
 
 log = setup_logger(__name__)
