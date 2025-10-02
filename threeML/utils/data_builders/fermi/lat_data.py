@@ -1,33 +1,28 @@
 import collections
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 
+from threeML.io.logging import setup_logger
 from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
-from threeML.io.logging import setup_logger
-
 
 log = setup_logger(__name__)
 
+
 class LLEFile(object):
     def __init__(self, lle_file, ft2_file, rsp_file):
-        """
-        Class to read the LLE and FT2 files
+        """Class to read the LLE and FT2 files.
 
         Inspired heavily by G. Vianello
-
-
 
         :param lle_file:
         :param ft2_file:
         """
 
         with fits.open(rsp_file) as rsp_:
-
             data = rsp_["EBOUNDS"].data
 
             self._emin = data.E_MIN
@@ -35,7 +30,6 @@ class LLEFile(object):
             self._channels = data.CHANNEL
 
         with fits.open(lle_file) as ft1_:
-
             data = ft1_["EVENTS"].data
 
             self._events = data.TIME  # - trigger_time
@@ -53,11 +47,11 @@ class LLEFile(object):
             try:
                 self._trigger_time = ft1_["EVENTS"].header["TRIGTIME"]
 
-            except:
-
+            except Exception:
                 # For whatever reason
                 log.warning(
-                    "There is no trigger time in the LLE file. Must be set manually or using MET relative times."
+                    "There is no trigger time in the LLE file. Must be set manually or "
+                    "using MET relative times."
                 )
 
                 self._trigger_time = 0
@@ -71,7 +65,6 @@ class LLEFile(object):
         self._apply_gti_to_events()
 
         with fits.open(ft2_file) as ft2_:
-
             ft2_tstart = ft2_["SC_DATA"].data.field("START")  # - trigger_time
             ft2_tstop = ft2_["SC_DATA"].data.field("STOP")  # - trigger_time
             ft2_livetime = ft2_["SC_DATA"].data.field("LIVETIME")
@@ -79,10 +72,9 @@ class LLEFile(object):
         ft2_bin_size = 1.0  # seconds
 
         if not np.all(ft2_livetime <= 1.0):
-
             log.warning(
-                "You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise the livetime "
-                "correction will not be accurate!"
+                "You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise "
+                "the livetime correction will not be accurate!"
             )
 
             ft2_bin_size = 30.0  # s
@@ -108,8 +100,7 @@ class LLEFile(object):
         self._livetime = self._livetime[idx]
 
     def _apply_gti_to_live_time(self):
-        """
-        This function applies the GTIs to the live time intervals
+        """This function applies the GTIs to the live time intervals.
 
         It will remove any livetime interval not falling within the
         boundaries of a GTI. The FT2 bins are assumed to have the same
@@ -127,7 +118,6 @@ class LLEFile(object):
         # now loop through each GTI interval
 
         for start, stop in zip(self._gti_start, self._gti_stop):
-
             # create an index of all the FT2 bins falling within this interval
 
             tmp_idx = np.logical_and(start <= self._ft2_tstart, self._ft2_tstop <= stop)
@@ -141,12 +131,10 @@ class LLEFile(object):
         self._livetime = self._livetime[filter_idx]
 
     def _apply_gti_to_events(self):
-        """
-
-        This created a filter index for events falling outside of the
-        GTI. It must be run after the events are binned in energy because
-        a filter is set up in that function for events that have energies
-        outside the EBOUNDS of the DRM
+        """This created a filter index for events falling outside of the GTI.
+        It must be run after the events are binned in energy because a filter
+        is set up in that function for events that have energies outside the
+        EBOUNDS of the DRM.
 
         :return: none
         """
@@ -156,7 +144,6 @@ class LLEFile(object):
 
         # loop throught the GTI intervals
         for start, stop in zip(self._gti_start, self._gti_stop):
-
             # capture all the events within that interval
             tmp_idx = np.logical_and(start <= self._events, self._events <= stop)
 
@@ -167,10 +154,7 @@ class LLEFile(object):
         self._filter_idx = np.logical_and(self._filter_idx, filter_idx)
 
     def is_in_gti(self, time):
-        """
-
-        Checks if a time falls within
-        a GTI
+        """Checks if a time falls within a GTI.
 
         :param time: time in MET
         :return: bool
@@ -179,17 +163,13 @@ class LLEFile(object):
         in_gti = False
 
         for start, stop in zip(self._gti_start, self._gti_stop):
-
             if (start <= time) and (time <= stop):
-
                 in_gti = True
 
         return in_gti
 
     def _bin_energies_into_pha(self):
-        """
-
-        bins the LLE data into PHA channels
+        """Bins the LLE data into PHA channels.
 
         :return:
         """
@@ -206,18 +186,16 @@ class LLEFile(object):
 
     @property
     def trigger_time(self):
-        """
-        Gets the trigger time in MET
-        :return: trigger time in MET
-        """
+        """Gets the trigger time in MET :return: trigger time in MET."""
         return self._trigger_time
 
     @trigger_time.setter
     def trigger_time(self, val):
-
-        assert self._tstart <= val <= self._tstop, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._tstart, self._tstop)
+        assert (
+            self._tstart <= val <= self._tstop
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._tstart,
+            self._tstop,
         )
 
         self._trigger_time = val
@@ -232,18 +210,12 @@ class LLEFile(object):
 
     @property
     def arrival_times(self):
-        """
-        The GTI/energy filtered arrival times in MET
-        :return:
-        """
+        """The GTI/energy filtered arrival times in MET :return:"""
         return self._events[self._filter_idx]
 
     @property
     def energies(self):
-        """
-        The GTI/energy filtered pha energies
-        :return:
-        """
+        """The GTI/energy filtered pha energies :return:"""
         return self._pha[self._filter_idx]
 
     @property
@@ -252,21 +224,16 @@ class LLEFile(object):
 
     @property
     def mission(self):
-        """
-        Return the name of the mission
-        :return:
-        """
+        """Return the name of the mission :return:"""
         return self._instrument
 
     @property
     def energy_edges(self):
-
         return np.vstack((self._emin, self._emax))
 
     @property
     def instrument(self):
-        """
-        Return the name of the instrument and detector
+        """Return the name of the instrument and detector.
 
         :return:
         """
@@ -286,18 +253,15 @@ class LLEFile(object):
         return self._ft2_tstop
 
     def __repr__(self):
-
         return self._output().to_string()
 
     def _output(self):
+        """Examine the currently selected interval If connected to the
+        internet, will also look up info for other instruments to compare with
+        Fermi.
 
+        :return: none
         """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
-
-                :return: none
-                """
 
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 

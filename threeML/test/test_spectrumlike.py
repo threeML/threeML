@@ -1,17 +1,19 @@
+import warnings
+
 import numpy as np
 import pytest
-from astromodels import Blackbody, Powerlaw, Model, PointSource
+from astromodels import Blackbody, Model, PointSource, Powerlaw
 
-from threeML import JointLikelihood, DataList
-from threeML.io.package_data import get_path_of_data_file
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.utils.OGIP.response import OGIPResponse
+from threeML import DataList, JointLikelihood
 from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.file_utils import within_directory
+from threeML.io.package_data import get_path_of_data_file
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.utils.OGIP.response import OGIPResponse
+
 from .conftest import get_test_datasets_directory
-import warnings
 
 warnings.simplefilter("ignore")
 
@@ -20,7 +22,6 @@ __example_dir = get_test_datasets_directory()
 
 
 def test_assigning_source_name():
-
     energies = np.logspace(1, 3, 51)
 
     low_edge = energies[:-1]
@@ -90,7 +91,6 @@ def test_assigning_source_name():
     jl = JointLikelihood(model, DataList(spectrum_generator))
 
     with pytest.raises(RuntimeError):
-
         spectrum_generator.assign_to_source("bad_name")
 
         # before with bad name
@@ -106,7 +106,6 @@ def test_assigning_source_name():
     spectrum_generator.assign_to_source("bad_name")
 
     with pytest.raises(RuntimeError):
-
         jl = JointLikelihood(model, DataList(spectrum_generator))
 
     # multisource model
@@ -138,7 +137,6 @@ def test_assigning_source_name():
 
 
 def test_spectrumlike_fit():
-
     energies = np.logspace(1, 3, 51)
 
     low_edge = energies[:-1]
@@ -171,7 +169,7 @@ def test_spectrumlike_fit():
 
     jl = JointLikelihood(model, DataList(spectrum_generator))
 
-    result = jl.fit()
+    _ = jl.fit()
 
     K_variates = jl.results.get_variates("mysource.spectrum.main.Blackbody.K")
 
@@ -183,7 +181,6 @@ def test_spectrumlike_fit():
 
 
 def test_dispersionspectrumlike_fit():
-
     response = OGIPResponse(get_path_of_data_file("datasets/ogip_powerlaw.rsp"))
 
     sim_K = 1e-1
@@ -212,7 +209,7 @@ def test_dispersionspectrumlike_fit():
 
     jl = JointLikelihood(model, DataList(spectrum_generator))
 
-    result = jl.fit()
+    _ = jl.fit()
 
     K_variates = jl.results.get_variates("mysource.spectrum.main.Blackbody.K")
 
@@ -273,7 +270,7 @@ def test_spectrum_like_with_background_model():
 
     jl = JointLikelihood(model, DataList(plugin_bkg_model))
 
-    result = jl.fit()
+    _ = jl.fit()
 
     K_variates = jl.results.get_variates("mysource.spectrum.main.Blackbody.K")
 
@@ -283,15 +280,14 @@ def test_spectrum_like_with_background_model():
         np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], rtol=0.5)
     )
 
-
-    ## test with ogiplike 
+    # test with ogiplike
     with within_directory(__example_dir):
-        ogip = OGIPLike("test_ogip", observation="test.pha{1}", background=background_plugin)
+        _ = OGIPLike(
+            "test_ogip", observation="test.pha{1}", background=background_plugin
+        )
 
-    
 
 def test_all_statistics():
-
     energies = np.logspace(1, 3, 51)
 
     low_edge = energies[:-1]

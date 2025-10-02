@@ -4,14 +4,14 @@ on: [push, release]
 jobs:
   fast_notebooks:
     name: "Build the fast notebooks"
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: install latex
         uses: xu-cheng/texlive-action/small@v1
           
@@ -78,7 +78,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,7 +89,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
+          key: conda-hal_notebooks-python-3.11-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -98,7 +98,7 @@ jobs:
           auto-activate-base: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
+          python-version: 3.11
           channels: threeml, conda-forge, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: false
@@ -163,7 +163,7 @@ jobs:
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -174,7 +174,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-fermi_notebooks-python-3.9-${{ hashFiles('ci/environment_fermi.yml') }}
+          key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -183,7 +183,7 @@ jobs:
           auto-activate-base: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
+          python-version: 3.11
           channels: fermi, threeml, conda-forge, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: false
@@ -214,8 +214,8 @@ jobs:
           pip install --upgrade speclite fermipy
 
           # Update gtburst
-          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.9/site-packages/fermitools/GtBurst/updater.py
-          python $CONDA_PREFIX/lib/python3.9/site-packages/fermitools/GtBurst/updater.py
+          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.11/site-packages/fermitools/GtBurst/updater.py
+          python $CONDA_PREFIX/lib/python3.11/site-packages/fermitools/GtBurst/updater.py
           
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
@@ -235,7 +235,6 @@ jobs:
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
-
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
 
@@ -259,7 +258,7 @@ jobs:
     
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -270,7 +269,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-xspec_notebooks-python-3.9-${{ hashFiles('ci/environment_xspec.yml') }}
+          key: conda-xspec_notebooks-python-3.11-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -279,8 +278,8 @@ jobs:
           auto-activate-base: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
-          channels: threeml, xspecmodels, conda-forge, defaults
+          python-version: 3.11
+          channels: threeml, conda-forge, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
 
@@ -347,7 +346,7 @@ jobs:
   
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -358,7 +357,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
+          key: conda-multinest_notebooks-python-3.11-${{ hashFiles('ci/environment.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -367,9 +366,9 @@ jobs:
           auto-activate-base: false
           miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
+          python-version: 3.11
           channels: threeml, conda-forge, defaults
-          environment-file: ci/environment_hal.yml
+          environment-file: ci/environment.yml
           use-only-tar-bz2: false
 
       - name: Init Environment
@@ -448,7 +447,7 @@ jobs:
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-13
+    runs-on: macos-latest
     
     steps:
       - name: Checkout
@@ -506,7 +505,7 @@ jobs:
 
   api_doc:
     name: "Create the API stubs"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -516,7 +515,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Build the API doc
         run: |
@@ -552,7 +551,7 @@ jobs:
 
   build_docs:
     name: "Build the Documentation"
-    runs-on: macos-13
+    runs-on: macos-latest
     needs: [upload_notebooks, api_doc]
     steps:
 
@@ -565,7 +564,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install package
         run: |

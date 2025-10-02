@@ -19,6 +19,8 @@ class OGIP:
 @dataclass
 class Fermipy:
     fit_plot: FermiSpectrumPlot = field(default_factory=lambda: FermiSpectrumPlot())
+
+
 #    data_plot: DataHistPlot = DataHistPlot()
 
 
@@ -32,6 +34,7 @@ class Plugins:
     ogip: OGIP = field(default_factory=lambda: OGIP())
     photo: Photo = field(default_factory=lambda: Photo())
     fermipy: Fermipy = field(default_factory=lambda: Fermipy())
+
 
 @dataclass
 class TimeSeriesFit:

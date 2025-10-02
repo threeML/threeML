@@ -1,6 +1,5 @@
 import collections
 import re
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
@@ -8,8 +7,9 @@ import pandas as pd
 import requests
 
 from threeML.io.logging import setup_logger
-from threeML.utils.fermi_relative_mission_time import \
-    compute_fermi_relative_mission_times
+from threeML.utils.fermi_relative_mission_time import (
+    compute_fermi_relative_mission_times,
+)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
 log = setup_logger(__name__)
@@ -17,13 +17,9 @@ log = setup_logger(__name__)
 
 class GBMTTEFile(object):
     def __init__(self, ttefile: str) -> None:
-        """
-
-        A simple class for opening and easily accessing Fermi GBM
-        TTE Files.
+        """A simple class for opening and easily accessing Fermi GBM TTE Files.
 
         :param ttefile: The filename of the TTE file to be stored
-
         """
 
         tte = fits.open(ttefile)
@@ -39,20 +35,20 @@ class GBMTTEFile(object):
         # and then warn the user
 
         if not len(self._events) == len(np.unique(self._events)):
-
             log.warning(
-                "The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC "
-                % ttefile
+                f"The TTE file {ttefile} contains duplicate time tags and is thus "
+                "invalid. Contact the FSSC"
             )
 
         # sorting in time
         sort_idx = self._events.argsort()
 
         if not np.all(self._events[sort_idx] == self._events):
-
             # now sort both time and energy
             log.warning(
-                "The TTE file %s was not sorted in time but contains no duplicate events. We will sort the times, but use caution with this file. Contact the FSSC."
+                f"The TTE file {ttefile} was not sorted in time but contains no "
+                "duplicate events. We will sort the times, but use caution with this "
+                "file. Contact the FSSC."
             )
             self._events = self._events[sort_idx]
             self._pha = self._pha[sort_idx]
@@ -60,11 +56,11 @@ class GBMTTEFile(object):
         try:
             self._trigger_time = tte["PRIMARY"].header["TRIGTIME"]
 
-        except:
-
+        except Exception:
             # For continuous data
             log.warning(
-                "There is no trigger time in the TTE file. Must be set manually or using MET relative times."
+                "There is no trigger time in the TTE file. Must be set manually or "
+                "using MET relative times."
             )
 
             log.debug("set trigger time to zero")
@@ -89,15 +85,15 @@ class GBMTTEFile(object):
 
     @property
     def trigger_time(self) -> float:
-
         return self._trigger_time
 
     @trigger_time.setter
     def trigger_time(self, val) -> None:
-
-        assert self._start_events <= val <= self._stop_events, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._start_events, self._stop_events)
+        assert (
+            self._start_events <= val <= self._stop_events
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events,
+            self._stop_events,
         )
 
         self._trigger_time = val
@@ -124,16 +120,12 @@ class GBMTTEFile(object):
 
     @property
     def mission(self) -> str:
-        """
-        Return the name of the mission
-        :return:
-        """
+        """Return the name of the mission :return:"""
         return self._telescope
 
     @property
     def det_name(self) -> str:
-        """
-        Return the name of the instrument and detector
+        """Return the name of the instrument and detector.
 
         :return:
         """
@@ -145,11 +137,10 @@ class GBMTTEFile(object):
         return self._deadtime
 
     def _calculate_deadtime(self) -> None:
-        """
-        Computes an array of deadtimes following the perscription of Meegan et al. (2009).
+        """Computes an array of deadtimes following the perscription of Meegan
+        et al. (2009).
 
         The array can be summed over to obtain the total dead time
-
         """
         self._deadtime = np.zeros_like(self._events)
         overflow_mask = self._pha == 127  # specific to gbm! should work for CTTE
@@ -162,7 +153,6 @@ class GBMTTEFile(object):
         self._deadtime[~overflow_mask] = 2.0e-6  # s
 
     def _compute_mission_times(self) -> None:
-
         mission_dict = {}
 
         if self.trigger_time == 0:
@@ -172,7 +162,14 @@ class GBMTTEFile(object):
 
         xtime_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"
 
-        pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
+        pattern = r"""
+            <tr>.*?
+            <th scope=row>
+            <label for="(.*?)">(.*?)</label>
+            </th>.*?
+            <td align=center>.*?</td>.*?<td>(.*?)</td>.*?
+            </tr>
+            """
 
         args = dict(
             time_in_sf=self._trigger_time,
@@ -182,7 +179,6 @@ class GBMTTEFile(object):
         )
 
         try:
-
             content = requests.get(xtime_url, params=args).content
 
             mission_info = re.findall(pattern, content, re.S)
@@ -195,11 +191,10 @@ class GBMTTEFile(object):
             mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
             mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
 
-        except:
-
+        except Exception:
             log.warning(
-                "You do not have the requests library, cannot get time system from Heasarc "
-                "at this point."
+                "You do not have the requests library, cannot get time system from "
+                "Heasarc at this point."
             )
 
             return None
@@ -207,17 +202,15 @@ class GBMTTEFile(object):
         return mission_dict
 
     def __repr__(self):
-
         return self._output().to_string()
 
     def _output(self):
-        """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        """Examine the currently selected interval If connected to the
+        internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = collections.OrderedDict()
@@ -240,20 +233,18 @@ class GBMTTEFile(object):
 
 class GBMCdata(object):
     def __init__(self, cdata_file: str, rsp_file: str) -> None:
-
         self.spectrum_set = PHASpectrumSet(cdata_file, rsp_file=rsp_file)
 
         cdata = fits.open(cdata_file)
 
         try:
-
             self._trigger_time = cdata["PRIMARY"].header["TRIGTIME"]
 
-        except:
-
+        except Exception:
             # For continuous data
             log.warning(
-                "There is no trigger time in the TTE file. Must be set manually or using MET relative times."
+                "There is no trigger time in the TTE file. Must be set manually or "
+                "using MET relative times."
             )
 
             self._trigger_time = 0
@@ -275,15 +266,15 @@ class GBMCdata(object):
 
     @property
     def trigger_time(self) -> float:
-
         return self._trigger_time
 
     @trigger_time.setter
     def trigger_time(self, val) -> None:
-
-        assert self._start_events <= val <= self._stop_events, (
-            "Trigger time must be within the interval (%f,%f)"
-            % (self._start_events, self._stop_events)
+        assert (
+            self._start_events <= val <= self._stop_events
+        ), "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events,
+            self._stop_events,
         )
 
         self._trigger_time = val
@@ -306,16 +297,12 @@ class GBMCdata(object):
 
     @property
     def mission(self) -> str:
-        """
-        Return the name of the mission
-        :return:
-        """
+        """Return the name of the mission :return:"""
         return self._telescope
 
     @property
     def det_name(self) -> str:
-        """
-        Return the name of the instrument and detector
+        """Return the name of the instrument and detector.
 
         :return:
         """
@@ -323,7 +310,6 @@ class GBMCdata(object):
         return self._det_name
 
     def _compute_mission_times(self):
-
         mission_dict = {}
 
         if self.trigger_time == 0:
@@ -333,7 +319,14 @@ class GBMCdata(object):
 
         xtime_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"
 
-        pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
+        pattern = r"""
+            <tr>.*?
+            <th scope=row>
+            <label for="(.*?)">(.*?)</label>
+            </th>.*?
+            <td align=center>.*?</td>.*?<td>(.*?)</td>.*?
+            </tr>
+            """
 
         args = dict(
             time_in_sf=self._trigger_time,
@@ -343,7 +336,6 @@ class GBMCdata(object):
         )
 
         try:
-
             content = requests.get(xtime_url, params=args).content
 
             mission_info = re.findall(pattern, content, re.S)
@@ -356,11 +348,10 @@ class GBMCdata(object):
             mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
             mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
 
-        except:
-
+        except Exception:
             log.warning(
-                "You do not have the requests library, cannot get time system from Heasarc "
-                "at this point."
+                "You do not have the requests library, cannot get time system from "
+                "Heasarc at this point."
             )
 
             return None
@@ -368,17 +359,15 @@ class GBMCdata(object):
         return mission_dict
 
     def __repr__(self):
-
         return self._output().to_string()
 
     def _output(self):
-        """
-                Examine the currently selected interval
-                If connected to the internet, will also look up info for other instruments to compare with
-                Fermi.
+        """Examine the currently selected interval If connected to the
+        internet, will also look up info for other instruments to compare with
+        Fermi.
 
-                :return: none
-                """
+        :return: none
+        """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = collections.OrderedDict()

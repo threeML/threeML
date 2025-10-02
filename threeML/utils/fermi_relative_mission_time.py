@@ -1,18 +1,15 @@
-import re
 import collections
+import re
+
 import requests
 
 from threeML.io.network import internet_connection_is_active
 
 
 def compute_fermi_relative_mission_times(trigger_time):
-    """
-
-    If the user has the requests library, this function looks
-    online to the HEASARC xtime utility and computes other mission
-    times relative to the input MET
-
-
+    """If the user has the requests library, this function looks online to the
+    HEASARC xtime utility and computes other mission times relative to the
+    input MET.
 
     :param trigger_time: a fermi MET
     :return: mission time in a python dictionary
@@ -26,7 +23,15 @@ def compute_fermi_relative_mission_times(trigger_time):
 
     xtime_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"
 
-    pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
+    pattern = r"""
+        <tr>.*?
+        <th\s+scope=row>
+        <label\s+for="(.*?)">(.*?)</label>
+        </th>.*?
+        <td\s+align=center>.*?</td>.*?
+        <td>(.*?)</td>.*?
+        </tr>
+        """
 
     args = dict(
         time_in_sf=trigger_time,
@@ -36,7 +41,6 @@ def compute_fermi_relative_mission_times(trigger_time):
     )
 
     if internet_connection_is_active():
-
         content = requests.get(xtime_url, params=args).content
 
         mission_info = re.findall(pattern, content, re.S)
@@ -52,5 +56,4 @@ def compute_fermi_relative_mission_times(trigger_time):
         return mission_dict
 
     else:
-
         return None

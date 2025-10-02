@@ -1,29 +1,28 @@
-from __future__ import division
-
-import re
-from builtins import map, str
-
 import numpy
-from astromodels import *
-from astromodels.utils.angular_distance import angular_distance
-from past.utils import old_div
+from astromodels import (
+    Band,
+    Cutoff_powerlaw,
+    Model,
+    PointSource,
+    Powerlaw,
+    SmoothlyBrokenPowerLaw,
+)
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 
-from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from .catalog_utils import _gbm_and_lle_valid_source_check
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 log = setup_logger(__name__)
 
+
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
-        """
-        The Fermi-LAT GBM GRB catalog. Search for GRBs  by trigger
-        number, location, spectral parameters, T90, and date range.
+        """The Fermi-LAT GBM GRB catalog. Search for GRBs  by trigger number,
+        location, spectral parameters, T90, and date range.
 
         :param update: force update the XML VO table
         """
@@ -58,7 +57,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         self._available_models = ("band", "comp", "plaw", "sbpl")
 
     def _get_vo_table_from_source(self):
-
         self._vo_dataframe = get_heasarc_table_as_pandas(
             "fermigbrst", update=self._update, cache_time_days=1.0
         )
@@ -78,13 +76,12 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         return new_table.group_by("trigger_time")
 
     def _source_is_valid(self, source):
-
         return _gbm_and_lle_valid_source_check(source)
 
     def get_detector_information(self):
-        """
-        Return the detectors used for spectral analysis as well as their background
-        intervals. Peak flux and fluence intervals are also returned as well as best fit models
+        """Return the detectors used for spectral analysis as well as their
+        background intervals. Peak flux and fluence intervals are also returned
+        as well as best fit models.
 
         :return: detector information dictionary
         """
@@ -164,15 +161,15 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         return DictWithPrettyPrint(sources)
 
     def get_model(self, model="band", interval="fluence"):
-        """
-        Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model form.
-        You can choose band, comp, plaw, or sbpl models corresponding to the models
-        fitted in the GBM catalog. The interval for the fit can be the 'fluence' or
-        'peak' interval
+        """Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model
+        form. You can choose band, comp, plaw, or sbpl models corresponding to
+        the models fitted in the GBM catalog. The interval for the fit can be
+        the 'fluence' or 'peak' interval.
 
         :param model: one of 'band' (default), 'comp', 'plaw', 'sbpl'
         :param interval: 'peak' or 'fluence' (default)
-        :return: a dictionary of 3ML likelihood models that can be fitted
+        :return: a dictionary of 3ML likelihood models that can be
+            fitted
         """
 
         # check the model name and the interval selection
@@ -196,7 +193,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         lh_model = None
 
         for name, row in self._last_query_results.T.items():
-
             ra = row["ra"]
             dec = row["dec"]
 
@@ -236,8 +232,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     @staticmethod
     def _build_band(name, ra, dec, row, interval):
-        """
-        builds a band function from the Fermi-LAT GBM catalog
+        """Builds a band function from the Fermi-LAT GBM catalog.
 
         :param name: GRB name
         :param ra: GRB ra
@@ -272,11 +267,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # The GBM catalog has some extreme alpha values
 
         if alpha < band.alpha.min_value:
-
             band.alpha.min_value = alpha
 
         elif alpha > band.alpha.max_value:
-
             band.alpha.max_value = alpha
 
         band.alpha = alpha
@@ -284,11 +277,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # The GBM catalog has some extreme beta values
 
         if beta < band.beta.min_value:
-
             band.beta.min_value = beta
 
         elif beta > band.beta.max_value:
-
             band.beta.max_value = beta
 
         band.beta = beta
@@ -302,8 +293,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     @staticmethod
     def _build_cpl(name, ra, dec, row, interval):
-        """
-        builds a cpl function from the Fermi-LAT GBM catalog
+        """Builds a cpl function from the Fermi-LAT GBM catalog.
 
         :param name: GRB name
         :param ra: GRB ra
@@ -321,7 +311,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         amp = row[primary_string + "ampl"]
 
         # need to correct epeak to e cut
-        ecut = old_div(epeak, (2 - index))
+        ecut = epeak / (2 - index)
 
         cpl = Cutoff_powerlaw()
 
@@ -338,11 +328,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         cpl.piv = pivot
 
         if index < cpl.index.min_value:
-
             cpl.index.min_value = index
 
         elif index > cpl.index.max_value:
-
             cpl.index.max_value = index
 
         cpl.index = index
@@ -355,8 +343,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     @staticmethod
     def _build_powerlaw(name, ra, dec, row, interval):
-        """
-        builds a pl function from the Fermi-LAT GBM catalog
+        """Builds a pl function from the Fermi-LAT GBM catalog.
 
         :param name: GRB name
         :param ra: GRB ra
@@ -389,8 +376,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     @staticmethod
     def _build_sbpl(name, ra, dec, row, interval):
-        """
-        builds a sbpl function from the Fermi-LAT GBM catalog
+        """Builds a sbpl function from the Fermi-LAT GBM catalog.
 
         :param name: GRB name
         :param ra: GRB ra
@@ -425,11 +411,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         sbpl.break_energy = break_energy
 
         if alpha < sbpl.alpha.min_value:
-
             sbpl.alpha.min_value = alpha
 
         elif alpha > sbpl.alpha.max_value:
-
             sbpl.alpha.max_value = alpha
 
         sbpl.alpha = alpha
@@ -437,11 +421,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # The GBM catalog has some extreme beta values
 
         if beta < sbpl.beta.min_value:
-
             sbpl.beta.min_value = beta
 
         elif beta > sbpl.beta.max_value:
-
             sbpl.beta.max_value = beta
 
         sbpl.beta = beta
@@ -458,8 +440,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
 class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
-        """
-        The Fermi-GBM trigger catalog.
+        """The Fermi-GBM trigger catalog.
 
         :param update: force update the XML VO table
         """
@@ -473,20 +454,13 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
         )
 
     def _get_vo_table_from_source(self):
-
         self._vo_dataframe = get_heasarc_table_as_pandas(
             "fermigtrig", update=self._update, cache_time_days=1.0
         )
 
     def apply_format(self, table):
         new_table = table[
-            "name",
-            "trigger_type",
-            "ra",
-            "dec",
-            "trigger_time",
-            "localization_source"
-            
+            "name", "trigger_type", "ra", "dec", "trigger_time", "localization_source"
         ]
 
         new_table["ra"].format = "5.3f"
@@ -495,6 +469,4 @@ class FermiGBMTriggerCatalog(VirtualObservatoryCatalog):
         return new_table.group_by("trigger_time")
 
     def _source_is_valid(self, source):
-
         return _gbm_and_lle_valid_source_check(source)
-

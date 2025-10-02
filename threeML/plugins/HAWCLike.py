@@ -1,8 +1,5 @@
-from __future__ import division, print_function
-
 import collections
 import os
-
 from builtins import range, str
 from copy import deepcopy
 
@@ -12,7 +9,7 @@ from astromodels import Parameter
 from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
-from past.utils import old_div
+
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger
@@ -28,13 +25,11 @@ __instrument_name = "HAWC"
 
 
 class NoFullSky(RuntimeWarning):
-
     pass
 
 
 class HAWCLike(PluginPrototype):
     def __init__(self, name, maptree, response, n_transits=None, fullsky=False):
-
         # This controls if the likeHAWC class should load the entire
         # map or just a small disc around a source (faster).
         # Default is the latter, which is way faster. LIFF will decide
@@ -63,11 +58,9 @@ class HAWCLike(PluginPrototype):
 
         # Number of transits
         if n_transits is not None:
-
             self._n_transits = float(n_transits)
 
         else:
-
             self._n_transits = None
 
         # Default list of bins
@@ -76,8 +69,8 @@ class HAWCLike(PluginPrototype):
 
         # By default the fit of the CommonNorm is deactivated
         # NOTE: this flag sets the internal common norm minimization of LiFF, not
-        # the common norm as nuisance parameter (which is controlled by activate_CommonNorm() and
-        # deactivate_CommonNorm()
+        # the common norm as nuisance parameter (which is controlled by
+        # activate_CommonNorm() and deactivate_CommonNorm()
         self._fit_commonNorm = False
 
         # This is to keep track of whether the user defined a ROI or not
@@ -101,13 +94,10 @@ class HAWCLike(PluginPrototype):
 
     @staticmethod
     def _min_and_max_to_list(min_channel, max_channel):
-
         return [str(n) for n in range(min_channel, max_channel + 1)]
 
     def _check_fullsky(self, method_name):
-
         if not self._fullsky:
-
             custom_warnings.warn(
                 "Attempting to use method %s, but fullsky=False during construction. "
                 "This might fail. If it does, specify `fullsky=True` when instancing "
@@ -116,7 +106,6 @@ class HAWCLike(PluginPrototype):
             )
 
     def set_ROI(self, ra, dec, radius, fixed_ROI=False, galactic=False):
-
         self._check_fullsky("set_ROI")
 
         self._roi_ra = ra
@@ -130,7 +119,6 @@ class HAWCLike(PluginPrototype):
     def set_strip_ROI(
         self, rastart, rastop, decstart, decstop, fixed_ROI=False, galactic=False
     ):
-
         self._check_fullsky("set_ROI")
 
         self._roi_ra = [rastart, rastop]
@@ -140,7 +128,6 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = galactic
 
     def set_polygon_ROI(self, ralist, declist, fixed_ROI=False, galactic=False):
-
         self._check_fullsky("set_ROI")
 
         self._roi_ra = ralist
@@ -150,7 +137,6 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = galactic
 
     def set_template_ROI(self, fitsname, threshold, fixed_ROI=False):
-
         self._check_fullsky("set_ROI")
 
         self._roi_ra = None
@@ -162,7 +148,6 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = False
 
     def __getstate__(self):
-
         # This method is used by pickle before attempting to pickle the class
 
         # Return only the objects needed to recreate the class
@@ -187,7 +172,6 @@ class HAWCLike(PluginPrototype):
         return d
 
     def __setstate__(self, state):
-
         # This is used by pickle to recreate the class on the remote
         # side
         name = state["name"]
@@ -214,18 +198,16 @@ class HAWCLike(PluginPrototype):
         self.set_model(state["model"])
 
     def set_bin_list(self, bin_list):
-
         self._bin_list = bin_list
 
         if self._instanced:
             log.warning(
-                "Since the plugins was already used before, the change in active measurements"
-                + "will not be effective until you create a new JointLikelihood or Bayesian"
-                + "instance"
+                "Since the plugins was already used before, the change in active "
+                "measurements will not be effective until you create a new "
+                "JointLikelihood or Bayesian instance"
             )
 
     def set_active_measurements(self, minChannel=None, maxChannel=None, bin_list=None):
-
         if bin_list is not None:
             assert minChannel is None and maxChannel is None, (
                 "bin_list provided, thus neither minChannel nor "
@@ -240,8 +222,9 @@ class HAWCLike(PluginPrototype):
             self.set_bin_list(self._min_and_max_to_list(minChannel, maxChannel))
 
     def set_model(self, likelihood_model_instance):
-        """
-        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
+        """Set the model to be used in the joint minimization.
+
+        Must be a LikelihoodModel instance.
         """
 
         # Instance the python - C++ bridge
@@ -254,7 +237,6 @@ class HAWCLike(PluginPrototype):
         # NOTE: we assume that these boundaries do not change during the fit
 
         for id in range(self._model.get_number_of_extended_sources()):
-
             (
                 lon_min,
                 lon_max,
@@ -270,7 +252,6 @@ class HAWCLike(PluginPrototype):
         n_point_sources = self._model.get_number_of_point_sources()
 
         for id in range(n_point_sources):
-
             this_ra, this_dec = self._model.get_point_source_position(id)
 
             self._pymodel.setPtsSourcePosition(id, this_ra, this_dec)
@@ -278,12 +259,10 @@ class HAWCLike(PluginPrototype):
         # Now init the HAWC LIFF software
 
         try:
-
             # Load all sky
             # (ROI will be defined later)
 
             if self._n_transits is None:
-
                 self._theLikeHAWC = liff_3ML.LikeHAWC(
                     self._maptree,
                     self._response,
@@ -293,7 +272,6 @@ class HAWCLike(PluginPrototype):
                 )
 
             else:
-
                 self._theLikeHAWC = liff_3ML.LikeHAWC(
                     self._maptree,
                     self._n_transits,
@@ -303,8 +281,7 @@ class HAWCLike(PluginPrototype):
                     self._fullsky,
                 )
 
-        except:
-
+        except Exception:
             print(
                 "Could not instance the LikeHAWC class from LIFF. "
                 + "Check that HAWC software is working"
@@ -313,23 +290,18 @@ class HAWCLike(PluginPrototype):
             raise
 
         else:
-
             self._instanced = True
 
         # If fullsky=True, the user *must* use one of the set_ROI methods
 
         if self._fullsky:
-
             if self._roi_ra is None and self._roi_fits is None:
-
                 raise RuntimeError("You have to define a ROI with the setROI method")
 
         # Now if an ROI is set, try to use it
 
         if self._roi_ra is not None:
-
             if not isinstance(self._roi_ra, list):
-
                 self._theLikeHAWC.SetROI(
                     self._roi_ra,
                     self._roi_dec,
@@ -339,7 +311,6 @@ class HAWCLike(PluginPrototype):
                 )
 
             elif len(self._roi_ra) == 2:
-
                 self._theLikeHAWC.SetROI(
                     self._roi_ra[0],
                     self._roi_ra[1],
@@ -350,19 +321,17 @@ class HAWCLike(PluginPrototype):
                 )
 
             elif len(self._roi_ra) > 2:
-
                 self._theLikeHAWC.SetROI(
                     self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic
                 )
 
             else:
-
                 raise RuntimeError(
-                    "Only one point is found, use set_ROI(float ra, float dec, float radius, bool fixedROI, bool galactic)."
+                    "Only one point is found, use set_ROI(float ra, float dec, float "
+                    "radius, bool fixedROI, bool galactic)."
                 )
 
         elif self._roi_fits is not None:
-
             self._theLikeHAWC.SetROI(
                 self._roi_fits, self._roi_threshold, self._fixed_ROI
             )
@@ -388,25 +357,20 @@ class HAWCLike(PluginPrototype):
         self.get_log_like()
 
     def _CommonNormCallback(self, commonNorm_parameter):
-
         self._theLikeHAWC.SetCommonNorm(commonNorm_parameter.value)
 
     def activate_CommonNorm(self):
-
         list(self._nuisance_parameters.values())[0].free = True
 
     def deactivate_CommonNorm(self):
-
         list(self._nuisance_parameters.values())[0].free = False
 
     def _fill_model_cache(self):
-
         n_extended = self._model.get_number_of_extended_sources()
 
         # Pre-compute all the model
 
         for id in range(n_extended):
-
             # Get the positions for this extended source
             positions = np.array(self._theLikeHAWC.GetPositions(id, False), order="C")
 
@@ -426,15 +390,12 @@ class HAWCLike(PluginPrototype):
             # the cache will silently fail!
 
             if not cube.flags.c_contiguous:
-
                 cube = np.array(cube, order="C")
 
             if not ras.flags.c_contiguous:
-
                 ras = np.array(ras, order="C")
 
             if not decs.flags.c_contiguous:
-
                 decs = np.array(decs, order="C")
 
             assert ras.flags.c_contiguous
@@ -446,7 +407,6 @@ class HAWCLike(PluginPrototype):
         n_point_sources = self._model.get_number_of_point_sources()
 
         for id in range(n_point_sources):
-
             # The 1000.0 factor is due to the fact that this diff. flux here is in
             # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
 
@@ -460,7 +420,6 @@ class HAWCLike(PluginPrototype):
             self._pymodel.setPtsSourcePosition(id, this_ra, this_dec)
 
             if not this_spectrum.flags.c_contiguous:
-
                 this_spectrum = np.array(this_spectrum, order="C")
 
             assert this_spectrum.flags.c_contiguous
@@ -468,11 +427,8 @@ class HAWCLike(PluginPrototype):
             self._pymodel.setPtsSourceSpectrum(id, this_spectrum)
 
     def get_log_like(self):
-
-        """
-        Return the value of the log-likelihood with the current values for the
-        parameters
-        """
+        """Return the value of the log-likelihood with the current values for
+        the parameters."""
 
         self._fill_model_cache()
 
@@ -481,7 +437,6 @@ class HAWCLike(PluginPrototype):
         return logL
 
     def calc_TS(self):
-
         """
         Return the value of the log-likelihood test statistic, defined as
         2*[log(LL_model) - log(LL_bkg)]
@@ -494,22 +449,21 @@ class HAWCLike(PluginPrototype):
         return TS
 
     def calc_p_value(self, ra, dec, radius):
-
-        """
-        Return a p-value for the fit by integrating over a top hat in each bin
-        and comparing observed and expected counts.
+        """Return a p-value for the fit by integrating over a top hat in each
+        bin and comparing observed and expected counts.
 
         :param ra: Right ascension in degrees of top-hat center.
         :param dec: Declination in degrees of top-hat center.
-        :param radius: List of top-hat radii in degrees (one per analysis bin).
+        :param radius: List of top-hat radii in degrees (one per
+            analysis bin).
         """
 
         return self._theLikeHAWC.calcPValue(ra, dec, radius)
 
     def write_map(self, file_name):
-        """
-        Write the HEALPiX data map in memory to disk. This method is useful if a source has been simulated and injected
-        into the data. If not, the produced map will be just a copy of the input map.
+        """Write the HEALPiX data map in memory to disk. This method is useful
+        if a source has been simulated and injected into the data. If not, the
+        produced map will be just a copy of the input map.
 
         :param file_name: name for the output map
         :return: None
@@ -518,15 +472,14 @@ class HAWCLike(PluginPrototype):
         self._theLikeHAWC.WriteMap(file_name)
 
     def get_nuisance_parameters(self):
-        """
-        Return a list of nuisance parameters. Return an empty list if there
-        are no nuisance parameters
+        """Return a list of nuisance parameters.
+
+        Return an empty list if there are no nuisance parameters
         """
 
         return list(self._nuisance_parameters.keys())
 
     def inner_fit(self):
-
         self._theLikeHAWC.SetBackgroundNormFree(self._fit_commonNorm)
 
         logL = self.get_log_like()
@@ -538,14 +491,15 @@ class HAWCLike(PluginPrototype):
         return logL
 
     def display(self, radius=0.5, pulls=False):
+        """Plot model&data/residuals vs HAWC analysis bins for all point
+        sources in the model.
 
-        """
-        Plot model&data/residuals vs HAWC analysis bins for all point sources in the model.
-
-        :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5.
-        Can also be a list with one element per analysis bin.
-        :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
-                      in lower panel (default: False).
+        :param radius: Radius of disk around each source over which
+            model/data are evaluated. Default 0.5. Can also be a list
+            with one element per analysis bin.
+        :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather
+            than fractional difference ( [excess-model]/model ) in lower
+            panel (default: False).
         :return: list of figures (one plot per point source).
         """
 
@@ -560,15 +514,17 @@ class HAWCLike(PluginPrototype):
         return figs
 
     def display_residuals_at_position(self, ra, dec, radius=0.5, pulls=False):
+        """Plot model&data/residuals vs HAWC analysis bins at arbitrary
+        location.
 
-        """
-        Plot model&data/residuals vs HAWC analysis bins at arbitrary location.
-    
-        :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
+        :param ra: R.A. of center of disk (in J2000) over which
+            model/data are evaluated.
         :param dec: Declination of center of disk.
-        :param radius: Radius of disk (in degrees). Default 0.5. Can also be a list with one element per analysis bin.
-        :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
-                      in lower panel (default: False).
+        :param radius: Radius of disk (in degrees). Default 0.5. Can
+            also be a list with one element per analysis bin.
+        :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather
+            than fractional difference ( [excess-model]/model ) in lower
+            panel (default: False).
         :return: matplotlib-type figure.
         """
 
@@ -576,7 +532,6 @@ class HAWCLike(PluginPrototype):
         bin_index = np.arange(n_bins)
 
         if hasattr(radius, "__getitem__"):
-
             # One radius per bin
 
             radius = list(radius)
@@ -584,7 +539,6 @@ class HAWCLike(PluginPrototype):
             n_radii = len(radius)
 
             if n_radii != n_bins:
-
                 raise RuntimeError(
                     "Number of radii ({}) must match number of bins ({}).".format(
                         n_radii, n_bins
@@ -613,7 +567,6 @@ class HAWCLike(PluginPrototype):
             )
 
         else:
-
             # Same radius for all bins
 
             model = np.array(
@@ -658,14 +611,14 @@ class HAWCLike(PluginPrototype):
 
         # Using model variance to account for low statistic
 
-        resid = old_div((signal - model), (error if pulls else model))
+        resid = (signal - model) / (error if pulls else model)
 
         sub1.axhline(0, linestyle="--")
 
         sub1.errorbar(
             bin_index,
             resid,
-            yerr=np.zeros(error.shape) if pulls else old_div(error, model),
+            yerr=np.zeros(error.shape) if pulls else error / model,
             capsize=0,
             fmt=".",
         )
@@ -694,16 +647,19 @@ class HAWCLike(PluginPrototype):
         return fig
 
     def get_number_of_data_points(self):
-        """
-        Number of data point = number of pixels.
-        Implemented in liff as the number of pixels in the ROI per analysis bin.
+        """Number of data point = number of pixels.
+
+        Implemented in liff as the number of pixels in the ROI per
+        analysis bin.
         """
         try:
             pixels_per_bin = np.array(self._theLikeHAWC.GetNumberOfPixels())
             return int(np.sum(pixels_per_bin))
         except AttributeError:
             custom_warnings.warn(
-                "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version."
+                "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical"
+                " measurements such as AIC or BIC are unreliable. Please update your "
+                "aerie version."
             )
             return 1
 
@@ -717,20 +673,23 @@ class HAWCLike(PluginPrototype):
         model_to_subtract=None,
         subtract_model_from_model=False,
     ):
-
         """
         Calculates radial profiles of data - background & model.
-    
+
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
-        :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
-        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius
-        for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param bin_list: List of analysis bins over which to average; if None, use HAWC
+        default (bins 4-9).
+        :param max_radius: Radius up to which the radial profile is evaluated; also used
+        as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
-        :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
-        :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
-        
-        :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
+        :param model_to_subtract: Another model that is to be subtracted from the data
+        excess. Default: None.
+        :param subtract_model_from_model: If True and model_to_subtract is not None,
+        subtract model from model too. Default: False.
+
+        :return: np arrays with the radii, model profile, data profile, data
+        uncertainty, list of analysis bins used.
         """
 
         # default is to use all active bins
@@ -742,11 +701,12 @@ class HAWCLike(PluginPrototype):
 
         list_of_bin_names = set(bin_list) & set(self._bin_list)
 
-        delta_r = old_div(1.0 * max_radius, n_radial_bins)
+        delta_r = 1.0 * max_radius / n_radial_bins
         radii = np.array([delta_r * (i + 0.5) for i in range(0, n_radial_bins)])
 
         # Use GetTopHatAreas to get the area of all pixels in a given circle.
-        # The area of each ring is then given by the differnence between two subseqent circle areas.
+        # The area of each ring is then given by the differnence between two subseqent
+        # circle areas.
         area = np.array(
             [
                 self._theLikeHAWC.GetTopHatAreas(ra, dec, r + 0.5 * delta_r)
@@ -806,22 +766,20 @@ class HAWCLike(PluginPrototype):
                 model -= model_subtract
             self.set_model(this_model)
 
-        # weights are calculated as expected number of gamma-rays / number of background counts.
-        # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
-        # The weights do not depend on the radius, but fill a matrix anyway so there's no confusion when multiplying them to the data later.
-        # weight is normalized (sum of weights over the bins = 1).
+        # weights are calculated as expected number of gamma-rays / number of background
+        # counts. here, use max_radius to evaluate the number of gamma-rays/bkg counts.
+        # The weights do not depend on the radius, but fill a matrix anyway so there's
+        # no confusion when multiplying them to the data later. weight is normalized
+        # (sum of weights over the bins = 1).
 
         total_model = np.array(
             self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, max_radius)
-        )[good_bins]
-        total_excess = np.array(
-            self._theLikeHAWC.GetTopHatExcesses(ra, dec, max_radius)
         )[good_bins]
         total_bkg = np.array(
             self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, max_radius)
         )[good_bins]
         w = np.divide(total_model, total_bkg)
-        weight = np.array([old_div(w, np.sum(w)) for r in radii])
+        weight = np.array([w / np.sum(w) for r in radii])
 
         # restrict profiles to the user-specified analysis bins.
         area = area[:, good_bins]
@@ -832,11 +790,9 @@ class HAWCLike(PluginPrototype):
 
         # average over the analysis bins
 
-        excess_data = np.average(old_div(signal, area), weights=weight, axis=1)
-        excess_error = np.sqrt(
-            np.sum(old_div(counts * weight * weight, (area * area)), axis=1)
-        )
-        excess_model = np.average(old_div(model, area), weights=weight, axis=1)
+        excess_data = np.average(signal / area, weights=weight, axis=1)
+        excess_error = np.sqrt(np.sum(counts * weight * weight / (area * area), axis=1))
+        excess_model = np.average(model / area, weights=weight, axis=1)
 
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
 
@@ -850,19 +806,21 @@ class HAWCLike(PluginPrototype):
         model_to_subtract=None,
         subtract_model_from_model=False,
     ):
-
         """
         Plots radial profiles of data - background & model.
-    
+
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
-        :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
-        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk
-        to calculate the gamma/hadron weights. Default: 3.0
+        :param bin_list: List of analysis bins over which to average; if None, use HAWC
+        default (bins 4-9).
+        :param max_radius: Radius up to which the radial profile is evaluated; also used
+        as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
-        :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
-        :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
-        
+        :param model_to_subtract: Another model that is to be subtracted from the data
+        excess. Default: None.
+        :param subtract_model_from_model: If True and model_to_subtract is not None,
+        subtract model from model too. Default: False.
+
         :return: plot of data - background vs model radial profiles.
         """
 
@@ -905,8 +863,10 @@ class HAWCLike(PluginPrototype):
 
         plt.ylabel("Apparent radial excess [sr$^{-1}$]")
         plt.xlabel(
-            "Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]"
-            % (ra, dec)
+            f"Distance from source at ({round(ra, 2)}"
+            + r"$^{\circ}$, "
+            + f"{round(dec, 2)}"
+            + r"$^{\circ}$) [$^{\circ}$]"
         )
 
         if len(list_of_bin_names) == 1:
@@ -924,15 +884,13 @@ class HAWCLike(PluginPrototype):
 
         try:
             plt.tight_layout()
-        except:
+        except Exception:
             pass
 
         return fig
 
     def write_model_map(self, fileName, poisson=False):
-
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
-
         self._theLikeHAWC.WriteResidualMap(fileName)

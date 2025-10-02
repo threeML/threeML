@@ -4,12 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from threeML.io.plotting.step_plot import step_plot
-from threeML.utils.interval import IntervalSet, Interval
+from threeML.utils.interval import Interval, IntervalSet
 from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares, sqrt_sum_of_squares_pairwise
 
 
 class Histogram(IntervalSet):
-
     INTERVAL_TYPE = Interval
 
     def __init__(
@@ -20,9 +19,7 @@ class Histogram(IntervalSet):
         sys_errors=None,
         is_poisson=False,
     ):
-
         if contents is None:
-
             self._contents = np.zeros(len(list_of_intervals))
 
         else:
@@ -33,21 +30,18 @@ class Histogram(IntervalSet):
             self._contents = np.array(contents)
 
         if stat_errors is not None:
-
             assert len(stat_errors) == len(
                 contents
             ), "contents and stat errors are not the same dimension "
 
-            assert is_poisson == False, "cannot have errors and is_poisson True"
+            assert is_poisson is False, "cannot have errors and is_poisson True"
 
             self._stat_errors = np.array(stat_errors)
 
         else:
-
             self._stat_errors = None
 
         if sys_errors is not None:
-
             assert len(sys_errors) == len(
                 contents
             ), "contents and errors are not the same dimension "
@@ -55,7 +49,6 @@ class Histogram(IntervalSet):
             self._sys_errors = np.array(sys_errors)
 
         else:
-
             self._sys_errors = None
 
         self._is_poisson = is_poisson
@@ -69,9 +62,7 @@ class Histogram(IntervalSet):
         assert self.is_sorted, "Histogram bins must be ordered"
 
     def bin_entries(self, entires):
-        """
-        add the entries into the proper bin
-
+        """Add the entries into the proper bin.
 
         :param entires: list of events
         :return:
@@ -80,23 +71,19 @@ class Histogram(IntervalSet):
         which_bins = np.digitize(entires, self.edges) - 1
 
         for bin in which_bins:
-
             try:
-
                 self._contents[bin] += 1
 
-            except (IndexError):
+            except IndexError:
                 # ignore if we are outside the bins
                 pass
 
     def __add__(self, other):
-
         assert self == other, "The bins are not equal"
 
         new_contents = self.contents + other.contents
 
         if self._is_poisson:
-
             assert (
                 other.is_poisson
             ), "Trying to add a Poisson and non-poisson histogram together"
@@ -104,13 +91,16 @@ class Histogram(IntervalSet):
             new_stat_errors = None
 
         else:
-
             assert (
                 not other.is_poisson
             ), "Trying to add a Poisson and non-poisson histogram together"
 
+<<<<<<< HEAD
             if self._stat_errors is not None:
 
+=======
+            if self._errors is not None:
+>>>>>>> dev
                 assert (
                     other._stat_errors is not None
                 ), "This histogram has errors, but the other does not"
@@ -123,11 +113,17 @@ class Histogram(IntervalSet):
                 )
 
             else:
+<<<<<<< HEAD
 
                 new_stat_errors = None
         
         if self._sys_errors is not None and other._sys_errors is not None:
 
+=======
+                new_errors = None
+
+        if self._sys_errors is not None and other.sys_errors is not None:
+>>>>>>> dev
             new_sys_errors = np.array(
                 [
                     sqrt_sum_of_squares([e1, e2])
@@ -136,20 +132,26 @@ class Histogram(IntervalSet):
             ) / new_contents
 
         elif self._sys_errors is not None:
+<<<<<<< HEAD
 
             new_sys_errors = self._sys_errors * self._contents / new_contents
 
         elif other.sys_errors is not None:
 
             new_sys_errors = other.sys_errors * other._contents / new_contents
+=======
+            new_sys_errors = self._sys_errors
+
+        elif other.sys_errors is not None:
+            new_sys_errors = other.sys_errors
+>>>>>>> dev
 
         else:
-
             new_sys_errors = None
 
         # because Hist gets inherited very deeply, when we add we will not know exactly
-        # what all the additional class members will be, so we will make a copy of the class
-        # This is not ideal and there is probably a better way to do this
+        # what all the additional class members will be, so we will make a copy of the
+        # class This is not ideal and there is probably a better way to do this
         # TODO: better new hist constructor
 
         new_hist = copy.deepcopy(self)
@@ -178,6 +180,7 @@ class Histogram(IntervalSet):
 
     @property
     def errors(self):
+<<<<<<< HEAD
         """ If the histogram has systematic errors, return the sum in 
         quadrature of the statistical and systematic error, otherwise return 
         the statistical error.
@@ -193,6 +196,13 @@ class Histogram(IntervalSet):
     def total_error(self):
 
         return sqrt_sum_of_squares(self.errors)
+=======
+        return self._errors
+
+    @property
+    def total_error(self):
+        return sqrt_sum_of_squares(self._errors)
+>>>>>>> dev
 
     @property
     def total_stat_error(self):
@@ -206,22 +216,18 @@ class Histogram(IntervalSet):
     
     @property
     def sys_errors(self):
-
         return self._sys_errors
 
     @property
     def contents(self):
-
         return self._contents
 
     @property
     def total(self):
-
         return sum(self._contents)
 
     @property
     def is_poisson(self):
-
         return self._is_poisson
 
     @classmethod
@@ -262,13 +268,12 @@ class Histogram(IntervalSet):
             errors=errors,
             sys_errors=sys_errors,
             is_poisson=is_poisson,
-            **kwargs
+            **kwargs,
         )
 
     @classmethod
     def from_entries(cls, list_of_intervals, entries):
-        """
-        create a histogram from a list of intervals and entries to bin
+        """Create a histogram from a list of intervals and entries to bin.
 
         :param list_of_intervals:
         :param entries:
@@ -282,7 +287,6 @@ class Histogram(IntervalSet):
         return new_hist
 
     def display(self, fill=False, fill_min=0.0, x_label="x", y_label="y", **kwargs):
-
         fig, ax = plt.subplots()
 
         step_plot(
@@ -291,7 +295,7 @@ class Histogram(IntervalSet):
             ax=ax,
             fill=fill,
             fill_min=fill_min,
-            **kwargs
+            **kwargs,
         )
 
         ax.set_xlabel(x_label)

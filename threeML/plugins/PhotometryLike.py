@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional, Union
 
 import numpy as np
 from speclite.filters import FilterResponse, FilterSequence
+
 from threeML.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.io.plotting.data_residual_plot import ResidualPlot
@@ -17,9 +18,7 @@ __instrument_name = "Generic photometric data"
 
 class BandNode:
     def __init__(self, name, index, value, mask):
-        """
-        Container class that allows for the shutting on and off of bands
-        """
+        """Container class that allows for the shutting on and off of bands."""
         self._name = name
         self._index = index
         self._mask = mask
@@ -28,13 +27,11 @@ class BandNode:
         self._on = True
 
     def _set_on(self, value=True):
-
         self._on = value
 
         self._mask[self._index] = self._on
 
     def _get_on(self):
-
         return self._on
 
     on = property(
@@ -47,13 +44,11 @@ class BandNode:
     # Define property "fix"
 
     def _set_off(self, value=True):
-
         self._on = not value
 
         self._mask[self._index] = self._on
 
     def _get_off(self):
-
         return not self._on
 
     off = property(
@@ -64,7 +59,6 @@ class BandNode:
     )
 
     def __repr__(self):
-
         return f"on: {self._on}\nvalue: {self._value}"
 
 
@@ -76,10 +70,11 @@ class PhotometryLike(XYLike):
         observation: PhotometericObservation,
     ):
         """
-        The photometry plugin is desinged to fit optical/IR/UV photometric data from a given
-        filter system. Filters are given in the form a speclite (http://speclite.readthedocs.io)
-        FitlerResponse or FilterSequence objects. 3ML contains a vast number of filters via the SVO
-        VO service: http://svo2.cab.inta-csic.es/svo/theory/fps/ and can be accessed via:
+        The photometry plugin is desinged to fit optical/IR/UV photometric data from a
+        given filter system. Filters are given in the form a speclite
+        (http://speclite.readthedocs.io) FitlerResponse or FilterSequence objects. 3ML
+        contains a vast number of filters via the SVO VO service:
+        http://svo2.cab.inta-csic.es/svo/theory/fps/ and can be accessed via:
 
         from threeML.utils.photometry import get_photometric_filter_library
 
@@ -106,21 +101,15 @@ class PhotometryLike(XYLike):
         # speclite uses '-' to separate instrument and filter
 
         if isinstance(filters, FilterSequence):
-
             # we have a filter sequence
 
-            names = [fname.split("-")[1] for fname in filters.names]
-
+            pass
         elif isinstance(filters, FilterResponse):
-
             # we have a filter response
-
-            names = [filters.name.split("-")[1]]
 
             filters = FilterSequence([filters])
 
         else:
-
             log.error("filters must be A FilterResponse or a FilterSequence")
 
             RuntimeError("filters must be A FilterResponse or a FilterSequence")
@@ -130,7 +119,6 @@ class PhotometryLike(XYLike):
         # during the life of the plugin
 
         if not observation.is_compatible_with_filter_set(filters):
-
             log.error("The data and filters are not congruent")
 
             raise AssertionError("The data and filters are not congruent")
@@ -138,7 +126,6 @@ class PhotometryLike(XYLike):
         mask = observation.get_mask_from_filter_sequence(filters)
 
         if not mask.sum() > 0:
-
             log.error("There are no data in this observation!")
 
             raise AssertionError("There are no data in this observation!")
@@ -155,7 +142,6 @@ class PhotometryLike(XYLike):
         # the filters
 
         for i, band in enumerate(self._filter_set.filter_names):
-
             self._magnitudes[i] = observation[band][0]
             self._magnitude_errors[i] = observation[band][1]
 
@@ -174,7 +160,6 @@ class PhotometryLike(XYLike):
         # now set up the mask zetting
 
         for i, band in enumerate(self._filter_set.filter_names):
-
             node = BandNode(
                 band,
                 i,
@@ -186,7 +171,6 @@ class PhotometryLike(XYLike):
 
     @property
     def observation(self) -> PhotometericObservation:
-
         return self._observation
 
     @classmethod
@@ -205,11 +189,12 @@ class PhotometryLike(XYLike):
                        K=(19.7,.04))
 
 
-        Magnitudes and errors are entered as keyword arguments where the key is the filter name and
-        the argument is a tuple containing the data. You can exclude data for individual filters and
-        they will be ignored during the fit.
+        Magnitudes and errors are entered as keyword arguments where the key is the
+        filter name and the argument is a tuple containing the data. You can exclude
+        data for individual filters and they will be ignored during the fit.
 
-        NOTE: PhotometryLike expects apparent AB magnitudes. Please calibrate your data to this system
+        NOTE: PhotometryLike expects apparent AB magnitudes. Please calibrate your data
+        to this system
 
 
         :param name: plugin name
@@ -227,14 +212,11 @@ class PhotometryLike(XYLike):
         filters: Union[FilterResponse, FilterSequence],
         file_name: str,
     ):
-        """
-        Create the a PhotometryLike plugin from a saved HDF5 data file
+        """Create the a PhotometryLike plugin from a saved HDF5 data file.
 
         :param name: plugin name
         :param filters: speclite filters
         :param file_name: name of the observation file
-
-
         """
 
         return cls(name, filters, PhotometericObservation.from_hdf5(file_name))
@@ -248,9 +230,8 @@ class PhotometryLike(XYLike):
         return self._magnitude_errors
 
     def set_model(self, likelihood_model):
-        """
-        set the likelihood model
-        :param likelihood_model:
+        """Set the likelihood model :param likelihood_model:
+
         :return:
         """
 
@@ -261,14 +242,12 @@ class PhotometryLike(XYLike):
         # sum up the differential
 
         def differential_flux(energies):
-
             fluxes = self._likelihood_model.get_point_source_fluxes(
                 0, energies, tag=self._tag
             )
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-
                 fluxes += self._likelihood_model.get_point_source_fluxes(
                     i, energies, tag=self._tag
                 )
@@ -278,12 +257,10 @@ class PhotometryLike(XYLike):
         self._filter_set.set_model(differential_flux)
 
     def _get_total_expectation(self):
-
         return self._filter_set.ab_magnitudes()
 
     def display_filters(self):
-        """
-        display the filter transmission curves
+        """Display the filter transmission curves.
 
         :return:
         """
@@ -302,8 +279,7 @@ class PhotometryLike(XYLike):
         data_kwargs: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> ResidualPlot:
-
-        """TODO describe function
+        """TODO describe function.
 
         :param data_color:
         :type data_color: str
@@ -322,7 +298,6 @@ class PhotometryLike(XYLike):
         :param data_kwargs:
         :type data_kwargs: Optional[Dict[str, Any]]
         :returns:
-
         """
 
         _default_model_kwargs = dict(color=model_color, alpha=1)
@@ -344,51 +319,37 @@ class PhotometryLike(XYLike):
         _kwargs_menu = threeML_config.plugins.photo.fit_plot
 
         if _kwargs_menu.model_mpl_kwargs is not None:
-
             for k, v in _kwargs_menu.model_mpl_kwargs.items():
-
                 _default_model_kwargs[k] = v
 
         if _kwargs_menu.data_mpl_kwargs is not None:
-
             for k, v in _kwargs_menu.data_mpl_kwargs.items():
-
                 _default_data_kwargs[k] = v
 
         if model_kwargs is not None:
-
-            if not type(model_kwargs) == dict:
-
+            if not isinstance(model_kwargs, dict):
                 log.error("model_kwargs must be a dict")
 
                 raise RuntimeError()
 
             for k, v in list(model_kwargs.items()):
-
                 if k in _default_model_kwargs:
-
                     _default_model_kwargs[k] = v
 
                 else:
-
                     _default_model_kwargs[k] = v
 
         if data_kwargs is not None:
-
-            if not type(data_kwargs) == dict:
-
+            if not isinstance(data_kwargs, dict):
                 log.error("data_kwargs must be a dict")
 
                 raise RuntimeError()
 
             for k, v in list(data_kwargs.items()):
-
                 if k in _default_data_kwargs:
-
                     _default_data_kwargs[k] = v
 
                 else:
-
                     _default_data_kwargs[k] = v
 
         # since we define some defualts, lets not overwrite
@@ -397,17 +358,10 @@ class PhotometryLike(XYLike):
         _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
 
         for d in _duplicates:
-
-            if (d[0] in _default_model_kwargs) and (
-                d[1] in _default_model_kwargs
-            ):
-
+            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
                 _default_model_kwargs.pop(d[0])
 
-            if (d[0] in _default_data_kwargs) and (
-                d[1] in _default_data_kwargs
-            ):
-
+            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
                 _default_data_kwargs.pop(d[0])
 
         if model_label is None:
@@ -456,28 +410,24 @@ class PhotometryLike(XYLike):
             xscale="linear",
             yscale="linear",
             invert_y=True,
-            show_legend=show_legend
+            show_legend=show_legend,
         )
 
     def _new_plugin(self, name, x, y, yerr):
-        """
-        construct a new PhotometryLike plugin. allows for returning a new plugin
-        from simulated data set while customizing the constructor
-        further down the inheritance tree
+        """Construct a new PhotometryLike plugin. allows for returning a new
+        plugin from simulated data set while customizing the constructor
+        further down the inheritance tree.
 
         :param name: new name
         :param x: new x
         :param y: new y
         :param yerr: new yerr
         :return: new XYLike
-
-
         """
 
         bands = collections.OrderedDict()
 
         for i, band in enumerate(self._filter_set.filter_names):
-
             bands[band] = (y[i], yerr[i])
 
         new_observation = PhotometericObservation.from_dict(bands)

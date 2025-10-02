@@ -1,13 +1,11 @@
-from __future__ import division
-from past.utils import old_div
-import pytest
-from threeML.utils.interval import IntervalSet
-from threeML.utils.histogram import Histogram
-from threeML import *
-from threeML.io.file_utils import within_directory
-import numpy as np
 import os
 
+import numpy as np
+import pytest
+
+from threeML.io.file_utils import within_directory
+from threeML.utils.histogram import Histogram
+from threeML.utils.interval import IntervalSet
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
@@ -15,19 +13,15 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
-    if abs(old_div((truth - value), truth)) <= relative_tolerance:
-
+    if abs((truth - value) / truth) <= relative_tolerance:
         return True
 
     else:
-
         return False
 
 
 def test_hist_constructor():
-
     with within_directory(__this_dir__):
-
         bins = [-3, -2, -1, 0, 1, 2, 3]
 
         bounds = IntervalSet.from_list_of_edges(bins)
@@ -36,7 +30,7 @@ def test_hist_constructor():
 
         hh1 = Histogram(bounds, contents, is_poisson=True)
 
-        assert hh1.is_poisson == True
+        assert hh1.is_poisson is True
 
         assert len(hh1) == len(bins) - 1
 
@@ -55,15 +49,15 @@ def test_hist_constructor():
 
         hh4 = Histogram(bounds, contents, stat_errors=contents)
 
-        assert hh4.is_poisson == False
+        assert hh4.is_poisson is False
 
         with pytest.raises(AssertionError):
 
-            hh4 = Histogram(bounds, contents, stat_errors=contents, is_poisson=True)
+            hh4 = Histogram(bounds, contents, stat_errors=contents, 
+            is_poisson=True)
 
 
 def test_hist_addition():
-
     bins = [-3, -2, -1, 0, 1, 2, 3]
 
     bounds = IntervalSet.from_list_of_edges(bins)
@@ -86,12 +80,11 @@ def test_hist_addition():
 
     assert hh3.has_stat_errors() == True
 
-    hh4 = hh3 + hh3
+    _ = hh3 + hh3
 
     assert hh4.has_stat_errors() == True
 
     with pytest.raises(AssertionError):
-
         hh3 + hh1
 
     hh5 = Histogram(bounds, contents, stat_errors=stat_errors, sys_errors=sys_errors)

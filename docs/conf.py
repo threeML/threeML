@@ -31,7 +31,7 @@ DOCS = Path(__file__).parent
 
 
 def run_apidoc(app):
-    """Generage API documentation"""
+    """Generage API documentation."""
     import better_apidoc
 
     better_apidoc.APP = app
@@ -73,7 +73,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_gallery.load_style",
     "sphinx_rtd_dark_mode",
-    "sphinxcontrib.email"
+    "sphinxcontrib.email",
 ]
 
 napoleon_google_docstring = True
@@ -84,7 +84,6 @@ default_dark_mode = True
 email_automode = True
 
 if "GITHUB_TOKEN" in os.environ:
-
     extensions.append("rtds_action")
 
     # The path where the artifact should be extracted
@@ -101,7 +100,6 @@ if "GITHUB_TOKEN" in os.environ:
     rtds_action_error_if_missing = True
 
 
-
 sphinx_gallery_conf = {
     "default_thumb_file": "media/logo.png"
     #     'matplotlib_animations': True,
@@ -109,7 +107,6 @@ sphinx_gallery_conf = {
     #     'nested_sections': False,
     #     'show_api_usage': True,
 }
-
 
 
 # The suffix(es) of source filenames.
@@ -245,7 +242,6 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-
         master_doc,
         "TheMulti-MissionMaximumLikelihoodframework",
         "The Multi-Mission Maximum Likelihood framework Documentation",
@@ -255,7 +251,6 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
-
 
 
 def setup(app):

@@ -1,6 +1,6 @@
-from builtins import object
 import contextlib
 import sys
+from builtins import object
 
 
 class _DummyFile(object):
@@ -13,8 +13,7 @@ class _DummyFile(object):
 
 @contextlib.contextmanager
 def suppress_stdout():
-    """
-    Temporarily suppress the output from a function
+    """Temporarily suppress the output from a function.
 
     :return: None
     """
