@@ -49,9 +49,6 @@ jobs:
             - name: Install dependencies
               run: |
                   python -m pip install --upgrade pip wheel setuptools numpy
-                  
-                  # Temp fix due to speclite not supporting the latest version
-                  pip install "matplotlib<3.9"
 
                   if [[ ${{matrix.os}} == macos-latest ]];
                   then
@@ -106,9 +103,6 @@ jobs:
               run: |
                   python -m pip install --upgrade pip wheel
 
-                  # Temp fix due to speclite not supporting the latest version
-                  pip install "matplotlib<3.9"
-
                   if [[ ${{matrix.os}} == macos-latest ]];
                   then
                     brew update
@@ -146,12 +140,6 @@ jobs:
             matrix:
                 os: ["ubuntu-latest", "macos-13", "macos-latest"]
                 python-version: [3.9, 3.11]
-                include:
-                  - environment: ci/environment.yml
-                    channel: threeml/label/dev #PRELIMINARY
-                  - environment:  ci/environment_noxspec.yml
-                    channel: threeml/label/dev #PRELIMINARY
-                    os: macos-latest
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -169,13 +157,13 @@ jobs:
                   miniforge-version: latest
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: conda-forge, xspecmodels, ${{ matrix.channel }}, fermi
-                  environment-file: ${{ matrix.environment }}
+                  channels: conda-forge, threeml, fermi
+                  environment-file: ci/environment_fermi.yml
                   use-only-tar-bz2: false
             - name: Init Env
               shell: bash -l {0}
               run: |
-
+                  pip install tomli
                   export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
 
                   echo "HOME= ${HOME}"
@@ -189,7 +177,7 @@ jobs:
                   
                   fi
                   #pip install --upgrade speclite
-                  #pip install fermipy "matplotlib<3.9"
+                  #pip install fermipy 
 
                   if [[ ${{matrix.python-version}} == 3.9 ]];
                   then
@@ -245,7 +233,7 @@ jobs:
             - name: Checkout source
               uses: actions/checkout@v4
             - name: Set up Python
-              uses: actions/setup-python@v1
+              uses: actions/setup-python@v5
               with:
                   python-version: 3.9
             - name: Build package
