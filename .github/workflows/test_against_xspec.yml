@@ -10,6 +10,7 @@ jobs:
         name: Test against XSPEC source - ${{ matrix.astro_source }}
         runs-on: ubuntu-latest
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - astro_source: "standard"
@@ -129,6 +130,7 @@ jobs:
         name: Test against XSPEC conda - ${{ matrix.astro_source }}
         runs-on: ubuntu-latest
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - astro_source: "standard"
@@ -145,10 +147,8 @@ jobs:
                       extra_deps: ""
 
         steps:
-            - name: Set up Python 3.9
-              uses: actions/setup-python@v5
-              with:
-                  python-version: 3.9
+            - name: Checkout
+              uses: actions/checkout@v4
 
             - name: Add conda to system path
               uses: conda-incubator/setup-miniconda@v3
@@ -162,9 +162,6 @@ jobs:
                   environment-file: ci/environment_xspec.yml
                   use-only-tar-bz2: false
                   channel-priority: true
-
-            - name: Checkout
-              uses: actions/checkout@v4
 
             - name: Install dependencies
               shell: bash -l {0}
