@@ -56,7 +56,7 @@ jobs:
                   if [[ ${{matrix.os}} == macos-latest ]];
                   then
                     brew update
-                    brew install hdf5
+                    brew install hdf5 lzo c-blosc
                   fi
 
                   if [[ "${ISDEV}" == "true" ]]; then
@@ -112,7 +112,7 @@ jobs:
                   if [[ ${{matrix.os}} == macos-latest ]];
                   then
                     brew update
-                    brew install hdf5
+                    brew install hdf5 lzo c-blosc
                   fi
 
                   # install astromodels dev directly without cloning
