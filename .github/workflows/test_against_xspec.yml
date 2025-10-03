@@ -117,8 +117,6 @@ jobs:
                   ${{ matrix.astro_install }}
                   pip install --upgrade flake8 coverage pytest-cov cython
                   pip install -e .
-              env:
-                  ASTRO_XSPEC_VERSION: 12.12.1
 
             - name: Test xspec
               shell: bash -l {0}

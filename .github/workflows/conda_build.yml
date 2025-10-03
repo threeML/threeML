@@ -15,6 +15,10 @@ jobs:
             matrix:
                 os: ["ubuntu-latest", "macos-13", "macos-latest"]
                 python-version: [3.9, 3.11]
+                include:
+                  - environment: ci/environment_fermi.yml
+                  - environment: ci/environment_macos-latest.yml
+                    os: macos-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -37,7 +41,7 @@ jobs:
                   miniforge-variant: Miniforge3
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
-                  environment-file: ci/environment_fermi.yml
+                  environment-file: ${{ matrix.environment }}
                   channels: conda-forge, threeml, fermi
                   use-only-tar-bz2: false
             - name: Init Env
@@ -112,6 +116,10 @@ jobs:
             matrix:
                 os: ["ubuntu-latest", "macos-13", "macos-latest"]
                 python-version: [3.9, 3.11]
+                include:
+                  - environment: ci/environment_fermi.yml
+                  - environment: ci/environment_macos-latest.yml
+                    os: macos-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -125,7 +133,7 @@ jobs:
                   miniforge-variant: Miniforge3
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
-                  environment-file: ci/environment_fermi.yml
+                  environment-file: ${{ matrix.environment }}
                   channels: threeml, conda-forge, fermi
                   use-only-tar-bz2: false
                   
