@@ -108,6 +108,9 @@ jobs:
                   echo "loading xspec from " $HEADAS;
                   source ${HEADAS}/headas-init.sh;
                   python -c 'import xspec' || true;
+
+                  echo "Listing all libraries in xspec"
+                  ls -l $HEADAS/lib/
                   
                   python -m pip install --upgrade pip wheel
                   ${{ matrix.extra_deps }}
