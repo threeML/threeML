@@ -368,7 +368,6 @@ class BinnedSpectrum(Histogram):
         if self.is_poisson:
             return None
         else:
-<<<<<<< HEAD
 
             return self.stat_errors
     
@@ -383,11 +382,7 @@ class BinnedSpectrum(Histogram):
         if self.is_poisson:
             return None
         else:
-
             return self.errors
-=======
-            return self._errors
->>>>>>> dev
 
     @property
     def n_channels(self) -> int:
@@ -395,14 +390,8 @@ class BinnedSpectrum(Histogram):
 
     @property
     def sys_errors(self) -> np.ndarray:
-<<<<<<< HEAD
-        """
-        Systematic errors per channel expressed as relative error. This is
+        """Systematic errors per channel expressed as relative error. This is
         nonzero only if the SYS_ERR column is present in the input file.
-=======
-        """Systematic errors per channel. This is nonzero only if the SYS_ERR
-        column is present in the input file.
->>>>>>> dev
 
         :return: the systematic errors stored in the input spectrum
         """
@@ -694,13 +683,8 @@ class BinnedSpectrum(Histogram):
 
         new_rate_errors = np.array(
             [
-<<<<<<< HEAD
-                (e1 ** -2 + e2 ** -2) ** -0.5
-                for e1, e2 in zip(self.rate_errors, other.rate_errors)
-=======
                 (e1**-2 + e2**-2) ** -0.5
-                for e1, e2 in zip(self.rate_errors, other._errors)
->>>>>>> dev
+                for e1, e2 in zip(self.rate_errors, other.rate_errors)
             ]
         )
         new_rates = (

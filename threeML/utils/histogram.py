@@ -95,12 +95,7 @@ class Histogram(IntervalSet):
                 not other.is_poisson
             ), "Trying to add a Poisson and non-poisson histogram together"
 
-<<<<<<< HEAD
-            if self._stat_errors is not None:
-
-=======
             if self._errors is not None:
->>>>>>> dev
                 assert (
                     other._stat_errors is not None
                 ), "This histogram has errors, but the other does not"
@@ -113,17 +108,10 @@ class Histogram(IntervalSet):
                 )
 
             else:
-<<<<<<< HEAD
-
                 new_stat_errors = None
         
         if self._sys_errors is not None and other._sys_errors is not None:
 
-=======
-                new_errors = None
-
-        if self._sys_errors is not None and other.sys_errors is not None:
->>>>>>> dev
             new_sys_errors = np.array(
                 [
                     sqrt_sum_of_squares([e1, e2])
@@ -132,19 +120,10 @@ class Histogram(IntervalSet):
             ) / new_contents
 
         elif self._sys_errors is not None:
-<<<<<<< HEAD
-
             new_sys_errors = self._sys_errors * self._contents / new_contents
 
         elif other.sys_errors is not None:
-
             new_sys_errors = other.sys_errors * other._contents / new_contents
-=======
-            new_sys_errors = self._sys_errors
-
-        elif other.sys_errors is not None:
-            new_sys_errors = other.sys_errors
->>>>>>> dev
 
         else:
             new_sys_errors = None
@@ -180,7 +159,6 @@ class Histogram(IntervalSet):
 
     @property
     def errors(self):
-<<<<<<< HEAD
         """ If the histogram has systematic errors, return the sum in 
         quadrature of the statistical and systematic error, otherwise return 
         the statistical error.
@@ -194,15 +172,7 @@ class Histogram(IntervalSet):
 
     @property
     def total_error(self):
-
         return sqrt_sum_of_squares(self.errors)
-=======
-        return self._errors
-
-    @property
-    def total_error(self):
-        return sqrt_sum_of_squares(self._errors)
->>>>>>> dev
 
     @property
     def total_stat_error(self):

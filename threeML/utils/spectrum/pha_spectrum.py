@@ -872,11 +872,6 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         """Make a new spectrum with new counts and errors and all other
         parameters the same.
 
-<<<<<<< HEAD
-=======
-        :param new_exposure: the new exposure for the clone
-        :param new_scale_factor: the new scale factor for the clone
->>>>>>> dev
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
         :param new_exposure: the new exposure for the clone
