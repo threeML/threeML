@@ -151,8 +151,13 @@ for i, module_full_path in enumerate(found_plugins):
 
     try:
         imported_plugin = importlib.import_module(f"threeML.plugins.{plugin_name}")
-        getattr(imported_plugin, plugin_name)
+        plugin_class = getattr(imported_plugin, plugin_name)
+        globals()[plugin_name] = plugin_class
     except ImportError:
+        log.warning(
+            f"Could not import plugin {plugin_name}."
+            "Do you have the relative instrument software installed?"
+        )
         continue
     _working_plugins[instrument_name] = plugin_name
 
