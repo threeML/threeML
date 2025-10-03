@@ -157,7 +157,7 @@ jobs:
                   miniforge-version: latest
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: conda-forge, threeml, fermi
+                  channels: threeml, conda-forge, fermi
                   environment-file: ci/environment_fermi.yml
                   use-only-tar-bz2: false
             - name: Init Env
