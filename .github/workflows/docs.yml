@@ -305,6 +305,8 @@ jobs:
 
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
+          mamba install xspec-data -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/
+
       - name: Install the package
         shell: bash -l {0}
         run: |
