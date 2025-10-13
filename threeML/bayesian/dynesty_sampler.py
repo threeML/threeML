@@ -41,132 +41,36 @@ class DynestyNestedSampler(UnitCubeSampler):
 
     def setup(
         self,
-        n_live_points=400,
-        maxiter=None,
-        maxcall=None,
-        dlogz=None,
-        logl_max=np.inf,
-        n_effective=None,
-        add_live=True,
-        print_func=None,
-        save_bounds=True,
-        bound="multi",
-        sample="auto",
+        n_live_points=500,
+        bound='multi',
+        sample='auto',
         periodic=None,
         reflective=None,
         update_interval=None,
         first_update=None,
-        npdim=None,
         rstate=None,
+        queue_size=None,
+        pool=None,
         use_pool=None,
         live_points=None,
         logl_args=None,
         logl_kwargs=None,
         ptform_args=None,
         ptform_kwargs=None,
-        gradient=None,
-        grad_args=None,
-        grad_kwargs=None,
-        compute_jac=False,
         enlarge=None,
-        bootstrap=0,
-        walks=25,
+        bootstrap=None,
+        walks=None,
         facc=0.5,
-        slices=5,
-        fmove=0.9,
-        max_move=100,
-        update_func=None,
+        slices=None,
+        ncdim=None,
+        blob=False,
+        save_evaluation_history=False,
+        history_filename=None,
         **kwargs,
     ):
-        """TODO describe function.
-
-        :param n_live_points:
-        :type n_live_points:
-        :param maxiter:
-        :type maxiter:
-        :param maxcall:
-        :type maxcall:
-        :param dlogz:
-        :type dlogz:
-        :param logl_max:
-        :type logl_max:
-        :param n_effective:
-        :type n_effective:
-        :param add_live:
-        :type add_live:
-        :param print_func:
-        :type print_func:
-        :param save_bounds:
-        :type save_bounds:
-        :param bound:
-        :type bound:
-        :param sample:
-        :type sample:
-        :param periodic:
-        :type periodic:
-        :param reflective:
-        :type reflective:
-        :param update_interval:
-        :type update_interval:
-        :param first_update:
-        :type first_update:
-        :param npdim:
-        :type npdim:
-        :param rstate:
-        :type rstate:
-        :param use_pool:
-        :type use_pool:
-        :param live_points:
-        :type live_points:
-        :param logl_args:
-        :type logl_args:
-        :param logl_kwargs:
-        :type logl_kwargs:
-        :param ptform_args:
-        :type ptform_args:
-        :param ptform_kwargs:
-        :type ptform_kwargs:
-        :param gradient:
-        :type gradient:
-        :param grad_args:
-        :type grad_args:
-        :param grad_kwargs:
-        :type grad_kwargs:
-        :param compute_jac:
-        :type compute_jac:
-        :param enlarge:
-        :type enlarge:
-        :param bootstrap:
-        :type bootstrap:
-        :param vol_dec:
-        :type vol_dec:
-        :param vol_check:
-        :type vol_check:
-        :param walks:
-        :type walks:
-        :param facc:
-        :type facc:
-        :param slices:
-        :type slices:
-        :param fmove:
-        :type fmove:
-        :param max_move:
-        :type max_move:
-        :param update_func:
-        :type update_func:
-        :returns:
-        """
         log.debug("Setup dynesty sampler")
 
         self._sampler_kwargs = {}
-        self._sampler_kwargs["maxiter"] = maxiter
-        self._sampler_kwargs["maxcall"] = maxcall
-        self._sampler_kwargs["dlogz"] = dlogz
-        self._sampler_kwargs["logl_max"] = logl_max
-        self._sampler_kwargs["n_effective"] = n_effective
-        self._sampler_kwargs["add_live"] = add_live
-        self._sampler_kwargs["print_func"] = print_func
-        self._sampler_kwargs["save_bounds"] = save_bounds
 
         self._kwargs = {}
         self._kwargs["nlive"] = n_live_points
@@ -177,9 +81,8 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._kwargs["reflective"] = reflective
         self._kwargs["update_interval"] = update_interval
         self._kwargs["first_update"] = first_update
-        self._kwargs["npdim"] = npdim
         self._kwargs["rstate"] = rstate
-        self._kwargs["pool"] = None
+        self._kwargs["pool"] = pool
 
         # TODO: have to figure out why
         # this is not working properly
@@ -198,19 +101,12 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._kwargs["logl_kwargs"] = logl_kwargs
         self._kwargs["ptform_args"] = ptform_args
         self._kwargs["ptform_kwargs"] = ptform_kwargs
-        self._kwargs["gradient"] = gradient
-        self._kwargs["grad_args"] = grad_args
-        self._kwargs["grad_kwargs"] = grad_kwargs
-        self._kwargs["compute_jac"] = compute_jac
         self._kwargs["enlarge"] = enlarge
         self._kwargs["bootstrap"] = bootstrap
 
         self._kwargs["walks"] = walks
         self._kwargs["facc"] = facc
         self._kwargs["slices"] = slices
-        self._kwargs["fmove"] = fmove
-        self._kwargs["max_move"] = max_move
-        self._kwargs["update_func"] = update_func
 
         for k, v in kwargs.items():
             self._kwargs[k] = v
@@ -329,176 +225,34 @@ class DynestyDynamicSampler(UnitCubeSampler):
     def setup(
         self,
         nlive_init=500,
-        maxiter_init=None,
-        maxcall_init=None,
-        dlogz_init=0.01,
-        logl_max_init=np.inf,
-        n_effective_init=np.inf,
-        nlive_batch=500,
-        wt_function=None,
-        wt_kwargs=None,
-        maxiter_batch=None,
-        maxcall_batch=None,
-        maxiter=None,
-        maxcall=None,
-        maxbatch=None,
-        n_effective=np.inf,
-        stop_function=None,
-        stop_kwargs=None,
-        use_stop=True,
-        save_bounds=True,
-        print_func=None,
-        live_points=None,
-        bound="multi",
-        sample="auto",
+        bound='multi',
+        sample='auto',
         periodic=None,
         reflective=None,
         update_interval=None,
         first_update=None,
-        npdim=None,
         rstate=None,
+        queue_size=None,
+        pool=None,
         use_pool=None,
         logl_args=None,
         logl_kwargs=None,
         ptform_args=None,
         ptform_kwargs=None,
-        gradient=None,
-        grad_args=None,
-        grad_kwargs=None,
-        compute_jac=False,
         enlarge=None,
-        bootstrap=0,
-        walks=25,
+        bootstrap=None,
+        walks=None,
         facc=0.5,
-        slices=5,
-        fmove=0.9,
-        max_move=100,
-        update_func=None,
+        slices=None,
+        ncdim=None,
+        blob=False,
+        history_filename=None,
+        save_evaluation_history=False,
         **kwargs,
     ):
-        """TODO describe function.
-
-        :param nlive_init:
-        :type nlive_init:
-        :param maxiter_init:
-        :type maxiter_init:
-        :param maxcall_init:
-        :type maxcall_init:
-        :param dlogz_init:
-        :type dlogz_init:
-        :param logl_max_init:
-        :type logl_max_init:
-        :param n_effective_init:
-        :type n_effective_init:
-        :param nlive_batch:
-        :type nlive_batch:
-        :param wt_function:
-        :type wt_function:
-        :param wt_kwargs:
-        :type wt_kwargs:
-        :param maxiter_batch:
-        :type maxiter_batch:
-        :param maxcall_batch:
-        :type maxcall_batch:
-        :param maxiter:
-        :type maxiter:
-        :param maxcall:
-        :type maxcall:
-        :param maxbatch:
-        :type maxbatch:
-        :param n_effective:
-        :type n_effective:
-        :param stop_function:
-        :type stop_function:
-        :param stop_kwargs:
-        :type stop_kwargs:
-        :param use_stop:
-        :type use_stop:
-        :param save_bounds:
-        :type save_bounds:
-        :param print_func:
-        :type print_func:
-        :param live_points:
-        :type live_points:
-        :param bound:
-        :type bound:
-        :param sample:
-        :type sample:
-        :param periodic:
-        :type periodic:
-        :param reflective:
-        :type reflective:
-        :param update_interval:
-        :type update_interval:
-        :param first_update:
-        :type first_update:
-        :param npdim:
-        :type npdim:
-        :param rstate:
-        :type rstate:
-        :param use_pool:
-        :type use_pool:
-        :param logl_args:
-        :type logl_args:
-        :param logl_kwargs:
-        :type logl_kwargs:
-        :param ptform_args:
-        :type ptform_args:
-        :param ptform_kwargs:
-        :type ptform_kwargs:
-        :param gradient:
-        :type gradient:
-        :param grad_args:
-        :type grad_args:
-        :param grad_kwargs:
-        :type grad_kwargs:
-        :param compute_jac:
-        :type compute_jac:
-        :param enlarge:
-        :type enlarge:
-        :param bootstrap:
-        :type bootstrap:
-        :param vol_dec:
-        :type vol_dec:
-        :param vol_check:
-        :type vol_check:
-        :param walks:
-        :type walks:
-        :param facc:
-        :type facc:
-        :param slices:
-        :type slices:
-        :param fmove:
-        :type fmove:
-        :param max_move:
-        :type max_move:
-        :param update_func:
-        :type update_func:
-        :returns:
-        """
         log.debug("Setup dynesty dynamic sampler")
         self._sampler_kwargs = {}
         self._sampler_kwargs["nlive_init"] = nlive_init
-        self._sampler_kwargs["maxiter_init"] = maxiter_init
-        self._sampler_kwargs["maxcall_init"] = maxcall_init
-        self._sampler_kwargs["dlogz_init"] = dlogz_init
-        self._sampler_kwargs["logl_max_init"] = logl_max_init
-        self._sampler_kwargs["n_effective_init"] = n_effective_init
-        self._sampler_kwargs["nlive_batch"] = nlive_batch
-        self._sampler_kwargs["wt_function"] = wt_function
-        self._sampler_kwargs["wt_kwargs"] = wt_kwargs
-        self._sampler_kwargs["maxiter_batch"] = maxiter_batch
-        self._sampler_kwargs["maxcall_batch"] = maxcall_batch
-        self._sampler_kwargs["maxiter"] = maxiter
-        self._sampler_kwargs["maxcall"] = maxcall
-        self._sampler_kwargs["maxbatch"] = maxbatch
-        self._sampler_kwargs["n_effective"] = n_effective
-        self._sampler_kwargs["stop_function"] = stop_function
-        self._sampler_kwargs["stop_kwargs"] = stop_kwargs
-        self._sampler_kwargs["use_stop"] = use_stop
-        self._sampler_kwargs["save_bounds"] = save_bounds
-        self._sampler_kwargs["print_func"] = print_func
-        self._sampler_kwargs["live_points"] = live_points
 
         self._kwargs = {}
 
@@ -509,7 +263,6 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._kwargs["reflective"] = reflective
         self._kwargs["update_interval"] = update_interval
         self._kwargs["first_update"] = first_update
-        self._kwargs["npdim"] = npdim
         self._kwargs["rstate"] = rstate
         self._kwargs["pool"] = None
 
@@ -529,19 +282,12 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._kwargs["logl_kwargs"] = logl_kwargs
         self._kwargs["ptform_args"] = ptform_args
         self._kwargs["ptform_kwargs"] = ptform_kwargs
-        self._kwargs["gradient"] = gradient
-        self._kwargs["grad_args"] = grad_args
-        self._kwargs["grad_kwargs"] = grad_kwargs
-        self._kwargs["compute_jac"] = compute_jac
         self._kwargs["enlarge"] = enlarge
         self._kwargs["bootstrap"] = bootstrap
 
         self._kwargs["walks"] = walks
         self._kwargs["facc"] = facc
         self._kwargs["slices"] = slices
-        self._kwargs["fmove"] = fmove
-        self._kwargs["max_move"] = max_move
-        self._kwargs["update_func"] = update_func
 
         for k, v in kwargs.items():
             self._kwargs[k] = v
