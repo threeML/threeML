@@ -220,11 +220,9 @@ jobs:
                   MPLBACKEND: "Agg"
 
             - name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v1
+              uses: codecov/codecov-action@v5
               with:
-                  file: ./coverage.xml
-                  files: ./coverage1.xml,./coverage2.xml
-                  Directory: ./coverage/reports/
+                  token: ${{ secrets.CODECOV_TOKEN }}
 
     publish-pypi:
         name: Publish to PyPi
