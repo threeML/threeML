@@ -42,8 +42,8 @@ class DynestyNestedSampler(UnitCubeSampler):
     def setup(
         self,
         n_live_points=500,
-        bound='multi',
-        sample='auto',
+        bound="multi",
+        sample="auto",
         periodic=None,
         reflective=None,
         update_interval=None,
@@ -68,48 +68,82 @@ class DynestyNestedSampler(UnitCubeSampler):
         history_filename=None,
         **kwargs,
     ):
+        """
+        Setup the Dynesty nested sampler.
+
+        :param n_live_points: Number of live points used in the nested sampling run.
+            Defaults to ``500``.
+        :type n_live_points: int
+        :param bound: Method for bounding the live points. Options include
+            ``"none"``, ``"single"``, ``"multi"``, or ``"balls"``.
+            Defaults to ``"multi"``.
+        :type bound: str
+        :param sample: Sampling method used for proposing new points. Options include
+            ``"auto"``, ``"uniform"``, ``"rwalk"``, ``"slice"``, or ``"rslice"``.
+            Defaults to ``"auto"``.
+        :type sample: str
+        :param periodic: Indices of parameters with periodic boundary conditions.
+        :type periodic: list[int] or None
+        :param reflective: Indices of parameters with reflective boundary conditions.
+        :type reflective: list[int] or None
+        :param update_interval: Interval (in iterations)
+        :type update_interval: int or float or None
+        :param first_update: Initial update behavior
+        :type first_update: tuple or dict or None
+        :param rstate: Random number generator for reproducibility.
+        :type rstate: numpy.random.Generator or numpy.random.RandomState or None
+        :param queue_size: Number of threads or processes for parallel sampling.
+        :type queue_size: int or None
+        :param pool: Multiprocessing pool for parallel likelihood evaluations.
+        :type pool: multiprocessing.Pool or None
+        :param use_pool: use the pool
+        :type use_pool: dict or None
+        :param live_points: Initial live points for starting the nested sampling run.
+        :type live_points: array-like or None
+        :param logl_args: Positional arguments for the log-likelihood function.
+        :type logl_args: tuple or None
+        :param logl_kwargs: Keyword arguments for the log-likelihood function.
+        :type logl_kwargs: dict or None
+        :param ptform_args: Positional arguments for the prior transform function.
+        :type ptform_args: tuple or None
+        :param ptform_kwargs: Keyword arguments for the prior transform function.
+        :type ptform_kwargs: dict or None
+        :param enlarge: Factor by which to enlarge the bounding ellipsoids.
+        :type enlarge: float or None
+        :param bootstrap: Number of bootstrap resamples for bounding ellipsoids.
+        :type bootstrap: int or None
+        :param walks: Number of random-walk steps used in certain sampling methods.
+        :type walks: int or None
+        :param facc: Target acceptance fraction for slice sampling.
+            Defaults to ``0.5``.
+        :type facc: float
+        :param slices: Number of slices used in the slice sampling method.
+        :type slices: int or None
+        :param ncdim: Dimensionality of coordinate transforms (if applicable).
+        :type ncdim: int or None
+        :param blob: Whether to store additional data for each likelihood evaluation.
+            Defaults to ``False``.
+        :type blob: bool
+        :param save_evaluation_history: Save likelihood evaluation history to file.
+            Defaults to ``False``.
+        :type save_evaluation_history: bool
+        :param history_filename: Path to the file where evaluation history is saved.
+        :type history_filename: str or None
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        """
         log.debug("Setup dynesty sampler")
 
         self._sampler_kwargs = {}
 
-        self._kwargs = {}
+        self._kwargs = locals().copy()
+        for k in ["self", "n_live_points"]:
+            self._kwargs.pop(k)
+
         self._kwargs["nlive"] = n_live_points
-        self._kwargs["bound"] = bound
-
-        self._kwargs["sample"] = sample
-        self._kwargs["periodic"] = periodic
-        self._kwargs["reflective"] = reflective
-        self._kwargs["update_interval"] = update_interval
-        self._kwargs["first_update"] = first_update
-        self._kwargs["rstate"] = rstate
-        self._kwargs["pool"] = pool
-
-        # TODO: have to figure out why
-        # this is not working properly
-        if use_pool is None:
-            use_pool = dict(
-                prior_transform=False,
-                loglikelihood=False,
-                propose_point=False,
-                update_bound=True,
-            )
-
-        self._kwargs["use_pool"] = use_pool
-
-        self._kwargs["live_points"] = live_points
-        self._kwargs["logl_args"] = logl_args
-        self._kwargs["logl_kwargs"] = logl_kwargs
-        self._kwargs["ptform_args"] = ptform_args
-        self._kwargs["ptform_kwargs"] = ptform_kwargs
-        self._kwargs["enlarge"] = enlarge
-        self._kwargs["bootstrap"] = bootstrap
-
-        self._kwargs["walks"] = walks
-        self._kwargs["facc"] = facc
-        self._kwargs["slices"] = slices
-
-        for k, v in kwargs.items():
-            self._kwargs[k] = v
+        kwargs = self._kwargs.get("kwargs")
+        self._kwargs.pop("kwargs")
+        self._kwargs.update(kwargs)
 
         self._is_setup = True
 
@@ -225,8 +259,8 @@ class DynestyDynamicSampler(UnitCubeSampler):
     def setup(
         self,
         nlive_init=500,
-        bound='multi',
-        sample='auto',
+        bound="multi",
+        sample="auto",
         periodic=None,
         reflective=None,
         update_interval=None,
@@ -250,47 +284,80 @@ class DynestyDynamicSampler(UnitCubeSampler):
         save_evaluation_history=False,
         **kwargs,
     ):
+        """
+        Setup the Dynesty dynamic nested sampler.
+
+        :param nlive_init: Number of live points used for the initial phase.
+            Defaults to ``500``.
+        :type nlive_init: int
+        :param bound: Method for bounding the live points. Options include
+            ``"none"``, ``"single"``, ``"multi"``, or ``"balls"``.
+            Defaults to ``"multi"``.
+        :type bound: str
+        :param sample: Sampling method used for proposing new points. Options include
+            ``"auto"``, ``"uniform"``, ``"rwalk"``, ``"slice"``, or ``"rslice"``.
+            Defaults to ``"auto"``.
+        :type sample: str
+        :param periodic: Indices of parameters with periodic boundary conditions.
+        :type periodic: list[int] or None
+        :param reflective: Indices of parameters with reflective boundary conditions.
+        :type reflective: list[int] or None
+        :param update_interval: Interval (in iterations) for updating.
+        :type update_interval: int or float or None
+        :param first_update: Initial update behavior.
+        :type first_update: tuple or dict or None
+        :param rstate: Random number generator for reproducibility.
+        :type rstate: numpy.random.Generator or numpy.random.RandomState or None
+        :param queue_size: Number of threads or processes for parallel sampling.
+        :type queue_size: int or None
+        :param pool: Multiprocessing pool for parallel likelihood evaluations.
+        :type pool: multiprocessing.Pool or None
+        :param use_pool: Dict specifying which parts of the algorithm to parallelize.
+            Defaults to disabling prior transform and likelihood parallelization.
+        :type use_pool: dict or None
+        :param logl_args: Positional arguments for the log-likelihood function.
+        :type logl_args: tuple or None
+        :param logl_kwargs: Keyword arguments for the log-likelihood function.
+        :type logl_kwargs: dict or None
+        :param ptform_args: Positional arguments for the prior transform function.
+        :type ptform_args: tuple or None
+        :param ptform_kwargs: Keyword arguments for the prior transform function.
+        :type ptform_kwargs: dict or None
+        :param enlarge: Factor by which to enlarge the bounding ellipsoids.
+        :type enlarge: float or None
+        :param bootstrap: Number of bootstrap resamples for bounding ellipsoids.
+        :type bootstrap: int or None
+        :param walks: Number of random-walk steps used in certain sampling methods.
+        :type walks: int or None
+        :param facc: Target acceptance fraction for slice sampling.
+            Defaults to ``0.5``.
+        :type facc: float
+        :param slices: Number of slices used in the slice sampling method.
+        :type slices: int or None
+        :param ncdim: Dimensionality of coordinate transforms (if applicable).
+        :type ncdim: int or None
+        :param blob: Store additional data for each likelihood evaluation.
+            Defaults to ``False``.
+        :type blob: bool
+        :param history_filename: Path to the file where evaluation history is saved.
+        :type history_filename: str or None
+        :param save_evaluation_history: Save likelihood evaluation history to file.
+            Defaults to ``False``.
+        :type save_evaluation_history: bool
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        """
+
         log.debug("Setup dynesty dynamic sampler")
         self._sampler_kwargs = {}
         self._sampler_kwargs["nlive_init"] = nlive_init
 
-        self._kwargs = {}
-
-        self._kwargs["bound"] = bound
-
-        self._kwargs["sample"] = sample
-        self._kwargs["periodic"] = periodic
-        self._kwargs["reflective"] = reflective
-        self._kwargs["update_interval"] = update_interval
-        self._kwargs["first_update"] = first_update
-        self._kwargs["rstate"] = rstate
-        self._kwargs["pool"] = None
-
-        # TODO: have to figure out why
-        # this is not working properly
-        if use_pool is None:
-            use_pool = dict(
-                prior_transform=False,
-                loglikelihood=False,
-                propose_point=False,
-                update_bound=True,
-            )
-
-        self._kwargs["use_pool"] = use_pool
-
-        self._kwargs["logl_args"] = logl_args
-        self._kwargs["logl_kwargs"] = logl_kwargs
-        self._kwargs["ptform_args"] = ptform_args
-        self._kwargs["ptform_kwargs"] = ptform_kwargs
-        self._kwargs["enlarge"] = enlarge
-        self._kwargs["bootstrap"] = bootstrap
-
-        self._kwargs["walks"] = walks
-        self._kwargs["facc"] = facc
-        self._kwargs["slices"] = slices
-
-        for k, v in kwargs.items():
-            self._kwargs[k] = v
+        self._kwargs = locals().copy()
+        for k in ["self", "nlive_init"]:
+            self._kwargs.pop(k)
+        kwargs = self._kwargs.get("kwargs")
+        self._kwargs.pop("kwargs")
+        self._kwargs.update(kwargs)
 
         self._is_setup = True
 
