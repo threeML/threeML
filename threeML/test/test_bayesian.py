@@ -130,6 +130,7 @@ def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("multinest")
+    assert bayes.sample() is None
 
     bayes.sampler.setup(n_live_points=400)
 
@@ -145,6 +146,7 @@ def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("ultranest")
+    assert bayes.sample() is None
 
     bayes.sampler.setup()
 
@@ -160,6 +162,8 @@ def test_autoemcee(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("autoemcee")
+    with pytest.raises(RuntimeError):
+        bayes.sample()
 
     bayes.sampler.setup()
 
@@ -175,6 +179,7 @@ def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("dynesty_nested")
+    assert bayes.sample() is None
 
     bayes.sampler.setup(nlive=200)
 
@@ -190,6 +195,7 @@ def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("dynesty_dynamic")
+    assert bayes.sample() is None
 
     bayes.sampler.setup(nlive=100)
 
@@ -205,6 +211,7 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.set_sampler("zeus")
+    assert bayes.sample() is None
 
     bayes.sampler.setup(n_iterations=200, n_walkers=20)
 
