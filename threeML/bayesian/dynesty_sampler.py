@@ -64,9 +64,15 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         self._is_setup = True
 
-    def sample(self, quiet=False):
-        """Sample using the UltraNest numerical integration method :rtype:
+    def sample(self, quiet=False, **kwargs):
+        """Sample using the Dynesty NestedSampler class
 
+        :param quiet: verbosity. Defaults to False.
+        :type quiet: bool
+        :param kwargs: Additional keywords that get passed to the run_nested() function.
+        :type kwargs: dict
+
+        :rtype:
         :returns:
         """
         if not self._is_setup:
@@ -75,6 +81,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         loud = not quiet
 
+        self._sampler_kwargs.update(kwargs)
         self._update_free_parameters()
 
         param_names = list(self._free_parameters.keys())
@@ -197,9 +204,15 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         self._is_setup = True
 
-    def sample(self, quiet=False):
-        """Sample using the UltraNest numerical integration method :rtype:
+    def sample(self, quiet=False, **kwargs):
+        """Sample using the Dynestey DynamicNestedSampler class.
 
+        :param quiet: verbosity. Defaults to False.
+        :type quiet: bool
+        :param kwargs: Additional keywords that get passed to the run_nested() function.
+        :type kwargs: dict
+
+        :rtype:
         :returns:
         """
         if not self._is_setup:
@@ -207,6 +220,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
             return
 
         loud = not quiet
+        self._sampler_kwargs.update(kwargs)
 
         self._update_free_parameters()
 
