@@ -14,6 +14,9 @@ try:
     from dynesty import DynamicNestedSampler, NestedSampler
     import dynesty
 
+    DYNESTY_DOC_URL = (
+        f"https://dynesty.readthedocs.io/en/v{dynesty.__version__}/api.html"
+    )
 except Exception:
     has_dynesty = False
 
@@ -21,6 +24,15 @@ else:
     has_dynesty = True
 
 log = setup_logger(__name__)
+
+
+def fill_docs(**kwargs):
+    def decorator(func):
+        if func.__doc__:
+            func.__doc__ = func.__doc__.format(**kwargs)
+        return func
+
+    return decorator
 
 
 class DynestyPool(object):
@@ -42,6 +54,7 @@ class DynestyNestedSampler(UnitCubeSampler):
             likelihood_model, data_list, **kwargs
         )
 
+    @fill_docs(BASE_URL=DYNESTY_DOC_URL)
     def setup(
         self,
         nlive: int = 500,
@@ -52,7 +65,7 @@ class DynestyNestedSampler(UnitCubeSampler):
         """
         Setup the Dynesty nested sampler.
         All available parameters can be found in the respective version of
-        https://dynesty.readthedocs.io/en/latest/api.html#module-dynesty.dynesty
+        {BASE_URL}#dynesty.dynesty.NestedSampler
 
         :param nlive: Number of live points. Defaults to 500.
         :type nlive: int
@@ -66,6 +79,7 @@ class DynestyNestedSampler(UnitCubeSampler):
             Defaults to the values used by dynesty.
         :type kwargs: dict
         """
+
         log.debug("Setup dynesty sampler")
         if history_filename is not None:
             if Version(dynesty.__version__) < Version("1.2.0"):
@@ -203,6 +217,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
             likelihood_model, data_list, **kwargs
         )
 
+    @fill_docs(BASE_URL=DYNESTY_DOC_URL)
     def setup(
         self,
         nlive: int = 500,
@@ -213,7 +228,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         """
         Setup the Dynesty dynamic nested sampler.
         All available parameters can be found in the respective version of
-        https://dynesty.readthedocs.io/en/latest/api.html#module-dynesty.dynesty
+        {BASE_URL}#dynesty.dynesty.DynamicNestedSampler
 
         :param nlive: Number of live points used during the inital nested sampling run
         :type nlive: int
