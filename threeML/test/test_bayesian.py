@@ -197,7 +197,7 @@ def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes.set_sampler("dynesty_dynamic")
     assert bayes.sample() is None
 
-    bayes.sampler.setup(nlive=100)
+    bayes.sampler.setup(nlive=100, n_effective_init=20)
 
     bayes.sample()
 
