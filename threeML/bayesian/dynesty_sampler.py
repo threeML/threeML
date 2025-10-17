@@ -1,4 +1,6 @@
 import math
+from typing import Optional, Literal
+from packaging.version import Version
 
 import numpy as np
 from astromodels import use_astromodels_memoization
@@ -10,6 +12,7 @@ from threeML.parallel.parallel_client import ParallelClient
 
 try:
     from dynesty import DynamicNestedSampler, NestedSampler
+    import dynesty
 
 except Exception:
     has_dynesty = False
@@ -41,30 +44,50 @@ class DynestyNestedSampler(UnitCubeSampler):
 
     def setup(
         self,
+        nlive: int = 500,
+        bound: Optional[Literal["multi", "single", "none", "balls", "cubes"]] = "multi",
+        history_filename: Optional[str] = None,
         **kwargs,
     ):
         """
         Setup the Dynesty nested sampler.
+        All available parameters can be found in the respective version of
+        https://dynesty.readthedocs.io/en/latest/api.html#module-dynesty.dynesty
 
+        :param nlive: Number of live points. Defaults to 500.
+        :type nlive: int
+        :param bound: Method to approximately bound the prior using the current set of
+            live points. Options are "multi", "single", "none", "balls" or "cubes".
+            Defaults to "multi".
+        :param history_filename: Path to save the history. Defaults to None
+        :type history_filename: str
         :param kwargs: Additional keyword arguments - must be same name and type as
             paramters in constructor of the dynesty.NestedSampler class.
             Defaults to the values used by dynesty.
         :type kwargs: dict
         """
         log.debug("Setup dynesty sampler")
+        if history_filename is not None:
+            if Version(dynesty.__version__) < Version("1.2.0"):
+                log.warning(
+                    f"Your dynesty version is {dynesty.__version__} but "
+                    + "saving to a file was introduced in version 1.2.0. We will "
+                    + "ignore your input."
+                )
+                history_filename = None
 
         self._sampler_kwargs = {}
 
-        self._kwargs = locals().copy()
-        for k in ["self"]:
-            self._kwargs.pop(k)
-        kwargs = self._kwargs.get("kwargs")
-        self._kwargs.pop("kwargs")
+        self._kwargs = {}
+        self._kwargs["nlive"] = nlive
+        self._kwargs["bound"] = bound
+        self._kwargs["history_filename"] = history_filename
+
         self._kwargs.update(kwargs)
 
         self._is_setup = True
 
-    def sample(self, quiet=False, **kwargs):
+    def sample(self, quiet: bool = False, **kwargs):
         """Sample using the Dynesty NestedSampler class
 
         :param quiet: verbosity. Defaults to False.
@@ -182,11 +205,23 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
     def setup(
         self,
+        nlive: int = 500,
+        n_effective_init: Optional[int] = None,
+        history_filename=None,
         **kwargs,
     ):
         """
         Setup the Dynesty dynamic nested sampler.
+        All available parameters can be found in the respective version of
+        https://dynesty.readthedocs.io/en/latest/api.html#module-dynesty.dynesty
 
+        :param nlive: Number of live points used during the inital nested sampling run
+        :type nlive: int
+        :param n_effective_init: Minimum number of effective posterior samples needed
+            during the baseline run. Defaults to no ESS. Removed in dynesty v3.0.0.
+        :type n_effective_init: int
+        :param history_filename: Path to save the history. Defaults to None
+        :type history_filename: str
         :param kwargs: Additional keyword arguments - must be same name and type as
             paramters in constructor of the dynesty.DynamicNestedSampler class.
             Defaults to the values used by dynesty.
@@ -194,17 +229,31 @@ class DynestyDynamicSampler(UnitCubeSampler):
         """
 
         log.debug("Setup dynesty dynamic sampler")
+        if history_filename is not None:
+            if Version(dynesty.__version__) < Version("1.2.0"):
+                log.warning(
+                    f"Your dynesty version is {dynesty.__version__} but "
+                    + "saving to a file was introduced in version 1.2.0"
+                )
+                history_filename = None
+        self._kwargs = {}
         self._sampler_kwargs = {}
-        self._kwargs = locals().copy()
-        for k in ["self"]:
-            self._kwargs.pop(k)
-        kwargs = self._kwargs.get("kwargs")
-        self._kwargs.pop("kwargs")
+
+        self._kwargs["nlive"] = nlive
+        if n_effective_init is not None:
+            if Version(dynesty.__version__) > Version("2.1.5"):
+                log.warning(
+                    "Setting the 'n_effective_init' was removed in dynesty v3.0.0."
+                    + "Will ignore your input."
+                )
+            else:
+                self._kwargs["n_effective_init"] = n_effective_init
+
         self._kwargs.update(kwargs)
 
         self._is_setup = True
 
-    def sample(self, quiet=False, **kwargs):
+    def sample(self, quiet: bool = False, **kwargs):
         """Sample using the Dynestey DynamicNestedSampler class.
 
         :param quiet: verbosity. Defaults to False.
