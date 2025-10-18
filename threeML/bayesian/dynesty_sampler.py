@@ -221,7 +221,6 @@ class DynestyDynamicSampler(UnitCubeSampler):
     def setup(
         self,
         nlive: int = 500,
-        n_effective_init: Optional[int] = None,
         history_filename=None,
         **kwargs,
     ):
@@ -232,9 +231,6 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         :param nlive: Number of live points used during the inital nested sampling run
         :type nlive: int
-        :param n_effective_init: Minimum number of effective posterior samples needed
-            during the baseline run. Defaults to no ESS. Removed in dynesty v3.0.0.
-        :type n_effective_init: int
         :param history_filename: Path to save the history. Defaults to None
         :type history_filename: str
         :param kwargs: Additional keyword arguments - must be same name and type as
@@ -255,15 +251,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._sampler_kwargs = {}
 
         self._kwargs["nlive"] = nlive
-        if n_effective_init is not None:
-            if Version(dynesty.__version__) > Version("2.1.5"):
-                log.warning(
-                    "Setting the 'n_effective_init' was removed in dynesty v3.0.0."
-                    + "Will ignore your input."
-                )
-            else:
-                self._kwargs["n_effective_init"] = n_effective_init
-
+        
         self._kwargs.update(kwargs)
 
         self._is_setup = True
