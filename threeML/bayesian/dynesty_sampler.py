@@ -251,7 +251,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._sampler_kwargs = {}
 
         self._kwargs["nlive"] = nlive
-        
+
         self._kwargs.update(kwargs)
 
         self._is_setup = True
