@@ -144,6 +144,9 @@ jobs:
                   - environment: ci/environment_fermi.yml
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
+                  - environment: ci/environment_macos-latest.yml
+                    os: macos-15-intel
+                    python-version: 3.9
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
