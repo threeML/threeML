@@ -19,6 +19,9 @@ jobs:
                   - environment: ci/environment_fermi.yml
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
+                  - environment: ci/environment.yml
+                    os: macos-15-intel
+                    python-version: 3.9
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -120,7 +123,7 @@ jobs:
                   - environment: ci/environment_fermi.yml
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
-                  - environment: ci/environment_macos-latest.yml
+                  - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
         steps:
