@@ -1,4 +1,6 @@
 import math
+from typing import Optional, Literal
+from packaging.version import Version
 
 import numpy as np
 from astromodels import use_astromodels_memoization
@@ -10,7 +12,11 @@ from threeML.parallel.parallel_client import ParallelClient
 
 try:
     from dynesty import DynamicNestedSampler, NestedSampler
+    import dynesty
 
+    DYNESTY_DOC_URL = (
+        f"https://dynesty.readthedocs.io/en/v{dynesty.__version__}/api.html"
+    )
 except Exception:
     has_dynesty = False
 
@@ -18,6 +24,15 @@ else:
     has_dynesty = True
 
 log = setup_logger(__name__)
+
+
+def fill_docs(**kwargs):
+    def decorator(func):
+        if func.__doc__:
+            func.__doc__ = func.__doc__.format(**kwargs)
+        return func
+
+    return decorator
 
 
 class DynestyPool(object):
@@ -39,187 +54,62 @@ class DynestyNestedSampler(UnitCubeSampler):
             likelihood_model, data_list, **kwargs
         )
 
+    @fill_docs(BASE_URL=DYNESTY_DOC_URL)
     def setup(
         self,
-        n_live_points=400,
-        maxiter=None,
-        maxcall=None,
-        dlogz=None,
-        logl_max=np.inf,
-        n_effective=None,
-        add_live=True,
-        print_func=None,
-        save_bounds=True,
-        bound="multi",
-        sample="auto",
-        periodic=None,
-        reflective=None,
-        update_interval=None,
-        first_update=None,
-        npdim=None,
-        rstate=None,
-        use_pool=None,
-        live_points=None,
-        logl_args=None,
-        logl_kwargs=None,
-        ptform_args=None,
-        ptform_kwargs=None,
-        gradient=None,
-        grad_args=None,
-        grad_kwargs=None,
-        compute_jac=False,
-        enlarge=None,
-        bootstrap=0,
-        walks=25,
-        facc=0.5,
-        slices=5,
-        fmove=0.9,
-        max_move=100,
-        update_func=None,
+        nlive: int = 500,
+        bound: Optional[Literal["multi", "single", "none", "balls", "cubes"]] = "multi",
+        history_filename: Optional[str] = None,
         **kwargs,
     ):
-        """TODO describe function.
-
-        :param n_live_points:
-        :type n_live_points:
-        :param maxiter:
-        :type maxiter:
-        :param maxcall:
-        :type maxcall:
-        :param dlogz:
-        :type dlogz:
-        :param logl_max:
-        :type logl_max:
-        :param n_effective:
-        :type n_effective:
-        :param add_live:
-        :type add_live:
-        :param print_func:
-        :type print_func:
-        :param save_bounds:
-        :type save_bounds:
-        :param bound:
-        :type bound:
-        :param sample:
-        :type sample:
-        :param periodic:
-        :type periodic:
-        :param reflective:
-        :type reflective:
-        :param update_interval:
-        :type update_interval:
-        :param first_update:
-        :type first_update:
-        :param npdim:
-        :type npdim:
-        :param rstate:
-        :type rstate:
-        :param use_pool:
-        :type use_pool:
-        :param live_points:
-        :type live_points:
-        :param logl_args:
-        :type logl_args:
-        :param logl_kwargs:
-        :type logl_kwargs:
-        :param ptform_args:
-        :type ptform_args:
-        :param ptform_kwargs:
-        :type ptform_kwargs:
-        :param gradient:
-        :type gradient:
-        :param grad_args:
-        :type grad_args:
-        :param grad_kwargs:
-        :type grad_kwargs:
-        :param compute_jac:
-        :type compute_jac:
-        :param enlarge:
-        :type enlarge:
-        :param bootstrap:
-        :type bootstrap:
-        :param vol_dec:
-        :type vol_dec:
-        :param vol_check:
-        :type vol_check:
-        :param walks:
-        :type walks:
-        :param facc:
-        :type facc:
-        :param slices:
-        :type slices:
-        :param fmove:
-        :type fmove:
-        :param max_move:
-        :type max_move:
-        :param update_func:
-        :type update_func:
-        :returns:
         """
+        Setup the Dynesty nested sampler.
+        All available parameters can be found in the respective version of
+        {BASE_URL}#dynesty.dynesty.NestedSampler
+
+        :param nlive: Number of live points. Defaults to 500.
+        :type nlive: int
+        :param bound: Method to approximately bound the prior using the current set of
+            live points. Options are "multi", "single", "none", "balls" or "cubes".
+            Defaults to "multi".
+        :param history_filename: Path to save the history. Defaults to None
+        :type history_filename: str
+        :param kwargs: Additional keyword arguments - must be same name and type as
+            paramters in constructor of the dynesty.NestedSampler class.
+            Defaults to the values used by dynesty.
+        :type kwargs: dict
+        """
+
         log.debug("Setup dynesty sampler")
+        if history_filename is not None:
+            if Version(dynesty.__version__) < Version("1.2.0"):
+                log.warning(
+                    f"Your dynesty version is {dynesty.__version__} but "
+                    + "saving to a file was introduced in version 1.2.0. We will "
+                    + "ignore your input."
+                )
+                history_filename = None
 
         self._sampler_kwargs = {}
-        self._sampler_kwargs["maxiter"] = maxiter
-        self._sampler_kwargs["maxcall"] = maxcall
-        self._sampler_kwargs["dlogz"] = dlogz
-        self._sampler_kwargs["logl_max"] = logl_max
-        self._sampler_kwargs["n_effective"] = n_effective
-        self._sampler_kwargs["add_live"] = add_live
-        self._sampler_kwargs["print_func"] = print_func
-        self._sampler_kwargs["save_bounds"] = save_bounds
 
         self._kwargs = {}
-        self._kwargs["nlive"] = n_live_points
+        self._kwargs["nlive"] = nlive
         self._kwargs["bound"] = bound
+        self._kwargs["history_filename"] = history_filename
 
-        self._kwargs["sample"] = sample
-        self._kwargs["periodic"] = periodic
-        self._kwargs["reflective"] = reflective
-        self._kwargs["update_interval"] = update_interval
-        self._kwargs["first_update"] = first_update
-        self._kwargs["npdim"] = npdim
-        self._kwargs["rstate"] = rstate
-        self._kwargs["pool"] = None
-
-        # TODO: have to figure out why
-        # this is not working properly
-        if use_pool is None:
-            use_pool = dict(
-                prior_transform=False,
-                loglikelihood=False,
-                propose_point=False,
-                update_bound=True,
-            )
-
-        self._kwargs["use_pool"] = use_pool
-
-        self._kwargs["live_points"] = live_points
-        self._kwargs["logl_args"] = logl_args
-        self._kwargs["logl_kwargs"] = logl_kwargs
-        self._kwargs["ptform_args"] = ptform_args
-        self._kwargs["ptform_kwargs"] = ptform_kwargs
-        self._kwargs["gradient"] = gradient
-        self._kwargs["grad_args"] = grad_args
-        self._kwargs["grad_kwargs"] = grad_kwargs
-        self._kwargs["compute_jac"] = compute_jac
-        self._kwargs["enlarge"] = enlarge
-        self._kwargs["bootstrap"] = bootstrap
-
-        self._kwargs["walks"] = walks
-        self._kwargs["facc"] = facc
-        self._kwargs["slices"] = slices
-        self._kwargs["fmove"] = fmove
-        self._kwargs["max_move"] = max_move
-        self._kwargs["update_func"] = update_func
-
-        for k, v in kwargs.items():
-            self._kwargs[k] = v
+        self._kwargs.update(kwargs)
 
         self._is_setup = True
 
-    def sample(self, quiet=False):
-        """Sample using the UltraNest numerical integration method :rtype:
+    def sample(self, quiet: bool = False, **kwargs):
+        """Sample using the Dynesty NestedSampler class
 
+        :param quiet: verbosity. Defaults to False.
+        :type quiet: bool
+        :param kwargs: Additional keywords that get passed to the run_nested() function.
+        :type kwargs: dict
+
+        :rtype:
         :returns:
         """
         if not self._is_setup:
@@ -228,6 +118,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         loud = not quiet
 
+        self._sampler_kwargs.update(kwargs)
         self._update_free_parameters()
 
         param_names = list(self._free_parameters.keys())
@@ -326,231 +217,54 @@ class DynestyDynamicSampler(UnitCubeSampler):
             likelihood_model, data_list, **kwargs
         )
 
+    @fill_docs(BASE_URL=DYNESTY_DOC_URL)
     def setup(
         self,
-        nlive_init=500,
-        maxiter_init=None,
-        maxcall_init=None,
-        dlogz_init=0.01,
-        logl_max_init=np.inf,
-        n_effective_init=np.inf,
-        nlive_batch=500,
-        wt_function=None,
-        wt_kwargs=None,
-        maxiter_batch=None,
-        maxcall_batch=None,
-        maxiter=None,
-        maxcall=None,
-        maxbatch=None,
-        n_effective=np.inf,
-        stop_function=None,
-        stop_kwargs=None,
-        use_stop=True,
-        save_bounds=True,
-        print_func=None,
-        live_points=None,
-        bound="multi",
-        sample="auto",
-        periodic=None,
-        reflective=None,
-        update_interval=None,
-        first_update=None,
-        npdim=None,
-        rstate=None,
-        use_pool=None,
-        logl_args=None,
-        logl_kwargs=None,
-        ptform_args=None,
-        ptform_kwargs=None,
-        gradient=None,
-        grad_args=None,
-        grad_kwargs=None,
-        compute_jac=False,
-        enlarge=None,
-        bootstrap=0,
-        walks=25,
-        facc=0.5,
-        slices=5,
-        fmove=0.9,
-        max_move=100,
-        update_func=None,
+        nlive: int = 500,
+        history_filename=None,
         **kwargs,
     ):
-        """TODO describe function.
-
-        :param nlive_init:
-        :type nlive_init:
-        :param maxiter_init:
-        :type maxiter_init:
-        :param maxcall_init:
-        :type maxcall_init:
-        :param dlogz_init:
-        :type dlogz_init:
-        :param logl_max_init:
-        :type logl_max_init:
-        :param n_effective_init:
-        :type n_effective_init:
-        :param nlive_batch:
-        :type nlive_batch:
-        :param wt_function:
-        :type wt_function:
-        :param wt_kwargs:
-        :type wt_kwargs:
-        :param maxiter_batch:
-        :type maxiter_batch:
-        :param maxcall_batch:
-        :type maxcall_batch:
-        :param maxiter:
-        :type maxiter:
-        :param maxcall:
-        :type maxcall:
-        :param maxbatch:
-        :type maxbatch:
-        :param n_effective:
-        :type n_effective:
-        :param stop_function:
-        :type stop_function:
-        :param stop_kwargs:
-        :type stop_kwargs:
-        :param use_stop:
-        :type use_stop:
-        :param save_bounds:
-        :type save_bounds:
-        :param print_func:
-        :type print_func:
-        :param live_points:
-        :type live_points:
-        :param bound:
-        :type bound:
-        :param sample:
-        :type sample:
-        :param periodic:
-        :type periodic:
-        :param reflective:
-        :type reflective:
-        :param update_interval:
-        :type update_interval:
-        :param first_update:
-        :type first_update:
-        :param npdim:
-        :type npdim:
-        :param rstate:
-        :type rstate:
-        :param use_pool:
-        :type use_pool:
-        :param logl_args:
-        :type logl_args:
-        :param logl_kwargs:
-        :type logl_kwargs:
-        :param ptform_args:
-        :type ptform_args:
-        :param ptform_kwargs:
-        :type ptform_kwargs:
-        :param gradient:
-        :type gradient:
-        :param grad_args:
-        :type grad_args:
-        :param grad_kwargs:
-        :type grad_kwargs:
-        :param compute_jac:
-        :type compute_jac:
-        :param enlarge:
-        :type enlarge:
-        :param bootstrap:
-        :type bootstrap:
-        :param vol_dec:
-        :type vol_dec:
-        :param vol_check:
-        :type vol_check:
-        :param walks:
-        :type walks:
-        :param facc:
-        :type facc:
-        :param slices:
-        :type slices:
-        :param fmove:
-        :type fmove:
-        :param max_move:
-        :type max_move:
-        :param update_func:
-        :type update_func:
-        :returns:
         """
+        Setup the Dynesty dynamic nested sampler.
+        All available parameters can be found in the respective version of
+        {BASE_URL}#dynesty.dynesty.DynamicNestedSampler
+
+        :param nlive: Number of live points used during the inital nested sampling run
+        :type nlive: int
+        :param history_filename: Path to save the history. Defaults to None
+        :type history_filename: str
+        :param kwargs: Additional keyword arguments - must be same name and type as
+            paramters in constructor of the dynesty.DynamicNestedSampler class.
+            Defaults to the values used by dynesty.
+        :type kwargs: dict
+        """
+
         log.debug("Setup dynesty dynamic sampler")
-        self._sampler_kwargs = {}
-        self._sampler_kwargs["nlive_init"] = nlive_init
-        self._sampler_kwargs["maxiter_init"] = maxiter_init
-        self._sampler_kwargs["maxcall_init"] = maxcall_init
-        self._sampler_kwargs["dlogz_init"] = dlogz_init
-        self._sampler_kwargs["logl_max_init"] = logl_max_init
-        self._sampler_kwargs["n_effective_init"] = n_effective_init
-        self._sampler_kwargs["nlive_batch"] = nlive_batch
-        self._sampler_kwargs["wt_function"] = wt_function
-        self._sampler_kwargs["wt_kwargs"] = wt_kwargs
-        self._sampler_kwargs["maxiter_batch"] = maxiter_batch
-        self._sampler_kwargs["maxcall_batch"] = maxcall_batch
-        self._sampler_kwargs["maxiter"] = maxiter
-        self._sampler_kwargs["maxcall"] = maxcall
-        self._sampler_kwargs["maxbatch"] = maxbatch
-        self._sampler_kwargs["n_effective"] = n_effective
-        self._sampler_kwargs["stop_function"] = stop_function
-        self._sampler_kwargs["stop_kwargs"] = stop_kwargs
-        self._sampler_kwargs["use_stop"] = use_stop
-        self._sampler_kwargs["save_bounds"] = save_bounds
-        self._sampler_kwargs["print_func"] = print_func
-        self._sampler_kwargs["live_points"] = live_points
-
+        if history_filename is not None:
+            if Version(dynesty.__version__) < Version("1.2.0"):
+                log.warning(
+                    f"Your dynesty version is {dynesty.__version__} but "
+                    + "saving to a file was introduced in version 1.2.0"
+                )
+                history_filename = None
         self._kwargs = {}
+        self._sampler_kwargs = {}
 
-        self._kwargs["bound"] = bound
+        self._kwargs["nlive"] = nlive
 
-        self._kwargs["sample"] = sample
-        self._kwargs["periodic"] = periodic
-        self._kwargs["reflective"] = reflective
-        self._kwargs["update_interval"] = update_interval
-        self._kwargs["first_update"] = first_update
-        self._kwargs["npdim"] = npdim
-        self._kwargs["rstate"] = rstate
-        self._kwargs["pool"] = None
-
-        # TODO: have to figure out why
-        # this is not working properly
-        if use_pool is None:
-            use_pool = dict(
-                prior_transform=False,
-                loglikelihood=False,
-                propose_point=False,
-                update_bound=True,
-            )
-
-        self._kwargs["use_pool"] = use_pool
-
-        self._kwargs["logl_args"] = logl_args
-        self._kwargs["logl_kwargs"] = logl_kwargs
-        self._kwargs["ptform_args"] = ptform_args
-        self._kwargs["ptform_kwargs"] = ptform_kwargs
-        self._kwargs["gradient"] = gradient
-        self._kwargs["grad_args"] = grad_args
-        self._kwargs["grad_kwargs"] = grad_kwargs
-        self._kwargs["compute_jac"] = compute_jac
-        self._kwargs["enlarge"] = enlarge
-        self._kwargs["bootstrap"] = bootstrap
-
-        self._kwargs["walks"] = walks
-        self._kwargs["facc"] = facc
-        self._kwargs["slices"] = slices
-        self._kwargs["fmove"] = fmove
-        self._kwargs["max_move"] = max_move
-        self._kwargs["update_func"] = update_func
-
-        for k, v in kwargs.items():
-            self._kwargs[k] = v
+        self._kwargs.update(kwargs)
 
         self._is_setup = True
 
-    def sample(self, quiet=False):
-        """Sample using the UltraNest numerical integration method :rtype:
+    def sample(self, quiet: bool = False, **kwargs):
+        """Sample using the Dynestey DynamicNestedSampler class.
 
+        :param quiet: verbosity. Defaults to False.
+        :type quiet: bool
+        :param kwargs: Additional keywords that get passed to the run_nested() function.
+        :type kwargs: dict
+
+        :rtype:
         :returns:
         """
         if not self._is_setup:
@@ -558,6 +272,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
             return
 
         loud = not quiet
+        self._sampler_kwargs.update(kwargs)
 
         self._update_free_parameters()
 

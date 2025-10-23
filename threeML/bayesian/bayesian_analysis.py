@@ -195,7 +195,7 @@ class BayesianAnalysis:
 
             log.info("sampler is setup with default parameters")
 
-    def sample(self, quiet=False) -> None:
+    def sample(self, quiet=False, **kwargs) -> None:
         """Sample the posterior of the model with the selected algorithm.
 
         If no algorithm as been set, then the configured default
@@ -210,7 +210,7 @@ class BayesianAnalysis:
             self.set_sampler()
 
         with use_astromodels_memoization(False):
-            self._sampler.sample(quiet=quiet)
+            self._sampler.sample(quiet=quiet, **kwargs)
 
     @property
     def results(self) -> Optional[BayesianResults]:
