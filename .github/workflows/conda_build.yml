@@ -17,11 +17,14 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
+                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
+                    architecture: arm64
                     os: macos-latest
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
+                    architecture: x64
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -41,12 +44,13 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
-                  miniforge-variant: Miniforge3
+                  miniforge-version: latest
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   channels: conda-forge, threeml, fermi
                   use-only-tar-bz2: false
+                  architecture: ${{ matrix.architecture }}
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -121,11 +125,14 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
+                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
+                    architecture: arm64
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
+                    architecture: x64
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -136,13 +143,13 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
-                  miniforge-variant: Miniforge3
+                  miniforge-version: latest
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   channels: threeml, conda-forge, fermi
                   use-only-tar-bz2: false
-                  
+                  architecture: ${{ matrix.architecture }}
             - name: Init Env
               shell: bash -l {0}
               run: |

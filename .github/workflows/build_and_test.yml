@@ -56,10 +56,10 @@ jobs:
                     brew install hdf5 lzo c-blosc
                   fi
 
+                  pip install astromodels
+
                   if [[ "${ISDEV}" == "true" ]]; then
-                    pip install --upgrade --pre astromodels
-                  else
-                    pip install --upgrade astromodels
+                    pip install --upgrade --pre --no-deps astromodels
                   fi
                   
                   pip install --upgrade flake8 coverage pytest-cov cython numba
@@ -142,11 +142,14 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
+                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
+                    architecture: arm64
                     os: macos-latest
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
+                    architecture: x64
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -162,6 +165,7 @@ jobs:
                   auto-update-conda: true
                   auto-activate-base: false
                   miniforge-version: latest
+                  architecture: ${{ matrix.architecture }}
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
                   channels: threeml, conda-forge, fermi
