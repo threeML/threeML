@@ -260,7 +260,7 @@ jobs:
     
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -284,26 +284,26 @@ jobs:
           channels: threeml, conda-forge, defaults
           environment-file: ci/environment_xspec.yml
           use-only-tar-bz2: false
-          architecture: arm64
+          architecture: x64
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
           set -e
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+          # miniconda_os=MacOSX
+          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
-          brew update
-          brew install --cask basictex
+          # brew update
+          # brew install --cask basictex
 
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
+          # eval "$(/usr/libexec/path_helper)"
+          # sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install -c conda-forge ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core
 
           mamba install xspec-data -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/
 

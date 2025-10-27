@@ -213,7 +213,7 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
-                  if [[ ${{matrix.python-version}} != 3.9 or ${{matrix.os}} != macos-15-intel ]]; then
+                  if [[ ${{matrix.python-version}} != 3.9 || ${{matrix.os}} != macos-15-intel ]]; then
 
                     wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                     python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
