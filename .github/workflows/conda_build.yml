@@ -48,7 +48,7 @@ jobs:
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
-                  channels: conda-forge, threeml, fermi
+                  channels: threeml, conda-forge, fermi
                   use-only-tar-bz2: false
                   architecture: ${{ matrix.architecture }}
             - name: Init Env
@@ -102,9 +102,14 @@ jobs:
             - name: Test conda build
               shell: bash -l {0}
               run: |
-                wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+
+                if [[ ${{matrix.python-version}} != 3.9 or ${{matrix.os}} != macos-15-intel ]]; then
+
+                  wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                  python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                 
+                fi
+
                 python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:

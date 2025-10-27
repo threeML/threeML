@@ -164,7 +164,7 @@ jobs:
               with:
                   auto-update-conda: true
                   auto-activate-base: false
-                  miniforge-version: latest
+                  mamba-version: "*"
                   architecture: ${{ matrix.architecture }}
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
@@ -213,9 +213,12 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
-                  # Update gtburst
-                  wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                  python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                  if [[ ${{matrix.python-version}} != 3.9 or ${{matrix.os}} != macos-15-intel ]]; then
+
+                    wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                    python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                  
+                  fi
 
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
