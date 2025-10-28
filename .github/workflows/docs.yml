@@ -78,7 +78,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -109,20 +109,19 @@ jobs:
         run: |
           # Make sure we fail in case of error
           set -e
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          # miniconda_os=MacOSX
+          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+          # brew update
+          # brew install --cask basictex
 
-          brew update
-          brew install --cask basictex
+          # eval "$(/usr/libexec/path_helper)"
+          # sudo apt-get install texlive
 
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
-
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
       - name: Install the package
         shell: bash -l {0}
@@ -164,7 +163,7 @@ jobs:
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -195,19 +194,19 @@ jobs:
         run: |
           # Make sure we fail in case of error
           set -e
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+          # miniconda_os=MacOSX
+          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
-          brew update
-          brew install --cask basictex
+          # brew update
+          # brew install --cask basictex
 
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
+          # eval "$(/usr/libexec/path_helper)"
+          # sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
           
       - name: Install the package
         shell: bash -l {0}
@@ -303,7 +302,7 @@ jobs:
           # eval "$(/usr/libexec/path_helper)"
           # sudo apt-get install texlive
 
-          mamba install -c conda-forge ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
           mamba install xspec-data -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/
 
@@ -351,7 +350,7 @@ jobs:
   
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -382,19 +381,19 @@ jobs:
         run: |
           # Make sure we fail in case of error
           set -e
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+          # miniconda_os=MacOSX
+          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
-          brew update
-          brew install --cask basictex
+          # brew update
+          # brew install --cask basictex
 
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
+          # eval "$(/usr/libexec/path_helper)"
+          # sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
       - name: Install the package
         shell: bash -l {0}
