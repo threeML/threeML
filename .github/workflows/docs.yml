@@ -206,7 +206,7 @@ jobs:
           # eval "$(/usr/libexec/path_helper)"
           # sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs libopenblas
           
       - name: Install the package
         shell: bash -l {0}
@@ -304,7 +304,7 @@ jobs:
 
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
-          mamba install xspec-data -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/
+          # mamba install xspec-data -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/
 
       - name: Install the package
         shell: bash -l {0}
