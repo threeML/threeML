@@ -8,7 +8,7 @@
   <title>threeML.analysis_results &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,9 +112,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.analysis_results</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
@@ -125,7 +126,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colormaps</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
@@ -133,7 +133,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.core.my_yaml</span><span class="w"> </span><span class="kn">import</span> <span class="n">my_yaml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.core.parameter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">corner</span><span class="w"> </span><span class="kn">import</span> <span class="n">corner</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colormaps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
@@ -142,8 +142,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.calculate_flux</span><span class="w"> </span><span class="kn">import</span> <span class="n">_calculate_point_source_flux</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sanitize_filename</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.fits_file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FITSExtension</span><span class="p">,</span> <span class="n">FITSFile</span><span class="p">,</span> <span class="n">fits</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.hdf5_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">recursively_load_dict_contents_from_group</span><span class="p">,</span>
-                                   <span class="n">recursively_save_dict_contents_to_group</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.hdf5_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">recursively_load_dict_contents_from_group</span><span class="p">,</span>
+    <span class="n">recursively_save_dict_contents_to_group</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.results_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTable</span>
@@ -153,7 +155,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.random_variates</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomVariates</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
-
     <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -161,23 +162,21 @@
 <span class="n">_rich_console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
 
 <span class="k">try</span><span class="p">:</span>
-
     <span class="kn">import</span><span class="w"> </span><span class="nn">chainconsumer</span>
 
-<span class="k">except</span><span class="p">:</span>
-
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">has_chainconsumer</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;chainconsumer is NOT installed&quot;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-
     <span class="n">has_chainconsumer</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;chainconsumer is installed&quot;</span><span class="p">)</span>
 
-<span class="c1"># These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute</span>
-<span class="c1"># them with normal characters when we write the keyword, and we substitute them back when we read it back</span>
+<span class="c1"># These are special characters which cannot be safely saved in the keyword of a FITS</span>
+<span class="c1"># file. We substitute them with normal characters when we write the keyword, and we</span>
+<span class="c1"># substitute them back when we read it back</span>
 <span class="n">_subs</span> <span class="o">=</span> <span class="p">(</span>
     <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;_NEWLINE_&quot;</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;_QUOTE1_&quot;</span><span class="p">),</span>
@@ -204,10 +203,8 @@
 <div class="viewcode-block" id="SEQUENCE">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.SEQUENCE">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SEQUENCE</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the SEQUENCE extension of a FITS file containing a set of</span>
+<span class="sd">    results from a set of analysis.&quot;&quot;&quot;</span>
 
     <span class="n">_HEADER_KEYWORDS</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s2">&quot;EXTNAME&quot;</span><span class="p">,</span> <span class="s2">&quot;SEQUENCE&quot;</span><span class="p">,</span> <span class="s2">&quot;Extension name&quot;</span><span class="p">),</span>
@@ -229,7 +226,6 @@
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS_HDF">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">,</span> <span class="n">hdf_obj</span><span class="p">):</span>
-
         <span class="n">optimized_model</span> <span class="o">=</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">optimized_model</span>
 
         <span class="c1"># Gather the dictionary with free parameters</span>
@@ -241,9 +237,7 @@
         <span class="c1"># Gather covariance matrix (if any)</span>
 
         <span class="k">if</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;MLE&quot;</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis_results</span><span class="p">,</span> <span class="n">MLEResults</span><span class="p">):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;this is not and MLEREsults&quot;</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -256,7 +250,6 @@
                 <span class="n">n_parameters</span><span class="p">,</span>
                 <span class="n">n_parameters</span><span class="p">,</span>
             <span class="p">):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                     <span class="s2">&quot;Matrix has the wrong shape. Should be </span><span class="si">%i</span><span class="s2"> x </span><span class="si">%i</span><span class="s2">, got </span><span class="si">%i</span><span class="s2"> x </span><span class="si">%i</span><span class="s2">&quot;</span>
                     <span class="o">%</span> <span class="p">(</span>
@@ -276,9 +269,7 @@
             <span class="n">log_probability</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_parameters</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis_results</span><span class="p">,</span> <span class="n">BayesianResults</span><span class="p">):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is not a BayesiResults&quot;</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -351,14 +342,14 @@
         <span class="n">hdf_obj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
             <span class="s2">&quot;UNIT&quot;</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_frame</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-                <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">()),</span>
+                <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">()</span>
+            <span class="p">),</span>
             <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span>
             <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;MLE&quot;</span><span class="p">:</span>
-
             <span class="n">hdf_obj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
                 <span class="s2">&quot;COVARIANCE&quot;</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">covariance_matrix</span><span class="p">,</span>
@@ -368,7 +359,6 @@
             <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;Bayesian&quot;</span><span class="p">:</span>
-
             <span class="n">hdf_obj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
                 <span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
@@ -386,14 +376,12 @@
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This AR is invalid!&quot;</span><span class="p">)</span>
 
         <span class="c1"># Now add two keywords for each instrument</span>
         <span class="n">stat_series</span> <span class="o">=</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">optimal_statistic_values</span>  <span class="c1"># type: pd.Series</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">plugin_instance_name</span><span class="p">,</span> <span class="n">stat_value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stat_series</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-
             <span class="n">hdf_obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;STAT</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stat_value</span>
             <span class="n">hdf_obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;PN</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_instance_name</span>
 
@@ -410,8 +398,8 @@
 <div class="viewcode-block" id="ANALYSIS_RESULTS">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.ANALYSIS_RESULTS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ANALYSIS_RESULTS</span><span class="p">(</span><span class="n">FITSExtension</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the ANALYSIS_RESULTS extension of a FITS file encoding the</span>
+<span class="sd">    results of an analysis.</span>
 
 <span class="sd">    :param analysis_results:</span>
 <span class="sd">    :type analysis_results: _AnalysisResults</span>
@@ -425,7 +413,6 @@
     <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">):</span>
-
         <span class="n">optimized_model</span> <span class="o">=</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">optimized_model</span>
 
         <span class="c1"># Gather the dictionary with free parameters</span>
@@ -437,9 +424,7 @@
         <span class="c1"># Gather covariance matrix (if any)</span>
 
         <span class="k">if</span> <span class="n">analysis_results</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;MLE&quot;</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis_results</span><span class="p">,</span> <span class="n">MLEResults</span><span class="p">):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is not a MLEResults&quot;</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -455,7 +440,6 @@
                 <span class="n">n_parameters</span><span class="p">,</span>
                 <span class="n">n_parameters</span><span class="p">,</span>
             <span class="p">):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                     <span class="s2">&quot;Matrix has the wrong shape. Should be </span><span class="si">%i</span><span class="s2"> x </span><span class="si">%i</span><span class="s2">, got </span><span class="si">%i</span><span class="s2"> x </span><span class="si">%i</span><span class="s2">&quot;</span>
                     <span class="o">%</span> <span class="p">(</span>
@@ -472,9 +456,7 @@
             <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_parameters</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">analysis_results</span><span class="p">,</span> <span class="n">BayesianResults</span><span class="p">):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is not a BayesianResults&quot;</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -498,7 +480,8 @@
         <span class="c1"># Serialize the model so it can be placed in the header</span>
         <span class="n">yaml_model_serialization</span> <span class="o">=</span> <span class="n">my_yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">to_dict_with_types</span><span class="p">())</span>
 
-        <span class="c1"># Replace characters which cannot be contained in a FITS header with other characters</span>
+        <span class="c1"># Replace characters which cannot be contained in a FITS header with other</span>
+        <span class="c1"># characters</span>
         <span class="n">yaml_model_serialization</span> <span class="o">=</span> <span class="n">_escape_yaml_for_fits</span><span class="p">(</span><span class="n">yaml_model_serialization</span><span class="p">)</span>
 
         <span class="c1"># Get data frame with parameters (always use equal tail errors)</span>
@@ -557,13 +540,9 @@
 <div class="viewcode-block" id="AnalysisResultsFITS">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsFITS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AnalysisResultsFITS</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A FITS file for storing one or more results from 3ML analysis</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A FITS file for storing one or more results from 3ML analysis.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">analysis_results</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="c1"># This will contain the list of extensions we want to write in the file</span>
 
         <span class="n">extensions</span> <span class="o">=</span> <span class="p">[]</span>
@@ -604,19 +583,22 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_AnalysisResults</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A unified class to store results from a maximum likelihood or a Bayesian analysis, which provides a unique interface</span>
-<span class="sd">    and allows for &quot;error propagation&quot; (which means different things in the two contexts) in arbitrary expressions.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A unified class to store results from a maximum likelihood or a Bayesian</span>
+<span class="sd">    analysis, which provides a unique interface and allows for &quot;error</span>
+<span class="sd">    propagation&quot; (which means different things in the two contexts) in</span>
+<span class="sd">    arbitrary expressions.</span>
 
-<span class="sd">    This class is not intended for public consumption. Use either the MLEResults or the BayesianResults subclasses.</span>
+<span class="sd">    This class is not intended for public consumption. Use either the</span>
+<span class="sd">    MLEResults or the BayesianResults subclasses.</span>
 
-<span class="sd">    :param optimized_model: a Model instance with the optimized values of the parameters. A clone will be stored within</span>
-<span class="sd">    the class, so there is no need to clone it before hand</span>
+<span class="sd">    :param optimized_model: a Model instance with the optimized values</span>
+<span class="sd">        of the parameters. A clone will be stored within the class, so</span>
+<span class="sd">        there is no need to clone it before hand</span>
 <span class="sd">    :type optimized_model: astromodels.Model</span>
 <span class="sd">    :param samples: the samples for the parameters</span>
 <span class="sd">    :type samples: np.ndarray</span>
-<span class="sd">    :param statistic_values: a dictionary containing the statistic (likelihood or posterior) values for the different</span>
-<span class="sd">    datasets</span>
+<span class="sd">    :param statistic_values: a dictionary containing the statistic</span>
+<span class="sd">        (likelihood or posterior) values for the different datasets</span>
 <span class="sd">    :type statistic_values: dict</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -628,7 +610,6 @@
         <span class="n">analysis_type</span><span class="p">,</span>
         <span class="n">statistical_measures</span><span class="p">,</span>
     <span class="p">):</span>
-
         <span class="c1"># Safety checks</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_free_parameters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">)</span>
@@ -638,8 +619,8 @@
             <span class="s2">&quot;do not agree.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_free_parameters</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="c1"># NOTE: we clone the model so that whatever happens outside or after, this copy of the model will not be</span>
-        <span class="c1"># changed</span>
+        <span class="c1"># NOTE: we clone the model so that whatever happens outside or after, this copy</span>
+        <span class="c1"># of the model will not be changed</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span> <span class="o">=</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">clone_model</span><span class="p">(</span><span class="n">optimized_model</span><span class="p">)</span>
 
@@ -655,8 +636,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_measures</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">statistical_measures</span><span class="p">)</span>
 
-        <span class="c1"># The .free_parameters property of the model is pretty costly because it needs to update all the parameters</span>
-        <span class="c1"># to see if they are free. Since the saved model will not be touched we can cache that</span>
+        <span class="c1"># The .free_parameters property of the model is pretty costly because it needs</span>
+        <span class="c1"># to update all the parameters to see if they are free. Since the saved model</span>
+        <span class="c1"># will not be touched we can cache that</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span><span class="o">.</span><span class="n">free_parameters</span>
 
         <span class="c1"># Gather also the optimized values of the parameters</span>
@@ -667,8 +649,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the matrix of the samples</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the matrix of the samples.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -677,12 +658,10 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">analysis_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_type</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">as_hdf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write results to a FITS or HDF5 file</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write results to a FITS or HDF5 file.</span>
 
 <span class="sd">        :param filename: the file name</span>
 <span class="sd">        :param overwrite: overwrite the file?</span>
@@ -691,15 +670,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">as_hdf</span><span class="p">:</span>
-
             <span class="n">fits_file</span> <span class="o">=</span> <span class="n">AnalysisResultsFITS</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
             <span class="n">fits_file</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-
                 <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;n_results&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
                 <span class="n">grp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;AnalysisResults_0&quot;</span><span class="p">)</span>
@@ -707,9 +683,8 @@
                 <span class="n">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grp</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_variates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_path</span><span class="p">):</span>
-
         <span class="k">assert</span> <span class="n">param_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;Parameter </span><span class="si">%s</span><span class="s2"> is not a &quot;</span> <span class="s2">&quot;free parameters of the model&quot;</span> <span class="o">%</span> <span class="n">param_path</span>
+            <span class="s2">&quot;Parameter </span><span class="si">%s</span><span class="s2"> is not a free parameters of the model&quot;</span> <span class="o">%</span> <span class="n">param_path</span>
         <span class="p">)</span>
 
         <span class="n">param_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">param_path</span><span class="p">)</span>
@@ -724,10 +699,10 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">propagate</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allow for propagation of uncertainties on arbitrary functions. It returns a function which is a wrapper around</span>
-<span class="sd">        the provided input function. Using the wrapper with RandomVariates instances as arguments will return a</span>
-<span class="sd">        RandomVariates result, with the errors propagated.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow for propagation of uncertainties on arbitrary functions. It</span>
+<span class="sd">        returns a function which is a wrapper around the provided input</span>
+<span class="sd">        function. Using the wrapper with RandomVariates instances as arguments</span>
+<span class="sd">        will return a RandomVariates result, with the errors propagated.</span>
 
 <span class="sd">        Example:</span>
 
@@ -749,9 +724,10 @@
 <span class="sd">        equal-tail: (4.11 -0.16 +0.15) x 10, hpd: (4.11 -0.05 +0.08) x 10</span>
 
 <span class="sd">        :param function: function to be wrapped</span>
-<span class="sd">        :param **kwargs: keyword arguments specifying which random variates should substitute which argument in the</span>
-<span class="sd">        function (see example above)</span>
-<span class="sd">        :return: a new function, wrapping function, which can be used to propagate errors</span>
+<span class="sd">        :param **kwargs: keyword arguments specifying which random variates should</span>
+<span class="sd">        substitute which argument in the function (see example above)</span>
+<span class="sd">        :return: a new function, wrapping function, which can be used to propagate</span>
+<span class="sd">        errors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Get calling sequence of input function</span>
@@ -771,14 +747,14 @@
         <span class="n">wrapper</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">vectorized</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Finally make so that the result is always a RandomVariate</span>
-        <span class="n">wrapper2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">RandomVariates</span><span class="p">(</span><span class="n">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper2</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">RandomVariates</span><span class="p">(</span><span class="n">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">wrapper2</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">optimized_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a copy of the optimized model</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a copy of the optimized model.</span>
 
 <span class="sd">        :return: a copy of the optimized model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -786,8 +762,7 @@
         <span class="k">return</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Estimate the covariance matrix from the samples</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the covariance matrix from the samples.</span>
 
 <span class="sd">        :return: a covariance matrix estimated from the samples</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -795,62 +770,52 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You need to implement this&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">optimal_statistic_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimal_statistic_values</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">statistical_measures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_measures</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covariance</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the correlation matrix</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the correlation matrix.</span>
 
 <span class="sd">        :return: correlation matrix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># NOTE: we compute this on-the-fly because it is of less frequent use, and contains essentially the same</span>
-        <span class="c1"># information of the covariance matrix.</span>
+        <span class="c1"># NOTE: we compute this on-the-fly because it is of less frequent use, and</span>
+        <span class="c1"># contains essentially the same information of the covariance matrix.</span>
 
         <span class="c1"># Compute correlation matrix</span>
 
         <span class="n">correlation_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">covariance</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_free_parameters</span><span class="p">):</span>
-
             <span class="n">variance_i</span> <span class="o">=</span> <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_free_parameters</span><span class="p">):</span>
-
                 <span class="n">variance_j</span> <span class="o">=</span> <span class="n">covariance</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">variance_i</span> <span class="o">*</span> <span class="n">variance_j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-
-                    <span class="n">correlation_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_div</span><span class="p">(</span>
-                        <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance_i</span> <span class="o">*</span> <span class="n">variance_j</span><span class="p">))</span>
+                    <span class="n">correlation_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span>
+                        <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance_i</span> <span class="o">*</span> <span class="n">variance_j</span><span class="p">)</span>
                     <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
-                    <span class="c1"># This should not happen, but it might because a fit failed or the numerical differentiation</span>
-                    <span class="c1"># failed</span>
+                    <span class="c1"># This should not happen, but it might because a fit failed or the</span>
+                    <span class="c1"># numerical differentiation failed</span>
 
                     <span class="n">correlation_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
         <span class="k">return</span> <span class="n">correlation_matrix</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You have to implement this&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-
         <span class="n">logl_results</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Create a new ordered dict so we can add the total</span>
@@ -870,11 +835,10 @@
         <span class="k">return</span> <span class="n">loglike_dataframe</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_statistic_measure_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a panadas DataFrame with additional statistical information including</span>
-<span class="sd">        point and posterior based information criteria as well as their effective number</span>
-<span class="sd">        of free parameters. To use these properly, it is vital you consult the statsitical</span>
-<span class="sd">        literature.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a panadas DataFrame with additional statistical information</span>
+<span class="sd">        including point and posterior based information criteria as well as</span>
+<span class="sd">        their effective number of free parameters. To use these properly, it is</span>
+<span class="sd">        vital you consult the statsitical literature.</span>
 
 <span class="sd">        :return: a pandas DataFrame instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -882,17 +846,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statistical_measures</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;statistical measures&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_results_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_type</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;equal tail&quot;</span><span class="p">:</span>
-
             <span class="n">errors_gatherer</span> <span class="o">=</span> <span class="n">RandomVariates</span><span class="o">.</span><span class="n">equal_tail_interval</span>
 
         <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;hpd&quot;</span><span class="p">:</span>
-
             <span class="n">errors_gatherer</span> <span class="o">=</span> <span class="n">RandomVariates</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span>
 
         <span class="k">elif</span> <span class="n">error_type</span> <span class="o">==</span> <span class="s2">&quot;covariance&quot;</span><span class="p">:</span>
-
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">covariance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="p">),</span> <span class="s2">&quot;If you use error_type=&#39;covariance&#39; you have to provide a cov. matrix&quot;</span>
@@ -900,7 +860,6 @@
             <span class="n">errors_gatherer</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;error_type must be either &#39;equal tail&#39; or &#39;hpd&#39;. Got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">error_type</span>
             <span class="p">)</span>
@@ -913,7 +872,6 @@
         <span class="n">units_dict</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_par</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-
             <span class="n">parameter_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_par</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
             <span class="n">this_phys_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">parameter_paths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -923,7 +881,6 @@
             <span class="n">units_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_par</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">error_type</span> <span class="o">!=</span> <span class="s2">&quot;covariance&quot;</span><span class="p">:</span>
-
                 <span class="n">low_bound</span><span class="p">,</span> <span class="n">hi_bound</span> <span class="o">=</span> <span class="n">errors_gatherer</span><span class="p">(</span><span class="n">this_phys_q</span><span class="p">,</span> <span class="n">cl</span><span class="p">)</span>
 
                 <span class="n">negative_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">low_bound</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -931,11 +888,9 @@
                 <span class="n">positive_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hi_bound</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">std_dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">covariance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
 
                 <span class="k">if</span> <span class="n">this_par</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
-
                     <span class="n">best_fit_internal</span> <span class="o">=</span> <span class="n">this_par</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
                     <span class="n">_</span><span class="p">,</span> <span class="n">neg_error</span> <span class="o">=</span> <span class="n">this_par</span><span class="o">.</span><span class="n">internal_to_external_delta</span><span class="p">(</span>
@@ -949,7 +904,6 @@
                     <span class="n">positive_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_error</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="n">negative_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">std_dev</span><span class="p">)</span>
                     <span class="n">positive_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_dev</span><span class="p">)</span>
 
@@ -964,13 +918,15 @@
         <span class="k">return</span> <span class="n">results_table</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_data_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;equal tail&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a pandas DataFrame with the parameters and their errors, computed as specified in &quot;error_type&quot; and</span>
-<span class="sd">        with the confidence/credibility level specified in cl.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a pandas DataFrame with the parameters and their errors,</span>
+<span class="sd">        computed as specified in &quot;error_type&quot; and with the</span>
+<span class="sd">        confidence/credibility level specified in cl.</span>
 
-<span class="sd">        Using &quot;equal_tail&quot; and cl=0.68 corresponds to the usual frequentist 1-sigma confidence interval</span>
+<span class="sd">        Using &quot;equal_tail&quot; and cl=0.68 corresponds to the usual</span>
+<span class="sd">        frequentist 1-sigma confidence interval</span>
 
-<span class="sd">        :param error_type: &quot;equal tail&quot; or &quot;hpd&quot; (highest posterior density)</span>
+<span class="sd">        :param error_type: &quot;equal tail&quot; or &quot;hpd&quot; (highest posterior</span>
+<span class="sd">            density)</span>
 <span class="sd">        :type error_type: str</span>
 <span class="sd">        :param cl: confidence/credibility level (0 &lt; cl &lt; 1)</span>
 <span class="sd">        :return: a pandas DataFrame instance</span>
@@ -981,7 +937,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_results_table</span><span class="p">(</span><span class="n">error_type</span><span class="p">,</span> <span class="n">cl</span><span class="p">)</span><span class="o">.</span><span class="n">frame</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_point_source_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;get_point_source_flux() has been replaced by get_flux()&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flux</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -1000,18 +955,21 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can also use a frequency, like</span>
-<span class="sd">        1 * u.Hz)</span>
-<span class="sd">        :param ene_max: maximum energy (an astropy quantity, like 10 * u.keV. You can also use a frequency, like</span>
-<span class="sd">        10 * u.Hz)</span>
-<span class="sd">        :param sources: Use this to specify the name of the source or a tuple/list of source names to be plotted.</span>
-<span class="sd">        If you don&#39;t use this, all sources will be plotted.</span>
+<span class="sd">        :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can</span>
+<span class="sd">        also use a frequency, like 1 * u.Hz)</span>
+<span class="sd">        :param ene_max: maximum energy (an astropy quantity, like 10 * u.keV. You can</span>
+<span class="sd">        also use a frequency, like 10 * u.Hz)</span>
+<span class="sd">        :param sources: Use this to specify the name of the source or a tuple/list of</span>
+<span class="sd">        source names to be plotted. If you don&#39;t use this, all sources will be plotted.</span>
 <span class="sd">        :param confidence_level: the confidence level for the error (default: 0.68)</span>
 <span class="sd">        :param flux_unit: (optional) astropy flux unit in string form (can be</span>
 <span class="sd">        :param use_components: plot the components of each source (default: False)</span>
-<span class="sd">        :param components_to_use: (optional) list of string names of the components to plot: including &#39;total&#39;</span>
-<span class="sd">        :param sum_sources: (optional) if True, also the sum of all sources will be plotted</span>
-<span class="sd">        :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.</span>
+<span class="sd">        :param components_to_use: (optional) list of string names of the components to</span>
+<span class="sd">        plot: including &#39;total&#39;</span>
+<span class="sd">        :param sum_sources: (optional) if True, also the sum of all sources will be</span>
+<span class="sd">        plotted</span>
+<span class="sd">        :param include_extended: (optional) if True, plot extended source spectra</span>
+<span class="sd">        (spatially integrated) as well.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1039,7 +997,6 @@
 
         <span class="c1"># The output contains one source per row</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_format_error</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
-
             <span class="n">rep</span> <span class="o">=</span> <span class="n">uncertainty_formatter</span><span class="p">(</span>
                 <span class="n">row</span><span class="p">[</span><span class="s2">&quot;flux&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;low bound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;hi bound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
             <span class="p">)</span>
@@ -1050,7 +1007,6 @@
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="n">unit_rep</span><span class="p">)})</span>
 
         <span class="k">if</span> <span class="n">mle_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="c1"># Format the errors and display the resulting data frame</span>
 
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -1060,7 +1016,6 @@
             <span class="k">return</span> <span class="n">mle_results</span>
 
         <span class="k">elif</span> <span class="n">bayes_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="c1"># Format the errors and display the resulting data frame</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="n">display</span><span class="p">(</span><span class="n">bayes_results</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_format_error</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
@@ -1069,21 +1024,18 @@
             <span class="k">return</span> <span class="n">bayes_results</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_equal_tailed_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the equal tailed interval for the parameter.</span>
 
-<span class="sd">        returns the equal tailed interval for the parameter</span>
-
-<span class="sd">        :param parameter_path: path of the parameter or parameter instance</span>
+<span class="sd">        :param parameter_path: path of the parameter or parameter</span>
+<span class="sd">            instance</span>
 <span class="sd">        :param cl: credible interval to obtain</span>
 <span class="sd">        :return: (low bound, high bound)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
-
             <span class="n">path</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">path</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">path</span> <span class="o">=</span> <span class="n">parameter</span>
 
         <span class="n">variates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1094,15 +1046,17 @@
 <div class="viewcode-block" id="BayesianResults">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BayesianResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and &quot;error propagation&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store results of a Bayesian analysis (i.e., the samples) and allow for</span>
+<span class="sd">    computation with them and &quot;error propagation&quot;.</span>
 
-<span class="sd">    :param optimized_model: a Model instance with the MAP values of the parameters. A clone will be stored within</span>
-<span class="sd">    the class, so there is no need to clone it before hand</span>
+<span class="sd">    :param optimized_model: a Model instance with the MAP values of the</span>
+<span class="sd">        parameters. A clone will be stored within the class, so there is</span>
+<span class="sd">        no need to clone it before hand</span>
 <span class="sd">    :type optimized_model: astromodels.Model</span>
 <span class="sd">    :param samples: the samples for the parameters</span>
 <span class="sd">    :type samples: np.ndarray</span>
-<span class="sd">    :param posterior_values: a dictionary containing the posterior values for the different datasets at the HPD</span>
+<span class="sd">    :param posterior_values: a dictionary containing the posterior</span>
+<span class="sd">        values for the different datasets at the HPD</span>
 <span class="sd">    :type posterior_values: dict</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1114,7 +1068,6 @@
         <span class="n">statistical_measures</span><span class="p">,</span>
         <span class="n">log_probabilty</span><span class="p">,</span>
     <span class="p">):</span>
-
         <span class="nb">super</span><span class="p">(</span><span class="n">BayesianResults</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">optimized_model</span><span class="p">,</span>
             <span class="n">samples</span><span class="p">,</span>
@@ -1128,13 +1081,13 @@
 <div class="viewcode-block" id="BayesianResults.get_correlation_matrix">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_correlation_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Estimate the covariance matrix from the samples</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the covariance matrix from the samples.</span>
 
 <span class="sd">        :return: the correlation matrix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Here we need to estimate the covariance from the samples, then compute the correlation matrix</span>
+        <span class="c1"># Here we need to estimate the covariance from the samples, then compute the</span>
+        <span class="c1"># correlation matrix</span>
 
         <span class="n">covariance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_covariance_matrix</span><span class="p">()</span>
 
@@ -1144,41 +1097,42 @@
 <div class="viewcode-block" id="BayesianResults.get_statistic_frame">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_statistic_frame">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_statistic_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;-log(posterior)&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BayesianResults.display">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.display">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display_correlation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;equal tail&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-
         <span class="n">best_fit_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_results_table</span><span class="p">(</span><span class="n">error_type</span><span class="p">,</span> <span class="n">cl</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="o">.</span><span class="n">use_median_fit</span><span class="p">:</span>
-
-            <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[medium_spring_green bold underline] Median posterior point:&quot;</span><span class="p">)</span>
+            <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                <span class="s2">&quot;[medium_spring_green bold underline] Median posterior point:&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-                <span class="s2">&quot;[medium_spring_green bold underline]Maximum a posteriori probability (MAP) point:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;[medium_spring_green bold underline]Maximum a posteriori probability &quot;</span>
+                <span class="s2">&quot;(MAP) point:</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="n">best_fit_table</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">display_correlation</span><span class="p">:</span>
-
             <span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">NumericMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_correlation_matrix</span><span class="p">())</span>
 
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">corr_matrix</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="n">corr_matrix</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;2.2f&quot;</span>
 
-            <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Correlation matrix:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                <span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Correlation matrix:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
             <span class="n">display</span><span class="p">(</span><span class="n">corr_matrix</span><span class="p">)</span>
 
         <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-            <span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of -log(posterior) at the minimum:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of -log(posterior) at the &quot;</span>
+            <span class="s2">&quot;minimum:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
         <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_statistic_frame</span><span class="p">())</span>
@@ -1198,13 +1152,16 @@
         <span class="n">components</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Produce the corner plot showing the marginal distributions in one and two directions.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce the corner plot showing the marginal distributions in one</span>
+<span class="sd">        and two directions.</span>
 
-<span class="sd">        :param renamed_parameters: a python dictionary of parameters to rename.</span>
-<span class="sd">             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is</span>
-<span class="sd">             {&#39;old label&#39;: &#39;new label&#39;}, where &#39;old label&#39; is the full path of the parameter</span>
-<span class="sd">        :param components: a python list of parameter paths to use in the corner plot</span>
+<span class="sd">        :param renamed_parameters: a python dictionary of parameters to</span>
+<span class="sd">            rename. Useful when e.g. spectral indices in models have</span>
+<span class="sd">            different names but you wish to compare them. Format is</span>
+<span class="sd">            {&#39;old label&#39;: &#39;new label&#39;}, where &#39;old label&#39; is the full</span>
+<span class="sd">            path of the parameter</span>
+<span class="sd">        :param components: a python list of parameter paths to use in</span>
+<span class="sd">            the corner plot</span>
 <span class="sd">        :param kwargs: arguments to be passed to the corner function</span>
 <span class="sd">        :return: a matplotlib.figure instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1213,9 +1170,7 @@
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">),</span> <span class="p">(</span>
-                <span class="s2">&quot;Mismatch between sample&quot;</span> <span class="s2">&quot; dimensions and number of free&quot;</span> <span class="s2">&quot; parameters&quot;</span>
-            <span class="p">)</span>
+            <span class="p">),</span> <span class="s2">&quot;Mismatch between sample dimensions and number of free parameters&quot;</span>
 
             <span class="n">components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span>
@@ -1240,7 +1195,6 @@
         <span class="c1"># priors = []</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
-
             <span class="n">short_name</span> <span class="o">=</span> <span class="n">parameter_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">short_name</span><span class="p">)</span>
@@ -1248,11 +1202,9 @@
             <span class="c1"># If the user has provided custom names, use them</span>
 
             <span class="k">if</span> <span class="n">renamed_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
                 <span class="c1"># Hopefully this doesn&#39;t break backward compatibility --</span>
                 <span class="c1"># parameter.path == keys in _free_parameters</span>
                 <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">renamed_parameters</span><span class="p">:</span>
-
                     <span class="n">labels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">renamed_parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
 
             <span class="c1"># priors.append(</span>
@@ -1273,7 +1225,7 @@
                 <span class="n">over</span><span class="o">=</span><span class="n">corner_style</span><span class="o">.</span><span class="n">extremes</span><span class="p">,</span>
                 <span class="n">bad</span><span class="o">=</span><span class="n">corner_style</span><span class="o">.</span><span class="n">extremes</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
 
         <span class="n">contourf_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">corner_style</span><span class="o">.</span><span class="n">contourf_kwargs</span><span class="p">)</span>
@@ -1291,9 +1243,9 @@
             <span class="s2">&quot;levels&quot;</span><span class="p">:</span> <span class="n">corner_style</span><span class="o">.</span><span class="n">levels</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="c1"># Update the default arguents with the one provided (if any). Note that .update also adds new keywords,</span>
-        <span class="c1"># if they weren&#39;t present in the original dictionary, so you can use any option in kwargs, not just</span>
-        <span class="c1"># the one in default_args</span>
+        <span class="c1"># Update the default arguents with the one provided (if any). Note that .update</span>
+        <span class="c1"># also adds new keywords, if they weren&#39;t present in the original dictionary, so</span>
+        <span class="c1"># you can use any option in kwargs, not just the one in default_args</span>
         <span class="n">default_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">corner</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="o">**</span><span class="n">default_args</span><span class="p">)</span>
@@ -1303,11 +1255,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The log probability values</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The log probability values.</span>
 
 <span class="sd">        :returns:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span>
 
@@ -1317,17 +1267,21 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Corner plots using chainconsumer which allows for nicer plotting of</span>
 <span class="sd">        marginals</span>
-<span class="sd">        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure</span>
+<span class="sd">        see: https://samreay.github.io/ChainConsumer/chain_api.html</span>
+<span class="sd">        #chainconsumer.ChainConsumer.configure</span>
 <span class="sd">        for all options</span>
 <span class="sd">        :param parameters: list of parameters to plot</span>
-<span class="sd">        :param renamed_parameters: a python dictionary of parameters to rename. Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is {&#39;old label&#39;: &#39;new label&#39;}</span>
+<span class="sd">        :param renamed_parameters: a python dictionary of parameters to rename. Useful</span>
+<span class="sd">        when e.g. spectral indices in models have different names but you wish to</span>
+<span class="sd">        compare them. Format is {&#39;old label&#39;: &#39;new label&#39;}</span>
 <span class="sd">        :param **cc_kwargs: chainconsumer general keyword arguments</span>
 <span class="sd">        :return fig:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_chainconsumer</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;You must have chainconsumer installed to use this function: pip install chainconsumer&quot;</span>
+                <span class="s2">&quot;You must have chainconsumer installed to use this function: pip &quot;</span>
+                <span class="s2">&quot;install chainconsumer&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># these are the keywords for the plot command</span>
@@ -1341,7 +1295,6 @@
         <span class="p">}</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cc_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_default_plot_args</span><span class="p">:</span>
                 <span class="n">_default_plot_args</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -1358,11 +1311,8 @@
         <span class="c1"># Rename the parameters if needed.</span>
 
         <span class="k">if</span> <span class="n">renamed_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="k">for</span> <span class="n">old_label</span><span class="p">,</span> <span class="n">new_label</span> <span class="ow">in</span> <span class="n">renamed_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-
                     <span class="k">if</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">old_label</span><span class="p">:</span>
                         <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label</span>
 
@@ -1372,7 +1322,6 @@
             <span class="n">i</span><span class="p">,</span>
             <span class="n">val</span><span class="p">,</span>
         <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="s2">&quot;$&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
@@ -1392,20 +1341,20 @@
 <div class="viewcode-block" id="BayesianResults.comparison_corner_plot">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.comparison_corner_plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">comparison_corner_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">other_fits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a corner plot from many different fits which allow for co-plotting of parameters marginals.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a corner plot from many different fits which allow for co-</span>
+<span class="sd">        plotting of parameters marginals.</span>
 
 <span class="sd">        :param other_fits: other fitted results</span>
 <span class="sd">        :param parameters: parameters to plot</span>
 <span class="sd">        :param renamed_parameters: a python dictionary of parameters to rename.</span>
-<span class="sd">             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is</span>
-<span class="sd">             {&#39;old label&#39;: &#39;new label&#39;}</span>
-<span class="sd">        :param names: (optional) name for each chain first name is this chain followed by each added chain</span>
+<span class="sd">         Useful when e.g. spectral indices in models have different names but you wish</span>
+<span class="sd">         to compare them. Format is {&#39;old label&#39;: &#39;new label&#39;}</span>
+<span class="sd">        :param names: (optional) name for each chain first name is this chain followed</span>
+<span class="sd">        by each added chain</span>
 <span class="sd">        :param kwargs: chain consumer kwargs</span>
 <span class="sd">        :return:</span>
 
 <span class="sd">        Returns:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_chainconsumer</span><span class="p">:</span>
@@ -1429,14 +1378,12 @@
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_default_plot_args</span><span class="p">:</span>
                 <span class="n">_default_plot_args</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="c1"># allows us to name chains</span>
 
         <span class="k">if</span> <span class="s2">&quot;names&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-
             <span class="n">names</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">)</span>
 
             <span class="k">assert</span> <span class="p">(</span>
@@ -1447,28 +1394,20 @@
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">names</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="s2">&quot;renamed_parameters&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-
             <span class="n">renamed_parameters</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;renamed_parameters&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">renamed_parameters</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">other_fit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">other_fits</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="n">other_fit</span><span class="o">.</span><span class="n">samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="p">(</span>
                     <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">other_fit</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                     <span class="o">==</span> <span class="n">other_fit</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="p">),</span> <span class="p">(</span>
-                    <span class="s2">&quot;Mismatch between sample&quot;</span>
-                    <span class="s2">&quot; dimensions and number of free&quot;</span>
-                    <span class="s2">&quot; parameters&quot;</span>
-                <span class="p">)</span>
+                <span class="p">),</span> <span class="s2">&quot;Mismatch between sample dimensions and number of free parameters&quot;</span>
 
             <span class="n">labels_other</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="c1"># priors_other = []</span>
@@ -1480,17 +1419,15 @@
 
                 <span class="n">labels_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">short_name</span><span class="p">)</span>
 
-                <span class="c1"># priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)</span>
+                <span class="c1"># priors_other.append(</span>
+                <span class="c1">#     other_fit._likelihood_model.parameters[parameter_name].prior)</span>
 
             <span class="c1"># Rename any parameters so that they can be plotted together.</span>
             <span class="c1"># A dictionary is passed with keys = old label values = new label.</span>
 
             <span class="k">if</span> <span class="n">renamed_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
                 <span class="k">for</span> <span class="n">old_label</span><span class="p">,</span> <span class="n">new_label</span> <span class="ow">in</span> <span class="n">renamed_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
                     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels_other</span><span class="p">):</span>
-
                         <span class="k">if</span> <span class="n">labels_other</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">old_label</span><span class="p">:</span>
                             <span class="n">labels_other</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label</span>
 
@@ -1500,12 +1437,10 @@
                 <span class="n">i</span><span class="p">,</span>
                 <span class="n">val</span><span class="p">,</span>
             <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels_other</span><span class="p">):</span>
-
                 <span class="k">if</span> <span class="s2">&quot;$&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels_other</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                     <span class="n">labels_other</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
                 <span class="n">cc</span><span class="o">.</span><span class="n">add_chain</span><span class="p">(</span>
                     <span class="n">other_fit</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
                     <span class="n">parameters</span><span class="o">=</span><span class="n">labels_other</span><span class="p">,</span>
@@ -1513,7 +1448,6 @@
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">cc</span><span class="o">.</span><span class="n">add_chain</span><span class="p">(</span><span class="n">other_fit</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">labels_other</span><span class="p">)</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1527,11 +1461,8 @@
             <span class="c1"># priors.append(self._optimized_model.parameters[parameter_name].prior)</span>
 
         <span class="k">if</span> <span class="n">renamed_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="k">for</span> <span class="n">old_label</span><span class="p">,</span> <span class="n">new_label</span> <span class="ow">in</span> <span class="n">renamed_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-
                     <span class="k">if</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">old_label</span><span class="p">:</span>
                         <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_label</span>
 
@@ -1541,16 +1472,13 @@
             <span class="n">i</span><span class="p">,</span>
             <span class="n">val</span><span class="p">,</span>
         <span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="s2">&quot;$&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">cc</span><span class="o">.</span><span class="n">add_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">cc</span><span class="o">.</span><span class="n">add_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 
         <span class="c1"># should only be the cc kwargs</span>
@@ -1564,8 +1492,7 @@
 <div class="viewcode-block" id="BayesianResults.plot_chains">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.plot_chains">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Produce a plot of the series of samples for each parameter</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce a plot of the series of samples for each parameter.</span>
 
 <span class="sd">        :parameter thin: use only one sample every &#39;thin&#39; samples</span>
 <span class="sd">        :return: a list of matplotlib.figure instances</span>
@@ -1573,17 +1500,14 @@
 
         <span class="n">figures</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-
             <span class="n">figure</span><span class="p">,</span> <span class="n">subplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">thin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
                 <span class="c1"># Use all samples</span>
 
                 <span class="n">subplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thin</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">&quot;Thin must be a integer number&quot;</span>
 
                 <span class="n">subplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">::</span><span class="n">thin</span><span class="p">])</span>
@@ -1604,12 +1528,13 @@
 <div class="viewcode-block" id="BayesianResults.convergence_plots">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.convergence_plots">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">convergence_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_in_each_subset</span><span class="p">,</span> <span class="n">n_subsets</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same</span>
-<span class="sd">        values if the MCMC has converged to the posterior distribution.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the mean and variance for subsets of the samples, and plot</span>
+<span class="sd">        them. They should all be around the same values if the MCMC has</span>
+<span class="sd">        converged to the posterior distribution.</span>
 
-<span class="sd">        The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second</span>
-<span class="sd">        is to take random samples from the chain (bootstrap)</span>
+<span class="sd">        The subsamples are taken with two different strategies: the first is to slide a</span>
+<span class="sd">        fixed-size window, the second is to take random samples from the chain</span>
+<span class="sd">        (bootstrap)</span>
 
 <span class="sd">        :param n_samples_in_each_subset: number of samples in each subset</span>
 <span class="sd">        :param n_subsets: number of subsets to take for each strategy</span>
@@ -1633,7 +1558,6 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stepsize for sliding window is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">stepsize</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-
             <span class="n">this_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span>
 
             <span class="c1"># First compute averages and variances using the sliding window</span>
@@ -1642,7 +1566,6 @@
             <span class="n">this_variances</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_subsets</span><span class="p">):</span>
-
                 <span class="n">idx1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">stepsize</span>
                 <span class="n">idx2</span> <span class="o">=</span> <span class="n">idx1</span> <span class="o">+</span> <span class="n">n_samples_in_each_subset</span>
 
@@ -1673,7 +1596,6 @@
         <span class="c1"># Now plot all these things</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">plot_one_histogram</span><span class="p">(</span><span class="n">subplot</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
-
             <span class="n">nbins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freedman_diaconis_rule</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
             <span class="n">subplot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nbins</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
@@ -1712,8 +1634,8 @@
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.freedman_diaconis_rule">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">freedman_diaconis_rule</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of bins from the Freedman-Diaconis rule for a</span>
+<span class="sd">        histogram of the given data.</span>
 
 <span class="sd">        :param data: an array of data</span>
 <span class="sd">        :return: the optimal number of bins</span>
@@ -1724,7 +1646,7 @@
 
         <span class="n">binsize</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">iqr</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
 
-        <span class="n">nbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">old_div</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="n">binsize</span><span class="p">))</span>
+        <span class="n">nbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">/</span> <span class="n">binsize</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">nbins</span></div>
 
@@ -1732,21 +1654,18 @@
 <div class="viewcode-block" id="BayesianResults.get_highest_density_posterior_interval">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_highest_density_posterior_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_highest_density_posterior_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the highest density posterior interval for that parameter.</span>
 
-<span class="sd">        returns the highest density posterior interval for that parameter</span>
-
-<span class="sd">        :param parameter_path: path of the parameter or parameter instance</span>
+<span class="sd">        :param parameter_path: path of the parameter or parameter</span>
+<span class="sd">            instance</span>
 <span class="sd">        :param cl: credible interval to obtain</span>
 <span class="sd">        :return: (low bound, high bound)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
-
             <span class="n">path</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">path</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">path</span> <span class="o">=</span> <span class="n">parameter</span>
 
         <span class="n">variates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1757,16 +1676,15 @@
 <div class="viewcode-block" id="BayesianResults.get_median_fit_model">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.BayesianResults.get_median_fit_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_median_fit_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the model parameters to the mean of the marginal distributions</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the model parameters to the mean of the marginal</span>
+<span class="sd">        distributions.&quot;&quot;&quot;</span>
 
         <span class="n">new_model</span> <span class="o">=</span> <span class="n">astromodels</span><span class="o">.</span><span class="n">clone_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimized_model</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;this is an older analysis results file and does not contain the log probability&quot;</span>
+                <span class="s2">&quot;this is an older analysis results file and does not contain the log &quot;</span>
+                <span class="s2">&quot;probability&quot;</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -1776,7 +1694,6 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
             <span class="n">new_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">):</span>
-
             <span class="n">par</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples_transposed</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span>
 
             <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">par</span>
@@ -1789,12 +1706,10 @@
 <div class="viewcode-block" id="MLEResults">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MLEResults</span><span class="p">(</span><span class="n">_AnalysisResults</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Build the _AnalysisResults object starting from a covariance matrix.</span>
-
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the _AnalysisResults object starting from a covariance matrix.</span>
 
 <span class="sd">    :param optimized_model: best fit model</span>
-<span class="sd">    :type optimized_model:astromodels.Model</span>
+<span class="sd">    :type optimized_model: astromodels.Model</span>
 <span class="sd">    :param covariance_matrix:</span>
 <span class="sd">    :type covariance_matrix: np.ndarray</span>
 <span class="sd">    :param likelihood_values:</span>
@@ -1812,7 +1727,6 @@
         <span class="n">n_samples</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
         <span class="n">statistical_measures</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-
         <span class="c1"># Generate samples for each parameter accounting for their covariance</span>
 
         <span class="c1"># Force covariance into proper type</span>
@@ -1829,7 +1743,6 @@
         <span class="n">expected_shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">covariance_matrix</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">():</span>
-
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">covariance_matrix</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">expected_shape</span>
             <span class="p">),</span> <span class="s2">&quot;Covariance matrix has wrong shape. &quot;</span> <span class="s2">&quot;Got </span><span class="si">%s</span><span class="s2">, should be </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
@@ -1838,27 +1751,26 @@
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">covariance_matrix</span><span class="p">)):</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Covariance matrix contains Nan or inf. Cannot continue.&quot;</span><span class="p">)</span>
 
                 <span class="k">raise</span> <span class="n">BadCovariance</span><span class="p">()</span>
 
-            <span class="c1"># Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the</span>
-            <span class="c1"># parameters</span>
+            <span class="c1"># Generate samples from the multivariate normal distribution, i.e.,</span>
+            <span class="c1"># accounting for the covariance of the parameters</span>
 
             <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="p">,</span> <span class="n">n_samples</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="c1"># No error information, just make duplicates of the values</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
             <span class="c1"># Make a fake covariance matrix</span>
             <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">expected_shape</span><span class="p">)</span>
 
-        <span class="c1"># Now reject the samples outside of the boundaries. If we reject more than 1% we warn the user</span>
+        <span class="c1"># Now reject the samples outside of the boundaries. If we reject more than 1% we</span>
+        <span class="c1"># warn the user</span>
 
         <span class="c1"># Gather boundaries</span>
         <span class="c1"># NOTE: every None boundary will become nan thanks to the casting to float</span>
@@ -1884,7 +1796,6 @@
         <span class="n">to_be_kept_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">sample</span> <span class="o">&gt;</span> <span class="n">hi_bounds</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">sample</span> <span class="o">&lt;</span> <span class="n">low_bounds</span><span class="p">):</span>
                 <span class="c1"># Remove this sample</span>
                 <span class="n">to_be_kept_mask</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1896,9 +1807,10 @@
 
         <span class="k">if</span> <span class="n">n_removed_samples</span> <span class="o">&gt;</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> percent of samples have been thrown away because they failed the constraints &quot;</span>
-                <span class="s2">&quot;on the parameters. This results might not be suitable for error propagation. &quot;</span>
-                <span class="s2">&quot;Enlarge the boundaries until you loose less than 1 percent of the samples.&quot;</span>
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> percent of samples have been thrown away because they failed the &quot;</span>
+                <span class="s2">&quot;constraints on the parameters. This results might not be suitable for &quot;</span>
+                <span class="s2">&quot;error propagation. Enlarge the boundaries until you loose less than 1 &quot;</span>
+                <span class="s2">&quot;percent of the samples.&quot;</span>
                 <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n_removed_samples</span><span class="p">)</span> <span class="o">/</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
             <span class="p">)</span>
 
@@ -1907,9 +1819,7 @@
 
         <span class="c1"># Now transform in the external space</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">optimized_model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-
             <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
-
                 <span class="n">samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">transformation</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
 
         <span class="c1"># Finally build the class</span>
@@ -1928,11 +1838,10 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the covariance matrix.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the covariance matrix.</span>
 
-<span class="sd">        :return: covariance matrix or None (if the class was built from samples.</span>
-<span class="sd">                 Use estimate_covariance_matrix in that case)</span>
+<span class="sd">        :return: covariance matrix or None (if the class was built from</span>
+<span class="sd">            samples. Use estimate_covariance_matrix in that case)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covariance_matrix</span>
@@ -1940,8 +1849,7 @@
 <div class="viewcode-block" id="MLEResults.get_correlation_matrix">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_correlation_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute correlation matrix</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute correlation matrix.</span>
 
 <span class="sd">        :return: the correlation matrix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1952,14 +1860,12 @@
 <div class="viewcode-block" id="MLEResults.get_statistic_frame">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.get_statistic_frame">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_statistic_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_statistic_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;-log(likelihood)&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MLEResults.display">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.MLEResults.display">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">display_correlation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-
         <span class="n">best_fit_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_results_table</span><span class="p">(</span>
             <span class="n">error_type</span><span class="o">=</span><span class="s2">&quot;covariance&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="n">cl</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance_matrix</span>
         <span class="p">)</span>
@@ -1969,21 +1875,27 @@
         <span class="n">best_fit_table</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">display_correlation</span><span class="p">:</span>
-
             <span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">NumericMatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_correlation_matrix</span><span class="p">())</span>
 
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">corr_matrix</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
                 <span class="n">corr_matrix</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;2.2f&quot;</span>
 
-            <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Correlation matrix:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                <span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Correlation matrix:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
             <span class="n">display</span><span class="p">(</span><span class="n">corr_matrix</span><span class="p">)</span>
 
-        <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of -log(likelihood) at the minimum:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+            <span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of -log(likelihood) at the &quot;</span>
+            <span class="s2">&quot;minimum:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_statistic_frame</span><span class="p">())</span>
 
-        <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of statistical measures:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_rich_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+            <span class="s2">&quot;[medium_spring_green bold underline]</span><span class="se">\n</span><span class="s2">Values of statistical measures:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_statistic_measure_frame</span><span class="p">())</span></div>
 </div>
@@ -1993,35 +1905,35 @@
 <div class="viewcode-block" id="AnalysisResultsSet">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AnalysisResultsSet</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A container for results which behaves like a list (but you cannot add/remove elements).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A container for results which behaves like a list (but you cannot</span>
+<span class="sd">    add/remove elements).</span>
 
-<span class="sd">    You can index (analysis_set[0]), iterate (for item in analysis_set) and measure with len()</span>
+<span class="sd">    You can index (analysis_set[0]), iterate (for item in analysis_set)</span>
+<span class="sd">    and measure with len()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">results</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AnalysisResultsSet.set_x">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_x">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when</span>
-<span class="sd">        saving these results to a FITS file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Associate the provided x with these results. The values in x will be</span>
+<span class="sd">        written in the SEQUENCE extension when saving these results to a FITS</span>
+<span class="sd">        file.</span>
 
-<span class="sd">        :param name: a name for this sequence (for example, &quot;time&quot; or &quot;energy&quot;). Please use only letters and numbers</span>
-<span class="sd">        (no special characters)</span>
+<span class="sd">        :param name: a name for this sequence (for example, &quot;time&quot; or</span>
+<span class="sd">            &quot;energy&quot;). Please use only letters and numbers (no special</span>
+<span class="sd">            characters)</span>
 <span class="sd">        :param x:</span>
-<span class="sd">        :param unit: unit for x (like &quot;s&quot; for seconds, or a astropy.units.Unit instance)</span>
+<span class="sd">        :param unit: unit for x (like &quot;s&quot; for seconds, or a</span>
+<span class="sd">            astropy.units.Unit instance)</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2031,13 +1943,11 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
 
             <span class="n">data_tuple</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;VALUE&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">unit</span><span class="p">),)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">data_tuple</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;VALUE&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">),)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">characterize_sequence</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">)</span></div>
@@ -2046,15 +1956,17 @@
 <div class="viewcode-block" id="AnalysisResultsSet.set_bins">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.set_bins">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when</span>
-<span class="sd">        saving these results to a FITS file</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Associate the provided bins with these results. These bins will be</span>
+<span class="sd">        written in the SEQUENCE extension when saving these results to a FITS</span>
+<span class="sd">        file.</span>
 
-<span class="sd">        :param name: a name for these bins (for example, &quot;time&quot; or &quot;energy&quot;). Please use only letters and numbers</span>
-<span class="sd">        (no special characters)</span>
+<span class="sd">        :param name: a name for these bins (for example, &quot;time&quot; or</span>
+<span class="sd">            &quot;energy&quot;). Please use only letters and numbers (no special</span>
+<span class="sd">            characters)</span>
 <span class="sd">        :param lower_bounds:</span>
 <span class="sd">        :param upper_bounds:</span>
-<span class="sd">        :param unit: unit for the boundaries (like &quot;s&quot; for seconds, or a astropy.units.Unit instance)</span>
+<span class="sd">        :param unit: unit for the boundaries (like &quot;s&quot; for seconds, or a</span>
+<span class="sd">            astropy.units.Unit instance)</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2070,7 +1982,6 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
 
             <span class="n">data_tuple</span> <span class="o">=</span> <span class="p">(</span>
@@ -2079,7 +1990,6 @@
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">data_tuple</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="p">(</span><span class="s2">&quot;LOWER_BOUND&quot;</span><span class="p">,</span> <span class="n">lower_bounds</span><span class="p">),</span>
                 <span class="p">(</span><span class="s2">&quot;UPPER_BOUND&quot;</span><span class="p">,</span> <span class="n">upper_bounds</span><span class="p">),</span>
@@ -2091,16 +2001,18 @@
 <div class="viewcode-block" id="AnalysisResultsSet.characterize_sequence">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.characterize_sequence">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">characterize_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Characterize the sequence of these results. The provided data frame will be saved along with the results</span>
-<span class="sd">        in the &quot;SEQUENCE&quot; extension to allow the interpretation of the results.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Characterize the sequence of these results. The provided data frame</span>
+<span class="sd">        will be saved along with the results in the &quot;SEQUENCE&quot; extension to</span>
+<span class="sd">        allow the interpretation of the results.</span>
 
-<span class="sd">        This method is completely general, and allow for a lot of flexibility.</span>
+<span class="sd">        This method is completely general, and allow for a lot of</span>
+<span class="sd">        flexibility.</span>
 
-<span class="sd">        If this is a binned analysis and you only want to save the lower and upper bound of the bins, use</span>
-<span class="sd">        set_bins instead.</span>
+<span class="sd">        If this is a binned analysis and you only want to save the lower</span>
+<span class="sd">        and upper bound of the bins, use set_bins instead.</span>
 
-<span class="sd">        If you only want to associate one quantity for each entry, use set_x.</span>
+<span class="sd">        If you only want to associate one quantity for each entry, use</span>
+<span class="sd">        set_x.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -2120,8 +2032,7 @@
 <div class="viewcode-block" id="AnalysisResultsSet.write_to">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.AnalysisResultsSet.write_to">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_hdf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write this set of results to a FITS file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write this set of results to a FITS file.</span>
 
 <span class="sd">        :param filename: name for the output file</span>
 <span class="sd">        :param overwrite: True or False</span>
@@ -2137,7 +2048,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">characterize_sequence</span><span class="p">(</span><span class="s2">&quot;unspecified&quot;</span><span class="p">,</span> <span class="n">frame_tuple</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">as_hdf</span><span class="p">:</span>
-
             <span class="n">fits</span> <span class="o">=</span> <span class="n">AnalysisResultsFITS</span><span class="p">(</span>
                 <span class="o">*</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">sequence_tuple</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sequence_tuple</span><span class="p">,</span>
@@ -2146,32 +2056,26 @@
 
             <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-
                 <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;n_results&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
                 <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;SEQ_TYPE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_name</span>
                 <span class="n">seq_grp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;SEQUENCE&quot;</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_tuple</span><span class="p">:</span>
-
                     <span class="n">sub_grp</span> <span class="o">=</span> <span class="n">seq_grp</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
                     <span class="k">try</span><span class="p">:</span>
-
                         <span class="n">sub_grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;UNIT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
 
                         <span class="n">sub_grp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;DATA&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-                    <span class="k">except</span><span class="p">:</span>
-
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                         <span class="n">sub_grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;UNIT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;NONE_TYPE&quot;</span>
 
                         <span class="n">sub_grp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;DATA&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ar</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
                     <span class="n">grp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;AnalysisResults_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
 
                     <span class="n">ANALYSIS_RESULTS_HDF</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">grp</span><span class="p">)</span></div>
@@ -2182,27 +2086,26 @@
 <div class="viewcode-block" id="load_analysis_results">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_analysis_results</span><span class="p">(</span><span class="n">fits_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load the results of one or more analysis from a FITS file produced by 3ML</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the results of one or more analysis from a FITS file produced by</span>
+<span class="sd">    3ML.</span>
 
-<span class="sd">    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults</span>
-<span class="sd">    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file</span>
+<span class="sd">    :param fits_file: path to the FITS file containing the results, as</span>
+<span class="sd">        output by MLEResults or BayesianResults</span>
+<span class="sd">    :return: a new instance of either MLEResults or Bayesian results</span>
+<span class="sd">        dending on the type of the input FITS file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">fits_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">fits_file</span>
 
     <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-
         <span class="n">n_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;ANALYSIS_RESULTS&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_results</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fits_file</span><span class="si">}</span><span class="s2"> AR opened with 1 result&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">_load_one_results</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;ANALYSIS_RESULTS&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fits_file</span><span class="si">}</span><span class="s2"> AR opened with </span><span class="si">{</span><span class="n">n_results</span><span class="si">}</span><span class="s2"> results&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">_load_set_of_results</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">n_results</span><span class="p">)</span></div>
@@ -2212,27 +2115,26 @@
 <div class="viewcode-block" id="load_analysis_results_hdf">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.load_analysis_results_hdf">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_analysis_results_hdf</span><span class="p">(</span><span class="n">hdf_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_AnalysisResults</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load the results of one or more analysis from a FITS file produced by 3ML</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the results of one or more analysis from a FITS file produced by</span>
+<span class="sd">    3ML.</span>
 
-<span class="sd">    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults</span>
-<span class="sd">    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file</span>
+<span class="sd">    :param fits_file: path to the FITS file containing the results, as</span>
+<span class="sd">        output by MLEResults or BayesianResults</span>
+<span class="sd">    :return: a new instance of either MLEResults or Bayesian results</span>
+<span class="sd">        dending on the type of the input FITS file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">hdf_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">hdf_file</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-
         <span class="n">n_results</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;n_results&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">n_results</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hdf_file</span><span class="si">}</span><span class="s2"> AR opened with </span><span class="si">{</span><span class="n">n_results</span><span class="si">}</span><span class="s2"> result&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">_load_one_results_hdf</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;AnalysisResults_0&quot;</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hdf_file</span><span class="si">}</span><span class="s2"> AR opened with </span><span class="si">{</span><span class="n">n_results</span><span class="si">}</span><span class="s2"> results&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">_load_set_of_results_hdf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">n_results</span><span class="p">)</span></div>
@@ -2242,7 +2144,6 @@
 <div class="viewcode-block" id="convert_fits_analysis_result_to_hdf">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.analysis_results.convert_fits_analysis_result_to_hdf">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_fits_analysis_result_to_hdf</span><span class="p">(</span><span class="n">fits_result_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-
     <span class="n">ar</span> <span class="o">=</span> <span class="n">load_analysis_results</span><span class="p">(</span><span class="n">fits_result_file</span><span class="p">)</span>  <span class="c1"># type: _AnalysisResults</span>
 
     <span class="n">new_file_name_base</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fits_result_file</span><span class="p">)</span>
@@ -2271,7 +2172,6 @@
     <span class="n">measure_values</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">fits_extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-
         <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;STAT&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Found a keyword with a statistic for a plugin</span>
             <span class="c1"># Gather info about it</span>
@@ -2291,7 +2191,6 @@
             <span class="n">measure_values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">if</span> <span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;MLE&quot;</span><span class="p">:</span>
-
         <span class="c1"># Get covariance matrix</span>
 
         <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fits_extension</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;COVARIANCE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -2306,7 +2205,6 @@
         <span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;Bayesian&quot;</span><span class="p">:</span>
-
         <span class="c1"># Gather samples</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="n">fits_extension</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">)</span>
 
@@ -2314,8 +2212,7 @@
             <span class="c1"># Gather log probability</span>
             <span class="n">log_probability</span> <span class="o">=</span> <span class="n">fits_extension</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;LOG_PROB&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">except</span><span class="p">:</span>
-
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">log_probability</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Instance and return</span>
@@ -2344,7 +2241,6 @@
     <span class="n">measure_values</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">hdf_obj</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-
         <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;STAT&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Found a keyword with a statistic for a plugin</span>
             <span class="c1"># Gather info about it</span>
@@ -2364,7 +2260,6 @@
             <span class="n">measure_values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">if</span> <span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;MLE&quot;</span><span class="p">:</span>
-
         <span class="c1"># Get covariance matrix</span>
 
         <span class="n">covariance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">hdf_obj</span><span class="p">[</span><span class="s2">&quot;COVARIANCE&quot;</span><span class="p">][()]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -2379,7 +2274,6 @@
         <span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;Bayesian&quot;</span><span class="p">:</span>
-
         <span class="c1"># Gather samples</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="n">hdf_obj</span><span class="p">[</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">][()]</span>
 
@@ -2387,8 +2281,7 @@
             <span class="c1"># Gather log probabiltiy</span>
             <span class="n">log_probability</span> <span class="o">=</span> <span class="n">hdf_obj</span><span class="p">[</span><span class="s2">&quot;LOG_PROB&quot;</span><span class="p">][()]</span>
 
-        <span class="k">except</span><span class="p">:</span>
-
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">log_probability</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Instance and return</span>
@@ -2407,7 +2300,6 @@
     <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_results</span><span class="p">):</span>
-
         <span class="n">grp</span> <span class="o">=</span> <span class="n">hdf_obj</span><span class="p">[</span><span class="s2">&quot;AnalysisResults_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span>
 
         <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_load_one_results_hdf</span><span class="p">(</span><span class="n">grp</span><span class="p">))</span>
@@ -2424,13 +2316,10 @@
     <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">seq_grp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
         <span class="k">if</span> <span class="n">grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;UNIT&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NONE_TYPE&quot;</span><span class="p">:</span>
-
             <span class="n">this_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grp</span><span class="p">[</span><span class="s2">&quot;DATA&quot;</span><span class="p">][()])</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">this_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">grp</span><span class="p">[</span><span class="s2">&quot;DATA&quot;</span><span class="p">][()]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;UNIT&quot;</span><span class="p">]))</span>
 
         <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_tuple</span><span class="p">)</span>
@@ -2461,13 +2350,10 @@
     <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-
         <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">this_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">record</span><span class="p">[</span><span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">this_tuple</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">record</span><span class="p">[</span><span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">unit</span><span class="p">),</span>

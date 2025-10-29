@@ -9,7 +9,7 @@
   <title>threeML.utils.time_series package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -82,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -128,8 +131,19 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">binned_spectrum_set</span></span><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.binned_spectrum_set" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns the spectrum set
-:return: binned_spectrum_set</p>
+<p>binned_spectrum_set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Returns the spectrum set</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>return</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -138,8 +152,19 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bins</span></span><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.bins" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the time bins of the spectrum set
-:return: TimeIntervalSet</p>
+<p>TimeIntervalSet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The time bins of the spectrum set</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>return</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -148,9 +173,9 @@
 <span class="sig-name descname"><span class="pre">count_per_channel_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/binned_spectrum_series.html#BinnedSpectrumSeries.count_per_channel_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.count_per_channel_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return the number of counts in the selected interval
-:param start: start of interval
-:param stop:  stop of interval
+<p>Return the number of counts in the selected interval :param start:</p>
+<p>start of interval
+:param stop: stop of interval
 :return:</p>
 </dd>
 </dl>
@@ -160,9 +185,9 @@
 <span class="sig-name descname"><span class="pre">counts_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/binned_spectrum_series.html#BinnedSpectrumSeries.counts_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.counts_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return the number of counts in the selected interval
-:param start: start of interval
-:param stop:  stop of interval
+<p>Return the number of counts in the selected interval :param start:</p>
+<p>start of interval
+:param stop: stop of interval
 :return:</p>
 </dd>
 </dl>
@@ -172,7 +197,7 @@
 <span class="sig-name descname"><span class="pre">dead_time_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/binned_spectrum_series.html#BinnedSpectrumSeries.dead_time_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.dead_time_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>computer the dead time over the interval</p>
+<p>Computer the dead time over the interval.</p>
 </dd>
 </dl>
 
@@ -181,7 +206,7 @@
 <span class="sig-name descname"><span class="pre">exposure_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/binned_spectrum_series.html#BinnedSpectrumSeries.exposure_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.exposure_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>calculate the exposure over the given interval</p>
+<p>Calculate the exposure over the given interval.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -205,8 +230,8 @@
 <span class="sig-name descname"><span class="pre">set_active_time_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/binned_spectrum_series.html#BinnedSpectrumSeries.set_active_time_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.binned_spectrum_series.BinnedSpectrumSeries.set_active_time_intervals" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Set the time interval(s) to be used during the analysis.
-Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
+<p>Set the time interval(s) to be used during the analysis. Specified
+as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <p>set_active_time_intervals(“0.0-10.0”)</p>
 <p>which will set the time range 0-10. seconds.</p>
 </dd>
@@ -264,7 +289,7 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">bin_by_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/event_list.html#EventList.bin_by_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.event_list.EventList.bin_by_constant" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Interface to the temporal binner’s constant binning mode</p>
+<p>Interface to the temporal binner’s constant binning mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -289,7 +314,7 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">bin_by_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/event_list.html#EventList.bin_by_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.event_list.EventList.bin_by_custom" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Interface to temporal binner’s custom bin mode</p>
+<p>Interface to temporal binner’s custom bin mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -313,41 +338,26 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">bin_by_significance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/event_list.html#EventList.bin_by_significance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.event_list.EventList.bin_by_significance" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Interface to the temporal binner’s significance binning model</p>
-<blockquote>
-<div>
+<p>Interface to the temporal binner’s significance binning model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param start<span class="colon">:</span>
+<dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p>start of the interval to bin on</p>
+<ul class="simple">
+<li><p><strong>start</strong> – start of the interval to bin on</p></li>
+<li><p><strong>stop</strong> – stop of the interval ot bin on</p></li>
+<li><p><strong>sigma</strong> – sigma-level of the bins</p></li>
+<li><p><strong>mask</strong> – (bool) use the energy mask to decide on
+,significance</p></li>
+<li><p><strong>min_counts</strong> – minimum number of counts per bin</p></li>
+</ul>
 </dd>
-<dt class="field-even">param stop<span class="colon">:</span>
+<dt class="field-even">Returns<span class="colon">:</span>
 </dt>
 <dd class="field-even">
-<p>stop of the interval ot bin on</p>
+<p></p>
 </dd>
-<dt class="field-odd">param sigma<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>sigma-level of the bins</p>
-</dd>
-<dt class="field-even">param mask<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>(bool) use the energy mask to decide on ,significance</p>
-</dd>
-<dt class="field-odd">param min_counts<span class="colon">:</span>
-</dt>
-<dd class="field-odd">
-<p>minimum number of counts per bin</p>
-</dd>
-<dt class="field-even">return<span class="colon">:</span>
-</dt>
-<dd class="field-even"><p></p></dd>
 </dl>
-</div>
-</blockquote>
 </dd>
 </dl>
 
@@ -386,9 +396,9 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">counts_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/event_list.html#EventList.counts_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.event_list.EventList.counts_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return the number of counts in the selected interval
-:param start: start of interval
-:param stop:  stop of interval
+<p>Return the number of counts in the selected interval :param start:</p>
+<p>start of interval
+:param stop: stop of interval
 :return:</p>
 </dd>
 </dl>
@@ -453,7 +463,7 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">exposure_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/event_list.html#EventListWithDeadTime.exposure_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.event_list.EventListWithDeadTime.exposure_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>calculate the exposure over the given interval</p>
+<p>Calculate the exposure over the given interval.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -486,7 +496,7 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">exposure_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/event_list.html#EventListWithDeadTimeFraction.exposure_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.event_list.EventListWithDeadTimeFraction.exposure_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>calculate the exposure over the given interval</p>
+<p>Calculate the exposure over the given interval.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -605,8 +615,14 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degree</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.time_series.polynomial.Polynomial.degree" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the polynomial degree
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The polynomial degree</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -615,8 +631,14 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#threeML.utils.time_series.polynomial.Polynomial.error" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the error on the polynomial coefficients
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The error on the polynomial coefficients</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -632,7 +654,7 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">integral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/polynomial.html#Polynomial.integral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.polynomial.Polynomial.integral" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Evaluate the integral of the polynomial between xmin and xmax</p>
+<p>Evaluate the integral of the polynomial between xmin and xmax.</p>
 </dd>
 </dl>
 
@@ -641,10 +663,8 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">integral_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/polynomial.html#Polynomial.integral_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.polynomial.Polynomial.integral_error" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>computes the integral error of an interval
-:param xmin: start of the interval
-:param xmax: stop of the interval
-:return: interval error</p>
+<p>Computes the integral error of an interval :param xmin: start of the
+interval :param xmax: stop of the interval :return: interval error.</p>
 </dd>
 </dl>
 
@@ -663,8 +683,8 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.time_series.polynomial.</span></span><span class="sig-name descname"><span class="pre">polyfit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bayes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#threeML.utils.time_series.polynomial.Polynomial" title="threeML.utils.time_series.polynomial.Polynomial"><span class="pre">Polynomial</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/polynomial.html#polyfit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.polynomial.polyfit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>function to fit a polynomial to data.
-not a member to allow parallel computation</p>
+<p>Function to fit a polynomial to data. not a member to allow parallel
+computation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -686,8 +706,8 @@ not a member to allow parallel computation</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.time_series.polynomial.</span></span><span class="sig-name descname"><span class="pre">unbinned_polyfit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bayes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#threeML.utils.time_series.polynomial.Polynomial" title="threeML.utils.time_series.polynomial.Polynomial"><span class="pre">Polynomial</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/polynomial.html#unbinned_polyfit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.polynomial.unbinned_polyfit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>function to fit a polynomial to unbinned event data.
-not a member to allow parallel computation</p>
+<p>Function to fit a polynomial to unbinned event data. not a member to
+allow parallel computation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -738,7 +758,7 @@ not a member to allow parallel computation</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.utils.time_series.time_series.TimeSeries">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.time_series.time_series.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries" title="Link to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.utils.time_series.time_series.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -784,9 +804,9 @@ not a member to allow parallel computation</p>
 <span class="sig-name descname"><span class="pre">counts_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.counts_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.counts_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return the number of counts in the selected interval
-:param start: start of interval
-:param stop:  stop of interval
+<p>Return the number of counts in the selected interval :param start:</p>
+<p>start of interval
+:param stop: stop of interval
 :return:</p>
 </dd>
 </dl>
@@ -796,7 +816,7 @@ not a member to allow parallel computation</p>
 <span class="sig-name descname"><span class="pre">exposure_over_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.exposure_over_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.exposure_over_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>calculate the exposure over a given interval</p>
+<p>Calculate the exposure over a given interval.</p>
 </dd>
 </dl>
 
@@ -805,9 +825,14 @@ not a member to allow parallel computation</p>
 <span class="sig-name descname"><span class="pre">fit_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.fit_polynomial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.fit_polynomial" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Fit the polynominals to the selected time intervals
-:param kwargs:
-:returns:</p>
+<p>Fit the polynominals to the selected time intervals :param kwargs:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -816,7 +841,7 @@ not a member to allow parallel computation</p>
 <span class="sig-name descname"><span class="pre">get_information_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">_OutputContainer</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.get_information_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.get_information_dict" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return a PHAContainer that can be read by different builders</p>
+<p>Return a PHAContainer that can be read by different builders.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -843,7 +868,7 @@ and errors
 <span class="sig-name descname"><span class="pre">get_total_poly_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.get_total_poly_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.get_total_poly_count" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Get the total poly counts</p>
+<p>Get the total poly counts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -867,7 +892,7 @@ and errors
 <span class="sig-name descname"><span class="pre">get_total_poly_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.get_total_poly_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.get_total_poly_error" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Get the total poly error</p>
+<p>Get the total poly error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -914,7 +939,7 @@ and errors
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">polynomials</span></span><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.polynomials" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns polynomial is they exist</p>
+<p>Returns polynomial is they exist.</p>
 </dd>
 </dl>
 
@@ -930,7 +955,7 @@ and errors
 <span class="sig-name descname"><span class="pre">save_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.save_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.save_background" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>save the background to an HD5F</p>
+<p>Save the background to an HD5F.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -958,9 +983,9 @@ and errors
 <span class="sig-name descname"><span class="pre">set_background_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">time_intervals</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.set_background_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.set_background_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Set the time interval for the background observation.
-Multiple intervals can be input as separate arguments
-Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
+<p>Set the time interval for the background observation. Multiple
+intervals can be input as separate arguments Specified as ‘tmin-tmax’.
+Intervals are in seconds. Example:</p>
 <p>set_polynomial_fit_interval(“-10.0-0.0”,”10.-15.”)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
@@ -980,9 +1005,9 @@ Specified as ‘tmin-tmax’. Intervals are in seconds. Example:</p>
 <span class="sig-name descname"><span class="pre">set_polynomial_fit_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">time_intervals</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/time_series/time_series.html#TimeSeries.set_polynomial_fit_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.set_polynomial_fit_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Set the time interval to fit the background.
-Multiple intervals can be input as separate arguments
-Specified as ‘tmin-tmax’. Intervals are in seconds. Example:
+<p>Set the time interval to fit the background.</p>
+<p>Multiple intervals can be input as separate arguments Specified
+as ‘tmin-tmax’. Intervals are in seconds. Example:
 set_polynomial_fit_interval(“-10.0-0.0”,”10.-15.”)
 :param time_intervals: intervals to fit on
 :param unbinned:
@@ -996,7 +1021,7 @@ set_polynomial_fit_interval(“-10.0-0.0”,”10.-15.”)
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_intervals</span></span><a class="headerlink" href="#threeML.utils.time_series.time_series.TimeSeries.time_intervals" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the time intervals of the events</p>
+<p>The time intervals of the events.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>

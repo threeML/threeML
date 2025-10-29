@@ -9,7 +9,7 @@
   <title>threeML.utils.OGIP package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -82,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -158,8 +161,8 @@
 <span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_rsp_write</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/pha.html#PHAWrite.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.pha.PHAWrite.write" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
-if BAK files should be generated.</p>
+<p>Write a PHA Type II and BAK file for the given OGIP plugin.
+Automatically determines if BAK files should be generated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -233,7 +236,7 @@ if BAK files should be generated.</p>
 <span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/response.html#InstrumentResponse.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.clone" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return a new response with the contents of this response</p>
+<p>Return a new response with the contents of this response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -249,9 +252,9 @@ if BAK files should be generated.</p>
 <span class="sig-name descname"><span class="pre">convolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/response.html#InstrumentResponse.convolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.convolve" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Convolve the source flux with the response
-:param precalc_fluxes: The precalulated flux. If this is None, the
-flux gets calculated here.</p>
+<p>Convolve the source flux with the response :param precalc_fluxes:
+The precalulated flux.</p>
+<p>If this is None, the flux gets calculated here.</p>
 </dd>
 </dl>
 
@@ -260,8 +263,8 @@ flux gets calculated here.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coverage_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="threeML.utils.html#threeML.utils.time_interval.TimeInterval" title="threeML.utils.time_interval.TimeInterval"><span class="pre">TimeInterval</span></a></em><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.coverage_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the time interval that this matrix is applicable to. None if it wasn’t defined and the matrix is
-applicable everywhere</p>
+<p>Returns the time interval that this matrix is applicable to. None if
+it wasn’t defined and the matrix is applicable everywhere.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return time_interval<span class="colon">:</span>
 </dt>
@@ -278,14 +281,17 @@ applicable everywhere</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_dummy_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ebounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monte_carlo_energies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/response.html#InstrumentResponse.create_dummy_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.create_dummy_response" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Creates a dummy identity response of the shape of the ebounds and mc energies</p>
+<p>Creates a dummy identity response of the shape of the ebounds and mc
+energies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>ebounds</strong> – the energy boundaries of the detector channels (size n_channels + 1)</p></li>
-<li><p><strong>monte_carlo_energies</strong> – the energy boundaries of the monte carlo channels (size n_mc_energies + 1)</p></li>
+<li><p><strong>ebounds</strong> – the energy boundaries of the detector channels
+(size n_channels + 1)</p></li>
+<li><p><strong>monte_carlo_energies</strong> – the energy boundaries of the monte
+carlo channels (size n_mc_energies + 1)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
@@ -322,7 +328,8 @@ applicable everywhere</p>
 NOTE: returns the channel index (starting at zero),
 not the channel number (likely starting from 1).</p>
 <p>If you ask for a energy lower than the minimum ebounds, 0 will be returned
-If you ask for a energy higher than the maximum ebounds, the last channel index will be returned</p>
+If you ask for a energy higher than the maximum ebounds, the last channel index
+will be returned</p>
 </dd>
 </dl>
 
@@ -338,7 +345,7 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.matrix" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the matrix representing the response</p>
+<p>Return the matrix representing the response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return matrix<span class="colon">:</span>
 </dt>
@@ -377,7 +384,7 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <span class="sig-name descname"><span class="pre">replace_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_matrix</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/response.html#InstrumentResponse.replace_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.replace_matrix" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Replace the read matrix with a new one of the same shape</p>
+<p>Replace the read matrix with a new one of the same shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -393,7 +400,8 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsp_filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.rsp_filename" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the name of the RSP/RMF file from which the response has been loaded</p>
+<p>Returns the name of the RSP/RMF file from which the response has
+been loaded.</p>
 </dd>
 </dl>
 
@@ -402,12 +410,13 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <span class="sig-name descname"><span class="pre">set_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integral_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/response.html#InstrumentResponse.set_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.set_function" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Set the function to be used for the convolution</p>
+<p>Set the function to be used for the convolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>integral_function</strong> (<em>callable</em>) – a function f = f(e1,e2) which returns the integral of the model between e1 and e2</p>
+<p><strong>integral_function</strong> (<em>callable</em>) – a function f = f(e1,e2) which returns
+the integral of the model between e1 and e2</p>
 </dd>
 </dl>
 </dd>
@@ -418,13 +427,35 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <span class="sig-name descname"><span class="pre">to_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telescope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/OGIP/response.html#InstrumentResponse.to_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponse.to_fits" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Write the current matrix into a OGIP FITS file</p>
+<p>Write the current matrix into a OGIP FITS file.</p>
 <p>:param filename : the name of the FITS file to be created
 :type filename : str
-:param telescope_name : a name for the telescope/experiment which this matrix applies to
-:param instrument_name : a name for the instrument which this matrix applies to
-:param overwrite: True or False, whether to overwrite or not the output file
-:return: None</p>
+:param telescope_name : a name for the telescope/experiment</p>
+<blockquote>
+<div>
+<p>which this matrix applies to</p>
+</div>
+</blockquote>
+<dl class="simple">
+<dt>:param instrument_name<span class="classifier">a name for the instrument which this</span>
+</dt>
+<dd>
+<p>matrix applies to</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>overwrite</strong> – True or False, whether to overwrite or not the
+output file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>None</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -437,7 +468,7 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A set of responses</p>
+<p>A set of responses.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.OGIP.response.InstrumentResponseSet.ebounds">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ebounds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.InstrumentResponseSet.ebounds" title="Link to this definition"></a>
@@ -498,7 +529,8 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSExtension" title="threeML.io.fits_file.FITSExtension"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSExtension</span></code></a></p>
-<p>Represents the MATRIX extension of a response FITS file following the OGIP format</p>
+<p>Represents the MATRIX extension of a response FITS file following the
+OGIP format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -508,7 +540,8 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <li><p><strong>mc_energies_hi</strong> – hi bound of MC energies (in keV)</p></li>
 <li><p><strong>channel_energies_lo</strong> – lower bound of channel energies (in keV)</p></li>
 <li><p><strong>channel_energies_hi</strong> – hi bound of channel energies (in keV</p></li>
-<li><p><strong>matrix</strong> – the redistribution matrix, representing energy dispersion effects</p></li>
+<li><p><strong>matrix</strong> – the redistribution matrix, representing energy
+dispersion effects</p></li>
 </ul>
 </dd>
 </dl>
@@ -553,7 +586,7 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arf</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.OGIPResponse.arf" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>The area response function</p>
+<p>The area response function.</p>
 </dd>
 </dl>
 
@@ -571,8 +604,8 @@ If you ask for a energy higher than the maximum ebounds, the last channel index 
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">first_channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.OGIPResponse.first_channel" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>The first channel of the channel array. Corresponds to
-TLMIN keyword in FITS files</p>
+<p>The first channel of the channel array. Corresponds to TLMIN keyword
+in FITS files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -588,7 +621,7 @@ TLMIN keyword in FITS files</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rmf</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.OGIPResponse.rmf" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>The redistribution matrix function</p>
+<p>The redistribution matrix function.</p>
 </dd>
 </dl>
 
@@ -597,7 +630,8 @@ TLMIN keyword in FITS files</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsp_filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#threeML.utils.OGIP.response.OGIPResponse.rsp_filename" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the name of the RSP/RMF file from which the response has been loaded</p>
+<p>Returns the name of the RSP/RMF file from which the response has
+been loaded.</p>
 </dd>
 </dl>
 
@@ -610,7 +644,8 @@ TLMIN keyword in FITS files</p>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSFile" title="threeML.io.fits_file.FITSFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSFile</span></code></a></p>
-<p>A RMF file, the OGIP format for a matrix representing energy dispersion effects.</p>
+<p>A RMF file, the OGIP format for a matrix representing energy dispersion
+effects.</p>
 </dd>
 </dl>
 
@@ -620,8 +655,8 @@ TLMIN keyword in FITS files</p>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSFile" title="threeML.io.fits_file.FITSFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">FITSFile</span></code></a></p>
-<p>A response file, the OGIP format for a matrix representing both energy dispersion effects and effective area,
-in the same matrix.</p>
+<p>A response file, the OGIP format for a matrix representing both energy
+dispersion effects and effective area, in the same matrix.</p>
 </dd>
 </dl>
 
@@ -631,7 +666,8 @@ in the same matrix.</p>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="#threeML.utils.OGIP.response.MATRIX" title="threeML.utils.OGIP.response.MATRIX"><code class="xref py py-class docutils literal notranslate"><span class="pre">MATRIX</span></code></a></p>
-<p>Represents the SPECRESP_MATRIX extension of a response FITS file following the OGIP format</p>
+<p>Represents the SPECRESP_MATRIX extension of a response FITS file
+following the OGIP format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -641,7 +677,8 @@ in the same matrix.</p>
 <li><p><strong>mc_energies_hi</strong> – hi bound of MC energies (in keV)</p></li>
 <li><p><strong>channel_energies_lo</strong> – lower bound of channel energies (in keV)</p></li>
 <li><p><strong>channel_energies_hi</strong> – hi bound of channel energies (in keV</p></li>
-<li><p><strong>matrix</strong> – the redistribution matrix, representing energy dispersion effects and effective area information</p></li>
+<li><p><strong>matrix</strong> – the redistribution matrix, representing energy
+dispersion effects and effective area information</p></li>
 </ul>
 </dd>
 </dl>

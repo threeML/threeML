@@ -9,7 +9,7 @@
   <title>threeML.utils.statistics.stats_tools module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -122,16 +125,21 @@
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class implements a way to compute residuals for a Poisson distribution mapping them to residuals of a standard
-normal distribution. The probability of obtaining the observed counts given the expected one is computed, and then
-transformed “in unit of sigma”, i.e., the sigma value corresponding to that probability is computed.</p>
-<p>The algorithm implemented here uses different branches so that it is fairly accurate between -36 and +36 sigma.</p>
-<p>NOTE: if the expected number of counts is not very high, then the Poisson distribution is skewed and so the
-probability of obtaining a downward fluctuation at a given sigma level is not the same as obtaining the same
-fluctuation in the upward direction. Therefore, the distribution of residuals is <em>not</em> expected to be symmetric
-in that case. The sigma level at which this effect is visible depends strongly on the expected number of counts.
-Under normal circumstances residuals are expected to be a few sigma at most, in which case the effect becomes
-important for expected number of counts &lt;~ 15-20.</p>
+<p>This class implements a way to compute residuals for a Poisson
+distribution mapping them to residuals of a standard normal distribution.
+The probability of obtaining the observed counts given the expected one is
+computed, and then transformed “in unit of sigma”, i.e., the sigma value
+corresponding to that probability is computed.</p>
+<p>The algorithm implemented here uses different branches so that it is fairly accurate
+between -36 and +36 sigma.</p>
+<p>NOTE: if the expected number of counts is not very high, then the Poisson
+distribution is skewed and so the probability of obtaining a downward fluctuation at
+a given sigma level is not the same as obtaining the same fluctuation in the upward
+direction. Therefore, the distribution of residuals is <em>not</em> expected to be
+symmetric in that case. The sigma level at which this effect is visible depends
+strongly on the expected number of counts. Under normal circumstances residuals are
+expected to be a few sigma at most, in which case the effect becomes important for
+expected number of counts &lt;~ 15-20.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.statistics.stats_tools.PoissonResiduals.significance_one_side">
 <span class="sig-name descname"><span class="pre">significance_one_side</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/stats_tools.html#PoissonResiduals.significance_one_side"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.stats_tools.PoissonResiduals.significance_one_side" title="Link to this definition"></a>
@@ -148,7 +156,7 @@ important for expected number of counts &lt;~ 15-20.</p>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Implements equations in Li&amp;Ma 1983</p>
+<p>Implements equations in Li&amp;Ma 1983.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.utils.statistics.stats_tools.Significance.Noff">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Noff</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#threeML.utils.statistics.stats_tools.Significance.Noff" title="Link to this definition"></a>
@@ -202,15 +210,18 @@ important for expected number of counts &lt;~ 15-20.</p>
 <span class="sig-name descname"><span class="pre">known_background</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/stats_tools.html#Significance.known_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.stats_tools.Significance.known_background" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Compute the significance under the hypothesis that there is no uncertainty in the background. In other words,
-compute the probability of obtaining the observed counts given the expected counts from the background, then
-transform it in sigma.</p>
-<p>NOTE: this is reliable for expected counts &gt;~10-15 if the significance is not very high. The higher the
-expected counts, the more reliable the significance estimation. As rule of thumb, you need at least 25 counts
-to have reliable estimates up to 5 sigma.</p>
-<p>NOTE 2: if you use to compute residuals in units of sigma, you should not expected them to be symmetrically
-distributed around 0 unless the expected number of counts is high enough for all bins (&gt;~15). This is due to
-the fact that the Poisson distribution is very skewed at low counts.</p>
+<p>Compute the significance under the hypothesis that there is no
+uncertainty in the background. In other words, compute the probability
+of obtaining the observed counts given the expected counts from the
+background, then transform it in sigma.</p>
+<p>NOTE: this is reliable for expected counts &gt;~10-15 if the significance is not
+very high. The higher the expected counts, the more reliable the significance
+estimation. As rule of thumb, you need at least 25 counts to have reliable
+estimates up to 5 sigma.</p>
+<p>NOTE 2: if you use to compute residuals in units of sigma, you should not
+expected them to be symmetrically distributed around 0 unless the expected
+number of counts is high enough for all bins (&gt;~15). This is due to the fact
+that the Poisson distribution is very skewed at low counts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -226,16 +237,18 @@ the fact that the Poisson distribution is very skewed at low counts.</p>
 <span class="sig-name descname"><span class="pre">li_and_ma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assign_sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/stats_tools.html#Significance.li_and_ma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.stats_tools.Significance.li_and_ma" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Compute the significance using the formula from Li &amp; Ma 1983, which is appropriate when both background and
-observed signal are counts coming from a Poisson distribution.</p>
+<p>Compute the significance using the formula from Li &amp; Ma 1983, which
+is appropriate when both background and observed signal are counts
+coming from a Poisson distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>assign_sign</strong> – whether to assign a sign to the significance, according to the sign of the net counts</p>
+<p><strong>assign_sign</strong> – whether to assign a sign to the significance, according to</p>
 </dd>
 </dl>
-<p>Non - alpha * Noff, so that excesses will have positive significances and defects negative significances
+<p>the sign of the net counts Non - alpha * Noff, so that excesses will have
+positive significances and defects negative significances
 :return:</p>
 </dd>
 </dl>
@@ -279,9 +292,9 @@ the background has been modeled and thus has Gaussian distributed errors.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.statistics.stats_tools.</span></span><span class="sig-name descname"><span class="pre">aic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_like</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_data_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/statistics/stats_tools.html#aic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.statistics.stats_tools.aic" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>The Aikake information criterion.
-A model comparison tool based of infomormation theory. It assumes that N is large i.e.,
-that the model is approaching the CLT.</p>
+<p>The Aikake information criterion.</p>
+<p>A model comparison tool based of infomormation theory. It assumes
+that N is large i.e., that the model is approaching the CLT.</p>
 </dd>
 </dl>
 

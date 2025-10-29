@@ -9,7 +9,7 @@
   <title>threeML.utils.photometry package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -82,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -147,7 +150,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.photometry.filter_library.</span></span><span class="sig-name descname"><span class="pre">get_photometric_filter_library</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/photometry/filter_library.html#get_photometric_filter_library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_library.get_photometric_filter_library" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Get the 3ML filter library</p>
+<p>Get the 3ML filter library.</p>
 </dd>
 </dl>
 
@@ -180,9 +183,8 @@
 <span class="sig-name descname"><span class="pre">ab_magnitudes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/photometry/filter_set.html#FilterSet.ab_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.ab_magnitudes" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return the effective stimulus of the model and filter for the given
-magnitude system
-:return: np.ndarray of ab magnitudes</p>
+<p>Return the effective stimulus of the model and filter for the given
+magnitude system :return: np.ndarray of ab magnitudes.</p>
 </dd>
 </dl>
 
@@ -239,8 +241,14 @@ magnitude system
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">native_filter_names</span></span><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.native_filter_names" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the native filter names
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The native filter names</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -249,8 +257,7 @@ magnitude system
 <span class="sig-name descname"><span class="pre">plot_filters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/photometry/filter_set.html#FilterSet.plot_filters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.plot_filters" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>plot the filter/ transmission curves
-:return: fig</p>
+<p>Plot the filter/ transmission curves :return: fig.</p>
 </dd>
 </dl>
 
@@ -259,9 +266,10 @@ magnitude system
 <span class="sig-name descname"><span class="pre">set_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">differential_flux</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/photometry/filter_set.html#FilterSet.set_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.set_model" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>set the model of that will be used during the convolution. Not that speclite
-considers a differential flux to be in units of erg/s/cm2/lambda so we must convert
-astromodels into the proper units (using astropy units!)</p>
+<p>Set the model of that will be used during the convolution.</p>
+<p>Not that speclite considers a differential flux to be in units
+of erg/s/cm2/lambda so we must convert astromodels into the
+proper units (using astropy units!)</p>
 </dd>
 </dl>
 
@@ -270,7 +278,7 @@ astromodels into the proper units (using astropy units!)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">speclite_filters</span></span><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.speclite_filters" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>exposes the speclite fitlers for simulations</p>
+<p>Exposes the speclite fitlers for simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -286,8 +294,14 @@ astromodels into the proper units (using astropy units!)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength_bounds</span></span><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.wavelength_bounds" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>IntervalSet of FWHM bounds of the filters
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><a class="reference internal" href="threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet">IntervalSet</a> of FWHM bounds of the filters</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -334,8 +348,8 @@ astromodels into the proper units (using astropy units!)</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation" title="threeML.utils.photometry.photometric_observation.PhotometericObservation"><span class="pre">PhotometericObservation</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/photometry/photometric_observation.html#PhotometericObservation.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation.from_dict" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Create an observation from a dict in the form
-data = dict(a=(mag, mag_err), b=(mag, mag_err))</p>
+<p>Create an observation from a dict in the form data = dict(a=(mag,
+mag_err), b=(mag, mag_err))</p>
 </dd>
 </dl>
 
@@ -344,7 +358,7 @@ data = dict(a=(mag, mag_err), b=(mag, mag_err))</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation" title="threeML.utils.photometry.photometric_observation.PhotometericObservation"><span class="pre">PhotometericObservation</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/photometry/photometric_observation.html#PhotometericObservation.from_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation.from_hdf5" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Load an observation from an hdf5 file</p>
+<p>Load an observation from an hdf5 file.</p>
 </dd>
 </dl>
 
@@ -353,8 +367,8 @@ data = dict(a=(mag, mag_err), b=(mag, mag_err))</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation" title="threeML.utils.photometry.photometric_observation.PhotometericObservation"><span class="pre">PhotometericObservation</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/photometry/photometric_observation.html#PhotometericObservation.from_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation.from_kwargs" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Create an observation from a kwargs in the form
-(a=(mag, mag_err), b=(mag, mag_err))</p>
+<p>Create an observation from a kwargs in the form (a=(mag, mag_err),
+b=(mag, mag_err))</p>
 </dd>
 </dl>
 
@@ -391,7 +405,7 @@ data = dict(a=(mag, mag_err), b=(mag, mag_err))</p>
 <span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/photometry/photometric_observation.html#PhotometericObservation.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.photometric_observation.PhotometericObservation.to_hdf5" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Save the data to an HDF5 file</p>
+<p>Save the data to an HDF5 file.</p>
 </dd>
 </dl>
 

@@ -8,7 +8,7 @@
   <title>threeML.plugin_prototype &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,9 +112,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.plugin_prototype</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Define the interface for a plugin class.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Define the interface for a plugin class.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
@@ -148,30 +149,24 @@
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PluginPrototype</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nuisance_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]):</span>
-
         <span class="n">invalid_plugin_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
 
-        <span class="c1"># Make sure total is not used as a name (need to use it for other things, like the total value of the statistic)</span>
+        <span class="c1"># Make sure total is not used as a name (need to use it for other things, like</span>
+        <span class="c1"># the total value of the statistic)</span>
 
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Sorry, you cannot use &#39;total&#39; as name for a plugin.&quot;</span><span class="p">)</span>
 
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;Sorry, you cannot use &#39;total&#39; as name for a plugin.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Sorry, you cannot use &#39;total&#39; as name for a plugin.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
 
         <span class="c1"># This is just to make sure that the plugin is legal</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuisance_parameters</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;nuisance_parameters are not a dict and are invalid!&quot;</span><span class="p">)</span>
 
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;nuisance_parameters are not a dict and are invalid!&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;nuisance_parameters are not a dict and are invalid!&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">nuisance_parameters</span>
 
@@ -194,17 +189,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the name of this instance</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the name of this instance.</span>
 
-<span class="sd">        :return: a string (this is enforced to be a valid python identifier)</span>
+<span class="sd">        :return: a string (this is enforced to be a valid python</span>
+<span class="sd">            identifier)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuisance_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a dictionary containing the nuisance parameters for this dataset</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary containing the nuisance parameters for this</span>
+<span class="sd">        dataset.</span>
 
 <span class="sd">        :return: a dictionary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -216,14 +211,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">update_nuisance_parameters</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">new_nuisance_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_nuisance_parameters</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;nuisance_parameters are not a dict and are invalid!&quot;</span><span class="p">)</span>
 
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;nuisance_parameters are not a dict and are invalid!&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;nuisance_parameters are not a dict and are invalid!&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_nuisance_parameters</span> <span class="o">=</span> <span class="n">new_nuisance_parameters</span></div>
 
@@ -241,51 +232,52 @@
 <div class="viewcode-block" id="PluginPrototype.get_number_of_data_points">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.get_number_of_data_points">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This returns the number of data points that are used to evaluate the likelihood.</span>
-<span class="sd">        For binned measurements, this is the number of active bins used in the fit. For</span>
-<span class="sd">        unbinned measurements, this would be the number of photons/particles that are</span>
-<span class="sd">        evaluated on the likelihood</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This returns the number of data points that are used to evaluate the</span>
+<span class="sd">        likelihood.</span>
+
+<span class="sd">        For binned measurements, this is the number of active bins used</span>
+<span class="sd">        in the fit. For unbinned measurements, this would be the number</span>
+<span class="sd">        of photons/particles that are evaluated on the likelihood</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are &quot;</span>
-            <span class="s2">&quot;unreliable&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;get_number_of_data_points not implemented, values for statistical &quot;</span>
+            <span class="s2">&quot;measurements such as AIC or BIC are unreliable&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="mf">1.0</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Tag this plugin with the provided independent variable and a start and end value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tag this plugin with the provided independent variable and a start</span>
+<span class="sd">        and end value.</span>
 
-<span class="sd">        This can be used for example to fit a time-varying model. In this case the independent variable will be the</span>
-<span class="sd">        time and the start and end will be the start and stop time of the exposure for this plugin. These values will</span>
-<span class="sd">        be used to average the model over the provided time interval when fitting.</span>
+<span class="sd">        This can be used for example to fit a time-varying model. In</span>
+<span class="sd">        this case the independent variable will be the time and the</span>
+<span class="sd">        start and end will be the start and stop time of the exposure</span>
+<span class="sd">        for this plugin. These values will be used to average the model</span>
+<span class="sd">        over the provided time interval when fitting.</span>
 
 <span class="sd">        :param independent_variable: an IndependentVariable instance</span>
 <span class="sd">        :param start: start value for this plugin</span>
-<span class="sd">        :param end: end value for this plugin. If this is not provided, instead of integrating the model between</span>
-<span class="sd">        start and end, the model will be evaluate at start. Default: None (i.e., not provided)</span>
+<span class="sd">        :param end: end value for this plugin. If this is not provided,</span>
+<span class="sd">            instead of integrating the model between start and end, the</span>
+<span class="sd">            model will be evaluate at start. Default: None (i.e., not</span>
+<span class="sd">            provided)</span>
 <span class="sd">        :return: none</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-
             <span class="n">independent_variable</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="n">spec</span>
             <span class="n">end</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-
             <span class="n">independent_variable</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">spec</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Tag specification should be (independent_variable, start[, end])&quot;</span>
             <span class="p">)</span>
@@ -293,11 +285,10 @@
         <span class="c1"># Let&#39;s do a lazy check</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">independent_variable</span><span class="p">,</span> <span class="n">IndependentVariable</span><span class="p">):</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;When tagging a plugin, you should use an IndependentVariable instance. You used instead &quot;</span>
-                <span class="s2">&quot;an instance of a </span><span class="si">%s</span><span class="s2"> object. This might lead to crashes or &quot;</span>
-                <span class="s2">&quot;other problems.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">independent_variable</span><span class="p">)</span>
+                <span class="s2">&quot;When tagging a plugin, you should use an IndependentVariable instance.&quot;</span>
+                <span class="s2">&quot; You used instead an instance of a </span><span class="si">%s</span><span class="s2"> object. This might lead to &quot;</span>
+                <span class="s2">&quot;crashes or other problems.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">independent_variable</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="p">(</span><span class="n">independent_variable</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
@@ -311,14 +302,12 @@
 
 <div class="viewcode-block" id="PluginPrototype.exclude_from_fit">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.exclude_from_fit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">exclude_from_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This can be used to explude a plug in from the fit</span>
-<span class="sd">        :param flag: True or Fase (default)</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exclude_from_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This can be used to explude a plug in from the fit :param flag: True</span>
+<span class="sd">        or Fase (default) :return:&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plug in </span><span class="si">%s</span><span class="s2"> had beed expluded from the fit&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exclude_from_fit</span> <span class="o">=</span> <span class="n">flag</span></div>
+
 
     <span class="c1">######################################################################</span>
     <span class="c1"># The following methods must be implemented by each plugin</span>
@@ -328,8 +317,9 @@
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.set_model">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization.</span>
+
+<span class="sd">        Must be a LikelihoodModel instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -338,10 +328,8 @@
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.get_log_like">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the value of the log-likelihood with the current values for the</span>
-<span class="sd">        parameters</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of the log-likelihood with the current values for</span>
+<span class="sd">        the parameters.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 
@@ -349,12 +337,13 @@
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.plugin_prototype.PluginPrototype.inner_fit">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This is used for the profile likelihood. Keeping fixed all parameters in the</span>
-<span class="sd">        LikelihoodModel, this method minimize the logLike over the remaining nuisance</span>
-<span class="sd">        parameters, i.e., the parameters belonging only to the model for this</span>
-<span class="sd">        particular detector. If there are no nuisance parameters, simply return the</span>
-<span class="sd">        logLike value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is used for the profile likelihood.</span>
+
+<span class="sd">        Keeping fixed all parameters in the LikelihoodModel, this method</span>
+<span class="sd">        minimize the logLike over the remaining nuisance parameters,</span>
+<span class="sd">        i.e., the parameters belonging only to the model for this</span>
+<span class="sd">        particular detector. If there are no nuisance parameters, simply</span>
+<span class="sd">        return the logLike value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 </div>

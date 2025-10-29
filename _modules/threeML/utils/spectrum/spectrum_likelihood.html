@@ -8,7 +8,7 @@
   <title>threeML.utils.spectrum.spectrum_likelihood &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -113,14 +116,16 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nb</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.numba_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">nb_sum</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.statistics.likelihood_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">half_chi2</span><span class="p">,</span> <span class="n">poisson_log_likelihood_ideal_bkg</span><span class="p">,</span>
-    <span class="n">poisson_observed_gaussian_background</span><span class="p">,</span> <span class="n">poisson_observed_poisson_background</span><span class="p">)</span>
+    <span class="n">half_chi2</span><span class="p">,</span>
+    <span class="n">poisson_log_likelihood_ideal_bkg</span><span class="p">,</span>
+    <span class="n">poisson_observed_gaussian_background</span><span class="p">,</span>
+    <span class="n">poisson_observed_poisson_background</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -133,15 +138,13 @@
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinnedStatistic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum_plugin</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        </span>
-<span class="sd">        A class to hold the likelihood call and randomization of spectrum counts</span>
-<span class="sd">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class to hold the likelihood call and randomization of spectrum</span>
+<span class="sd">        counts.</span>
+
 <span class="sd">        :param spectrum_plugin: the spectrum plugin to call</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span> <span class="o">=</span> <span class="n">spectrum_plugin</span>
-
 
 <div class="viewcode-block" id="BinnedStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_current_value">[docs]</a>
@@ -180,8 +183,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">GaussianObservedStatistic</span><span class="p">(</span><span class="n">BinnedStatistic</span><span class="p">):</span>
 <div class="viewcode-block" id="GaussianObservedStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_current_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span><span class="p">)</span>
 
         <span class="n">chi2_</span> <span class="o">=</span> <span class="n">half_chi2</span><span class="p">(</span>
@@ -198,14 +200,11 @@
 <div class="viewcode-block" id="GaussianObservedStatistic.get_randomized_source_counts">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_counts">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_randomized_source_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_model_counts</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
-
 
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">observed_count_errors</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
@@ -216,7 +215,8 @@
             <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">observed_count_errors</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="c1"># Issue a warning if the generated background is less than zero, and fix it by placing it at zero</span>
+        <span class="c1"># Issue a warning if the generated background is less than zero, and fix it by</span>
+        <span class="c1"># placing it at zero</span>
 
         <span class="n">idx</span> <span class="o">=</span> <span class="n">randomized_source_counts</span> <span class="o">&lt;</span> <span class="mi">0</span>  <span class="c1"># type: np.ndarray</span>
 
@@ -230,9 +230,6 @@
 
             <span class="n">randomized_source_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-
-
-            
         <span class="k">return</span> <span class="n">randomized_source_counts</span></div>
 
 
@@ -249,7 +246,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">PoissonObservedIdealBackgroundStatistic</span><span class="p">(</span><span class="n">BinnedStatistic</span><span class="p">):</span>
 <div class="viewcode-block" id="PoissonObservedIdealBackgroundStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_current_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># In this likelihood the background becomes part of the model, which means that</span>
         <span class="c1"># the uncertainty in the background is completely neglected</span>
 
@@ -273,14 +270,11 @@
         <span class="c1"># TODO: check with giacomo if this is correct!</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
 
-
-        
         <span class="n">randomized_source_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span>
             <span class="n">source_model_counts</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">_background_counts</span>
         <span class="p">)</span>
@@ -305,7 +299,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">PoissonObservedModeledBackgroundStatistic</span><span class="p">(</span><span class="n">BinnedStatistic</span><span class="p">):</span>
 <div class="viewcode-block" id="PoissonObservedModeledBackgroundStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_current_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># In this likelihood the background becomes part of the model, which means that</span>
         <span class="c1"># the uncertainty in the background is completely neglected</span>
 
@@ -341,14 +335,11 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
 
-
-        
         <span class="n">randomized_source_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span>
             <span class="n">source_model_counts</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_synthetic_background_plugin</span><span class="o">.</span><span class="n">observed_counts</span>
         <span class="p">)</span>
@@ -380,7 +371,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">PoissonObservedNoBackgroundStatistic</span><span class="p">(</span><span class="n">BinnedStatistic</span><span class="p">):</span>
 <div class="viewcode-block" id="PoissonObservedNoBackgroundStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_current_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># In this likelihood the background becomes part of the model, which means that</span>
         <span class="c1"># the uncertainty in the background is completely neglected</span>
 
@@ -404,7 +395,6 @@
         <span class="c1"># we want the unscalled background counts</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
@@ -422,7 +412,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">PoissonObservedPoissonBackgroundStatistic</span><span class="p">(</span><span class="n">BinnedStatistic</span><span class="p">):</span>
 <div class="viewcode-block" id="PoissonObservedPoissonBackgroundStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_current_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Scale factor between source and background spectrum</span>
         <span class="n">model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span><span class="p">)</span>
 
@@ -439,20 +429,17 @@
 <div class="viewcode-block" id="PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_randomized_source_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_model_counts</span><span class="p">):</span>
-        <span class="c1"># Since we use a profile likelihood, the background model is conditional on the source model, so let&#39;s</span>
-        <span class="c1"># get it from the likelihood function</span>
+        <span class="c1"># Since we use a profile likelihood, the background model is conditional on the</span>
+        <span class="c1"># source model, so let&#39;s get it from the likelihood function</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">background_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_value</span><span class="p">()</span>
 
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
 
-        
         <span class="c1"># Now randomize the expectations</span>
 
         <span class="c1"># Randomize expectations for the source</span>
@@ -472,8 +459,10 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">background_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_value</span><span class="p">()</span>
 
         <span class="c1"># scale the background to the scale factor</span>
-        
-        <span class="n">randomized_background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">background_model_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">scale_factor</span> <span class="p">)</span>
+
+        <span class="n">randomized_background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span>
+            <span class="n">background_model_counts</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">scale_factor</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">randomized_background_counts</span></div>
 </div>
@@ -485,13 +474,17 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">PoissonObservedGaussianBackgroundStatistic</span><span class="p">(</span><span class="n">BinnedStatistic</span><span class="p">):</span>
 <div class="viewcode-block" id="PoissonObservedGaussianBackgroundStatistic.get_current_value">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_current_value">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">expected_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">expected_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span>
+            <span class="n">precalc_fluxes</span><span class="o">=</span><span class="n">precalc_fluxes</span>
+        <span class="p">)</span>
 
         <span class="n">loglike</span><span class="p">,</span> <span class="n">bkg_model</span> <span class="o">=</span> <span class="n">poisson_observed_gaussian_background</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">current_observed_counts</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">current_background_counts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">current_background_count_errors</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">current_background_counts</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">current_background_count_errors</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">,</span>
             <span class="n">expected_model_counts</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -501,9 +494,8 @@
 <div class="viewcode-block" id="PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_randomized_source_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_model_counts</span><span class="p">):</span>
-
-        <span class="c1"># Since we use a profile likelihood, the background model is conditional on the source model, so let&#39;s</span>
-        <span class="c1"># get it from the likelihood function</span>
+        <span class="c1"># Since we use a profile likelihood, the background model is conditional on the</span>
+        <span class="c1"># source model, so let&#39;s get it from the likelihood function</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">background_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_value</span><span class="p">()</span>
 
@@ -514,35 +506,28 @@
 
         <span class="n">idx</span> <span class="o">=</span> <span class="n">background_model_counts</span> <span class="o">&lt;</span> <span class="mi">0</span>
 
-        <span class="n">background_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
-
+        <span class="n">background_model_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">background_model_counts</span><span class="p">)):</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;NaN count in background model counts&quot;</span><span class="p">)</span>
-            
+
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">background_model_counts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
+
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">background_model_counts</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;negative count in background model counts&quot;</span><span class="p">)</span>
-            
+
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">background_model_counts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
+
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-
             <span class="n">source_model_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;simulated spectrum had infinite counts in first channel&quot;</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;setting to ZERO&quot;</span><span class="p">)</span>
 
-        
-        
         <span class="c1"># Now randomize the expectations</span>
 
         <span class="c1"># Randomize expectations for the source</span>
@@ -561,9 +546,11 @@
 
         <span class="n">_</span><span class="p">,</span> <span class="n">background_model_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_value</span><span class="p">()</span>
 
-        <span class="c1"># We cannot generate variates with zero sigma. They variates from those channel will always be zero</span>
-        <span class="c1"># This is a limitation of this whole idea. However, remember that by construction an error of zero</span>
-        <span class="c1"># it is only allowed when the background counts are zero as well.</span>
+        <span class="c1"># We cannot generate variates with zero sigma. They variates from those channel</span>
+        <span class="c1"># will always be zero. This is a limitation of this whole idea. However,</span>
+        <span class="c1"># remember that by construction an error of zero it is only allowed when the</span>
+        <span class="c1"># background counts are zero as well.</span>
+
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">background_count_errors</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
         <span class="n">randomized_background_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">background_model_counts</span><span class="p">)</span>
@@ -573,7 +560,8 @@
             <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectrum_plugin</span><span class="o">.</span><span class="n">background_count_errors</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="c1"># Issue a warning if the generated background is less than zero, and fix it by placing it at zero</span>
+        <span class="c1"># Issue a warning if the generated background is less than zero, and fix it by</span>
+        <span class="c1"># placing it at zero</span>
 
         <span class="n">idx</span> <span class="o">=</span> <span class="n">randomized_background_counts</span> <span class="o">&lt;</span> <span class="mi">0</span>  <span class="c1"># type: np.ndarray</span>
 
@@ -601,18 +589,20 @@
 <div class="viewcode-block" id="NotAvailableStatistic">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NotAvailableStatistic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum_plugin</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;The required statistic is currently restricted to the IXPE plugin only.&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;The required statistic is currently restricted to the IXPE plugin only.&quot;</span>
+        <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span></div>
+
 
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">ixpepy.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianObservedGaussianBackgroundStatistic</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;IXPE plugin found. Enabling Gaussian source with Gaussian background.&#39;</span><span class="p">)</span>
-<span class="k">except</span><span class="p">:</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;IXPE plugin found. Enabling Gaussian source with Gaussian background.&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">GaussianObservedGaussianBackgroundStatistic</span> <span class="o">=</span> <span class="n">NotAvailableStatistic</span>
 
 
@@ -624,12 +614,12 @@
         <span class="kc">None</span><span class="p">:</span> <span class="n">PoissonObservedNoBackgroundStatistic</span><span class="p">,</span>
         <span class="s2">&quot;modeled&quot;</span><span class="p">:</span> <span class="n">PoissonObservedModeledBackgroundStatistic</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="n">GaussianObservedStatistic</span><span class="p">,</span>
-                 <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span><span class="n">GaussianObservedGaussianBackgroundStatistic</span><span class="p">},</span>
+    <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="kc">None</span><span class="p">:</span> <span class="n">GaussianObservedStatistic</span><span class="p">,</span>
+        <span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="n">GaussianObservedGaussianBackgroundStatistic</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="kc">None</span><span class="p">:</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
 <span class="p">}</span>
-
-
 </pre></div>
 
            </div>

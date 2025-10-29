@@ -8,7 +8,7 @@
   <title>threeML.io.plotting.light_curve_plots &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -111,13 +114,12 @@
   <h1>Source code for threeML.io.plotting.light_curve_plots</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">past.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">old_div</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.package_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path_of_data_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.step_plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_plot</span>
 
 <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">plotting</span><span class="o">.</span><span class="n">use_threeml_style</span><span class="p">:</span>
-
     <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s2">&quot;threeml.mplstyle&quot;</span><span class="p">)))</span>
 
 
@@ -143,9 +145,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
-    <span class="n">top</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">old_div</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span> <span class="n">width</span><span class="p">[</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]))</span> <span class="o">*</span> <span class="mf">1.2</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">width</span><span class="p">[</span><span class="n">width</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.2</span>
 
-    <span class="n">min_cnts</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">old_div</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">cnts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">],</span> <span class="n">width</span><span class="p">[</span><span class="n">cnts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]))</span> <span class="o">*</span> <span class="mf">0.95</span>
+    <span class="n">min_cnts</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">cnts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">width</span><span class="p">[</span><span class="n">cnts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.95</span>
     <span class="n">bottom</span> <span class="o">=</span> <span class="n">min_cnts</span>
     <span class="n">mean_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">time_bins</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -157,9 +159,7 @@
     <span class="n">light_curve_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">light_curve_color</span>
     <span class="n">selection_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">selection_color</span>
     <span class="n">background_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_color</span>
-    <span class="n">background_selection_color</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_selection_color</span>
-    <span class="p">)</span>
+    <span class="n">background_selection_color</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">time_series</span><span class="o">.</span><span class="n">background_selection_color</span>
 
     <span class="c1"># first plot the full lightcurve</span>
 
@@ -172,24 +172,20 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="c1"># now plot the temporal selections</span>
 
         <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">selection</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="ow">in</span> <span class="n">selection</span><span class="p">:</span>
-            <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
-                <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span>
-            <span class="p">)</span>
+            <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span><span class="p">)</span>
 
             <span class="n">all_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_mask</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_masks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-
             <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">all_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                 <span class="n">step_plot</span><span class="p">(</span>
                     <span class="n">time_bins</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
-                    <span class="n">old_div</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">width</span><span class="p">[</span><span class="n">mask</span><span class="p">]),</span>
+                    <span class="n">cnts</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">/</span> <span class="n">width</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                     <span class="n">ax</span><span class="p">,</span>
                     <span class="n">color</span><span class="o">=</span><span class="n">selection_color</span><span class="p">,</span>
                     <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -198,7 +194,7 @@
 
         <span class="n">step_plot</span><span class="p">(</span>
             <span class="n">time_bins</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
-            <span class="n">old_div</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">width</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+            <span class="n">cnts</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">/</span> <span class="n">width</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
             <span class="n">ax</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">selection_color</span><span class="p">,</span>
             <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -209,23 +205,19 @@
     <span class="c1"># now plot the background selections</span>
 
     <span class="k">if</span> <span class="n">bkg_selections</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bkg_selections</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">bkg_selections</span><span class="p">)</span>
 
         <span class="n">all_masks</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="ow">in</span> <span class="n">bkg_selections</span><span class="p">:</span>
-            <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
-                <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span>
-            <span class="p">)</span>
+            <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">time_bins</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span><span class="p">)</span>
 
             <span class="n">all_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_mask</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_masks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-
             <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">all_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                 <span class="n">step_plot</span><span class="p">(</span>
                     <span class="n">time_bins</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
-                    <span class="n">old_div</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">width</span><span class="p">[</span><span class="n">mask</span><span class="p">]),</span>
+                    <span class="n">cnts</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">/</span> <span class="n">width</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                     <span class="n">ax</span><span class="p">,</span>
                     <span class="n">color</span><span class="o">=</span><span class="n">background_selection_color</span><span class="p">,</span>
                     <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -235,7 +227,7 @@
 
         <span class="n">step_plot</span><span class="p">(</span>
             <span class="n">time_bins</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
-            <span class="n">old_div</span><span class="p">(</span><span class="n">cnts</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">width</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+            <span class="n">cnts</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">/</span> <span class="n">width</span><span class="p">[</span><span class="n">all_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
             <span class="n">ax</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">background_selection_color</span><span class="p">,</span>
             <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -246,7 +238,6 @@
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">bkg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="c1"># now plot the estimated background</span>
         <span class="c1"># the bkg is a rate</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mean_time</span><span class="p">,</span> <span class="n">bkg</span><span class="p">,</span> <span class="n">background_color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Background&quot;</span><span class="p">)</span>
@@ -269,7 +260,7 @@
     <span class="n">chans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">chan_min</span><span class="p">,</span> <span class="n">chan_max</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     <span class="n">width</span> <span class="o">=</span> <span class="n">chan_max</span> <span class="o">-</span> <span class="n">chan_min</span>
 
-    <span class="n">step_plot</span><span class="p">(</span><span class="n">chans</span><span class="p">,</span> <span class="n">old_div</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">step_plot</span><span class="p">(</span><span class="n">chans</span><span class="p">,</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 
@@ -281,9 +272,7 @@
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.disjoint_patch_plot">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">disjoint_patch_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">bin_min</span><span class="p">,</span> <span class="n">bin_max</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># type: (plt.Axes, np.array, np.array, float, float, np.array, dict) -&gt; None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    plots patches that are disjoint given by the mask</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots patches that are disjoint given by the mask.</span>
 
 <span class="sd">    :param ax: matplotlib Axes to plot to</span>
 <span class="sd">    :param bin_min: bin starts</span>
@@ -301,7 +290,6 @@
     <span class="n">non_zero</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_zero</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-
         <span class="n">slices</span> <span class="o">=</span> <span class="n">slice_disjoint</span><span class="p">(</span><span class="n">non_zero</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
@@ -316,12 +304,9 @@
 <div class="viewcode-block" id="slice_disjoint">
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.io.plotting.html#threeML.io.plotting.light_curve_plots.slice_disjoint">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">slice_disjoint</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns an array of disjoint indices from a bool array</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns an array of disjoint indices from a bool array.</span>
 
 <span class="sd">    :param arr: and array of bools</span>
-
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">slices</span> <span class="o">=</span> <span class="p">[]</span>

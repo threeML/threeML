@@ -8,7 +8,7 @@
   <title>threeML.bayesian.multinest_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -116,26 +119,23 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.core.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.sampler_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnitCubeSampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-
     <span class="kn">import</span><span class="w"> </span><span class="nn">pymultinest</span>
 
-<span class="k">except</span><span class="p">:</span>
-
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">has_pymultinest</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">else</span><span class="p">:</span>
-
     <span class="n">has_pymultinest</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-
     <span class="c1"># see if we have mpi and/or are using parallel</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
@@ -147,10 +147,8 @@
         <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">except</span><span class="p">:</span>
-
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -205,9 +203,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Setup for MultiNest sampler: n_live_points:</span><span class="si">{</span><span class="n">n_live_points</span><span class="si">}</span><span class="s2">, chain_name:</span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">,&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;resume: </span><span class="si">{</span><span class="n">resume</span><span class="si">}</span><span class="s2">, importance_nested_sampling: </span><span class="si">{</span><span class="n">importance_nested_sampling</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Other input: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Setup for MultiNest sampler: n_live_points:</span><span class="si">{</span><span class="n">n_live_points</span><span class="si">}</span><span class="s2">, chain_name:&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">, resume: </span><span class="si">{</span><span class="n">resume</span><span class="si">}</span><span class="s2">, importance_nested_sampling: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">importance_nested_sampling</span><span class="si">}</span><span class="s2">. Other input: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;n_live_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_live_points</span>
@@ -217,7 +215,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resume</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_clean</span> <span class="o">=</span> <span class="n">auto_clean</span>
@@ -228,21 +225,19 @@
 <div class="viewcode-block" id="MultiNestSampler.sample">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.multinest_sampler.MultiNestSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        sample using the MultiNest numerical integration method</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the MultiNest numerical integration method.</span>
 
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">has_pymultinest</span>
-        <span class="p">),</span> <span class="s2">&quot;You don&#39;t have pymultinest installed, so you cannot run the Multinest sampler&quot;</span>
+        <span class="k">assert</span> <span class="n">has_pymultinest</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;You don&#39;t have pymultinest installed, so you cannot run the Multinest &quot;</span>
+            <span class="s2">&quot;sampler&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">loud</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quiet</span>
 
@@ -264,7 +259,6 @@
         <span class="n">chain_dir</span> <span class="o">=</span> <span class="n">chain_name</span><span class="o">.</span><span class="n">parent</span>
 
         <span class="k">if</span> <span class="n">using_mpi</span><span class="p">:</span>
-
             <span class="c1"># if we are running in parallel and this is not the</span>
             <span class="c1"># first engine, then we want to wait and let everything finish</span>
 
@@ -278,26 +272,22 @@
                     <span class="n">chain_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="ow">not</span> <span class="n">chain_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Create </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2"> for multinest output&quot;</span><span class="p">)</span>
                 <span class="n">chain_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
-
-
 
         <span class="c1"># Multinest must be run parallel via an external method</span>
         <span class="c1"># see the demo in the examples folder!!</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;If you want to run multinest in parallell you need to use an ad-hoc method&quot;</span>
+                <span class="s2">&quot;If you want to run multinest in parallell you need to use an ad-hoc&quot;</span>
+                <span class="s2">&quot; method&quot;</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start multinest run&quot;</span><span class="p">)</span>
                 <span class="n">sampler</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
@@ -310,29 +300,22 @@
         <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">using_mpi</span><span class="p">:</span>
-
             <span class="c1"># if we are running in parallel and this is not the</span>
             <span class="c1"># first engine, then we want to wait and let everything finish</span>
 
             <span class="n">comm</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-
                 <span class="c1"># these engines do not need to read</span>
                 <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
-
-
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">process_fit</span><span class="p">:</span>
-
             <span class="n">multinest_analyzer</span> <span class="o">=</span> <span class="n">pymultinest</span><span class="o">.</span><span class="n">analyse</span><span class="o">.</span><span class="n">Analyzer</span><span class="p">(</span>
                 <span class="n">n_params</span><span class="o">=</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">outputfiles_basename</span><span class="o">=</span><span class="n">chain_name</span>
             <span class="p">)</span>
@@ -369,7 +352,6 @@
             <span class="c1"># now clean up the chains if requested</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_clean</span><span class="p">:</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deleting the chain directory </span><span class="si">{</span><span class="n">chain_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">chain_dir</span><span class="p">)</span>

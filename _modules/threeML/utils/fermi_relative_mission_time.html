@@ -8,7 +8,7 @@
   <title>threeML.utils.fermi_relative_mission_time &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,8 +112,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.utils.fermi_relative_mission_time</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.network</span><span class="w"> </span><span class="kn">import</span> <span class="n">internet_connection_is_active</span>
@@ -119,13 +123,9 @@
 <div class="viewcode-block" id="compute_fermi_relative_mission_times">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.fermi_relative_mission_time.compute_fermi_relative_mission_times">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_fermi_relative_mission_times</span><span class="p">(</span><span class="n">trigger_time</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    If the user has the requests library, this function looks</span>
-<span class="sd">    online to the HEASARC xtime utility and computes other mission</span>
-<span class="sd">    times relative to the input MET</span>
-
-
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If the user has the requests library, this function looks online to the</span>
+<span class="sd">    HEASARC xtime utility and computes other mission times relative to the</span>
+<span class="sd">    input MET.</span>
 
 <span class="sd">    :param trigger_time: a fermi MET</span>
 <span class="sd">    :return: mission time in a python dictionary</span>
@@ -139,7 +139,15 @@
 
     <span class="n">xtime_url</span> <span class="o">=</span> <span class="s2">&quot;https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl&quot;</span>
 
-    <span class="n">pattern</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;tr&gt;.*?&lt;th scope=row&gt;&lt;label for=&quot;(.*?)&quot;&gt;(.*?)&lt;/label&gt;&lt;/th&gt;.*?&lt;td align=center&gt;.*?&lt;/td&gt;.*?&lt;td&gt;(.*?)&lt;/td&gt;.*?&lt;/tr&gt;&quot;&quot;&quot;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;tr&gt;.*?</span>
+<span class="s2">        &lt;th\s+scope=row&gt;</span>
+<span class="s2">        &lt;label\s+for=&quot;(.*?)&quot;&gt;(.*?)&lt;/label&gt;</span>
+<span class="s2">        &lt;/th&gt;.*?</span>
+<span class="s2">        &lt;td\s+align=center&gt;.*?&lt;/td&gt;.*?</span>
+<span class="s2">        &lt;td&gt;(.*?)&lt;/td&gt;.*?</span>
+<span class="s2">        &lt;/tr&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">time_in_sf</span><span class="o">=</span><span class="n">trigger_time</span><span class="p">,</span>
@@ -149,7 +157,6 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">internet_connection_is_active</span><span class="p">():</span>
-
         <span class="n">content</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xtime_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
 
         <span class="n">mission_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
@@ -165,7 +172,6 @@
         <span class="k">return</span> <span class="n">mission_dict</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="k">return</span> <span class="kc">None</span></div>
 
 </pre></div>

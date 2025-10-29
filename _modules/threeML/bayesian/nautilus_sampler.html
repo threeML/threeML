@@ -8,7 +8,7 @@
   <title>threeML.bayesian.nautilus_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,18 +112,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.bayesian.nautilus_sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.sampler_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnitCubeSampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
-
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 
 
 <div class="viewcode-block" id="capture_arguments">
@@ -142,7 +142,7 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">nautilus</span>
 
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">has_nautilus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">else</span><span class="p">:</span>
@@ -162,7 +162,7 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">using_mpi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">using_mpi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -175,13 +175,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_nautilus</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You must install nautilus to use this sampler&quot;</span><span class="p">)</span>
 
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;You must install nautilus to use this sampler&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;You must install nautilus to use this sampler&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">NautilusSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NautilusSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NautilusSampler.setup">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.nautilus_sampler.NautilusSampler.setup">[docs]</a>
@@ -212,63 +208,97 @@
         <span class="n">discard_exploration</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        setup the nautilus sampler.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup the nautilus sampler.</span>
 
 <span class="sd">        See: https://nautilus-sampler.readthedocs.io/en/stable/index.html</span>
 
-<span class="sd">        :param n_live: Number of so-called live points. New bounds are constructed so that they encompass the live points. Default is 3000.</span>
+<span class="sd">        :param n_live: Number of so-called live points. New bounds are constructed so</span>
+<span class="sd">        that they encompass the live points. Default is 3000.</span>
 <span class="sd">        :type n_live: int</span>
-<span class="sd">        :param n_update: The maximum number of additions to the live set before a new bound is created. If None, use n_live. Default is None.</span>
+<span class="sd">        :param n_update: The maximum number of additions to the live set before a new</span>
+<span class="sd">        bound is created. If None, use n_live. Default is None.</span>
 <span class="sd">        :type n_update: Optional[int]</span>
-<span class="sd">        :param enlarge_per_dim: Along each dimension, outer ellipsoidal bounds are enlarged by this factor. Default is 1.1.</span>
+<span class="sd">        :param enlarge_per_dim: Along each dimension, outer ellipsoidal bounds are</span>
+<span class="sd">        enlarged by this factor. Default is 1.1.</span>
 <span class="sd">        :type enlarge_per_dim: float</span>
-<span class="sd">        :param n_points_min: The minimum number of points each ellipsoid should have. Effectively, ellipsoids with less than twice that number will not be split further. If None, uses n_points_min = n_dim + 50. Default is None.</span>
+<span class="sd">        :param n_points_min: The minimum number of points each ellipsoid should have.</span>
+<span class="sd">        Effectively, ellipsoids with less than twice that number will not be split</span>
+<span class="sd">        further. If None, uses n_points_min = n_dim + 50. Default is None.</span>
 <span class="sd">        :type n_points_min: Optional[int]</span>
-<span class="sd">        :param split_threshold: hreshold used for splitting the multi-ellipsoidal bound used for sampling. If the volume of the bound prior enlarging is larger than split_threshold times the target volume, the multi-ellipsiodal bound is split further, if possible. Default is 100.</span>
+<span class="sd">        :param split_threshold: hreshold used for splitting the multi-ellipsoidal bound</span>
+<span class="sd">        used for sampling. If the volume of the bound prior enlarging is larger than</span>
+<span class="sd">        split_threshold times the target volume, the multi-ellipsiodal bound is split</span>
+<span class="sd">        further, if possible. Default is 100.</span>
 <span class="sd">        :type split_threshold: int</span>
 <span class="sd">        :param n_networks: Number of networks used in the estimator. Default is 4.</span>
 <span class="sd">        :type n_networks: int</span>
-<span class="sd">        :param neural_network_kwargs: Non-default keyword arguments passed to the constructor of MLPRegressor.</span>
+<span class="sd">        :param neural_network_kwargs: Non-default keyword arguments passed to the</span>
+<span class="sd">        constructor of MLPRegressor.</span>
 <span class="sd">        :type neural_network_kwargs: Dict[Any]</span>
-<span class="sd">        :param prior_args: List of extra positional arguments for prior. Only used if prior is a function.</span>
+<span class="sd">        :param prior_args: List of extra positional arguments for prior. Only used if</span>
+<span class="sd">        prior is a function.</span>
 <span class="sd">        :type prior_args: List[Any]</span>
-<span class="sd">        :param prior_kwargs: Dictionary of extra keyword arguments for prior. Only used if prior is a function.</span>
+<span class="sd">        :param prior_kwargs: Dictionary of extra keyword arguments for prior. Only used</span>
+<span class="sd">        if prior is a function.</span>
 <span class="sd">        :type prior_kwargs: Dict[Any]</span>
 <span class="sd">        :param likelihood_args: List of extra positional arguments for likelihood.</span>
 <span class="sd">        :type likelihood_args: List[Any]</span>
 <span class="sd">        :param likelihood_kwargs: Dictionary of extra keyword arguments for likelihood.</span>
 <span class="sd">        :type likelihood_kwargs: Dict[Any]</span>
-<span class="sd">        :param n_batch: Number of likelihood evaluations that are performed at each step. If likelihood evaluations are parallelized, should be multiple of the number of parallel processes. Very large numbers can lead to new bounds being created long after n_update additions to the live set have been achieved. This will not cause any bias but could reduce efficiency. Default is 100.</span>
+<span class="sd">        :param n_batch: Number of likelihood evaluations that are performed at each</span>
+<span class="sd">        step. If likelihood evaluations are parallelized, should be multiple of the</span>
+<span class="sd">        number of parallel processes. Very large numbers can lead to new bounds being</span>
+<span class="sd">        created long after n_update additions to the live set have been achieved. This</span>
+<span class="sd">        will not cause any bias but could reduce efficiency. Default is 100.</span>
 <span class="sd">        :type n_batch: int</span>
-<span class="sd">        :param n_like_new_bound: The maximum number of likelihood calls before a new bounds is created. If None, use 10 times n_live. Default is None.</span>
+<span class="sd">        :param n_like_new_bound: The maximum number of likelihood calls before a new</span>
+<span class="sd">        bounds is created. If None, use 10 times n_live. Default is None.</span>
 <span class="sd">        :type n_like_new_bound: Optional[int]</span>
-<span class="sd">        :param vectorized: If True, the likelihood function can receive multiple input sets at once. For example, if the likelihood function receives arrays, it should be able to take an array with shape (n_points, n_dim) and return an array with shape (n_points). Similarly, if the likelihood function accepts dictionaries, it should be able to process dictionaries where each value is an array with shape (n_points). Default is False.</span>
+<span class="sd">        :param vectorized: If True, the likelihood function can receive multiple input</span>
+<span class="sd">        sets at once. For example, if the likelihood function receives arrays, it should</span>
+<span class="sd">        be able to take an array with shape (n_points, n_dim) and return an array with</span>
+<span class="sd">        shape (n_points). Similarly, if the likelihood function accepts dictionaries, it</span>
+<span class="sd">        should be able to process dictionaries where each value is an array with shape</span>
+<span class="sd">        (n_points). Default is False.</span>
 <span class="sd">        :type vectorized: bool</span>
-<span class="sd">        :param pass_dict: If True, the likelihood function expects model parameters as dictionaries. If False, it expects regular numpy arrays. Default is to set it to True if prior was a nautilus.Prior instance and False otherwise</span>
+<span class="sd">        :param pass_dict: If True, the likelihood function expects model parameters as</span>
+<span class="sd">        dictionaries. If False, it expects regular numpy arrays. Default is to set it to</span>
+<span class="sd">        True if prior was a nautilus.Prior instance and False otherwise</span>
 <span class="sd">        :type pass_dict: Optional[bool]</span>
-<span class="sd">        :param pool: Pool used for parallelization of likelihood calls and sampler calculations. If None, no parallelization is performed. If an integer, the sampler will use a multiprocessing.Pool object with the specified number of processes. Finally, if specifying a tuple, the first one specifies the pool used for likelihood calls and the second one the pool for sampler calculations. Default is None.</span>
+<span class="sd">        :param pool: Pool used for parallelization of likelihood calls and sampler</span>
+<span class="sd">        calculations. If None, no parallelization is performed. If an integer, the</span>
+<span class="sd">        sampler will use a multiprocessing.Pool object with the specified number of</span>
+<span class="sd">        processes. Finally, if specifying a tuple, the first one specifies the pool used</span>
+<span class="sd">        for likelihood calls and the second one the pool for sampler calculations.</span>
+<span class="sd">        Default is None.</span>
 <span class="sd">        :type pool: Optional[int]</span>
-<span class="sd">        :param seed: Seed for random number generation used for reproducible results accross different runs. If None, results are not reproducible. Default is None.</span>
+<span class="sd">        :param seed: Seed for random number generation used for reproducible results</span>
+<span class="sd">        accross different runs. If None, results are not reproducible. Default is None.</span>
 <span class="sd">        :type seed: Optional[int]</span>
-<span class="sd">        :param filepath: ath to the file where results are saved. Must have a ‘.h5’ or ‘.hdf5’ extension. If None, no results are written. Default is None.</span>
+<span class="sd">        :param filepath: ath to the file where results are saved. Must have a ‘.h5’ or</span>
+<span class="sd">        ‘.hdf5’ extension. If None, no results are written. Default is None.</span>
 <span class="sd">        :type filepath: Optional[str]</span>
-<span class="sd">        :param resume: If True, resume from previous run if filepath exists. If False, start from scratch and overwrite any previous file. Default is True.</span>
+<span class="sd">        :param resume: If True, resume from previous run if filepath exists. If False,</span>
+<span class="sd">        start from scratch and overwrite any previous file. Default is True.</span>
 <span class="sd">        :type resume: bool</span>
-<span class="sd">        :param f_live: Maximum fraction of the evidence contained in the live set before building the initial shells terminates. Default is 0.01.</span>
+<span class="sd">        :param f_live: Maximum fraction of the evidence contained in the live set before</span>
+<span class="sd">        building the initial shells terminates. Default is 0.01.</span>
 <span class="sd">        :type f_live: float</span>
-<span class="sd">        :param n_shell: Minimum number of points in each shell. The algorithm will sample from the shells until this is reached. Default is the batch size of the sampler which is 100 unless otherwise specified.</span>
+<span class="sd">        :param n_shell: Minimum number of points in each shell. The algorithm will</span>
+<span class="sd">        sample from the shells until this is reached. Default is the batch size of the</span>
+<span class="sd">        sampler which is 100 unless otherwise specified.</span>
 <span class="sd">        :type n_shell: Optional[int]</span>
-<span class="sd">        :param n_eff: Minimum effective sample size. The algorithm will sample from the shells until this is reached. Default is 10000.</span>
+<span class="sd">        :param n_eff: Minimum effective sample size. The algorithm will sample from the</span>
+<span class="sd">        shells until this is reached. Default is 10000.</span>
 
 <span class="sd">        :type n_eff: int</span>
-<span class="sd">        :param discard_exploration: Whether to discard points drawn in the exploration phase. This is required for a fully unbiased posterior and evidence estimate. Default is False.</span>
+<span class="sd">        :param discard_exploration: Whether to discard points drawn in the exploration</span>
+<span class="sd">        phase. This is required for a fully unbiased posterior and evidence estimate.</span>
+<span class="sd">        Default is False.</span>
 <span class="sd">        :type discard_exploration: bool</span>
 <span class="sd">        :param verbose: If True, print additional information. Default is False.</span>
 <span class="sd">        :type verbose: bool</span>
 <span class="sd">        :returns:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
@@ -285,12 +315,9 @@
 <div class="viewcode-block" id="NautilusSampler.sample">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.nautilus_sampler.NautilusSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        sample using the UltraNest numerical integration method</span>
-<span class="sd">        :rtype:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the UltraNest numerical integration method :rtype:</span>
 
 <span class="sd">        :returns:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
@@ -301,24 +328,21 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
 
-        <span class="n">param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
         <span class="c1"># chain_name = self._kwargs.pop(&quot;log_dir&quot;)</span>
 
-        <span class="n">loglike</span><span class="p">,</span> <span class="n">nautilus_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span>
-            <span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+        <span class="n">loglike</span><span class="p">,</span> <span class="n">nautilus_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span><span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">sampler</span> <span class="o">=</span> <span class="n">nautilus</span><span class="o">.</span><span class="n">Sampler</span><span class="p">(</span>
             <span class="n">nautilus_prior</span><span class="p">,</span>
             <span class="n">loglike</span><span class="p">,</span>
             <span class="n">n_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">),</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;If you want to run ultranest in parallel you need to use an ad-hoc method&quot;</span>
+                <span class="s2">&quot;If you want to run ultranest in parallel you need to use an ad-hoc &quot;</span>
+                <span class="s2">&quot;method&quot;</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>

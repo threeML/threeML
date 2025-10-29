@@ -9,7 +9,7 @@
   <title>Random Variates &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -19,7 +19,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -61,6 +61,8 @@
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -87,6 +89,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -235,27 +238,27 @@
   <tbody>
     <tr>
       <th>fake.spectrum.main.composite.a_1</th>
-      <td>1.84 +/- 0.11</td>
+      <td>1.91 +/- 0.11</td>
       <td>1 / (keV s cm2)</td>
     </tr>
     <tr>
       <th>fake.spectrum.main.composite.b_1</th>
-      <td>(4 +/- 4) x 10^-3</td>
+      <td>(3 +/- 4) x 10^-3</td>
       <td>1 / (s cm2 keV2)</td>
     </tr>
     <tr>
       <th>fake.spectrum.main.composite.F_2</th>
-      <td>(3.1 +/- 0.4) x 10</td>
+      <td>(3.6 +/- 0.4) x 10</td>
       <td>1 / (s cm2)</td>
     </tr>
     <tr>
       <th>fake.spectrum.main.composite.mu_2</th>
-      <td>(2.491 +/- 0.011) x 10</td>
+      <td>(2.506 +/- 0.010) x 10</td>
       <td>keV</td>
     </tr>
     <tr>
       <th>fake.spectrum.main.composite.sigma_2</th>
-      <td>(9.5 +/- 0.8) x 10^-1</td>
+      <td>(8.8 +/- 0.7) x 10^-1</td>
       <td>keV</td>
     </tr>
   </tbody>
@@ -277,40 +280,40 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<div><table id="table140013823285424">
+<div><table id="table140336784710672">
 <tr>
 <td>1.00</td>
 <td>-0.85</td>
 <td>-0.04</td>
-<td>0.01</td>
-<td>-0.07</td>
+<td>0.03</td>
+<td>-0.06</td>
 </tr>
 <tr>
 <td>-0.85</td>
 <td>1.00</td>
-<td>-0.00</td>
-<td>-0.02</td>
+<td>0.00</td>
+<td>-0.01</td>
 <td>0.00</td>
 </tr>
 <tr>
 <td>-0.04</td>
-<td>-0.00</td>
-<td>1.00</td>
-<td>0.10</td>
-<td>-0.07</td>
-</tr>
-<tr>
-<td>0.01</td>
-<td>-0.02</td>
-<td>0.10</td>
-<td>1.00</td>
-<td>0.07</td>
-</tr>
-<tr>
-<td>-0.07</td>
 <td>0.00</td>
-<td>-0.07</td>
-<td>0.07</td>
+<td>1.00</td>
+<td>-0.08</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>0.03</td>
+<td>-0.01</td>
+<td>-0.08</td>
+<td>1.00</td>
+<td>-0.33</td>
+</tr>
+<tr>
+<td>-0.06</td>
+<td>0.00</td>
+<td>0.01</td>
+<td>-0.33</td>
 <td>1.00</td>
 </tr>
 </table></div>
@@ -354,11 +357,11 @@
   <tbody>
     <tr>
       <th>sim_data</th>
-      <td>30.987453</td>
+      <td>18.745465</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>30.987453</td>
+      <td>18.745465</td>
     </tr>
   </tbody>
 </table>
@@ -403,11 +406,11 @@
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>73.338542</td>
+      <td>48.854565</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>81.535021</td>
+      <td>57.051044</td>
     </tr>
   </tbody>
 </table>
@@ -466,7 +469,7 @@ threeML.random_variates.RandomVariates
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-equal-tail: (3.1 +/- 0.4) x 10, hpd: (3.1 +/- 0.4) x 10
+equal-tail: (3.6 +/- 0.4) x 10, hpd: (3.6 +/- 0.4) x 10
 </pre></div>
 </div>
 </div>
@@ -488,7 +491,7 @@ equal-tail: (3.1 +/- 0.4) x 10, hpd: (3.1 +/- 0.4) x 10
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(23.374258133011615, 39.106298407610396)
+(27.8880251143554, 43.864206771535706)
 </pre></div>
 </div>
 </div>
@@ -509,7 +512,7 @@ equal-tail: (3.1 +/- 0.4) x 10, hpd: (3.1 +/- 0.4) x 10
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(27.799130324633737, 33.019050949402256)
+(np.float64(33.325985388565144), np.float64(38.62887732961156))
 </pre></div>
 </div>
 </div>
@@ -564,7 +567,7 @@ Text(0.5, 0, 'norm')
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-equal-tail: 1.49 -0.06 +0.05, hpd: 1.49 -0.05 +0.06
+equal-tail: 1.56 -0.05 +0.04, hpd: 1.56 -0.04 +0.05
 </pre></div>
 </div>
 </div>

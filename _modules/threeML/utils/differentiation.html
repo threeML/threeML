@@ -8,7 +8,7 @@
   <title>threeML.utils.differentiation &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -129,22 +132,19 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_wrapper</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
-
     <span class="n">point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">minima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">minima</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">maxima</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="n">n_dim</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1"># Find order of magnitude of each coordinate. If one of the coordinates is exactly zero we need</span>
-    <span class="c1"># to treat it differently</span>
+    <span class="c1"># Find order of magnitude of each coordinate. If one of the coordinates is exactly</span>
+    <span class="c1"># zero we need to treat it differently</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">point</span> <span class="o">==</span> <span class="mf">0.0</span>
 
     <span class="n">orders_of_magnitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
     <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-    <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]))</span>
-    <span class="p">)</span>  <span class="c1"># type: np.ndarray</span>
+    <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="o">~</span><span class="n">idx</span><span class="p">])))</span>
 
     <span class="n">scaled_point</span> <span class="o">=</span> <span class="n">point</span> <span class="o">/</span> <span class="n">orders_of_magnitude</span>
     <span class="n">scaled_minima</span> <span class="o">=</span> <span class="n">minima</span> <span class="o">/</span> <span class="n">orders_of_magnitude</span>
@@ -158,52 +158,44 @@
     <span class="n">scaled_deltas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">scaled_point</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
-
         <span class="n">scaled_value</span> <span class="o">=</span> <span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
         <span class="n">scaled_min_value</span><span class="p">,</span> <span class="n">scaled_max_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">scaled_minima</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scaled_maxima</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">scaled_value</span> <span class="o">==</span> <span class="n">scaled_min_value</span> <span class="ow">or</span> <span class="n">scaled_value</span> <span class="o">==</span> <span class="n">scaled_max_value</span><span class="p">:</span>
-
             <span class="k">raise</span> <span class="n">ParameterOnBoundary</span><span class="p">(</span>
                 <span class="s2">&quot;Value for parameter number </span><span class="si">%s</span><span class="s2"> is on the boundary&quot;</span> <span class="o">%</span> <span class="n">i</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scaled_min_value</span><span class="p">):</span>
-
             <span class="c1"># Parameter with low bound</span>
 
             <span class="n">distance_to_min</span> <span class="o">=</span> <span class="n">scaled_value</span> <span class="o">-</span> <span class="n">scaled_min_value</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="c1"># No defined minimum</span>
 
             <span class="n">distance_to_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scaled_max_value</span><span class="p">):</span>
-
             <span class="c1"># Parameter with hi bound</span>
 
             <span class="n">distance_to_max</span> <span class="o">=</span> <span class="n">scaled_max_value</span> <span class="o">-</span> <span class="n">scaled_value</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="c1"># No defined maximum</span>
 
             <span class="n">distance_to_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
         <span class="c1"># Delta is the minimum between 0.03% of the value, and 1/2.5 times the minimum</span>
-        <span class="c1"># distance to either boundary. 1/2 of that factor is due to the fact that numdifftools uses</span>
-        <span class="c1"># twice the delta to compute the differential, and the 0.5 is due to the fact that we don&#39;t want</span>
-        <span class="c1"># to go exactly equal to the boundary</span>
+        <span class="c1"># distance to either boundary. 1/2 of that factor is due to the fact that</span>
+        <span class="c1"># numdifftools uses twice the delta to compute the differential, and the 0.5 is</span>
+        <span class="c1"># due to the fact that we don&#39;t want to go exactly equal to the boundary</span>
 
         <span class="k">if</span> <span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-
             <span class="n">scaled_deltas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">distance_to_max</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">distance_to_min</span> <span class="o">/</span> <span class="mf">2.5</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">scaled_deltas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
                 <span class="p">[</span>
                     <span class="mf">0.003</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">scaled_point</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
@@ -213,21 +205,17 @@
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-
         <span class="n">scaled_back_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">orders_of_magnitude</span>  <span class="c1"># type: np.ndarray</span>
 
         <span class="k">try</span><span class="p">:</span>
-
             <span class="n">result</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">scaled_back_x</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">SettingOutOfBounds</span><span class="p">:</span>
-
             <span class="k">raise</span> <span class="n">CannotComputeHessian</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot compute Hessian, parameters out of bounds at </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">scaled_back_x</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot compute Hessian, parameters out of bounds at </span><span class="si">{</span><span class="n">scaled_back_x</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">return</span> <span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">scaled_point</span><span class="p">,</span> <span class="n">orders_of_magnitude</span><span class="p">,</span> <span class="n">n_dim</span>
@@ -236,7 +224,6 @@
 <div class="viewcode-block" id="get_jacobian">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.differentiation.get_jacobian">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_jacobian</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
-
     <span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">scaled_point</span><span class="p">,</span> <span class="n">orders_of_magnitude</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">_get_wrapper</span><span class="p">(</span>
         <span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span>
     <span class="p">)</span>
@@ -261,7 +248,6 @@
 <div class="viewcode-block" id="get_hessian">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.utils.html#threeML.utils.differentiation.get_hessian">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_hessian</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">):</span>
-
     <span class="n">wrapper</span><span class="p">,</span> <span class="n">scaled_deltas</span><span class="p">,</span> <span class="n">scaled_point</span><span class="p">,</span> <span class="n">orders_of_magnitude</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">_get_wrapper</span><span class="p">(</span>
         <span class="n">function</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span>
     <span class="p">)</span>
@@ -276,9 +262,7 @@
 
     <span class="c1"># Now correct back the Hessian for the scales</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
-
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
-
             <span class="n">hessian_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/=</span> <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">orders_of_magnitude</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">hessian_matrix</span></div>

@@ -8,7 +8,7 @@
   <title>threeML.bayesian.sampler_base &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,16 +112,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.bayesian.sampler_base</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 
 <span class="k">try</span><span class="p">:</span>
-
     <span class="c1"># see if we have mpi and/or are using parallel</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
@@ -130,15 +133,14 @@
         <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">except</span><span class="p">:</span>
-
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.core.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels.functions.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelAssertionViolation</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.analysis_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianResults</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
@@ -153,19 +155,15 @@
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SamplerBase</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">DataList</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        The base class for all bayesian samplers. Provides a common interface</span>
-<span class="sd">        to access samples and byproducts of fits.</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The base class for all bayesian samplers. Provides a common</span>
+<span class="sd">        interface to access samples and byproducts of fits.</span>
 
 <span class="sd">        :param likelihood_model: the likelihood model</span>
 <span class="sd">        :param data_list: the data list</span>
-<span class="sd">        :param share_spectrum: (optional) Should the spectrum be shared between detectors</span>
-<span class="sd">        with the same input energy bins?</span>
+<span class="sd">        :param share_spectrum: (optional) Should the spectrum be shared</span>
+<span class="sd">            between detectors with the same input energy bins?</span>
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -187,7 +185,7 @@
         <span class="k">if</span> <span class="s2">&quot;share_spectrum&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_share_spectrum</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;share_spectrum&quot;</span><span class="p">]</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_share_spectrum</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span>
+                <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_share_spectrum</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span>
             <span class="p">),</span> <span class="s2">&quot;share_spectrum must be False or True.&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_share_spectrum</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_share_spectrum_object</span> <span class="o">=</span> <span class="n">ShareSpectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="p">)</span>
@@ -211,23 +209,23 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BayesianResults</span><span class="p">:</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Access the samples from the posterior distribution generated by the selected sampler</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access the samples from the posterior distribution generated by the</span>
+<span class="sd">        selected sampler.</span>
 
-<span class="sd">        :return: a dictionary with the samples from the posterior distribution for each parameter</span>
+<span class="sd">        :return: a dictionary with the samples from the posterior</span>
+<span class="sd">            distribution for each parameter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">raw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,</span>
-<span class="sd">        in the format returned by the sampler)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access the samples from the posterior distribution generated by the</span>
+<span class="sd">        selected sampler in raw form (i.e., in the format returned by the</span>
+<span class="sd">        sampler)</span>
 
 <span class="sd">        :return: the samples as returned by the sampler</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -236,11 +234,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_like_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the value of the log_likelihood found by the bayesian sampler while samplin  g from the posterior. If</span>
-<span class="sd">        you need to find the values of the parameters which generated a given value of the log. likelihood, remember</span>
-<span class="sd">        that the samples accessible through the property .raw_samples are ordered in the same way as the vector</span>
-<span class="sd">        returned by this method.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the value of the log_likelihood found by the bayesian</span>
+<span class="sd">        sampler while samplin  g from the posterior. If you need to find the</span>
+<span class="sd">        values of the parameters which generated a given value of the log.</span>
+<span class="sd">        likelihood, remember that the samples accessible through the property</span>
+<span class="sd">        .raw_samples are ordered in the same way as the vector returned by this</span>
+<span class="sd">        method.</span>
 
 <span class="sd">        :return: a vector of log. like values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -248,11 +247,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_probability_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the value of the log_probability (posterior) found by the bayesian sampler while sampling from the posterior. If</span>
-<span class="sd">        you need to find the values of the parameters which generated a given value of the log. likelihood, remember</span>
-<span class="sd">        that the samples accessible through the property .raw_samples are ordered in the same way as the vector</span>
-<span class="sd">        returned by this method.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the value of the log_probability (posterior) found by the</span>
+<span class="sd">        bayesian sampler while sampling from the posterior. If you need to find</span>
+<span class="sd">        the values of the parameters which generated a given value of the log.</span>
+<span class="sd">        likelihood, remember that the samples accessible through the property</span>
+<span class="sd">        .raw_samples are ordered in the same way as the vector returned by this</span>
+<span class="sd">        method.</span>
 
 <span class="sd">        :return: a vector of log probabilty values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -261,23 +261,18 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_marginal_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the log marginal likelihood (evidence) if computed</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the log marginal likelihood (evidence) if computed</span>
+<span class="sd">        :return:&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span>
 
 <div class="viewcode-block" id="SamplerBase.restore_median_fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.restore_median_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_median_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the model parameters to the median of the log probability</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the model parameters to the median of the log probability.&quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">arg_median</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-
             <span class="n">par</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
 
             <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">par</span>
@@ -288,13 +283,10 @@
 <div class="viewcode-block" id="SamplerBase.restore_MAP_fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.restore_MAP_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_MAP_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the model parameters to the MAP of the probability</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the model parameters to the MAP of the probability.&quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-
             <span class="n">par</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
 
             <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">par</span>
@@ -303,8 +295,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_samples_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Build the dictionary to access easily the samples by parameter</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the dictionary to access easily the samples by parameter.</span>
 
 <span class="sd">        :return: none</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -317,34 +308,27 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        build the results after a fit is performed</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the results after a fit is performed.</span>
 
 <span class="sd">        :returns:</span>
 <span class="sd">        :rtype:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># set the median or MAP</span>
 
-                <span class="c1"># Instance the result</span>
+        <span class="c1"># Instance the result</span>
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="o">.</span><span class="n">use_median_fit</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">restore_median_fit</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">restore_MAP_fit</span><span class="p">()</span>
-
 
         <span class="c1"># Find maximum of the log posterior</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="o">.</span><span class="n">use_median_fit</span><span class="p">:</span>
-
             <span class="n">idx</span> <span class="o">=</span> <span class="n">arg_median</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
 
         <span class="c1"># Get parameter values at the maximum</span>
@@ -352,7 +336,6 @@
 
         <span class="c1"># Sets the values of the parameters to their MAP values</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">):</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">approximate_MAP_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
         <span class="c1"># Get the value of the posterior for each dataset at the MAP</span>
@@ -368,7 +351,6 @@
         <span class="n">total_log_posterior</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-
             <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span> <span class="o">+</span> <span class="n">log_prior</span>
 
             <span class="n">log_posteriors</span><span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_posterior</span>
@@ -398,18 +380,15 @@
         <span class="n">statistical_measures</span><span class="p">[</span><span class="s2">&quot;PDIC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdic</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">statistical_measures</span><span class="p">[</span><span class="s2">&quot;log(Z)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span>
 
         <span class="c1"># TODO: add WAIC</span>
 
         <span class="c1"># Instance the result</span>
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">bayesian</span><span class="o">.</span><span class="n">use_median_fit</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">restore_median_fit</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">restore_MAP_fit</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">BayesianResults</span><span class="p">(</span>
@@ -421,17 +400,14 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the dictionary of the current free parameters</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the dictionary of the current free parameters :return:&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_likelihood_model</span><span class="o">.</span><span class="n">free_parameters</span>
 
 <div class="viewcode-block" id="SamplerBase.get_posterior">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.get_posterior">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the posterior for the normal sampler&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the posterior for the normal sampler.&quot;&quot;&quot;</span>
 
         <span class="c1"># Assign this trial values to the parameters and</span>
         <span class="c1"># store the corresponding values for the priors</span>
@@ -439,8 +415,8 @@
         <span class="c1"># self._update_free_parameters()</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trial_values</span><span class="p">):</span>
-
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Something is wrong. Number of free parameters</span><span class="se">\n</span><span class="s2">do not match the number of trial values.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Something is wrong. Number of free parameters</span><span class="se">\n</span><span class="s2">do not match the &quot;</span>
+            <span class="s2">&quot;number of trial values.&quot;</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -451,7 +427,6 @@
         <span class="c1"># with use_</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-
             <span class="n">prior_value</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">prior</span><span class="p">(</span><span class="n">trial_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
             <span class="k">if</span> <span class="n">prior_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -460,27 +435,27 @@
                 <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">trial_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
                 <span class="n">log_prior</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prior_value</span><span class="p">)</span>
 
         <span class="n">log_like</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_like</span><span class="p">(</span><span class="n">trial_values</span><span class="p">)</span>
 
-        <span class="c1"># print(&quot;Log like is %s, log_prior is %s, for trial values %s&quot; % (log_like, log_prior,trial_values))</span>
+        <span class="c1"># print(&quot;Log like is %s, log_prior is %s, for trial values %s&quot; % (log_like,</span>
+        <span class="c1"># log_prior,trial_values))</span>
 
         <span class="k">return</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">log_prior</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sum of log-priors, used in the parallel tempering sampling&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sum of log-priors, used in the parallel tempering</span>
+<span class="sd">        sampling.&quot;&quot;&quot;</span>
 
         <span class="c1"># Compute the sum of the log-priors</span>
 
         <span class="n">log_prior</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-
             <span class="n">prior_value</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">prior</span><span class="p">(</span><span class="n">trial_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
             <span class="k">if</span> <span class="n">prior_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -489,7 +464,6 @@
                 <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">trial_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
                 <span class="n">log_prior</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prior_value</span><span class="p">)</span>
@@ -497,12 +471,11 @@
         <span class="k">return</span> <span class="n">log_prior</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the log-likelihood&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the log-likelihood.&quot;&quot;&quot;</span>
 
         <span class="c1"># Get the value of the log-likelihood for this parameters</span>
 
         <span class="k">try</span><span class="p">:</span>
-
             <span class="n">log_like_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_plugins</span><span class="p">)</span>
 
             <span class="c1"># Loop over each dataset and get the likelihood values for each set</span>
@@ -511,14 +484,14 @@
                 <span class="c1"># spectrum calc is fast.</span>
 
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_list</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-
                     <span class="n">log_like_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># If the calculation for the input spectrum of one of the sources is expensive</span>
-                <span class="c1"># we want to avoid calculating the same thing several times.</span>
+                <span class="c1"># If the calculation for the input spectrum of one of the sources is</span>
+                <span class="c1"># expensive we want to avoid calculating the same thing several times.</span>
 
-                <span class="c1"># Precalc the spectrum for all different Ebin_in that are used in the plugins</span>
+                <span class="c1"># Precalc the spectrum for all different Ebin_in that are used in the</span>
+                <span class="c1"># plugins</span>
                 <span class="n">precalc_fluxes</span> <span class="o">=</span> <span class="p">[]</span>
 
                 <span class="k">for</span> <span class="n">base_key</span><span class="p">,</span> <span class="n">e_edges</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
@@ -550,13 +523,11 @@
                         <span class="n">log_like_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span>
 
         <span class="k">except</span> <span class="n">ModelAssertionViolation</span><span class="p">:</span>
-
             <span class="c1"># Fit engine or sampler outside of allowed zone</span>
 
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">except</span><span class="p">:</span>
-
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="c1"># We don&#39;t want to catch more serious issues</span>
 
             <span class="k">raise</span>
@@ -585,11 +556,9 @@
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.MCMCSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MCMCSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="nb">super</span><span class="p">(</span><span class="n">MCMCSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_starting_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_walkers</span><span class="p">,</span> <span class="n">variance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
-
         <span class="c1"># Generate the starting points for the walkers by getting random</span>
         <span class="c1"># values for the parameters close to the current value</span>
 
@@ -614,21 +583,21 @@
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.UnitCubeSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UnitCubeSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="nb">super</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_construct_unitcube_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Here, we construct the prior and log.</span>
 
-<span class="sd">        Here, we construct the prior and log. likelihood for multinest etc on the unit cube</span>
+<span class="sd">        likelihood for multinest etc on the unit cube</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># First update the free parameters (in case the user changed them after the construction of the class)</span>
+        <span class="c1"># First update the free parameters (in case the user changed them after the</span>
+        <span class="c1"># construction of the class)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">loglike</span><span class="p">(</span><span class="n">trial_values</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-            <span class="c1"># NOTE: the _log_like function DOES NOT assign trial_values to the parameters</span>
+            <span class="c1"># NOTE: the _log_like function DOES NOT assign trial_values to the</span>
+            <span class="c1"># parameters</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
                 <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">trial_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -650,13 +619,10 @@
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">):</span>
-
                     <span class="k">try</span><span class="p">:</span>
-
                         <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">from_unit_cube</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
                     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                             <span class="s2">&quot;The prior you are trying to use for parameter </span><span class="si">%s</span><span class="s2"> is &quot;</span>
                             <span class="s2">&quot;not compatible with sampling from a unitcube&quot;</span>
@@ -667,25 +633,22 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">prior</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nparams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">):</span>
-
                     <span class="k">try</span><span class="p">:</span>
-
                         <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">from_unit_cube</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
                     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                             <span class="s2">&quot;The prior you are trying to use for parameter </span><span class="si">%s</span><span class="s2"> is &quot;</span>
                             <span class="s2">&quot;not compatible with sampling from a unitcube&quot;</span>
                             <span class="o">%</span> <span class="n">parameter_name</span>
                         <span class="p">)</span>
 
-            <span class="c1"># Give a test run to the prior to check that it is working. If it crashes while multinest is going</span>
-            <span class="c1"># it will not stop multinest from running and generate thousands of exceptions (argh!)</span>
+            <span class="c1"># Give a test run to the prior to check that it is working. If it crashes</span>
+            <span class="c1"># while multinest is going it will not stop multinest from running and</span>
+            <span class="c1"># generate thousands of exceptions (argh!)</span>
             <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">)</span>
 
             <span class="n">_</span> <span class="o">=</span> <span class="n">prior</span><span class="p">([</span><span class="mf">0.5</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="p">[])</span>

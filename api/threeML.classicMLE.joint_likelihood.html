@@ -9,7 +9,7 @@
   <title>threeML.classicMLE.joint_likelihood module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -133,23 +136,26 @@
 <span class="sig-name descname"><span class="pre">compute_TS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt_hyp_mlike_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.compute_TS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.compute_TS" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Computes the Likelihood Ratio Test statistic (TS) for the provided source</p>
+<p>Computes the Likelihood Ratio Test statistic (TS) for the provided
+source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
 <li><p><strong>source_name</strong> – name for the source</p></li>
-<li><p><strong>alt_hyp_mlike_df</strong> – likelihood dataframe (it is the second output of the .fit() method)</p></li>
+<li><p><strong>alt_hyp_mlike_df</strong> – likelihood dataframe (it is the second
+output of the .fit() method)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>
 <dd class="field-even">
-<p>a DataFrame containing the null hypothesis and the alternative hypothesis -log(likelihood) values and</p>
+<p>a DataFrame containing the null hypothesis and the
+alternative hypothesis -log(likelihood) values and the value
+for TS for the source for each loaded dataset</p>
 </dd>
 </dl>
-<p>the value for TS for the source for each loaded dataset</p>
 </dd>
 </dl>
 
@@ -190,7 +196,8 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_minimum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.current_minimum" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>current minimum of the joint likelihood (available only after the fit() method)</p>
+<p>current minimum of the joint likelihood (available only after the fit()
+method)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span>
 </dt>
@@ -222,17 +229,27 @@
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_covariance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Perform a fit of the current likelihood model on the datasets</p>
+<p>Perform a fit of the current likelihood model on the datasets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>quiet</strong> – If True, print the results (default), otherwise do not print anything</p>
+<ul class="simple">
+<li><p><strong>quiet</strong> – If True, print the results (default), otherwise do
+not print anything</p></li>
+<li><p><strong>compute_covariance</strong> – If True (default), compute and
+display the errors and the correlation matrix.</p></li>
+<li><p><strong>n_samples</strong> – Number of samples to scan the likelihood.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>a dictionary with the results on the parameters, and
+the values of the likelihood at the minimum for each dataset
+and the total one.</p>
 </dd>
 </dl>
-<p>:param compute_covariance:If True (default), compute and display the errors and the correlation matrix.
-:param n_samples: Number of samples to scan the likelihood.
-:return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum for each dataset and the total one.</p>
 </dd>
 </dl>
 
@@ -248,44 +265,43 @@
 <span class="sig-name descname"><span class="pre">get_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_minimum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_maximum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_contours" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Generate confidence contours for the given parameters by stepping for the given number of steps between
-the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
-generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
-contour of param_1 vs param_2.</p>
-<p>NOTE: if using parallel computation, param_1_n_steps must be an integer multiple of the number of running
-engines. If that is not the case, the code will reduce the number of steps to match that requirement, and
-issue a warning</p>
+<p>Generate confidence contours for the given parameters by stepping
+for the given number of steps between the given boundaries. Call it
+specifying only source_1, param_1, param_1_minimum and param_1_maximum
+to generate the profile of the likelihood for parameter 1. Specify all
+parameters to obtain instead a 2d contour of param_1 vs param_2.</p>
+<p>NOTE: if using parallel computation, param_1_n_steps must be an integer multiple
+of the number of running engines. If that is not the case, the code will reduce
+the number of steps to match that requirement, and issue a warning</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<ul class="simple">
-<li><p><strong>param_1</strong> – fully qualified name of the first parameter or parameter instance</p></li>
-<li><p><strong>param_1_minimum</strong> – lower bound for the range for the first parameter</p></li>
-<li><p><strong>param_1_maximum</strong> – upper bound for the range for the first parameter</p></li>
-<li><p><strong>param_1_n_steps</strong> – number of steps for the first parameter</p></li>
-<li><p><strong>param_2</strong> – fully qualified name of the second parameter or parameter instance</p></li>
-<li><p><strong>param_2_minimum</strong> – lower bound for the range for the second parameter</p></li>
-<li><p><strong>param_2_maximum</strong> – upper bound for the range for the second parameter</p></li>
-<li><p><strong>param_2_n_steps</strong> – number of steps for the second parameter</p></li>
-<li><p><strong>progress</strong> – (True or False) whether to display progress or not</p></li>
-<li><p><strong>log</strong> – by default the steps are taken linearly. With this optional parameter you can provide a tuple of
-booleans which specify whether the steps are to be taken logarithmically. For example,
-‘log=(True,False)’ specify that the steps for the first parameter are to be taken logarithmically,
-while they are linear for the second parameter. If you are generating the profile for only one
-parameter, you can specify ‘log=(True,)’ or ‘log=(False,)’ (optional)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>a tuple containing an array corresponding to the steps for the first parameter, an array corresponding
-to the steps for the second parameter (or None if stepping only in one direction), a matrix of size
-param_1_steps x param_2_steps containing the value of the function at the corresponding points in the
-grid. If param_2_steps is None (only one parameter), then this reduces to an array of
-size param_1_steps.</p>
+<p><strong>param_1</strong> – fully qualified name of the first parameter or parameter</p>
 </dd>
 </dl>
+<p>instance
+:param param_1_minimum: lower bound for the range for the first parameter
+:param param_1_maximum: upper bound for the range for the first parameter
+:param param_1_n_steps: number of steps for the first parameter
+:param param_2: fully qualified name of the second parameter or parameter
+instance
+:param param_2_minimum: lower bound for the range for the second parameter
+:param param_2_maximum: upper bound for the range for the second parameter
+:param param_2_n_steps: number of steps for the second parameter
+:param progress: (True or False) whether to display progress or not
+:param log: by default the steps are taken linearly. With this optional
+parameter you can provide a tuple of booleans which specify whether the steps
+are to be taken logarithmically. For example, ‘log=(True,False)’ specify that
+the steps for the first parameter are to be taken logarithmically, while they
+are linear for the second parameter. If you are generating the profile for only
+one parameter, you can specify ‘log=(True,)’ or ‘log=(False,)’ (optional)
+:return: a tuple containing an array corresponding to the steps for the first
+parameter, an array corresponding to the steps for the second parameter (or None
+if stepping only in one direction), a matrix of size param_1_steps x
+param_2_steps containing the value of the function at the corresponding points
+in the grid. If param_2_steps is None (only one parameter), then this reduces to
+an array of size param_1_steps.</p>
 </dd>
 </dl>
 
@@ -294,12 +310,14 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.get_errors" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Compute the errors on the parameters using the profile likelihood method.</p>
+<p>Compute the errors on the parameters using the profile likelihood
+method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p>a dictionary containing the asymmetric errors for each parameter.</p>
+<p>a dictionary containing the asymmetric errors for each
+parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -326,7 +344,8 @@ size param_1_steps.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimizer</span></span><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minimizer" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>an instance of the minimizer used in the fit (available only after the fit() method)</p>
+<p>an instance of the minimizer used in the fit (available only after the
+fit() method)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span>
 </dt>
@@ -349,12 +368,13 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">minus_log_like_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">trial_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.minus_log_like_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.minus_log_like_profile" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the minus log likelihood for a given set of trial values</p>
+<p>Return the minus log likelihood for a given set of trial values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>trial_values</strong> – the trial values. Must be in the same number as the free parameters in the model</p>
+<p><strong>trial_values</strong> – the trial values. Must be in the same
+number as the free parameters in the model</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>
@@ -377,7 +397,7 @@ size param_1_steps.</p>
 <span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/classicMLE/joint_likelihood.html#JointLikelihood.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.classicMLE.joint_likelihood.JointLikelihood.restore_best_fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Restore the model to its best fit</p>
+<p>Restore the model to its best fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -405,12 +425,18 @@ size param_1_steps.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>minimizer</strong> – the name of the new minimizer or an instance of a LocalMinimization or a GlobalMinimization</p>
+<p><strong>minimizer</strong> – the name of the new minimizer or an instance
+of a LocalMinimization or a GlobalMinimization class. Using
+the latter two classes allows for more choices and a better
+control of the details of the minimization, like the choice
+of algorithms (if supported by the used minimizer)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>(none)</p>
 </dd>
 </dl>
-<p>class. Using the latter two classes allows for more choices and a better control of the details of the
-minimization, like the choice of algorithms (if supported by the used minimizer)
-:return: (none)</p>
 </dd>
 </dl>
 

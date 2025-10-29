@@ -8,7 +8,7 @@
   <title>threeML.bayesian.tutorial_material &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,18 +112,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.bayesian.tutorial_material</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">zip</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">PointSource</span><span class="p">,</span> <span class="n">Uniform_prior</span><span class="p">,</span> <span class="n">Log_uniform_prior</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.bayesian_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianAnalysis</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.tutorial_material</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simple</span><span class="p">,</span> <span class="n">Complex</span><span class="p">,</span> <span class="n">CustomLikelihoodLike</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
-
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Log_uniform_prior</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">PointSource</span><span class="p">,</span>
+    <span class="n">use_astromodels_memoization</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.bayesian_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianAnalysis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.tutorial_material</span><span class="w"> </span><span class="kn">import</span> <span class="n">Complex</span><span class="p">,</span> <span class="n">CustomLikelihoodLike</span><span class="p">,</span> <span class="n">Simple</span>
 
 
 <div class="viewcode-block" id="BayesianAnalysisWrap">
@@ -129,22 +133,17 @@
 <div class="viewcode-block" id="BayesianAnalysisWrap.sample">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.tutorial_material.BayesianAnalysisWrap.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">reset_tracking</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
-
             <span class="k">try</span><span class="p">:</span>
-
                 <span class="nb">super</span><span class="p">(</span><span class="n">BayesianAnalysisWrap</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-            <span class="k">except</span><span class="p">:</span>
-
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">raise</span>
 
             <span class="k">finally</span><span class="p">:</span>
-
                 <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">stop_tracking</span><span class="p">()</span></div>
 </div>
 
@@ -203,10 +202,8 @@
 <div class="viewcode-block" id="array_to_cmap">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.tutorial_material.array_to_cmap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">array_to_cmap</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">use_log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generates a color map and color list that is normalized</span>
-<span class="sd">    to the values in an array. Allows for adding a 3rd dimension</span>
-<span class="sd">    onto a plot</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates a color map and color list that is normalized to the values in</span>
+<span class="sd">    an array. Allows for adding a 3rd dimension onto a plot.</span>
 
 <span class="sd">    :param values: a list a values to map into a cmap</span>
 <span class="sd">    :param cmap: the mpl colormap to use</span>
@@ -214,11 +211,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">use_log</span><span class="p">:</span>
-
         <span class="n">norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="n">norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
 
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
@@ -233,11 +228,9 @@
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.tutorial_material.plot_likelihood_function">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_likelihood_function</span><span class="p">(</span><span class="n">bayes</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_prior</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="n">fig</span><span class="p">,</span> <span class="n">sub</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="n">sub</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="n">original_mu</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">likelihood_model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">value</span>
@@ -255,11 +248,9 @@
     <span class="n">_</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mus</span><span class="p">,</span> <span class="n">log_like</span><span class="p">,</span> <span class="s2">&quot;k--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_prior</span><span class="p">:</span>
-
         <span class="n">prior</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">mus</span><span class="p">:</span>
-
             <span class="n">prior</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">bayes</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">([</span><span class="n">mu</span><span class="p">]))</span>
 
         <span class="n">_</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mus</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
@@ -307,11 +298,9 @@
     <span class="c1">#     ax1.scatter(time[i], qx, c=np.atleast_2d(colors[i]), s=10)</span>
 
     <span class="k">if</span> <span class="n">truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="n">ax1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;True $\mu=$</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">truth</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">burn_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="n">ax1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">burn_in</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FC2530&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Burn in&quot;</span><span class="p">)</span>
 
     <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

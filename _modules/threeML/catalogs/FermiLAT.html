@@ -8,7 +8,7 @@
   <title>threeML.catalogs.FermiLAT &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,67 +112,68 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.catalogs.FermiLAT</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">str</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span>
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.get_heasarc_table_as_pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_heasarc_table_as_pandas</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.catalog_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ModelFromFGL</span><span class="p">,</span>
+    <span class="n">_get_extended_source_from_fgl</span><span class="p">,</span>
+    <span class="n">_get_point_source_from_fgl</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.VirtualObservatoryCatalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualObservatoryCatalog</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.catalog_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_get_point_source_from_fgl</span><span class="p">,</span> <span class="n">_get_extended_source_from_fgl</span><span class="p">,</span> <span class="n">ModelFromFGL</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">fermipy.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Catalog</span>
-    <span class="n">have_fermipy</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">have_fermipy</span> <span class="o">=</span> <span class="kc">False</span>
 
+    <span class="n">have_fermipy</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">have_fermipy</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">fgl_types</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;agn&quot;</span><span class="p">:</span> <span class="s2">&quot;other non-blazar active galaxy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bcu&quot;</span><span class="p">:</span> <span class="s2">&quot;active galaxy of uncertain type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bll&quot;</span><span class="p">:</span> <span class="s2">&quot;BL Lac type of blazar&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;css&quot;</span><span class="p">:</span> <span class="s2">&quot;compact steep spectrum quasar&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fsrq&quot;</span><span class="p">:</span> <span class="s2">&quot;FSRQ type of blazar&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;gal&quot;</span><span class="p">:</span> <span class="s2">&quot;normal galaxy (or part)&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;glc&quot;</span><span class="p">:</span> <span class="s2">&quot;globular cluster&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hmb&quot;</span><span class="p">:</span> <span class="s2">&quot;high-mass binary&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;nlsy1&quot;</span><span class="p">:</span> <span class="s2">&quot;narrow line Seyfert 1&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;nov&quot;</span><span class="p">:</span> <span class="s2">&quot;nova&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;PSR&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar, identified by pulsations&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;psr&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar, no pulsations seen in LAT yet&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pwn&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar wind nebula&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;rdg&quot;</span><span class="p">:</span> <span class="s2">&quot;radio galaxy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;sbg&quot;</span><span class="p">:</span> <span class="s2">&quot;starburst galaxy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;sey&quot;</span><span class="p">:</span> <span class="s2">&quot;Seyfert galaxy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;sfr&quot;</span><span class="p">:</span> <span class="s2">&quot;star-forming region&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;snr&quot;</span><span class="p">:</span> <span class="s2">&quot;supernova remnant&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;spp&quot;</span><span class="p">:</span> <span class="s2">&quot;special case - potential association with SNR or PWN&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;ssrq&quot;</span><span class="p">:</span> <span class="s2">&quot;soft spectrum radio quasar&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;unk&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;agn&quot;</span><span class="p">:</span> <span class="s2">&quot;other non-blazar active galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bcu&quot;</span><span class="p">:</span> <span class="s2">&quot;active galaxy of uncertain type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bll&quot;</span><span class="p">:</span> <span class="s2">&quot;BL Lac type of blazar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;css&quot;</span><span class="p">:</span> <span class="s2">&quot;compact steep spectrum quasar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fsrq&quot;</span><span class="p">:</span> <span class="s2">&quot;FSRQ type of blazar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gal&quot;</span><span class="p">:</span> <span class="s2">&quot;normal galaxy (or part)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;glc&quot;</span><span class="p">:</span> <span class="s2">&quot;globular cluster&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hmb&quot;</span><span class="p">:</span> <span class="s2">&quot;high-mass binary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nlsy1&quot;</span><span class="p">:</span> <span class="s2">&quot;narrow line Seyfert 1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nov&quot;</span><span class="p">:</span> <span class="s2">&quot;nova&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PSR&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar, identified by pulsations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;psr&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar, no pulsations seen in LAT yet&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pwn&quot;</span><span class="p">:</span> <span class="s2">&quot;pulsar wind nebula&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rdg&quot;</span><span class="p">:</span> <span class="s2">&quot;radio galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sbg&quot;</span><span class="p">:</span> <span class="s2">&quot;starburst galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sey&quot;</span><span class="p">:</span> <span class="s2">&quot;Seyfert galaxy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sfr&quot;</span><span class="p">:</span> <span class="s2">&quot;star-forming region&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;snr&quot;</span><span class="p">:</span> <span class="s2">&quot;supernova remnant&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;spp&quot;</span><span class="p">:</span> <span class="s2">&quot;special case - potential association with SNR or PWN&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ssrq&quot;</span><span class="p">:</span> <span class="s2">&quot;soft spectrum radio quasar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;unk&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="n">_FGL_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^[34]FGL J\d</span><span class="si">{4}</span><span class="s2">.\d(\+|-)\d</span><span class="si">{4}</span><span class="s2">\D?$&quot;</span><span class="p">)</span>
+<span class="n">_FGL_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[34]FGL J\d</span><span class="si">{4}</span><span class="s2">.\d(\+|-)\d</span><span class="si">{4}</span><span class="s2">\D?$&quot;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="FermiLATSourceCatalog">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FermiLATSourceCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">FermiLATSourceCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -179,14 +183,12 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
             <span class="s2">&quot;fermilpsc&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">10.0</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        checks if source name is valid for the 4FGL catalog</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if source name is valid for the 4FGL catalog.</span>
 
 <span class="sd">        :param source: source name</span>
 <span class="sd">        :return: bool</span>
@@ -200,22 +202,18 @@
         <span class="n">match</span> <span class="o">=</span> <span class="n">_FGL_name_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_string</span><span class="p">)</span>
 
             <span class="n">answer</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">answer</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="n">answer</span>
-        
-        
+
 <div class="viewcode-block" id="FermiLATSourceCatalog.apply_format">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.apply_format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-
         <span class="c1"># Translate the 3 letter code to a more informative category, according</span>
         <span class="c1"># to the dictionary above</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
@@ -228,10 +226,11 @@
             <span class="k">return</span> <span class="n">key</span>
 
         <span class="n">table</span><span class="p">[</span><span class="s2">&quot;short_source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span>
-        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">translate</span><span class="p">,</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;short_source_type&quot;</span><span class="p">])))</span>
+        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">translate</span><span class="p">,</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;short_source_type&quot;</span><span class="p">]))</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="s2">&quot;Search_Offset&quot;</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-
             <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
                 <span class="s2">&quot;name&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;source_type&quot;</span><span class="p">,</span>
@@ -247,25 +246,31 @@
 
         <span class="c1"># we may have not done a cone search!</span>
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;short_source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;assoc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;tevcat_assoc&quot;</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;short_source_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;assoc_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">,</span>
             <span class="p">]</span>
 
             <span class="k">return</span> <span class="n">new_table</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span></div>
 
 
-
 <div class="viewcode-block" id="FermiLATSourceCatalog.get_model">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_association_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">npred_min</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Build the model with FGL sources</span>
-<span class="sd">        :param use_association_name: use the name of the associated source (stored in assoc_name column)</span>
-<span class="sd">        :param exposure: exposure in cm2 * seconds (can be calculated with gtexposure)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the model with FGL sources.</span>
+
+<span class="sd">        :param use_association_name: use the name of the associated</span>
+<span class="sd">            source (stored in assoc_name column)</span>
+<span class="sd">        :param exposure: exposure in cm2 * seconds (can be calculated</span>
+<span class="sd">            with gtexposure)</span>
 <span class="sd">        :param npred_min: minimum number of predicted events.</span>
 <span class="sd">        :return: model</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -276,61 +281,57 @@
         <span class="n">source_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">exposure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">npred</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;flux_1_100_gev&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">exposure</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Source </span><span class="si">%s</span><span class="s1"> npred= </span><span class="si">%.1e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">npred</span><span class="p">)</span> <span class="p">)</span>
+                <span class="n">npred</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;flux_1_100_gev&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">exposure</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> npred= </span><span class="si">%.1e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">npred</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">npred</span> <span class="o">&lt;</span> <span class="n">npred_min</span><span class="p">:</span>
                     <span class="k">continue</span>
-            <span class="c1"># If there is an association and use_association is True, use that name, otherwise the 3FGL name</span>
+            <span class="c1"># If there is an association and use_association is True, use that name,</span>
+            <span class="c1"># otherwise the 3FGL name</span>
             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">use_association_name</span><span class="p">:</span>
-
                 <span class="n">this_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span>
 
-                <span class="c1"># The crab is the only source which is present more than once in the 3FGL</span>
+                <span class="c1"># The crab is the only source which is present more than once in the</span>
+                <span class="c1"># 3FGL</span>
 
                 <span class="k">if</span> <span class="n">this_name</span> <span class="o">==</span> <span class="s2">&quot;Crab Nebula&quot;</span><span class="p">:</span>
-
                     <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
-
                         <span class="n">this_name</span> <span class="o">=</span> <span class="s2">&quot;Crab_IC&quot;</span>
 
                     <span class="k">elif</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;s&quot;</span><span class="p">:</span>
-
                         <span class="n">this_name</span> <span class="o">=</span> <span class="s2">&quot;Crab_synch&quot;</span>
 
                     <span class="k">else</span><span class="p">:</span>
-
                         <span class="n">this_name</span> <span class="o">=</span> <span class="s2">&quot;Crab_pulsar&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">this_name</span> <span class="o">=</span> <span class="n">name</span>
 
-            <span class="c1"># in the 4FGL name there are more sources with the same name: this nwill avod any duplicates:</span>
+            <span class="c1"># in the 4FGL name there are more sources with the same name: this will</span>
+            <span class="c1"># avoid any duplicates:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">while</span> <span class="n">this_name</span> <span class="ow">in</span> <span class="n">source_names</span><span class="p">:</span>
                 <span class="n">this_name</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">pass</span>
-            <span class="c1"># By default all sources are fixed. The user will free the one he/she will need</span>
+            <span class="c1"># By default all sources are fixed. The user will free the one needed</span>
 
             <span class="n">source_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_name</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="p">(</span> <span class="s2">&quot;extended_source_name&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;extended_source_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="p">)</span> <span class="ow">or</span> \
-                <span class="p">(</span><span class="s2">&quot;sourcetype&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;sourcetype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DiffuseSource&quot;</span> <span class="p">):</span>
-        
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;extended_source_name&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;extended_source_name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;sourcetype&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;sourcetype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DiffuseSource&quot;</span><span class="p">):</span>
                 <span class="k">if</span> <span class="s2">&quot;spatial_function&quot;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
-                    
-                    <span class="n">this_source</span> <span class="o">=</span> <span class="n">_get_extended_source_from_fgl</span><span class="p">(</span><span class="n">this_name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">this_source</span> <span class="o">=</span> <span class="n">_get_extended_source_from_fgl</span><span class="p">(</span>
+                        <span class="n">this_name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is extended, but morphology information is unavailable. &quot;</span>
-                        <span class="s2">&quot;I will provide a point source instead&quot;</span> <span class="o">%</span> <span class="n">name</span>
+                        <span class="s2">&quot;Source </span><span class="si">%s</span><span class="s2"> is extended, but morphology information is &quot;</span>
+                        <span class="s2">&quot;unavailable. I will provide a point source instead&quot;</span> <span class="o">%</span> <span class="n">name</span>
                     <span class="p">)</span>
                     <span class="n">this_source</span> <span class="o">=</span> <span class="n">_get_point_source_from_fgl</span><span class="p">(</span><span class="n">this_name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-    
                 <span class="n">this_source</span> <span class="o">=</span> <span class="n">_get_point_source_from_fgl</span><span class="p">(</span><span class="n">this_name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_source</span><span class="p">)</span>
@@ -343,112 +344,117 @@
 <div class="viewcode-block" id="FermiPySourceCatalog">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiPySourceCatalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FermiPySourceCatalog</span><span class="p">(</span><span class="n">FermiLATSourceCatalog</span><span class="p">):</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span> <span class="o">=</span> <span class="s2">&quot;4FGL&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s2">&quot;4FGL&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
-    
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span> <span class="o">=</span> <span class="n">catalog_name</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">FermiPySourceCatalog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">have_fermipy</span><span class="p">:</span>
-            
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Must have fermipy installed to use FermiPySourceCatalog&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="kc">None</span>
-            
+
         <span class="k">else</span><span class="p">:</span>
-        
             <span class="k">try</span><span class="p">:</span>
-                
                 <span class="bp">self</span><span class="o">.</span><span class="n">_fermipy_catalog</span> <span class="o">=</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span><span class="p">)</span>
-            
-            <span class="k">except</span><span class="p">:</span>
-            
+
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Catalog </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span><span class="si">}</span><span class="s2"> not available in fermipy&quot;</span><span class="p">)</span>
-                        
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fermipy_catalog</span><span class="o">.</span><span class="n">table</span>
 
-            <span class="c1">#Stupid but necessary: Remove catalog values if we&#39;re reading in a pre-fit ROI.</span>
+            <span class="c1"># Stupid but necessary: Remove catalog values if we&#39;re reading in a pre-fit</span>
+            <span class="c1"># ROI.</span>
             <span class="n">catalog_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GLAT&quot;</span><span class="p">,</span> <span class="s2">&quot;GLON&quot;</span><span class="p">,</span> <span class="s2">&quot;RAJ2000&quot;</span><span class="p">,</span> <span class="s2">&quot;DEJ2000&quot;</span><span class="p">]</span>
             <span class="n">prefit_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;glat&quot;</span><span class="p">,</span> <span class="s2">&quot;glon&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span> <span class="n">catalog_columns</span><span class="p">,</span> <span class="n">prefit_columns</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">col1</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span> <span class="n">col2</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">catalog_columns</span><span class="p">,</span> <span class="n">prefit_columns</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">col1</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span> <span class="n">col2</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span>
+                <span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="n">col1</span><span class="p">)</span>
 
-            <span class="c1">#remove multi-dimensional columns</span>
-            <span class="n">good_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">colnames</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># remove multi-dimensional columns</span>
+            <span class="n">good_columns</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">name</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">colnames</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+            <span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="p">[</span><span class="n">good_columns</span><span class="p">]</span>
 
-            <span class="c1">#remove duplicate columns</span>
-            <span class="k">if</span> <span class="s2">&quot;Extended&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span>  <span class="s2">&quot;extended&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="c1"># remove duplicate columns</span>
+            <span class="k">if</span> <span class="s2">&quot;Extended&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;extended&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s2">&quot;Extended&quot;</span><span class="p">)</span>
-            
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">convert_bytestring_to_unicode</span><span class="p">()</span>
-            <span class="c1">##### This prevents an issue with multi dimension columns:</span>
-            <span class="c1">#names = [name for name in self._astropy_table.colnames if len(self._astropy_table[name].shape) &lt;= 1]</span>
-            <span class="c1">#log.info(&quot;COL NAMES = &quot;, names)</span>
-            <span class="c1">#self._vo_dataframe = self._astropy_table[names].to_pandas()</span>
-            <span class="c1">### Comment the following</span>
+            <span class="c1"># This prevents an issue with multi dimension columns:</span>
+            <span class="c1"># names = [name for name in self._astropy_table.colnames if</span>
+            <span class="c1"># len(self._astropy_table[name].shape) &lt;= 1]</span>
+            <span class="c1"># log.info(&quot;COL NAMES = &quot;, names)</span>
+            <span class="c1"># self._vo_dataframe = self._astropy_table[names].to_pandas()</span>
+            <span class="c1"># Comment the following</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;Pivot_Energy&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;pivot_energy&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Pivot_Energy&quot;</span><span class="p">:</span><span class="s2">&quot;pivot_energy_catalog&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;Pivot_Energy&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="s2">&quot;pivot_energy&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Pivot_Energy&quot;</span><span class="p">:</span> <span class="s2">&quot;pivot_energy_catalog&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="n">rename_dict</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;spectrumtype&quot;</span><span class="p">:</span>   <span class="s2">&quot;spectrum_type&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;raj2000&quot;</span><span class="p">:</span>        <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;dej2000&quot;</span><span class="p">:</span>        <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span>    <span class="s2">&quot;name_fermipy&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;source_name&quot;</span><span class="p">:</span>    <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;spectrumtype&quot;</span><span class="p">:</span> <span class="s2">&quot;spectrum_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;raj2000&quot;</span><span class="p">:</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dej2000&quot;</span><span class="p">:</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name_fermipy&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;source_name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;plec_expfactor&quot;</span><span class="p">:</span> <span class="s2">&quot;plec_exp_factor&quot;</span><span class="p">,</span>
             <span class="p">}</span>
-                  
-            <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rename_dict</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_dict</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="s2">&quot;class1&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;class1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;class2&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;class1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;class2&quot;</span><span class="p">]</span>
-            
             <span class="k">else</span><span class="p">:</span>
-                
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="s2">&quot;assoc1&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">:</span>
-            
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                    <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc1&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="p">),</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc1&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc1&quot;</span><span class="p">],</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc2&quot;</span><span class="p">]</span> <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc2&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-
             <span class="k">if</span> <span class="s2">&quot;assoc_gam1&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">:</span>
-
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                    <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam1&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="p">),</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam1&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam1&quot;</span><span class="p">],</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam2&quot;</span><span class="p">]</span> <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam2&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-                    <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="p">),</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">],</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam3&quot;</span><span class="p">]</span> <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;assoc_gam3&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="p">[</span><span class="s2">&quot;tevcat_assoc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-
-    <span class="c1">#overwrite cone_search function to use existing table.</span>
+    <span class="c1"># overwrite cone_search function to use existing table.</span>
 <div class="viewcode-block" id="FermiPySourceCatalog.cone_search">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiPySourceCatalog.cone_search">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Searches for sources in a cone of given radius and center</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Searches for sources in a cone of given radius and center.</span>
 
 <span class="sd">        :param ra: decimal degrees, R.A. of the center of the cone</span>
 <span class="sd">        :param dec: decimal degrees, Dec. of the center of the cone</span>
@@ -459,13 +465,15 @@
         <span class="n">skycoord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">)</span>
 
         <span class="n">pandas_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span>
-        <span class="n">pandas_df</span><span class="p">[</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fermipy_catalog</span><span class="o">.</span><span class="n">skydir</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">skycoord</span><span class="p">)</span><span class="o">.</span><span class="n">deg</span>
+        <span class="n">pandas_df</span><span class="p">[</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fermipy_catalog</span><span class="o">.</span><span class="n">skydir</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span>
+            <span class="n">skycoord</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">deg</span>
 
-        <span class="n">pandas_df</span> <span class="o">=</span> <span class="n">pandas_df</span><span class="p">[</span><span class="n">pandas_df</span><span class="p">[</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">radius</span> <span class="p">]</span>
+        <span class="n">pandas_df</span> <span class="o">=</span> <span class="n">pandas_df</span><span class="p">[</span><span class="n">pandas_df</span><span class="p">[</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">]</span>
         <span class="n">pandas_df</span> <span class="o">=</span> <span class="n">pandas_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Search_Offset&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span> <span class="o">=</span> <span class="n">pandas_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-        
+
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">pandas_df</span><span class="p">))</span>
 
         <span class="c1"># Save coordinates of center of cone search</span>

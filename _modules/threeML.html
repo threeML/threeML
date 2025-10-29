@@ -8,7 +8,7 @@
   <title>threeML &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -110,31 +113,36 @@
   <h1>Source code for threeML</h1><div class="highlight"><pre>
 <span></span><span class="c1"># We import matplotlib first, because we need control on the backend</span>
 <span class="c1"># Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_columns&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="c1"># Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue</span>
 <span class="c1"># LEAVE THESE HERE BEFORE ANY THREEML IMPORT</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">ROOT</span>
+
+    <span class="n">ROOT</span><span class="o">.</span><span class="vm">__doc__</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">pyLikelihood</span>
+
+    <span class="n">pyLikelihood</span><span class="o">.</span><span class="vm">__doc__</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
-
 <span class="c1"># Import everything from astromodels</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">threeML_config</span><span class="p">,</span>
@@ -148,9 +156,7 @@
 <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">][</span><span class="s2">&quot;startup_warnings&quot;</span><span class="p">]:</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting 3ML!&quot;</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WARNINGs here are [red]NOT[/red] errors&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-        <span class="s2">&quot;but are inform you about optional packages that can be installed&quot;</span>
-    <span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;but are inform you about optional packages that can be installed&quot;</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
         <span class="s2">&quot;[red] to disable these messages, turn off start_warning in your config file[/red]&quot;</span>
     <span class="p">)</span>
@@ -167,14 +173,12 @@
 
 <span class="c1"># Import version (this has to be placed before the import of serialization</span>
 <span class="c1"># since __version__ needs to be defined at that stage)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_versions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_version</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
-<span class="k">del</span> <span class="n">get_versions</span>
-
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">_version</span><span class="o">.</span><span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.machinery</span><span class="w"> </span><span class="kn">import</span> <span class="n">SourceFileLoader</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
 
 <span class="c1"># Finally import the serialization machinery</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.io.serialization</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
@@ -213,18 +217,17 @@
 <div class="viewcode-block" id="is_module_importable">
 <a class="viewcode-back" href="../notebooks/api/threeML.html#threeML.is_module_importable">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_module_importable</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">):</span>
-
     <span class="k">try</span><span class="p">:</span>
-
-        <span class="n">_</span> <span class="o">=</span> <span class="n">SourceFileLoader</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">))</span><span class="o">.</span><span class="n">load_module</span><span class="p">()</span>
-
-    <span class="k">except</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
-
-    <span class="k">else</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> imported ok&quot;</span> <span class="o">%</span> <span class="n">module_full_path</span></div>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span>
+            <span class="n">module_full_path</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="n">module_full_path</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">spec</span><span class="o">.</span><span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot load </span><span class="si">{</span><span class="n">module_full_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">module</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span></div>
 
 
 
@@ -232,14 +235,7 @@
 
 <span class="n">found_plugins</span> <span class="o">=</span> <span class="n">plugins_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">)</span>
 
-<span class="c1"># Filter out __init__</span>
-
-<span class="c1"># found_plugins = filter(lambda x: str(x).find(&quot;__init__&quot;) &lt; 0, found_plugins)</span>
-
-<span class="c1"># Filter out __init__</span>
-
-<span class="n">found_plugins</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;__init__&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">found_plugins</span><span class="p">)</span>
-
+<span class="n">found_plugins</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">plugins_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;__init__.py&quot;</span><span class="p">]</span>
 
 <span class="n">_working_plugins</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">_not_working_plugins</span> <span class="o">=</span> <span class="p">{}</span>
@@ -247,10 +243,9 @@
 <span class="c1"># Loop over each candidates plugins and check if it is importable</span>
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">module_full_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">found_plugins</span><span class="p">):</span>
-
     <span class="n">plugin_name</span> <span class="o">=</span> <span class="n">module_full_path</span><span class="o">.</span><span class="n">stem</span>
 
-    <span class="n">is_importable</span><span class="p">,</span> <span class="n">failure_traceback</span> <span class="o">=</span> <span class="n">is_module_importable</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">)</span>
+    <span class="n">is_importable</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">is_module_importable</span><span class="p">(</span><span class="n">module_full_path</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_importable</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
@@ -260,40 +255,27 @@
                 <span class="c1"># custom_exceptions.CannotImportPlugin,</span>
             <span class="p">)</span>
 
-        <span class="n">_not_working_plugins</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">failure_traceback</span>
+        <span class="n">_not_working_plugins</span><span class="p">[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
 
         <span class="k">continue</span>
 
-    <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># First get the instrument name</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="n">instrument_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;__instrument_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">instrument_name</span><span class="p">:</span>
+        <span class="k">continue</span>
 
-        <span class="c1"># First get the instrument name</span>
-        <span class="k">try</span><span class="p">:</span>
-
-            <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;from threeML.plugins.</span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2"> import __instrument_name&quot;</span><span class="p">)</span>
-
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-
-            <span class="c1"># This module does not contain a plugin, continue</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Now import the plugin itself</span>
-
-        <span class="n">import_command</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;from threeML.plugins.</span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2"> import </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">imported_plugin</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threeML.plugins.</span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plugin_class</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">imported_plugin</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">)</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="n">plugin_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_class</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Could not import plugin </span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s2">&quot;Do you have the relative instrument software installed?&quot;</span>
         <span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-
-            <span class="n">exec</span><span class="p">(</span><span class="n">import_command</span><span class="p">)</span>
-
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-
-            <span class="k">pass</span>
-
-        <span class="k">else</span><span class="p">:</span>
-
-            <span class="n">_working_plugins</span><span class="p">[</span><span class="n">__instrument_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_name</span>
-
+        <span class="k">continue</span>
+    <span class="n">_working_plugins</span><span class="p">[</span><span class="n">instrument_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_name</span>
 
 <span class="c1"># Now some convenience functions</span>
 
@@ -301,53 +283,42 @@
 <div class="viewcode-block" id="get_available_plugins">
 <a class="viewcode-back" href="../notebooks/api/threeML.html#threeML.get_available_plugins">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_available_plugins</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Print a list of available plugins</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a list of available plugins.</span>
 
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Available plugins:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">instrument</span><span class="p">,</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">_working_plugins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">instrument</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_display_plugin_traceback</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;#############################################################&quot;</span>
-        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#############################################################&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Couldn&#39;t import plugin </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">plugin</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Traceback:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">_not_working_plugins</span><span class="p">[</span><span class="n">plugin</span><span class="p">])</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;#############################################################&quot;</span>
-        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;#############################################################&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="is_plugin_available">
 <a class="viewcode-back" href="../notebooks/api/threeML.html#threeML.is_plugin_available">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_plugin_available</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test whether the plugin for the provided instrument is available</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether the plugin for the provided instrument is available.</span>
 
 <span class="sd">    :param plugin: the name of the plugin class</span>
 <span class="sd">    :return: True or False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">_working_plugins</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-
         <span class="c1"># FIXME</span>
         <span class="k">if</span> <span class="n">plugin</span> <span class="o">==</span> <span class="s2">&quot;FermipyLike&quot;</span><span class="p">:</span>
-
             <span class="k">try</span><span class="p">:</span>
-
                 <span class="n">_</span> <span class="o">=</span> <span class="n">FermipyLike</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">FermipyLike</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="k">except</span><span class="p">:</span>
-
                 <span class="c1"># Do not register it</span>
 
                 <span class="n">_not_working_plugins</span><span class="p">[</span><span class="n">plugin</span><span class="p">]</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
@@ -359,15 +330,12 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="k">if</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">_not_working_plugins</span><span class="p">:</span>
-
             <span class="n">_display_plugin_traceback</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">plugin</span><span class="si">}</span><span class="s2"> is not known&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span></div>
 
@@ -391,23 +359,22 @@
     <span class="n">FermiGBMBurstCatalog</span><span class="p">,</span>
     <span class="n">FermiGBMTriggerCatalog</span><span class="p">,</span>
     <span class="n">FermiLATSourceCatalog</span><span class="p">,</span>
-    <span class="n">FermiPySourceCatalog</span><span class="p">,</span>
     <span class="n">FermiLLEBurstCatalog</span><span class="p">,</span>
+    <span class="n">FermiPySourceCatalog</span><span class="p">,</span>
     <span class="n">SwiftGRBCatalog</span><span class="p">,</span>
 <span class="p">)</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">activate_logs</span><span class="p">,</span>
+    <span class="n">activate_progress_bars</span><span class="p">,</span>
     <span class="n">activate_warnings</span><span class="p">,</span>
-    <span class="n">silence_warnings</span><span class="p">,</span>
-    <span class="n">update_logging_level</span><span class="p">,</span>
+    <span class="n">debug_mode</span><span class="p">,</span>
+    <span class="n">loud_mode</span><span class="p">,</span>
+    <span class="n">quiet_mode</span><span class="p">,</span>
     <span class="n">silence_logs</span><span class="p">,</span>
     <span class="n">silence_progress_bars</span><span class="p">,</span>
-    <span class="n">activate_progress_bars</span><span class="p">,</span>
+    <span class="n">silence_warnings</span><span class="p">,</span>
     <span class="n">toggle_progress_bars</span><span class="p">,</span>
-    <span class="n">quiet_mode</span><span class="p">,</span>
-    <span class="n">loud_mode</span><span class="p">,</span>
-    <span class="n">debug_mode</span><span class="p">,</span>
-    <span class="n">activate_logs</span><span class="p">,</span>
+    <span class="n">update_logging_level</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.light_curve_plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_tte_lightcurve</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.plotting.model_plot</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -425,8 +392,8 @@
 <span class="c1"># import time series builder, soon to replace the Fermi plugins</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.data_builders</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.data_download.Fermi_GBM.download_GBM_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">download_GBM_trigger_data</span><span class="p">,</span>
     <span class="n">download_GBM_daily_data</span><span class="p">,</span>
+    <span class="n">download_GBM_trigger_data</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Import the LAT data downloader</span>
@@ -450,20 +417,18 @@
     <span class="n">JointLikelihoodSetAnalyzer</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.classicMLE.likelihood_ratio_test</span><span class="w"> </span><span class="kn">import</span> <span class="n">LikelihoodRatioTest</span>
-
-<span class="c1"># Now read the configuration and make it available as threeML_config</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">.data_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_threeML_style</span><span class="p">,</span> <span class="n">set_threeML_style</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.io.calculate_flux</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_point_source_flux</span>
-
-<span class="c1"># Import the plot_style context manager and the function to create new styles</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel_computation</span>
 
 <span class="c1"># Added by JM. step generator for time-resolved fits</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils.step_parameter_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_generator</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_threeML_style</span><span class="p">,</span> <span class="n">set_threeML_style</span>
+<span class="c1"># Now read the configuration and make it available as threeML_config</span>
+
+
+<span class="c1"># Import the plot_style context manager and the function to create new styles</span>
 
 
 <span class="c1"># Import optical filters</span>
@@ -483,13 +448,10 @@
 
 
 <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">var_to_check</span><span class="p">:</span>
-
     <span class="n">num_threads</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">num_threads</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
         <span class="k">try</span><span class="p">:</span>
-
             <span class="n">num_threads</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -501,7 +463,6 @@
                 <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Env. variable </span><span class="si">%s</span><span class="s2"> is not set. Please set it to 1 for optimal performances in 3ML&quot;</span>
@@ -513,7 +474,6 @@
 <span class="k">del</span> <span class="n">os</span>
 <span class="k">del</span> <span class="n">Path</span>
 <span class="k">del</span> <span class="n">warnings</span>
-<span class="k">del</span> <span class="n">SourceFileLoader</span>
 </pre></div>
 
            </div>

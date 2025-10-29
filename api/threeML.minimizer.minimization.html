@@ -9,7 +9,7 @@
   <title>threeML.minimizer.minimization module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -256,10 +259,11 @@
 <span class="sig-name descname"><span class="pre">contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_minimum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_maximum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_1_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_2_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.contours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.contours" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Generate confidence contours for the given parameters by stepping for the given number of steps between
-the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
-generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
-contour of param_1 vs param_2</p>
+<p>Generate confidence contours for the given parameters by stepping
+for the given number of steps between the given boundaries. Call it
+specifying only source_1, param_1, param_1_minimum and param_1_maximum
+to generate the profile of the likelihood for parameter 1. Specify all
+parameters to obtain instead a 2d contour of param_1 vs param_2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -274,21 +278,26 @@ contour of param_1 vs param_2</p>
 <li><p><strong>param_2_maximum</strong> – upper bound for the range for the second parameter</p></li>
 <li><p><strong>param_2_n_steps</strong> – number of steps for the second parameter</p></li>
 <li><p><strong>progress</strong> – (True or False) whether to display progress or not</p></li>
-<li><p><strong>log</strong> – by default the steps are taken linearly. With this optional parameter you can provide a tuple of</p></li>
+<li><p><strong>log</strong> – by default the steps are taken linearly. With this optional</p></li>
 </ul>
 </dd>
 </dl>
-<p>booleans which specify whether the steps are to be taken logarithmically. For example,
-‘log=(True,False)’ specify that the steps for the first parameter are to be taken logarithmically, while they
-are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
-‘log=(True,)’ or ‘log=(False,)’ (optional)
+<p>parameter you can provide a tuple of booleans which specify whether the steps
+are to be taken logarithmically. For example, ‘log=(True,False)’ specify that
+the steps for the first parameter are to be taken logarithmically, while they
+are linear for the second parameter. If you are generating the profile for only
+one parameter, you can specify ‘log=(True,)’ or ‘log=(False,)’ (optional)
 :param: parallel: whether to use or not parallel computation (default:False)
 :return:</p>
 <blockquote>
 <div>
 <p>a : an array corresponding to the steps for the first parameter
-b : an array corresponding to the steps for the second parameter (or None if stepping only in one direction)
-contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to an array of size param_1_steps.</p>
+b : an array corresponding to the steps for the second parameter (or None if
+stepping only in one direction)
+contour : a matrix of size param_1_steps x param_2_steps containing the value
+of the function at the corresponding points in the grid. If param_2_steps is
+None (only one parameter), then this reduces to an array of size
+param_1_steps.</p>
 </div>
 </blockquote>
 </dd>
@@ -327,7 +336,8 @@ contour : a matrix of size param_1_steps x param_2_steps containing the value of
 <span class="sig-name descname"><span class="pre">get_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.get_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.get_errors" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Compute asymmetric errors using the profile likelihood method (slow, but accurate).</p>
+<p>Compute asymmetric errors using the profile likelihood method (slow,
+but accurate).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -343,7 +353,8 @@ contour : a matrix of size param_1_steps x param_2_steps containing the value of
 <span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_covar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.minimize" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Minimize objective function. This call _minimize, which is implemented by each subclass.</p>
+<p>Minimize objective function. This call _minimize, which is
+implemented by each subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -353,7 +364,8 @@ contour : a matrix of size param_1_steps x param_2_steps containing the value of
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>
 <dd class="field-even">
-<p>best fit values (in external reference) and minimum of the objective function</p>
+<p>best fit values (in external reference) and minimum of
+the objective function</p>
 </dd>
 </dl>
 </dd>
@@ -371,7 +383,8 @@ contour : a matrix of size param_1_steps x param_2_steps containing the value of
 <span class="sig-name descname"><span class="pre">restore_best_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/minimizer/minimization.html#Minimizer.restore_best_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.minimizer.minimization.Minimizer.restore_best_fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Reset all the parameters to their best fit value (from the last run fit)</p>
+<p>Reset all the parameters to their best fit value (from the last run
+fit)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>

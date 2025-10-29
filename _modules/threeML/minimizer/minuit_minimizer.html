@@ -8,7 +8,7 @@
   <title>threeML.minimizer.minuit_minimizer &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,18 +112,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.minimizer.minuit_minimizer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_function</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">range</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">iminuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Minuit</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minimization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CannotComputeCovariance</span><span class="p">,</span>
-                                            <span class="n">CannotComputeErrors</span><span class="p">,</span> <span class="n">FitFailed</span><span class="p">,</span>
-                                            <span class="n">LocalMinimizer</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.minimizer.minimization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CannotComputeCovariance</span><span class="p">,</span>
+    <span class="n">CannotComputeErrors</span><span class="p">,</span>
+    <span class="n">FitFailed</span><span class="p">,</span>
+    <span class="n">LocalMinimizer</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -149,17 +153,18 @@
 <div class="viewcode-block" id="MinuitMinimizer">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minuit_minimizer.MinuitMinimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MinuitMinimizer</span><span class="p">(</span><span class="n">LocalMinimizer</span><span class="p">):</span>
-
     <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ftol&quot;</span><span class="p">,)</span>
 
-    <span class="c1"># @TODO: Is this still relevant?</span>
-    <span class="c1"># NOTE: this class is built to be able to work both with iMinuit and with a boost interface to SEAL</span>
-    <span class="c1"># minuit, i.e., it does not rely on functionality that iMinuit provides which is not of the original</span>
-    <span class="c1"># minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want</span>
+    <span class="c1"># TODO: Is this still relevant?</span>
+    <span class="c1"># NOTE: this class is built to be able to work both with iMinuit and with a boost</span>
+    <span class="c1"># interface to SEAL</span>
+    <span class="c1"># minuit, i.e., it does not rely on functionality that iMinuit provides which is not</span>
+    <span class="c1"># of the original</span>
+    <span class="c1"># minuit. This makes the implementation a little bit more cumbersome, but more</span>
+    <span class="c1"># adaptable if we want</span>
     <span class="c1"># to switch back to the bare bone SEAL minuit</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">setup_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
         <span class="c1"># This will contain the results of the last call to Migrad</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_migrad_results</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -168,7 +173,6 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_setup_dict</span><span class="p">):</span>
-
         <span class="c1"># Prepare the dictionaries for the parameters which will be used by iminuit</span>
 
         <span class="n">iminuit_init_parameters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
@@ -183,14 +187,14 @@
 
         <span class="n">variable_names_for_iminuit</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># NOTE: we use the internal_ versions of value, min_value and max_value because they don&#39;t have</span>
-        <span class="c1"># units, and they are transformed to make the fit easier (for example in log scale)</span>
+        <span class="c1"># NOTE: we use the internal_ versions of value, min_value and max_value because</span>
+        <span class="c1"># they don&#39;t have units, and they are transformed to make the fit easier (for</span>
+        <span class="c1"># example in log scale)</span>
 
         <span class="k">for</span> <span class="p">(</span>
             <span class="n">parameter_path</span><span class="p">,</span>
             <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">),</span>
         <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
             <span class="n">current_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_name_to_minuit_name</span><span class="p">(</span><span class="n">parameter_path</span><span class="p">)</span>
 
             <span class="n">variable_names_for_iminuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_name</span><span class="p">)</span>
@@ -232,13 +236,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">print_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span>
 
         <span class="k">if</span> <span class="n">user_setup_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="s2">&quot;ftol&quot;</span> <span class="ow">in</span> <span class="n">user_setup_dict</span><span class="p">:</span>
-
                 <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">user_setup_dict</span><span class="p">[</span><span class="s2">&quot;ftol&quot;</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="c1"># Do nothing and leave the default in iminuit</span>
             <span class="k">pass</span>
 
@@ -247,11 +248,13 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parameter_name_to_minuit_name</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Translate the name of the parameter to the format accepted by Minuit</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Translate the name of the parameter to the format accepted by</span>
+<span class="sd">        Minuit.</span>
 
-<span class="sd">        :param parameter: the parameter name, of the form source.component.shape.parname</span>
-<span class="sd">        :return: a minuit-friendly name for the parameter, such as source_component_shape_parname</span>
+<span class="sd">        :param parameter: the parameter name, of the form</span>
+<span class="sd">            source.component.shape.parname</span>
+<span class="sd">        :return: a minuit-friendly name for the parameter, such as</span>
+<span class="sd">            source_component_shape_parname</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">parameter</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
@@ -260,8 +263,7 @@
 <div class="viewcode-block" id="MinuitMinimizer.restore_best_fit">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minuit_minimizer.MinuitMinimizer.restore_best_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_best_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the parameters back to their best fit value</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the parameters back to their best fit value.</span>
 
 <span class="sd">        :return: none</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -273,17 +275,13 @@
         <span class="c1"># Update also the internal iminuit dictionary</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
             <span class="n">minuit_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_name_to_minuit_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">minuit_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">_get_internal_value</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_print_current_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        To be used to print info before raising an exception</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;To be used to print info before raising an exception :return:&quot;&quot;&quot;</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Last status:&quot;</span><span class="p">)</span>
 
@@ -295,18 +293,17 @@
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
-        
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Minimize the function using MIGRAD</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minimize the function using MIGRAD.</span>
 
-<span class="sd">        :param compute_covar: whether to compute the covariance (and error estimates) or not</span>
-<span class="sd">        :return: best_fit: a dictionary containing the parameters at their best fit values</span>
+<span class="sd">        :param compute_covar: whether to compute the covariance (and error estimates) or</span>
+<span class="sd">        not</span>
+<span class="sd">        :return: best_fit: a dictionary containing the parameters at their best fit</span>
+<span class="sd">                    values</span>
 <span class="sd">                 function_minimum : the value for the function at the minimum</span>
 
-<span class="sd">                 NOTE: if the minimization fails, the dictionary will be empty and the function_minimum will be set</span>
-<span class="sd">                 to minimization.FIT_FAILED</span>
+<span class="sd">                 NOTE: if the minimization fails, the dictionary will be empty and the</span>
+<span class="sd">                 function_minimum will be set to minimization.FIT_FAILED</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Try a maximum of 10 times and break as soon as the fit is ok</span>
@@ -315,18 +312,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_migrad_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">migrad</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
-
                 <span class="k">break</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="c1"># Try again</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_last_migrad_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">migrad</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_current_status</span><span class="p">()</span>
 
             <span class="k">raise</span> <span class="n">FitFailed</span><span class="p">(</span>
@@ -334,14 +327,12 @@
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="c1"># Gather the optimized values for all parameters from the internal</span>
             <span class="c1"># iminuit dictionary</span>
 
             <span class="n">best_fit_values</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
                 <span class="n">minuit_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_name_to_minuit_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
                 <span class="n">best_fit_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">minuit_name</span><span class="p">])</span>
@@ -350,34 +341,30 @@
 
     <span class="c1"># Override the default _compute_covariance_matrix</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_covariance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">best_fit_values</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">hesse</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
-
             <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-
             <span class="c1"># Covariance computation has failed</span>
 
             <span class="c1"># Print current status</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_current_status</span><span class="p">()</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;HESSE failed. Most probably some of your parameters are unconstrained.&quot;</span><span class="p">)</span>
-
-            <span class="k">raise</span> <span class="n">CannotComputeCovariance</span><span class="p">(</span>
-
+                <span class="s2">&quot;HESSE failed. Most probably some of your parameters are unconstrained.&quot;</span>
             <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="n">CannotComputeCovariance</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">covariance</span>
 
 <div class="viewcode-block" id="MinuitMinimizer.get_errors">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.minuit_minimizer.MinuitMinimizer.get_errors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute asymmetric errors using MINOS (slow, but accurate) and print them.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute asymmetric errors using MINOS (slow, but accurate) and print</span>
+<span class="sd">        them.</span>
 
 <span class="sd">        NOTE: this should be called immediately after the minimize() method</span>
 
@@ -387,29 +374,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">valid</span><span class="p">:</span>
-
             <span class="k">raise</span> <span class="n">CannotComputeErrors</span><span class="p">(</span>
                 <span class="s2">&quot;MIGRAD results not valid, cannot compute errors.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">minos</span><span class="p">()</span>
 
-        <span class="k">except</span><span class="p">:</span>
-
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_current_status</span><span class="p">()</span>
 
             <span class="k">raise</span> <span class="n">MINOSFailed</span><span class="p">(</span>
                 <span class="s2">&quot;MINOS has failed. This is not necessarily a problem if:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;* There are unconstrained parameters (the error is undefined). This is usually signaled &quot;</span>
-                <span class="s2">&quot;by an approximated error, printed after the fit, larger than the best fit value</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;* The fit is very difficult, because of high correlation between parameters. This is &quot;</span>
-                <span class="s2">&quot;signaled by values close to 1.0 or -1.0 in the correlation matrix printed after the &quot;</span>
-                <span class="s2">&quot;fit step.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;In this cases you can check the contour plots with get_contours(). If you are using a &quot;</span>
-                <span class="s2">&quot;user-defined model, you can also try to reformulate your model with less correlated &quot;</span>
-                <span class="s2">&quot;parameters.&quot;</span>
+                <span class="s2">&quot;* There are unconstrained parameters (the error is undefined). This is&quot;</span>
+                <span class="s2">&quot; usually signaled by an approximated error, printed after the fit, &quot;</span>
+                <span class="s2">&quot;larger than the best fit value</span><span class="se">\n\n</span><span class="s2">* The fit is very difficult, because&quot;</span>
+                <span class="s2">&quot; of high correlation between parameters. This is signaled by values &quot;</span>
+                <span class="s2">&quot;close to 1.0 or -1.0 in the correlation matrix printed after the fit &quot;</span>
+                <span class="s2">&quot;step.</span><span class="se">\n\n</span><span class="s2"> In this cases you can check the contour plots with &quot;</span>
+                <span class="s2">&quot;get_contours(). If you are using a user-defined model, you can also &quot;</span>
+                <span class="s2">&quot;try to reformulate your model with less correlated parameters.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Make a list for the results</span>
@@ -417,14 +401,12 @@
         <span class="n">errors</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
             <span class="n">minuit_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_name_to_minuit_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
             <span class="n">minus_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">merrors</span><span class="p">[</span><span class="n">minuit_name</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span>
             <span class="n">plus_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minuit</span><span class="o">.</span><span class="n">merrors</span><span class="p">[</span><span class="n">minuit_name</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span>
 
             <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
-
                 <span class="c1"># Need to transform in the external reference</span>
 
                 <span class="n">best_fit_value_internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">par</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">]</span>
@@ -438,7 +420,6 @@
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">minus_error_external</span> <span class="o">=</span> <span class="n">minus_error</span>
                 <span class="n">plus_error_external</span> <span class="o">=</span> <span class="n">plus_error</span>
 

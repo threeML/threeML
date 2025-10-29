@@ -8,7 +8,7 @@
   <title>threeML.io.fits_file &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,11 +112,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.io.fits_file</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pkg_resources</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">six</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
@@ -162,34 +164,30 @@
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FITSFile</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_hdu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fits_extensions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
         <span class="n">hdu_list</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="n">primary_hdu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">primary_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">primary_hdu</span><span class="p">,</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">)</span>
 
         <span class="n">hdu_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary_hdu</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fits_extensions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">fits_extensions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fits_extensions</span><span class="p">)</span>
 
             <span class="n">hdu_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">hdu</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fits_extensions</span><span class="p">])</span>
 
-        <span class="c1"># We embed instead of subclassing because the HDUList class has some weird interaction with the</span>
-        <span class="c1"># __init__ and __new__ methods which makes difficult to do so (we couldn&#39;t figure it out)</span>
+        <span class="c1"># We embed instead of subclassing because the HDUList class has some weird</span>
+        <span class="c1"># interaction with the __init__ and __new__ methods which makes difficult to do</span>
+        <span class="c1"># so (we couldn&#39;t figure it out)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">(</span><span class="n">hdus</span><span class="o">=</span><span class="n">hdu_list</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FITSFile.writeto">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile.writeto">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">writeto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -198,13 +196,11 @@
     <span class="n">writeto</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="o">.</span><span class="n">writeto</span><span class="o">.</span><span class="vm">__doc__</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FITSFile.info">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile.info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 
 
@@ -213,7 +209,6 @@
 <div class="viewcode-block" id="FITSFile.index_of">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSFile.index_of">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">index_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdu_list</span><span class="o">.</span><span class="n">index_of</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
 
 
@@ -224,12 +219,10 @@
 <div class="viewcode-block" id="FITSExtension">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSExtension">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FITSExtension</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
-    <span class="c1"># I use __new__ instead of __init__ because I need to use the classmethod .from_columns instead of the</span>
-    <span class="c1"># constructor of fits.BinTableHDU</span>
+    <span class="c1"># I use __new__ instead of __init__ because I need to use the classmethod</span>
+    <span class="c1"># .from_columns instead of the constructor of fits.BinTableHDU</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_tuple</span><span class="p">,</span> <span class="n">header_tuple</span><span class="p">):</span>
-
         <span class="c1"># Generate the header from the dictionary</span>
 
         <span class="n">header</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">Header</span><span class="p">(</span><span class="n">header_tuple</span><span class="p">)</span>
@@ -238,7 +231,6 @@
         <span class="n">fits_columns</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">column_data</span> <span class="ow">in</span> <span class="n">data_tuple</span><span class="p">:</span>
-
             <span class="c1"># Get type of column</span>
             <span class="c1"># NOTE: we assume the type is the same for the entire column</span>
 
@@ -246,62 +238,55 @@
 
             <span class="c1"># Generate FITS column</span>
 
-            <span class="c1"># By default a column does not have units, unless the content is an astropy.Quantity</span>
+            <span class="c1"># By default a column does not have units, unless the content is an</span>
+            <span class="c1"># astropy.Quantity</span>
 
             <span class="n">units</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
-
                 <span class="c1"># Probe the format</span>
 
                 <span class="k">try</span><span class="p">:</span>
-
                     <span class="c1"># Use the one already defined, if possible</span>
 
                     <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">column_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
 
                 <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-
-                    <span class="c1"># Try to infer it. Note that this could unwillingly upscale a float16 to a float32, for example</span>
+                    <span class="c1"># Try to infer it. Note that this could unwillingly upscale a</span>
+                    <span class="c1"># float16 to a float32, for example</span>
 
                     <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
 
                 <span class="c1"># check if this is a vector of quantities</span>
 
                 <span class="k">if</span> <span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-
                     <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="p">)</span>
 
                 <span class="c1"># Store the unit as text</span>
 
                 <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">test_value</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
-
-                <span class="c1"># Get maximum length, but make 1 as minimum length so if the column is completely made up of empty</span>
-                <span class="c1"># string we still can work</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="c1"># Get maximum length, but make 1 as minimum length so if the column is</span>
+                <span class="c1"># completely made up of empty string we still can work</span>
 
                 <span class="n">max_string_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
 
                 <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">A&quot;</span> <span class="o">%</span> <span class="n">max_string_length</span>
 
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">test_value</span><span class="p">):</span>
-
                 <span class="nb">format</span> <span class="o">=</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-
                 <span class="c1"># Probably a column array</span>
                 <span class="c1"># Check that we can convert it to a proper numpy type</span>
 
                 <span class="k">try</span><span class="p">:</span>
-
                     <span class="c1"># Get type of first number</span>
 
                     <span class="n">col_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
 
-                <span class="k">except</span><span class="p">:</span>
-
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                         <span class="s2">&quot;Could not understand type of column </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">column_name</span>
                     <span class="p">)</span>
@@ -310,35 +295,29 @@
                 <span class="k">assert</span> <span class="n">col_type</span> <span class="o">!=</span> <span class="nb">object</span> <span class="ow">and</span> <span class="n">col_type</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">object_</span>
 
                 <span class="k">try</span><span class="p">:</span>
-
                     <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="n">col_type</span><span class="p">)</span>
 
-                <span class="k">except</span><span class="p">:</span>
-
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                         <span class="s2">&quot;Column </span><span class="si">%s</span><span class="s2"> contain data which cannot be coerced to </span><span class="si">%s</span><span class="s2">&quot;</span>
                         <span class="o">%</span> <span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">col_type</span><span class="p">)</span>
                     <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="c1"># see if it is a string array</span>
 
                     <span class="k">if</span> <span class="n">test_value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bytes_</span><span class="p">:</span>
-
                         <span class="n">max_string_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span>
 
                         <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">A&quot;</span> <span class="o">%</span> <span class="n">max_string_length</span>
 
                     <span class="k">else</span><span class="p">:</span>
-
                         <span class="c1"># All good. Check the length</span>
                         <span class="c1"># NOTE: variable length arrays are not supported</span>
                         <span class="n">line_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span>
                         <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">line_length</span><span class="p">,</span> <span class="n">_NUMPY_TO_FITS_CODE</span><span class="p">[</span><span class="n">col_type</span><span class="p">])</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="c1"># Something we do not know</span>
 
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
@@ -361,26 +340,23 @@
         <span class="c1"># update the header to indicate that the file was created by 3ML</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;CREATOR&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;3ML v.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">),</span>
+            <span class="s2">&quot;3ML v.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)),</span>
             <span class="s2">&quot;(G.Vianello, giacomov@slac.stanford.edu)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">hdu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdu</span>
 
 <div class="viewcode-block" id="FITSExtension.from_fits_file_extension">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.fits_file.FITSExtension.from_fits_file_extension">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_fits_file_extension</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fits_extension</span><span class="p">):</span>
-
         <span class="n">data</span> <span class="o">=</span> <span class="n">fits_extension</span><span class="o">.</span><span class="n">data</span>
 
         <span class="n">data_tuple</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-
             <span class="n">data_tuple</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
 
         <span class="n">header_tuple</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fits_extension</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>

@@ -8,7 +8,7 @@
   <title>threeML.plugins.OGIPLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -113,6 +116,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.DispersionSpectrumLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">DispersionSpectrumLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.SpectrumLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpectrumLike</span>
@@ -143,9 +147,7 @@
         <span class="n">spectrum_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a DisperionSpectrumLike plugin from OGIP data. This is the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a DisperionSpectrumLike plugin from OGIP data. This is the</span>
 <span class="sd">        main plugin to use for &#39;XSPEC&#39; style data from FITS files.</span>
 
 <span class="sd">        Basic usage:</span>
@@ -182,7 +184,6 @@
 <span class="sd">        :param verbose:</span>
 <span class="sd">        :type verbose: bool</span>
 <span class="sd">        :returns:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Read the pha file (or the PHAContainer instance)</span>
@@ -191,9 +192,9 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;observation must be a FITS file name or PHASpectrum, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;observation must be a FITS file name or PHASpectrum, not &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
@@ -202,15 +203,14 @@
                 <span class="k">break</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;background must be a FITS file name, PHASpectrum, a Plugin or None, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">background</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;background must be a FITS file name, PHASpectrum, a Plugin or None, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">background</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">):</span>
-
             <span class="n">pha</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="p">(</span>
                 <span class="n">observation</span><span class="p">,</span>
                 <span class="n">spectrum_number</span><span class="o">=</span><span class="n">spectrum_number</span><span class="p">,</span>
@@ -220,46 +220,39 @@
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">pha</span> <span class="o">=</span> <span class="n">observation</span>
 
-        <span class="c1"># Get the required background file, response and (if present) arf_file either from the</span>
-        <span class="c1"># calling sequence or the file.</span>
-        <span class="c1"># NOTE: if one of the file is specified in the calling sequence, it will be used whether or not there is an</span>
-        <span class="c1"># equivalent specification in the header. This allows the user to override the content of the header of the</span>
-        <span class="c1"># PHA file, if needed</span>
+        <span class="c1"># Get the required background file, response and (if present) arf_file either</span>
+        <span class="c1"># from the calling sequence or the file.</span>
+        <span class="c1"># NOTE: if one of the file is specified in the calling sequence, it will be used</span>
+        <span class="c1"># whether or not there is an equivalent specification in the header. This allows</span>
+        <span class="c1"># the user to override the content of the header of the PHA file, if needed</span>
 
         <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has no bkg set&quot;</span><span class="p">)</span>
 
             <span class="n">background</span> <span class="o">=</span> <span class="n">pha</span><span class="o">.</span><span class="n">background_file</span>
 
             <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using background from FIT header: </span><span class="si">{</span><span class="n">background</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="c1"># assert background is not None, &quot;No background file provided, and the PHA file does not specify one.&quot;</span>
+            <span class="c1"># assert background is not None, &quot;No background file provided, and the PHA</span>
+            <span class="c1"># file does not specify one.&quot;</span>
 
-        <span class="c1"># Get a PHA instance with the background, we pass the response to get the energy bounds in the</span>
-        <span class="c1"># histogram constructor. It is not saved to the background class</span>
+        <span class="c1"># Get a PHA instance with the background, we pass the response to get the energy</span>
+        <span class="c1"># bounds in the histogram constructor. It is not saved to the background class</span>
 
         <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="c1"># in the case there is no background file</span>
 
             <span class="n">bak</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">background</span><span class="p">,</span> <span class="n">XYLike</span>
-        <span class="p">):</span>
-
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">SpectrumLike</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">XYLike</span><span class="p">):</span>
             <span class="c1"># this will be a background</span>
 
             <span class="n">bak</span> <span class="o">=</span> <span class="n">background</span>
 
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">PHASpectrum</span><span class="p">):</span>
-
             <span class="n">bak</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="p">(</span>
                 <span class="n">background</span><span class="p">,</span>
                 <span class="n">spectrum_number</span><span class="o">=</span><span class="n">spectrum_number</span><span class="p">,</span>
@@ -268,11 +261,10 @@
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">bak</span> <span class="o">=</span> <span class="n">background</span>
 
-        <span class="c1"># we do not need to pass the response as it is contained in the observation (pha) spectrum</span>
-        <span class="c1"># already.</span>
+        <span class="c1"># we do not need to pass the response as it is contained in the observation</span>
+        <span class="c1"># (pha) spectrum already.</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">OGIPLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="n">pha</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bak</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
@@ -283,9 +275,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_dataset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spectrum_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OGIPLike&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the</span>
-<span class="sd">        model, as well as from the background (depending on the respective noise models)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns another OGIPLike instance where data have been obtained by</span>
+<span class="sd">        randomizing the current expectation from the model, as well as from the</span>
+<span class="sd">        background (depending on the respective noise models)</span>
 
 <span class="sd">        :param new_name: name of the simulated plugin</span>
 <span class="sd">        :param spectrum_number: spectrum number (default is 1)</span>
@@ -304,7 +296,6 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">grouping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed_spectrum</span><span class="o">.</span><span class="n">grouping</span>
 
 <div class="viewcode-block" id="OGIPLike.write_pha">
@@ -315,14 +306,11 @@
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">force_rsp_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a pha file of the current pha selections</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a pha file of the current pha selections.</span>
 
 <span class="sd">        :param file_name: output file name (excluding extension)</span>
 <span class="sd">        :param overwrite: overwrite the files</span>
 <span class="sd">        :param force_rsp_write: for an rsp to be saved</span>
-
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -350,7 +338,7 @@
 
         <span class="n">this_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">this_out</span><span class="p">)</span>
 
-        <span class="c1">#return this_df.append(superout)</span>
+        <span class="c1"># return this_df.append(superout)</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">this_df</span><span class="p">,</span> <span class="n">superout</span><span class="p">])</span>
 
 <div class="viewcode-block" id="OGIPLike.from_general_dispersion_spectrum">
@@ -358,10 +346,8 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_general_dispersion_spectrum</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dispersion_like</span><span class="p">):</span>
         <span class="c1"># type: (DispersionSpectrumLike) -&gt; OGIPLike</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Build on OGIPLike from a dispersion like.</span>
-<span class="sd">        This makes it easy to write a dispersion like to a</span>
-<span class="sd">        pha file</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build on OGIPLike from a dispersion like. This makes it easy to</span>
+<span class="sd">        write a dispersion like to a pha file.</span>
 
 <span class="sd">        :param dispersion_like:</span>
 <span class="sd">        :return:</span>
@@ -371,11 +357,9 @@
         <span class="n">observed</span> <span class="o">=</span> <span class="n">pha_files</span><span class="p">[</span><span class="s2">&quot;pha&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="s2">&quot;bak&quot;</span> <span class="ow">in</span> <span class="n">pha_files</span><span class="p">:</span>
-
             <span class="n">background</span> <span class="o">=</span> <span class="n">pha_files</span><span class="p">[</span><span class="s2">&quot;bak&quot;</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">background</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">observed_pha</span> <span class="o">=</span> <span class="n">PHASpectrum</span><span class="o">.</span><span class="n">from_dispersion_spectrum</span><span class="p">(</span>
@@ -385,7 +369,6 @@
         <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">background_pha</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-
             <span class="c1"># we need to pass the response from the observations</span>
             <span class="c1"># to figure out the bounds of the background</span>
 

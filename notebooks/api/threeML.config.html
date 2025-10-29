@@ -9,7 +9,7 @@
   <title>threeML.config package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -82,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -400,11 +403,10 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.config_structure.LoggingLevel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.config_structure.</span></span><span class="sig-name descname"><span class="pre">LoggingLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/config_structure.html#LoggingLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.config_structure.LoggingLevel" title="Link to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.config_structure.</span></span><span class="sig-name descname"><span class="pre">LoggingLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/config_structure.html#LoggingLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.config_structure.LoggingLevel" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
-<p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.config_structure.LoggingLevel.CRITICAL">
 <span class="sig-name descname"><span class="pre">CRITICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50</span></em><a class="headerlink" href="#threeML.config.config_structure.LoggingLevel.CRITICAL" title="Link to this definition"></a>
@@ -482,7 +484,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.config.config_utils.</span></span><span class="sig-name descname"><span class="pre">get_current_configuration_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'threeML_config.yml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/config_utils.html#get_current_configuration_copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.config_utils.get_current_configuration_copy" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>write a copy of the CURRENT configuration to the config directory</p>
+<p>Write a copy of the CURRENT configuration to the config directory.</p>
 </dd>
 </dl>
 
@@ -491,7 +493,8 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.config.config_utils.</span></span><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">par_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/config_utils.html#get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.config_utils.get_value" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Get the value for a parameter. If value is None returns the config value.
+<p>Get the value for a parameter.</p>
+<p>If value is None returns the config value.
 :param name: Name of parameter
 :param user_value: user value (can be None if no value given)
 :param par_type: Type of the paramter
@@ -505,13 +508,25 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.config.config_utils.</span></span><span class="sig-name descname"><span class="pre">get_value_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">par_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/config_utils.html#get_value_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.config_utils.get_value_kwargs" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Read the value of a parameter from the kwargs or the config if it does not exist
-in the kwargs.
-:param name: Name of parameter in kwargs
-:param par_type: Type of the parameter
-:param config_value: Value in the config
-:param kwargs:
-:returns: value of parameter, rest of kwargs</p>
+<p>Read the value of a parameter from the kwargs or the config if it does
+not exist in the kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>name</strong> – Name of parameter in kwargs</p></li>
+<li><p><strong>par_type</strong> – Type of the parameter</p></li>
+<li><p><strong>config_value</strong> – Value in the config</p></li>
+<li><p><strong>kwargs</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>value of parameter, rest of kwargs</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -527,8 +542,7 @@ in the kwargs.
 <span class="sig-prename descclassname"><span class="pre">threeML.config.config_utils.</span></span><span class="sig-name descname"><span class="pre">show_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sub_menu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/config_utils.html#show_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.config_utils.show_configuration" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>display the current configuration or a sub menu if
-provided</p>
+<p>Display the current configuration or a sub menu if provided.</p>
 </dd>
 </dl>
 
@@ -703,11 +717,10 @@ provided</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Optimizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/fitting_structure.html#Optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer" title="Link to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/fitting_structure.html#Optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Optimizer.ROOT">
 <span class="sig-name descname"><span class="pre">ROOT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ROOT'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Optimizer.ROOT" title="Link to this definition"></a>
@@ -734,11 +747,10 @@ provided</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/fitting_structure.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Sampler" title="Link to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.fitting_structure.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/fitting_structure.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.fitting_structure.Sampler" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.fitting_structure.Sampler.autoemcee">
 <span class="sig-name descname"><span class="pre">autoemcee</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autoemcee'</span></em><a class="headerlink" href="#threeML.config.fitting_structure.Sampler.autoemcee" title="Link to this definition"></a>
@@ -1238,11 +1250,10 @@ provided</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.plotting_structure.</span></span><span class="sig-name descname"><span class="pre">MPLCmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap" title="Link to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.plotting_structure.</span></span><span class="sig-name descname"><span class="pre">MPLCmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.Accent">
 <span class="sig-name descname"><span class="pre">Accent</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Accent'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.Accent" title="Link to this definition"></a>
@@ -1358,6 +1369,13 @@ provided</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.Grays">
 <span class="sig-name descname"><span class="pre">Grays</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Grays'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.Grays" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.Grays_r">
+<span class="sig-name descname"><span class="pre">Grays_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Grays_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.Grays_r" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -1797,6 +1815,20 @@ provided</p>
 </dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.berlin">
+<span class="sig-name descname"><span class="pre">berlin</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'berlin'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.berlin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.berlin_r">
+<span class="sig-name descname"><span class="pre">berlin_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'berlin_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.berlin_r" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.binary">
 <span class="sig-name descname"><span class="pre">binary</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'binary'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.binary" title="Link to this definition"></a>
 </dt>
@@ -1972,6 +2004,13 @@ provided</p>
 </dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.gist_grey_r">
+<span class="sig-name descname"><span class="pre">gist_grey_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gist_grey_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.gist_grey_r" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.gist_heat">
 <span class="sig-name descname"><span class="pre">gist_heat</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gist_heat'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.gist_heat" title="Link to this definition"></a>
 </dt>
@@ -2049,6 +2088,13 @@ provided</p>
 </dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.gist_yerg_r">
+<span class="sig-name descname"><span class="pre">gist_yerg_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gist_yerg_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.gist_yerg_r" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.gnuplot">
 <span class="sig-name descname"><span class="pre">gnuplot</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gnuplot'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.gnuplot" title="Link to this definition"></a>
 </dt>
@@ -2093,6 +2139,13 @@ provided</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.grey">
 <span class="sig-name descname"><span class="pre">grey</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'grey'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.grey" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.grey_r">
+<span class="sig-name descname"><span class="pre">grey_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'grey_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.grey_r" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -2163,6 +2216,20 @@ provided</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.magma_r">
 <span class="sig-name descname"><span class="pre">magma_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'magma_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.magma_r" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.managua">
+<span class="sig-name descname"><span class="pre">managua</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'managua'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.managua" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.managua_r">
+<span class="sig-name descname"><span class="pre">managua_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'managua_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.managua_r" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -2401,6 +2468,20 @@ provided</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.twilight_shifted_r">
 <span class="sig-name descname"><span class="pre">twilight_shifted_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'twilight_shifted_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.twilight_shifted_r" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.vanimo">
+<span class="sig-name descname"><span class="pre">vanimo</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'vanimo'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.vanimo" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.config.plotting_structure.MPLCmap.vanimo_r">
+<span class="sig-name descname"><span class="pre">vanimo_r</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'vanimo_r'</span></em><a class="headerlink" href="#threeML.config.plotting_structure.MPLCmap.vanimo_r" title="Link to this definition"></a>
 </dt>
 <dd></dd>
 </dl>
@@ -2788,11 +2869,10 @@ provided</p>
 </h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="threeML.config.point_source_structure.IntegrateMethod">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.point_source_structure.</span></span><span class="sig-name descname"><span class="pre">IntegrateMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/point_source_structure.html#IntegrateMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.point_source_structure.IntegrateMethod" title="Link to this definition"></a>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threeML.config.point_source_structure.</span></span><span class="sig-name descname"><span class="pre">IntegrateMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/config/point_source_structure.html#IntegrateMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.config.point_source_structure.IntegrateMethod" title="Link to this definition"></a>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
-<p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.config.point_source_structure.IntegrateMethod.quad">
 <span class="sig-name descname"><span class="pre">quad</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#threeML.config.point_source_structure.IntegrateMethod.quad" title="Link to this definition"></a>

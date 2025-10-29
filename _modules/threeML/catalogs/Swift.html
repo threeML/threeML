@@ -8,7 +8,7 @@
   <title>threeML.catalogs.Swift &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -118,31 +121,26 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">astro_table</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">future</span><span class="w"> </span><span class="kn">import</span> <span class="n">standard_library</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.catalogs.VirtualObservatoryCatalog</span><span class="w"> </span><span class="kn">import</span> \
-    <span class="n">VirtualObservatoryCatalog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.catalogs.VirtualObservatoryCatalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualObservatoryCatalog</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.get_heasarc_table_as_pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_heasarc_table_as_pandas</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.rich_display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 
-<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
-
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">_gcn_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^\d</span><span class="si">{4}</span><span class="s2">GCN\D?\.*(\d*)\.*\d\D$&quot;</span><span class="p">)</span>
-<span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;^GRB \d</span><span class="si">{6}</span><span class="s2">[A-Z]$&quot;</span><span class="p">)</span>
+<span class="n">_gcn_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d</span><span class="si">{4}</span><span class="s2">GCN\D?\.*(\d*)\.*\d\D$&quot;</span><span class="p">)</span>
+<span class="n">_trigger_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^GRB \d</span><span class="si">{6}</span><span class="s2">[A-Z]$&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="SwiftGRBCatalog">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SwiftGRBCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The Swift GRB catalog. Search for GRBs  by trigger</span>
-<span class="sd">        number, location,  T90, and date range.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Swift GRB catalog. Search for GRBs  by trigger number, location,</span>
+<span class="sd">        T90, and date range.</span>
 
 <span class="sd">        :param update: force update the XML VO table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -183,13 +181,11 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_vo_table_from_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span> <span class="o">=</span> <span class="n">get_heasarc_table_as_pandas</span><span class="p">(</span>
             <span class="s2">&quot;swiftgrb&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">,</span> <span class="n">cache_time_days</span><span class="o">=</span><span class="mf">1.0</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_source_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-
         <span class="n">warn_string</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;The trigger </span><span class="si">%s</span><span class="s2"> is not valid. Must be in the form GRB080916009&quot;</span> <span class="o">%</span> <span class="n">source</span>
         <span class="p">)</span>
@@ -197,20 +193,17 @@
         <span class="n">match</span> <span class="o">=</span> <span class="n">_trigger_name_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_string</span><span class="p">)</span>
 
             <span class="n">answer</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">answer</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="n">answer</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_other_obs_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        builds a list of all the other instruments that observed Swift GRBs</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds a list of all the other instruments that observed Swift GRBs.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -233,16 +226,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">other_observing_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.query_other_observing_instruments">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">query_other_observing_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">instruments</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        search for observations that were also seen by the requested instrument.</span>
-<span class="sd">        to see what instruments are available, use the .other_observing_instruments call</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search for observations that were also seen by the requested</span>
+<span class="sd">        instrument. to see what instruments are available, use the</span>
+<span class="sd">        .other_observing_instruments call.</span>
 
 <span class="sd">        :param instruments: other instruments</span>
 <span class="sd">        :return:</span>
@@ -251,15 +242,15 @@
         <span class="n">all_queries</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">instrument</span> <span class="ow">in</span> <span class="n">instruments</span><span class="p">:</span>
-
-            <span class="k">assert</span> <span class="n">instrument</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;Other instrument choices include </span><span class="si">%s</span><span class="s2">&quot;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="s2">&quot; ,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">instrument</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span>
+            <span class="p">),</span> <span class="s2">&quot;Other instrument choices include </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="s2">&quot; ,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span><span class="p">)</span>
             <span class="p">)</span>
 
             <span class="n">query_string</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s1">&#39; other_obs == &quot;</span><span class="si">%s</span><span class="s1">&quot; | other_obs2 == &quot;</span><span class="si">%s</span><span class="s1">&quot; |other_obs3 == &quot;</span><span class="si">%s</span><span class="s1">&quot; |other_obs4 == &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span>
-                <span class="o">%</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">instrument</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="s1">&#39; other_obs == &quot;</span><span class="si">%s</span><span class="s1">&quot; | other_obs2 == &quot;</span><span class="si">%s</span><span class="s1">&quot; |other_obs3 == &quot;</span><span class="si">%s</span><span class="s1">&quot; &#39;</span>
+                <span class="s1">&#39;|other_obs4 == &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">instrument</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
             <span class="p">)</span>
 
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vo_dataframe</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_string</span><span class="p">)</span>
@@ -270,8 +261,7 @@
 
             <span class="n">table</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">query_results</span><span class="p">)</span>
 
-            <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">name_column</span> <span class="o">=</span> <span class="n">astro_table</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">query_results</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
             <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
@@ -283,11 +273,9 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_fermiGBM_trigger_number_from_gcn</span><span class="p">(</span><span class="n">gcn_url</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        this is a custom function that parses GBM GCNs to find the burst number</span>
-<span class="sd">        that can later be used to download GBM data. It contains a lot of regex statements</span>
-<span class="sd">        to handle the variability in the GCNs</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is a custom function that parses GBM GCNs to find the burst</span>
+<span class="sd">        number that can later be used to download GBM data. It contains a lot</span>
+<span class="sd">        of regex statements to handle the variability in the GCNs.</span>
 
 <span class="sd">        :param gcn_url: url to gbm gcn</span>
 <span class="sd">        :return:</span>
@@ -298,76 +286,62 @@
         <span class="n">data_decode</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-
             <span class="k">try</span><span class="p">:</span>
-
                 <span class="n">tmp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
 
                 <span class="n">data_decode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 
-            <span class="k">except</span> <span class="p">(</span><span class="ne">UnicodeDecodeError</span><span class="p">):</span>
-
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_decode</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-
             <span class="n">trigger_number</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;trigger *\d* */ *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+                <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;trigger *\d* */ *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
-
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-
                 <span class="n">trigger_number</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-                        <span class="s2">&quot;GBM *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">), *trigger *\d*&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+                    <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;GBM *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">), *trigger *\d*&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
 
-            <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
-
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-
                     <span class="n">trigger_number</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-                            <span class="s2">&quot;trigger *\d* *, *trigcat *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">string</span>
+                            <span class="sa">r</span><span class="s2">&quot;trigger *\d* *, *trigcat *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">string</span>
                         <span class="p">)</span>
                         <span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                         <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                     <span class="p">)</span>
 
-                <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
-
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
-
                         <span class="n">trigger_number</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-                                <span class="s2">&quot;trigger *.* */ *\D{0,3}(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">string</span>
+                                <span class="sa">r</span><span class="s2">&quot;trigger *.* */ *\D{0,3}(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">string</span>
                             <span class="p">)</span>
                             <span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                             <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                         <span class="p">)</span>
 
-                    <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
-
+                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                         <span class="k">try</span><span class="p">:</span>
-
                             <span class="n">trigger_number</span> <span class="o">=</span> <span class="p">(</span>
                                 <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-                                    <span class="s2">&quot;Trigger number*.* */ *GRB *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                                    <span class="sa">r</span><span class="s2">&quot;Trigger number*.* */ *GRB *(\d</span><span class="si">{9}</span><span class="s2">|\d</span><span class="si">{6}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)&quot;</span><span class="p">,</span>
                                     <span class="n">string</span><span class="p">,</span>
                                 <span class="p">)</span>
                                 <span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                                 <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                             <span class="p">)</span>
 
-                        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
-
+                        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                             <span class="n">trigger_number</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">trigger_number</span>
@@ -375,9 +349,10 @@
 <div class="viewcode-block" id="SwiftGRBCatalog.get_other_observation_information">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_other_observation_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,</span>
-<span class="sd">        their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-LAT-GBM.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a structured pandas table containing the other observing</span>
+<span class="sd">        instruments, their GCNs and if obtainable, their trigger numbers/ data</span>
+<span class="sd">        identifiers. Currently, the trigger number is only obtained for Fermi-</span>
+<span class="sd">        LAT-GBM.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -390,35 +365,28 @@
         <span class="n">sources</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
             <span class="c1"># First we want to get the the detectors used in the SCAT file</span>
 
             <span class="n">obs_instrument</span> <span class="o">=</span> <span class="p">{}</span>
 
             <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xrt&quot;</span><span class="p">,</span> <span class="s2">&quot;uvot&quot;</span><span class="p">,</span> <span class="s2">&quot;bat&quot;</span><span class="p">,</span> <span class="s2">&quot;opt&quot;</span><span class="p">,</span> <span class="s2">&quot;radio&quot;</span><span class="p">]:</span>
-
                 <span class="n">obs_detection</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_detection&quot;</span> <span class="o">%</span> <span class="n">obs</span>
 
                 <span class="k">if</span> <span class="n">obs</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xrt&quot;</span><span class="p">,</span> <span class="s2">&quot;uvot&quot;</span><span class="p">,</span> <span class="s2">&quot;bat&quot;</span><span class="p">]:</span>
-
                     <span class="n">obs_ref</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_pos_ref&quot;</span> <span class="o">%</span> <span class="n">obs</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="n">obs_ref</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_ref&quot;</span> <span class="o">%</span> <span class="n">obs</span>
 
                 <span class="n">detect</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">obs_detection</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">detect</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>  <span class="c1"># or detect== &#39;U&#39;:</span>
-
                     <span class="n">observed</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="n">observed</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">if</span> <span class="n">observed</span><span class="p">:</span>
-
                     <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_redshift_reference</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">obs_ref</span><span class="p">])</span>
 
                     <span class="c1"># gcn = &quot;https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3&quot; % gcn_number</span>
@@ -426,7 +394,6 @@
                     <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="n">reference</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">:</span> <span class="n">detect</span><span class="p">}</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;GCN&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;observed&quot;</span><span class="p">:</span> <span class="n">detect</span><span class="p">}</span>
 
                 <span class="n">obs_instrument</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
@@ -443,9 +410,9 @@
 <div class="viewcode-block" id="SwiftGRBCatalog.get_other_instrument_information">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_other_instrument_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the detectors used for spectral analysis as well as their background</span>
-<span class="sd">        intervals. Peak flux and fluence intervals are also returned as well as best fit models</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the detectors used for spectral analysis as well as their</span>
+<span class="sd">        background intervals. Peak flux and fluence intervals are also returned</span>
+<span class="sd">        as well as best fit models.</span>
 
 <span class="sd">        :return: observing information dataframe indexed by source</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -457,18 +424,14 @@
         <span class="n">sources</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_query_results</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
             <span class="n">obs_instrument</span> <span class="o">=</span> <span class="p">{}</span>
 
             <span class="c1"># loop over the observation indices</span>
             <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
-
                 <span class="k">if</span> <span class="n">obs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-
                     <span class="n">obs_base</span> <span class="o">=</span> <span class="s2">&quot;other_obs&quot;</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="n">obs_base</span> <span class="o">=</span> <span class="s2">&quot;other_obs</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obs</span>
 
                 <span class="n">obs_ref</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_ref&quot;</span> <span class="o">%</span> <span class="n">obs_base</span>
@@ -477,15 +440,12 @@
 
                 <span class="c1"># this means that nothing in this column saw the grb</span>
                 <span class="k">if</span> <span class="n">obs</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-
                     <span class="n">observed</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">else</span><span class="p">:</span>
-
                     <span class="n">observed</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="k">if</span> <span class="n">observed</span><span class="p">:</span>
-
                     <span class="c1"># if we saw it then lets get the GCN</span>
                     <span class="n">gcn_number</span> <span class="o">=</span> <span class="n">_gcn_match</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">obs_ref</span><span class="p">])</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                     <span class="c1"># gcn_number = filter(lambda x: x != &#39;&#39;, row[obs_ref].split(&#39;.&#39;))[1]</span>
@@ -496,17 +456,14 @@
                     <span class="c1"># just for Fermi GBM, lets get the trigger number</span>
 
                     <span class="c1"># TODO: add more instruments</span>
+                    <span class="n">tn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fermiGBM_trigger_number_from_gcn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">gcn</span><span class="p">))</span>
                     <span class="k">if</span> <span class="n">obs</span> <span class="o">==</span> <span class="s2">&quot;Fermi-GBM&quot;</span><span class="p">:</span>
-
                         <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
                             <span class="s2">&quot;GCN&quot;</span><span class="p">:</span> <span class="n">gcn</span><span class="p">,</span>
-                            <span class="s2">&quot;trigger number&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fermiGBM_trigger_number_from_gcn</span><span class="p">(</span>
-                                <span class="nb">str</span><span class="p">(</span><span class="n">gcn</span><span class="p">)</span>
-                            <span class="p">),</span>
+                            <span class="s2">&quot;trigger number&quot;</span><span class="p">:</span> <span class="n">tn</span><span class="p">,</span>
                         <span class="p">}</span>
 
                     <span class="k">else</span><span class="p">:</span>
-
                         <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;GCN&quot;</span><span class="p">:</span> <span class="n">gcn</span><span class="p">,</span> <span class="s2">&quot;trigger number&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
                     <span class="n">obs_instrument</span><span class="p">[</span><span class="n">obs</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
@@ -526,9 +483,7 @@
 <div class="viewcode-block" id="SwiftGRBCatalog.get_redshift">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the redshift and redshift type from the searched sources</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the redshift and redshift type from the searched sources.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -561,9 +516,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_redshift_reference</span><span class="p">(</span><span class="n">reference</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="n">reference</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-
             <span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">elif</span> <span class="s2">&quot;GCN&quot;</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
@@ -572,7 +525,6 @@
             <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://gcn.gsfc.nasa.gov/gcn3/</span><span class="si">%s</span><span class="s2">.gcn3&quot;</span> <span class="o">%</span> <span class="n">gcn_number</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://adsabs.harvard.edu/abs/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">reference</span>
 
         <span class="k">return</span> <span class="n">url</span></div>

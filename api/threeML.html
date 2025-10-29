@@ -9,7 +9,7 @@
   <title>threeML package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -175,6 +178,7 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.bayesian.dynesty_sampler.html#threeML.bayesian.dynesty_sampler.DynestyPool.map"><code class="docutils literal notranslate"><span class="pre">DynestyPool.map()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.bayesian.dynesty_sampler.html#threeML.bayesian.dynesty_sampler.fill_docs"><code class="docutils literal notranslate"><span class="pre">fill_docs()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3">
@@ -727,6 +731,7 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.GnBu"><code class="docutils literal notranslate"><span class="pre">MPLCmap.GnBu</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.GnBu_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.GnBu_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.Grays"><code class="docutils literal notranslate"><span class="pre">MPLCmap.Grays</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.Grays_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.Grays_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.Greens"><code class="docutils literal notranslate"><span class="pre">MPLCmap.Greens</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.Greens_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.Greens_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.Greys"><code class="docutils literal notranslate"><span class="pre">MPLCmap.Greys</span></code></a></li>
@@ -789,6 +794,8 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.afmhot_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.afmhot_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.autumn"><code class="docutils literal notranslate"><span class="pre">MPLCmap.autumn</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.autumn_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.autumn_r</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.berlin"><code class="docutils literal notranslate"><span class="pre">MPLCmap.berlin</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.berlin_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.berlin_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.binary"><code class="docutils literal notranslate"><span class="pre">MPLCmap.binary</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.binary_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.binary_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.bone"><code class="docutils literal notranslate"><span class="pre">MPLCmap.bone</span></code></a></li>
@@ -814,6 +821,7 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_gray"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_gray</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_gray_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_gray_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_grey"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_grey</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_grey_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_grey_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_heat"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_heat</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_heat_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_heat_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_ncar"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_ncar</span></code></a></li>
@@ -825,6 +833,7 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_yarg"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_yarg</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_yarg_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_yarg_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_yerg"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_yerg</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gist_yerg_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gist_yerg_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gnuplot"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gnuplot</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gnuplot2"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gnuplot2</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gnuplot2_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gnuplot2_r</span></code></a></li>
@@ -832,6 +841,7 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gray"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gray</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.gray_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.gray_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.grey"><code class="docutils literal notranslate"><span class="pre">MPLCmap.grey</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.grey_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.grey_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.hot"><code class="docutils literal notranslate"><span class="pre">MPLCmap.hot</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.hot_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.hot_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.hsv"><code class="docutils literal notranslate"><span class="pre">MPLCmap.hsv</span></code></a></li>
@@ -842,6 +852,8 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.jet_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.jet_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.magma"><code class="docutils literal notranslate"><span class="pre">MPLCmap.magma</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.magma_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.magma_r</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.managua"><code class="docutils literal notranslate"><span class="pre">MPLCmap.managua</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.managua_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.managua_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.nipy_spectral"><code class="docutils literal notranslate"><span class="pre">MPLCmap.nipy_spectral</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.nipy_spectral_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.nipy_spectral_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.ocean"><code class="docutils literal notranslate"><span class="pre">MPLCmap.ocean</span></code></a></li>
@@ -876,6 +888,8 @@
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.twilight_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.twilight_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.twilight_shifted"><code class="docutils literal notranslate"><span class="pre">MPLCmap.twilight_shifted</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.twilight_shifted_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.twilight_shifted_r</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.vanimo"><code class="docutils literal notranslate"><span class="pre">MPLCmap.vanimo</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.vanimo_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.vanimo_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.viridis"><code class="docutils literal notranslate"><span class="pre">MPLCmap.viridis</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.viridis_r"><code class="docutils literal notranslate"><span class="pre">MPLCmap.viridis_r</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="threeML.config.plotting_structure.html#threeML.config.plotting_structure.MPLCmap.winter"><code class="docutils literal notranslate"><span class="pre">MPLCmap.winter</span></code></a></li>
@@ -1716,7 +1730,19 @@
 <li class="toctree-l4"><a class="reference internal" href="threeML.test.test_XYLike.html#threeML.test.test_XYLike.test_xy_plot"><code class="docutils literal notranslate"><span class="pre">test_xy_plot()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.test.test_analysis_results.html">threeML.test.test_analysis_results module</a></li>
+<li class="toctree-l3">
+<a class="reference internal" href="threeML.test.test_analysis_results.html">threeML.test.test_analysis_results module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_analysis_results_input_output"><code class="docutils literal notranslate"><span class="pre">test_analysis_results_input_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_analysis_results_input_output_hdf"><code class="docutils literal notranslate"><span class="pre">test_analysis_results_input_output_hdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_analysis_set_input_output"><code class="docutils literal notranslate"><span class="pre">test_analysis_set_input_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_analysis_set_input_output_hdf"><code class="docutils literal notranslate"><span class="pre">test_analysis_set_input_output_hdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_bayesian_input_output"><code class="docutils literal notranslate"><span class="pre">test_bayesian_input_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_conversion_fits2hdf"><code class="docutils literal notranslate"><span class="pre">test_conversion_fits2hdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_corner_plotting"><code class="docutils literal notranslate"><span class="pre">test_corner_plotting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_error_propagation"><code class="docutils literal notranslate"><span class="pre">test_error_propagation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_analysis_results.html#threeML.test.test_analysis_results.test_one_free_parameter_input_output"><code class="docutils literal notranslate"><span class="pre">test_one_free_parameter_input_output()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_basic.html">threeML.test.test_basic module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_bayesian.html">threeML.test.test_bayesian module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_catalogs.html">threeML.test.test_catalogs module</a></li>
@@ -1724,7 +1750,13 @@
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_download_GBM_data.html">threeML.test.test_download_GBM_data module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_download_LAT_data.html">threeML.test.test_download_LAT_data module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_event_list.html">threeML.test.test_event_list module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.test.test_file_utils.html">threeML.test.test_file_utils module</a></li>
+<li class="toctree-l3">
+<a class="reference internal" href="threeML.test.test_file_utils.html">threeML.test.test_file_utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_file_utils.html#threeML.test.test_file_utils.test_directory_check"><code class="docutils literal notranslate"><span class="pre">test_directory_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_file_utils.html#threeML.test.test_file_utils.test_file_check"><code class="docutils literal notranslate"><span class="pre">test_file_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_file_utils.html#threeML.test.test_file_utils.test_sanatize"><code class="docutils literal notranslate"><span class="pre">test_sanatize()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_fits_file.html">threeML.test.test_fits_file module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_fitted_point_sources.html">threeML.test.test_fitted_point_sources module</a></li>
 <li class="toctree-l3">
@@ -1738,7 +1770,11 @@
 <li class="toctree-l4"><a class="reference internal" href="threeML.test.test_get_package_data.html#threeML.test.test_get_package_data.test_get_package_data"><code class="docutils literal notranslate"><span class="pre">test_get_package_data()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.test.test_goodness_of_fit.html">threeML.test.test_goodness_of_fit module</a></li>
+<li class="toctree-l3">
+<a class="reference internal" href="threeML.test.test_goodness_of_fit.html">threeML.test.test_goodness_of_fit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_goodness_of_fit.html#threeML.test.test_goodness_of_fit.test_goodness_of_fit"><code class="docutils literal notranslate"><span class="pre">test_goodness_of_fit()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_hawc.html">threeML.test.test_hawc module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_histogram.html">threeML.test.test_histogram module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_joint_likelihood_set.html">threeML.test.test_joint_likelihood_set module</a></li>
@@ -1757,7 +1793,11 @@
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_response.html">threeML.test.test_response module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_spectrum_class.html">threeML.test.test_spectrum_class module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_spectrumlike.html">threeML.test.test_spectrumlike module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.test.test_time_energy_fit.html">threeML.test.test_time_energy_fit module</a></li>
+<li class="toctree-l3">
+<a class="reference internal" href="threeML.test.test_time_energy_fit.html">threeML.test.test_time_energy_fit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="threeML.test.test_time_energy_fit.html#threeML.test.test_time_energy_fit.test_energy_time_fit"><code class="docutils literal notranslate"><span class="pre">test_energy_time_fit()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_time_interval.html">threeML.test.test_time_interval module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_time_series.html">threeML.test.test_time_series module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="threeML.test.test_unbinned_poisson_like.html">threeML.test.test_unbinned_poisson_like module</a></li>
@@ -2893,7 +2933,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">get_available_plugins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML.html#get_available_plugins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.get_available_plugins" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Print a list of available plugins</p>
+<p>Print a list of available plugins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -2916,7 +2956,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.</span></span><span class="sig-name descname"><span class="pre">is_plugin_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML.html#is_plugin_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.is_plugin_available" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Test whether the plugin for the provided instrument is available</p>
+<p>Test whether the plugin for the provided instrument is available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>

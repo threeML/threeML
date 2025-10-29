@@ -8,7 +8,7 @@
   <title>threeML.bayesian.autoemcee_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,33 +112,26 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.bayesian.autoemcee_sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.sampler_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnitCubeSampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-
     <span class="kn">import</span><span class="w"> </span><span class="nn">autoemcee</span>
 
-<span class="k">except</span><span class="p">:</span>
-
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">has_autoemcee</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">else</span><span class="p">:</span>
-
     <span class="n">has_autoemcee</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-
     <span class="c1"># see if we have mpi and/or are using parallel</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
@@ -147,10 +143,8 @@
         <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">except</span><span class="p">:</span>
-
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">using_mpi</span> <span class="o">=</span> <span class="kc">False</span>
 
 
@@ -164,37 +158,39 @@
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.autoemcee_sampler.AutoEmceeSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AutoEmceeSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="k">assert</span> <span class="n">has_autoemcee</span><span class="p">,</span> <span class="s2">&quot;You must install AutoEmcee to use this sampler&quot;</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">AutoEmceeSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AutoEmceeSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AutoEmceeSampler.setup">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.autoemcee_sampler.AutoEmceeSampler.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-            <span class="n">num_global_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
-            <span class="n">num_chains</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="n">num_walkers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">max_ncalls</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span>
-            <span class="n">max_improvement_loops</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="n">num_initial_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">min_autocorr_times</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">num_global_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">num_chains</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">num_walkers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_ncalls</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span>
+        <span class="n">max_improvement_loops</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">num_initial_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">min_autocorr_times</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sample until MCMC chains have converged.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sample until MCMC chains have converged.</span>
 
 <span class="sd">        The steps are:</span>
 
-<span class="sd">        1. Draw *num_global_samples* from prior. The highest *num_walkers* points are selected.</span>
+<span class="sd">        1. Draw *num_global_samples* from prior. The highest *num_walkers* points are</span>
+<span class="sd">            selected.</span>
 <span class="sd">        2. Set *num_steps* to *num_initial_steps*</span>
 <span class="sd">        3. Run *num_chains* MCMC ensembles for *num_steps* steps</span>
-<span class="sd">        4. For each walker chain, compute auto-correlation length (Convergence requires *num_steps*/autocorrelation length &gt; *min_autocorr_times*)</span>
-<span class="sd">        5. For each parameter, compute geweke convergence diagnostic (Convergence requires \|z\| &lt; 2)</span>
-<span class="sd">        6. For each ensemble, compute gelman-rubin rank convergence diagnostic (Convergence requires rhat&lt;1.2)</span>
+<span class="sd">        4. For each walker chain, compute auto-correlation length (Convergence requires</span>
+<span class="sd">            *num_steps*/autocorrelation length &gt; *min_autocorr_times*)</span>
+<span class="sd">        5. For each parameter, compute geweke convergence diagnostic (Convergence</span>
+<span class="sd">            requires \|z\| &lt; 2)</span>
+<span class="sd">        6. For each ensemble, compute gelman-rubin rank convergence diagnostic</span>
+<span class="sd">            (Convergence requires rhat&lt;1.2)</span>
 <span class="sd">        7. If converged, stop and return results.</span>
-<span class="sd">        8. Increase *num_steps* by 10, and repeat from (3) up to *max_improvement_loops* times.</span>
+<span class="sd">        8. Increase *num_steps* by 10, and repeat from (3) up to</span>
+<span class="sd">            *max_improvement_loops* times.</span>
 
 
 
@@ -216,12 +212,7 @@
 <span class="sd">            if positive, additionally require for convergence that the</span>
 <span class="sd">            number of samples is larger than the *min_autocorr_times*</span>
 <span class="sd">            times the autocorrelation length.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># log.debug(f&quot;Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, &quot;\</span>
-        <span class="c1">#           f&quot;chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}. &quot;\</span>
-        <span class="c1">#           f&quot;Other input: {kwargs}&quot;)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_global_samples</span> <span class="o">=</span> <span class="n">num_global_samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_chains</span> <span class="o">=</span> <span class="n">num_chains</span>
@@ -237,15 +228,11 @@
 <div class="viewcode-block" id="AutoEmceeSampler.sample">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.autoemcee_sampler.AutoEmceeSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        sample using the UltraNest numerical integration method</span>
-<span class="sd">        :rtype: </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the UltraNest numerical integration method :rtype:</span>
 
-<span class="sd">        :returns: </span>
-
+<span class="sd">        :returns:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
@@ -256,10 +243,7 @@
 
         <span class="n">param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-        <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_names</span><span class="p">)</span>
-
-        <span class="n">loglike</span><span class="p">,</span> <span class="n">autoemcee_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span>
-            <span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">loglike</span><span class="p">,</span> <span class="n">autoemcee_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_unitcube_posterior</span><span class="p">(</span><span class="n">return_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># We need to check if the MCMC</span>
         <span class="c1"># chains will have a place on</span>
@@ -267,46 +251,43 @@
         <span class="c1"># create one</span>
 
         <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;If you want to run ultranest in parallell you need to use an ad-hoc method&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;If you want to run ultranest in parallell you need to use an ad-hoc &quot;</span>
+                <span class="s2">&quot;method&quot;</span>
+            <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">sampler</span> <span class="o">=</span> <span class="n">autoemcee</span><span class="o">.</span><span class="n">ReactiveAffineInvariantSampler</span><span class="p">(</span>
                 <span class="n">param_names</span><span class="p">,</span>
                 <span class="n">loglike</span><span class="p">,</span>
                 <span class="n">transform</span><span class="o">=</span><span class="n">autoemcee_prior</span><span class="p">,</span>
                 <span class="n">vectorized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">sampler</span><span class="o">=</span><span class="s2">&quot;goodman-weare&quot;</span>
+                <span class="n">sampler</span><span class="o">=</span><span class="s2">&quot;goodman-weare&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start autoemcee run&quot;</span><span class="p">)</span>
-                <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_global_samples</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_num_chains</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_num_walkers</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_max_ncalls</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_max_improvement_loops</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_num_initial_steps</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_min_autocorr_times</span><span class="p">,</span>
-                            <span class="n">progress</span><span class="o">=</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span>
-
-
-                            <span class="p">)</span>
+                <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_global_samples</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_chains</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_walkers</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_max_ncalls</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_max_improvement_loops</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_num_initial_steps</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_min_autocorr_times</span><span class="p">,</span>
+                    <span class="n">progress</span><span class="o">=</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">,</span>
+                <span class="p">)</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;autoemcee run done&quot;</span><span class="p">)</span>
 
         <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">using_mpi</span><span class="p">:</span>
-
             <span class="c1"># if we are running in parallel and this is not the</span>
             <span class="c1"># first engine, then we want to wait and let everything finish</span>
 
             <span class="k">if</span> <span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-
                 <span class="c1"># let these guys take a break</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
@@ -314,35 +295,36 @@
                 <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="c1"># wait for a moment to allow it all to turn off</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
                 <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="n">process_fit</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">process_fit</span><span class="p">:</span>
 
-            <span class="n">results</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">results</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">sampler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">samplers</span><span class="p">])</span>
+                <span class="p">[</span>
+                    <span class="n">sampler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">samplers</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
 
             <span class="c1"># First we need the prior</span>
             <span class="n">log_prior</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">]</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">samplers</span><span class="p">])</span>
+                <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">.</span><span class="n">samplers</span><span class="p">]</span>
+            <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span> <span class="o">-</span> <span class="n">log_prior</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="kc">None</span>
-            
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_results</span><span class="p">()</span>

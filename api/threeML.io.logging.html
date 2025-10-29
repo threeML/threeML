@@ -9,7 +9,7 @@
   <title>threeML.io.logging module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -157,7 +160,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">activate_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#activate_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.activate_logs" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>re-activate silenced logs</p>
+<p>Re-activate silenced logs.</p>
 </dd>
 </dl>
 
@@ -166,7 +169,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">activate_progress_bars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#activate_progress_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.activate_progress_bars" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Turn on the progress bars</p>
+<p>Turn on the progress bars.</p>
 </dd>
 </dl>
 
@@ -175,7 +178,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">activate_warnings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#activate_warnings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.activate_warnings" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>supress warning messages in console and file usr logs</p>
+<p>Supress warning messages in console and file usr logs.</p>
 </dd>
 </dl>
 
@@ -184,7 +187,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">debug_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#debug_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.debug_mode" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>activate debug in the console</p>
+<p>Activate debug in the console.</p>
 </dd>
 </dl>
 
@@ -193,7 +196,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">get_path_of_log_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../_modules/threeML/io/logging.html#get_path_of_log_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.get_path_of_log_dir" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>get the path to the logging directory</p>
+<p>Get the path to the logging directory.</p>
 </dd>
 </dl>
 
@@ -202,7 +205,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">get_path_of_log_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../_modules/threeML/io/logging.html#get_path_of_log_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.get_path_of_log_file" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns the path of the log files</p>
+<p>Returns the path of the log files.</p>
 </dd>
 </dl>
 
@@ -218,7 +221,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">loud_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#loud_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.loud_mode" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>turn on all progress bars and logging</p>
+<p>Turn on all progress bars and logging.</p>
 </dd>
 </dl>
 
@@ -227,7 +230,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">quiet_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#quiet_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.quiet_mode" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>turn off all logging and progress bars</p>
+<p>Turn off all logging and progress bars.</p>
 </dd>
 </dl>
 
@@ -243,7 +246,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_console_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">and_progress_bars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#silence_console_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_console_log" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>temporarily silence the console and progress bars</p>
+<p>Temporarily silence the console and progress bars.</p>
 </dd>
 </dl>
 
@@ -252,7 +255,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#silence_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_logs" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Turn off all logging</p>
+<p>Turn off all logging.</p>
 </dd>
 </dl>
 
@@ -261,7 +264,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_progress_bars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#silence_progress_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_progress_bars" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Turn off the progress bars</p>
+<p>Turn off the progress bars.</p>
 </dd>
 </dl>
 
@@ -270,7 +273,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_warnings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#silence_warnings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_warnings" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>supress warning messages in console and file usr logs</p>
+<p>Supress warning messages in console and file usr logs.</p>
 </dd>
 </dl>
 
@@ -279,7 +282,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">toggle_progress_bars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#toggle_progress_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.toggle_progress_bars" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>toggle the state of the progress bars</p>
+<p>Toggle the state of the progress bars.</p>
 </dd>
 </dl>
 
@@ -288,7 +291,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">update_logging_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/io/logging.html#update_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.update_logging_level" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>update the logging level to the console</p>
+<p>Update the logging level to the console.</p>
 </dd>
 </dl>
 

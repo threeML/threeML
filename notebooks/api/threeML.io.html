@@ -9,7 +9,7 @@
   <title>threeML.io package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -82,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -242,7 +245,7 @@
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code></p>
-<p>A dictionary with a _repr_html method for the Jupyter notebook</p>
+<p>A dictionary with a _repr_html method for the Jupyter notebook.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.io.dict_with_pretty_print.DictWithPrettyPrint.display">
 <span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/dict_with_pretty_print.html#DictWithPrettyPrint.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.dict_with_pretty_print.DictWithPrettyPrint.display" title="Link to this definition"></a>
@@ -281,7 +284,8 @@
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Allows to interact with a directory listing like the one returned by an Apache server</p>
+<p>Allows to interact with a directory listing like the one returned by an
+Apache server.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="threeML.io.download_from_http.ApacheDirectory.directories">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">directories</span></span><a class="headerlink" href="#threeML.io.download_from_http.ApacheDirectory.directories" title="Link to this definition"></a>
@@ -301,20 +305,27 @@
 <span class="sig-name descname"><span class="pre">download_all_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/download_from_http.html#ApacheDirectory.download_all_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.download_from_http.ApacheDirectory.download_all_files" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Download all files in the current directory</p>
+<p>Download all files in the current directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>destination_path</strong> – the path for the destination directory in the local file system</p></li>
-<li><p><strong>progress</strong> – (True or False) whether to display progress or not</p></li>
-<li><p><strong>pattern</strong> – (default: None) If not None, only files matching this pattern (a regular expression) will be</p></li>
+<li><p><strong>destination_path</strong> – the path for the destination directory
+in the local file system</p></li>
+<li><p><strong>progress</strong> – (True or False) whether to display progress or
+not</p></li>
+<li><p><strong>pattern</strong> – (default: None) If not None, only files matching
+this pattern (a regular expression) will be downloaded</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>list of the downloaded files as absolute paths in the
+local file system</p>
+</dd>
 </dl>
-<p>downloaded
-:return: list of the downloaded files as absolute paths in the local file system</p>
 </dd>
 </dl>
 
@@ -362,8 +373,7 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.file_utils.</span></span><span class="sig-name descname"><span class="pre">fits_file_existing_and_readable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/threeML/io/file_utils.html#fits_file_existing_and_readable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.file_utils.fits_file_existing_and_readable" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>checks if a FITS file exists ignoring extension ({})
-info</p>
+<p>Checks if a FITS file exists ignoring extension ({}) info.</p>
 </dd>
 </dl>
 
@@ -372,7 +382,8 @@ info</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.file_utils.</span></span><span class="sig-name descname"><span class="pre">get_random_unique_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/file_utils.html#get_random_unique_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.file_utils.get_random_unique_name" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns a name which is random and (with extremely high probability) unique</p>
+<p>Returns a name which is random and (with extremely high probability)
+unique.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -388,7 +399,7 @@ info</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.file_utils.</span></span><span class="sig-name descname"><span class="pre">if_directory_not_existing_then_make</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/threeML/io/file_utils.html#if_directory_not_existing_then_make"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.file_utils.if_directory_not_existing_then_make" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>If the given directory does not exists, then make it</p>
+<p>If the given directory does not exists, then make it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -423,20 +434,26 @@ info</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.file_utils.</span></span><span class="sig-name descname"><span class="pre">temporary_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">within_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/file_utils.html#temporary_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.file_utils.temporary_directory" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>This context manager creates a temporary directory in the most secure possible way (with no race condition), and
-removes it at the end.</p>
+<p>This context manager creates a temporary directory in the most secure
+possible way (with no race condition), and removes it at the end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>prefix</strong> – the directory name will start with this prefix, if specified</p></li>
-<li><p><strong>within_directory</strong> – create within a specific directory (assumed to exist). Otherwise, it will be created in the</p></li>
+<li><p><strong>prefix</strong> – the directory name will start with this prefix, if
+specified</p></li>
+<li><p><strong>within_directory</strong> – create within a specific directory (assumed
+to exist). Otherwise, it will be created in the default system
+temp directory (/tmp in unix)</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>the absolute pathname of the provided directory</p>
+</dd>
 </dl>
-<p>default system temp directory (/tmp in unix)
-:return: the absolute pathname of the provided directory</p>
 </dd>
 </dl>
 
@@ -573,10 +590,10 @@ to the headers of all HDU’s written to the file.</p></li>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>gzip, zip and bzip2 compression algorithms are natively supported.
+<p>gzip, zip, bzip2 and lzma compression algorithms are natively supported.
 Compression mode is determined from the filename extension
-(‘.gz’, ‘.zip’ or ‘.bz2’ respectively).  It is also possible to pass a
-compressed file object, e.g. <cite>gzip.GzipFile</cite>.</p>
+(‘.gz’, ‘.zip’, ‘.bz2’ or ‘.xz’ respectively).  It is also possible to
+pass a compressed file object, e.g. <cite>gzip.GzipFile</cite>.</p>
 </dd>
 </dl>
 
@@ -592,12 +609,14 @@ compressed file object, e.g. <cite>gzip.GzipFile</cite>.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.get_heasarc_table_as_pandas.</span></span><span class="sig-name descname"><span class="pre">get_heasarc_table_as_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heasarc_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_time_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/get_heasarc_table_as_pandas.html#get_heasarc_table_as_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.get_heasarc_table_as_pandas.get_heasarc_table_as_pandas" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Obtain a a VO table from the HEASARC archives and return it as a pandas table indexed
-by object/trigger names. The heasarc_table_name values are the ones referenced at:</p>
+<p>Obtain a a VO table from the HEASARC archives and return it as a pandas
+table indexed by object/trigger names. The heasarc_table_name values are
+the ones referenced at:</p>
 <p><a class="reference external" href="https://heasarc.gsfc.nasa.gov/docs/archive/vo/">https://heasarc.gsfc.nasa.gov/docs/archive/vo/</a></p>
-<p>In order to speed up the processing of the tables, 3ML can cache the XML table in a cache
-that is updated every cache_time_days. The cache can be forced to update, i.e, reload from
-the web, by setting update to True.</p>
+<p>In order to speed up the processing of the tables, 3ML can cache the
+XML table in a cache that is updated every cache_time_days. The
+cache can be forced to update, i.e, reload from the web, by setting
+update to True.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -626,7 +645,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.hdf5_utils.</span></span><span class="sig-name descname"><span class="pre">recursively_load_dict_contents_from_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/hdf5_utils.html#recursively_load_dict_contents_from_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.hdf5_utils.recursively_load_dict_contents_from_group" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>read a dictionary from and HDF5 file</p>
+<p>Read a dictionary from and HDF5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -655,7 +674,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.hdf5_utils.</span></span><span class="sig-name descname"><span class="pre">recursively_save_dict_contents_to_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/hdf5_utils.html#recursively_save_dict_contents_to_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.hdf5_utils.recursively_save_dict_contents_to_group" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>save a dictionary to an HDf5 file</p>
+<p>Save a dictionary to an HDf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -726,7 +745,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">activate_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#activate_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.activate_logs" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>re-activate silenced logs</p>
+<p>Re-activate silenced logs.</p>
 </dd>
 </dl>
 
@@ -735,7 +754,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">activate_progress_bars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#activate_progress_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.activate_progress_bars" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Turn on the progress bars</p>
+<p>Turn on the progress bars.</p>
 </dd>
 </dl>
 
@@ -744,7 +763,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">activate_warnings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#activate_warnings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.activate_warnings" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>supress warning messages in console and file usr logs</p>
+<p>Supress warning messages in console and file usr logs.</p>
 </dd>
 </dl>
 
@@ -753,7 +772,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">debug_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#debug_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.debug_mode" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>activate debug in the console</p>
+<p>Activate debug in the console.</p>
 </dd>
 </dl>
 
@@ -762,7 +781,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">get_path_of_log_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/threeML/io/logging.html#get_path_of_log_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.get_path_of_log_dir" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>get the path to the logging directory</p>
+<p>Get the path to the logging directory.</p>
 </dd>
 </dl>
 
@@ -771,7 +790,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">get_path_of_log_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/threeML/io/logging.html#get_path_of_log_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.get_path_of_log_file" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns the path of the log files</p>
+<p>Returns the path of the log files.</p>
 </dd>
 </dl>
 
@@ -787,7 +806,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">loud_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#loud_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.loud_mode" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>turn on all progress bars and logging</p>
+<p>Turn on all progress bars and logging.</p>
 </dd>
 </dl>
 
@@ -796,7 +815,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">quiet_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#quiet_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.quiet_mode" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>turn off all logging and progress bars</p>
+<p>Turn off all logging and progress bars.</p>
 </dd>
 </dl>
 
@@ -812,7 +831,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_console_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">and_progress_bars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#silence_console_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_console_log" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>temporarily silence the console and progress bars</p>
+<p>Temporarily silence the console and progress bars.</p>
 </dd>
 </dl>
 
@@ -821,7 +840,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#silence_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_logs" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Turn off all logging</p>
+<p>Turn off all logging.</p>
 </dd>
 </dl>
 
@@ -830,7 +849,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_progress_bars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#silence_progress_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_progress_bars" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Turn off the progress bars</p>
+<p>Turn off the progress bars.</p>
 </dd>
 </dl>
 
@@ -839,7 +858,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">silence_warnings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#silence_warnings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.silence_warnings" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>supress warning messages in console and file usr logs</p>
+<p>Supress warning messages in console and file usr logs.</p>
 </dd>
 </dl>
 
@@ -848,7 +867,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">toggle_progress_bars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#toggle_progress_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.toggle_progress_bars" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>toggle the state of the progress bars</p>
+<p>Toggle the state of the progress bars.</p>
 </dd>
 </dl>
 
@@ -857,7 +876,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.logging.</span></span><span class="sig-name descname"><span class="pre">update_logging_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/logging.html#update_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.logging.update_logging_level" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>update the logging level to the console</p>
+<p>Update the logging level to the console.</p>
 </dd>
 </dl>
 
@@ -883,8 +902,7 @@ the web, by setting update to True.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.package_data.</span></span><span class="sig-name descname"><span class="pre">get_path_of_data_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/threeML/io/package_data.html#get_path_of_data_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.package_data.get_path_of_data_dir" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Used to get internal testing data and for examples.
-Not for user data</p>
+<p>Used to get internal testing data and for examples. Not for user data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -900,8 +918,7 @@ Not for user data</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.package_data.</span></span><span class="sig-name descname"><span class="pre">get_path_of_data_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/threeML/io/package_data.html#get_path_of_data_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.package_data.get_path_of_data_file" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Used to get internal testing data and for examples.
-Not for user data</p>
+<p>Used to get internal testing data and for examples. Not for user data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -991,7 +1008,7 @@ Not for user data</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.suppress_stdout.</span></span><span class="sig-name descname"><span class="pre">suppress_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/suppress_stdout.html#suppress_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.suppress_stdout.suppress_stdout" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Temporarily suppress the output from a function</p>
+<p>Temporarily suppress the output from a function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1054,7 +1071,7 @@ Not for user data</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">interval_to_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/uncertainty_formatter.html#interval_to_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.interval_to_errors" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Convert error intervals to errors</p>
+<p>Convert error intervals to errors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1079,8 +1096,9 @@ Not for user data</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.io.uncertainty_formatter.</span></span><span class="sig-name descname"><span class="pre">uncertainty_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/io/uncertainty_formatter.html#uncertainty_formatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.uncertainty_formatter.uncertainty_formatter" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Gets a value and its error in input, and returns the value, the uncertainty and the common exponent with the proper
-number of significant digits in a string like (4.2 -0.023 +5.23) x 10^5</p>
+<p>Gets a value and its error in input, and returns the value, the
+uncertainty and the common exponent with the proper number of significant
+digits in a string like (4.2 -0.023 +5.23) x 10^5.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>

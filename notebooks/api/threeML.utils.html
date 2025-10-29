@@ -9,7 +9,7 @@
   <title>threeML.utils package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -82,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -824,14 +827,20 @@ the background is perceptibly constant.</p>
 <li><p><strong>tt</strong> – arrival times of the events</p></li>
 <li><p><strong>ttstart</strong> – the start of the interval</p></li>
 <li><p><strong>ttstop</strong> – the stop of the interval</p></li>
-<li><p><strong>p0</strong> – the false positive probability. This is used to decide the penalization on the likelihood, so this</p></li>
+<li><p><strong>p0</strong> – the false positive probability. This is used to decide
+the penalization on the likelihood, so this parameter affects
+the number of blocks</p></li>
+<li><p><strong>bkg_integral_distribution</strong> – (default: None) If given, the
+algorithm account for the presence of the background and finds
+changes in rate with respect to the background</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>the np.array containing the edges of the blocks</p>
+</dd>
 </dl>
-<p>parameter affects the number of blocks
-:param bkg_integral_distribution: (default: None) If given, the algorithm account for the presence of the background and
-finds changes in rate with respect to the background
-:return: the np.array containing the edges of the blocks</p>
 </dd>
 </dl>
 
@@ -861,8 +870,9 @@ finds changes in rate with respect to the background
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A class to rebin vectors keeping a minimum value per bin. It supports array with a mask, so that elements excluded
-through the mask will not be considered for the rebinning</p>
+<p>A class to rebin vectors keeping a minimum value per bin.</p>
+<p>It supports array with a mask, so that elements excluded through the
+mask will not be considered for the rebinning</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.Rebinner.get_new_start_and_stop">
 <span class="sig-name descname"><span class="pre">get_new_start_and_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_stop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/binner.html#Rebinner.get_new_start_and_stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.get_new_start_and_stop" title="Link to this definition"></a>
@@ -905,7 +915,7 @@ through the mask will not be considered for the rebinning</p>
 <span class="sig-name descname"><span class="pre">rebin_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/binner.html#Rebinner.rebin_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.Rebinner.rebin_errors" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Rebin errors by summing the squares</p>
+<p>Rebin errors by summing the squares.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -930,16 +940,17 @@ through the mask will not be considered for the rebinning</p>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="#threeML.utils.time_interval.TimeIntervalSet" title="threeML.utils.time_interval.TimeIntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeIntervalSet</span></code></a></p>
-<p>An extension of the TimeInterval set that includes binning capabilities</p>
+<p>An extension of the TimeInterval set that includes binning
+capabilities.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_bayesian_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bkg_integral_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_bayesian_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_bayesian_blocks" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Divide a series of events characterized by their arrival time in blocks
-of perceptibly constant count rate. If the background integral distribution
-is given, divide the series in blocks where the difference with respect to
-the background is perceptibly constant.</p>
+<p>Divide a series of events characterized by their arrival time in
+blocks of perceptibly constant count rate. If the background integral
+distribution is given, divide the series in blocks where the difference
+with respect to the background is perceptibly constant.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -979,7 +990,7 @@ the background component between time 0 and x.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_constant" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Create bins with a constant dt</p>
+<p>Create bins with a constant dt.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1000,8 +1011,8 @@ the background component between time 0 and x.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_custom" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Simplicity function to make custom bins. This form keeps introduction of
-custom bins uniform for other binning methods</p>
+<p>Simplicity function to make custom bins. This form keeps
+introduction of custom bins uniform for other binning methods.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1025,16 +1036,19 @@ custom bins uniform for other binning methods</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_by_significance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arrival_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_error_getter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/binner.html#TemporalBinner.bin_by_significance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.binner.TemporalBinner.bin_by_significance" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Bin the data to a given significance level for a given background method and sigma
-method. If a background error function is given then it is assumed that the error distribution
-is gaussian. Otherwise, the error distribution is assumed to be Poisson.</p>
+<p>Bin the data to a given significance level for a given background
+method and sigma method. If a background error function is given then
+it is assumed that the error distribution is gaussian. Otherwise, the
+error distribution is assumed to be Poisson.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>background_getter</strong> – function of a start and stop time that returns background counts</p></li>
-<li><p><strong>background_error_getter</strong> – function of a start and stop time that returns background count errors</p></li>
+<li><p><strong>background_getter</strong> – function of a start and stop time that
+returns background counts</p></li>
+<li><p><strong>background_error_getter</strong> – function of a start and stop
+time that returns background count errors</p></li>
 <li><p><strong>sigma_level</strong> – the sigma level of the intervals</p></li>
 <li><p><strong>min_counts</strong> – the minimum counts per bin</p></li>
 </ul>
@@ -1100,9 +1114,9 @@ is gaussian. Otherwise, the error distribution is assumed to be Poisson.</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.fermi_relative_mission_time.</span></span><span class="sig-name descname"><span class="pre">compute_fermi_relative_mission_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/fermi_relative_mission_time.html#compute_fermi_relative_mission_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fermi_relative_mission_time.compute_fermi_relative_mission_times" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>If the user has the requests library, this function looks
-online to the HEASARC xtime utility and computes other mission
-times relative to the input MET</p>
+<p>If the user has the requests library, this function looks online to the
+HEASARC xtime utility and computes other mission times relative to the
+input MET.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1142,7 +1156,7 @@ times relative to the input MET</p>
 <span class="sig-name descname"><span class="pre">bin_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entires</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/histogram.html#Histogram.bin_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.bin_entries" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>add the entries into the proper bin</p>
+<p>Add the entries into the proper bin.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1184,7 +1198,7 @@ times relative to the input MET</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/histogram.html#Histogram.from_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.histogram.Histogram.from_entries" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>create a histogram from a list of intervals and entries to bin</p>
+<p>Create a histogram from a list of intervals and entries to bin.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1280,7 +1294,8 @@ hist = Histogram.from_numpy_histogram(np_hist)</p>
 <span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#Interval.intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.intersect" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns a new time interval corresponding to the intersection between this interval and the provided one.</p>
+<p>Returns a new time interval corresponding to the intersection
+between this interval and the provided one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1302,21 +1317,17 @@ hist = Histogram.from_numpy_histogram(np_hist)</p>
 <span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#Interval.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.merge" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals
-must overlap.</p>
+<p>Returns a new interval corresponding to the merge of the current and
+the provided time interval. The intervals must overlap.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>interval</strong> – a TimeInterval instance
-:type interval : Interval</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span>
-</dt>
-<dd class="field-even">
-<p>a new TimeInterval instance</p>
+<p><strong>interval</strong> – a TimeInterval instance</p>
 </dd>
 </dl>
+<p>:type interval : Interval
+:return: a new TimeInterval instance</p>
 </dd>
 </dl>
 
@@ -1339,7 +1350,8 @@ must overlap.</p>
 <span class="sig-name descname"><span class="pre">overlaps_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><span class="pre">Interval</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#Interval.overlaps_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.overlaps_with" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns whether the current time interval and the provided one overlap or not</p>
+<p>Returns whether the current time interval and the provided one
+overlap or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1374,8 +1386,8 @@ must overlap.</p>
 <span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#Interval.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.Interval.to_string" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns a string representation of the time interval that is like the
-argument of many interval reading funcitons</p>
+<p>Returns a string representation of the time interval that is like
+the argument of many interval reading funcitons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1395,7 +1407,7 @@ argument of many interval reading funcitons</p>
 </dt>
 <dd>
 <p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A set of intervals</p>
+<p>A set of intervals.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.interval.IntervalSet.INTERVAL_TYPE">
 <span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.INTERVAL_TYPE" title="Link to this definition"></a>
@@ -1410,8 +1422,14 @@ argument of many interval reading funcitons</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_start</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.absolute_start" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the minimum of the start times
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The minimum of the start times</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1420,8 +1438,14 @@ argument of many interval reading funcitons</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_stop</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.absolute_stop" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the maximum of the stop times
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The maximum of the stop times</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1430,7 +1454,7 @@ argument of many interval reading funcitons</p>
 <span class="sig-name descname"><span class="pre">argsort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.argsort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.argsort" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the indices which order the set</p>
+<p>Returns the indices which order the set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1446,12 +1470,8 @@ argument of many interval reading funcitons</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_stack</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.bin_stack" title="Link to this definition"></a>
 </dt>
 <dd>
-<dl class="simple">
-<dt>get a stacked view of the bins [[start_1,stop_1 ],</dt>
-<dd>
-<p>[start_2,stop_2 ]]</p>
-</dd>
-</dl>
+<p>Get a stacked view of the bins [[start_1,stop_1 ], [start_2,stop_2
+]]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1467,9 +1487,14 @@ argument of many interval reading funcitons</p>
 <span class="sig-name descname"><span class="pre">containing_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.containing_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.containing_bin" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>finds the index of the interval containing
-:param value:
-:return:</p>
+<p>Finds the index of the interval containing :param value:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1478,8 +1503,9 @@ argument of many interval reading funcitons</p>
 <span class="sig-name descname"><span class="pre">containing_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.containing_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.containing_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns either a mask of the intervals contained in the selection
-or a new set of intervals within the selection. NOTE: no sort is performed</p>
+<p>Returns either a mask of the intervals contained in the selection or
+a new set of intervals within the selection. NOTE: no sort is
+performed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1487,7 +1513,8 @@ or a new set of intervals within the selection. NOTE: no sort is performed</p>
 <ul class="simple">
 <li><p><strong>start</strong> – start of interval</p></li>
 <li><p><strong>stop</strong> – stop of interval</p></li>
-<li><p><strong>inner</strong> – if True, returns only intervals strictly contained within bounds, if False, returns outer bounds as well</p></li>
+<li><p><strong>inner</strong> – if True, returns only intervals strictly contained
+within bounds, if False, returns outer bounds as well</p></li>
 <li><p><strong>as_mask</strong> – if you want a mask or the intervals</p></li>
 </ul>
 </dd>
@@ -1505,8 +1532,14 @@ or a new set of intervals within the selection. NOTE: no sort is performed</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.edges" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return an array of time edges if contiguous
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Return an array of time edges if contiguous</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1570,7 +1603,7 @@ stop =  [0,1]</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.from_strings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.from_strings" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>These are intervals specified as “-10 – 5”, “0-10”, and so on</p>
+<p>These are intervals specified as “-10 – 5”, “0-10”, and so on.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1591,8 +1624,8 @@ stop =  [0,1]</p>
 <span class="sig-name descname"><span class="pre">is_contiguous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.is_contiguous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.is_contiguous" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Check whether the time intervals are all contiguous, i.e., the stop time of one interval is the start
-time of the next</p>
+<p>Check whether the time intervals are all contiguous, i.e., the stop
+time of one interval is the start time of the next.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1608,8 +1641,20 @@ time of the next</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sorted</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.is_sorted" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Check whether the time intervals are sorted
-:return: True or False</p>
+<p>True or
+False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Check whether the time intervals are sorted</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>return</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1618,7 +1663,7 @@ time of the next</p>
 <span class="sig-name descname"><span class="pre">merge_intersecting_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.merge_intersecting_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.merge_intersecting_intervals" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>merges intersecting intervals into a contiguous intervals</p>
+<p>Merges intersecting intervals into a contiguous intervals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1641,10 +1686,19 @@ time of the next</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.new" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Create a new interval set of this type
-:param args:
-:param kwargs:
-:return: interval set</p>
+<p>Create a new interval set of this type :param args:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>kwargs</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>interval set</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1653,10 +1707,19 @@ time of the next</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.new_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.new_interval" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Create a new interval of INTERVAL_TYPE
-:param args:
-:param kwargs:
-:return: interval</p>
+<p>Create a new interval of INTERVAL_TYPE :param args:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>kwargs</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>interval</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1672,7 +1735,8 @@ time of the next</p>
 <span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.sort" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns a sorted copy of the set (sorted according to the tstart of the time intervals)</p>
+<p>Returns a sorted copy of the set (sorted according to the tstart of
+the time intervals)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1688,7 +1752,7 @@ time of the next</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">starts</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.starts" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the starts fo the set</p>
+<p>Return the starts fo the set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1704,7 +1768,7 @@ time of the next</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stops</span></span><a class="headerlink" href="#threeML.utils.interval.IntervalSet.stops" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the stops of the set</p>
+<p>Return the stops of the set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -1720,8 +1784,7 @@ time of the next</p>
 <span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/interval.html#IntervalSet.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.interval.IntervalSet.to_string" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns a set of string representaitons of the intervals
-:return:</p>
+<p>Returns a set of string representaitons of the intervals :return:</p>
 </dd>
 </dl>
 
@@ -1890,9 +1953,8 @@ time of the next</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.power_of_two_utils.</span></span><span class="sig-name descname"><span class="pre">is_power_of_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/power_of_two_utils.html#is_power_of_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.power_of_two_utils.is_power_of_2" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns whether num is a power of two or not
-:param num: an integer positive number
-:return: True if num is a power of 2, False otherwise</p>
+<p>Returns whether num is a power of two or not :param num: an integer
+positive number :return: True if num is a power of 2, False otherwise.</p>
 </dd>
 </dl>
 
@@ -1901,7 +1963,8 @@ time of the next</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.power_of_two_utils.</span></span><span class="sig-name descname"><span class="pre">next_power_of_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/power_of_two_utils.html#next_power_of_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.power_of_two_utils.next_power_of_2" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the first power of two &gt;= x, so f(2) = 2, f(127) = 128, f(65530) = 65536</p>
+<p>Returns the first power of two &gt;= x, so f(2) = 2, f(127) = 128, f(65530)
+= 65536.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1945,15 +2008,15 @@ time of the next</p>
 </dt>
 <dd>
 <p>Generates sum of step or dirac delta functions for the given intervals
-and parameter. This can be used to link time-independent parameters
-of a model to time.</p>
-<p>If the intervals provided are 1-D, i.e, they are the means of time bins or
-the TOA of photons, then a sum of dirac deltas is returned with their centers
-at the times provided</p>
-<p>If the intervals are 2-D (start, stop), sum of step functions is created with
-the bounds at the start and stop times of the interval.</p>
-<p>The parameter is used to set the bounds and initial value, min, max of the
-non-zero points of the functions</p>
+and parameter. This can be used to link time-independent parameters of a
+model to time.</p>
+<p>If the intervals provided are 1-D, i.e, they are the means of time
+bins or the TOA of photons, then a sum of dirac deltas is returned
+with their centers at the times provided</p>
+<p>If the intervals are 2-D (start, stop), sum of step functions is
+created with the bounds at the start and stop times of the interval.</p>
+<p>The parameter is used to set the bounds and initial value, min, max
+of the non-zero points of the functions</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -1976,7 +2039,7 @@ non-zero points of the functions</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.string_utils.</span></span><span class="sig-name descname"><span class="pre">dash_separated_string_to_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/string_utils.html#dash_separated_string_to_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.string_utils.dash_separated_string_to_tuple" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>turn a dash separated string into a tuple</p>
+<p>Turn a dash separated string into a tuple.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -2039,7 +2102,7 @@ non-zero points of the functions</p>
 </dt>
 <dd>
 <p>Bases: <a class="reference internal" href="#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSet</span></code></a></p>
-<p>A set of time intervals</p>
+<p>A set of time intervals.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="threeML.utils.time_interval.TimeIntervalSet.INTERVAL_TYPE">
 <span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.INTERVAL_TYPE" title="Link to this definition"></a>
@@ -2054,8 +2117,14 @@ non-zero points of the functions</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_start_time</span></span><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.absolute_start_time" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the minimum of the start times
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The minimum of the start times</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -2064,8 +2133,14 @@ non-zero points of the functions</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">absolute_stop_time</span></span><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.absolute_stop_time" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the maximum of the stop times
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The maximum of the stop times</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -2074,7 +2149,7 @@ non-zero points of the functions</p>
 <span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/time_interval.html#TimeIntervalSet.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.display" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Display the time intervals</p>
+<p>Display the time intervals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -2090,7 +2165,7 @@ non-zero points of the functions</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_times</span></span><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.start_times" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the starts fo the set</p>
+<p>Return the starts fo the set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -2106,7 +2181,7 @@ non-zero points of the functions</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop_times</span></span><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.stop_times" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the stops of the set</p>
+<p>Return the stops of the set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -2122,8 +2197,14 @@ non-zero points of the functions</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_edges</span></span><a class="headerlink" href="#threeML.utils.time_interval.TimeIntervalSet.time_edges" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return an array of time edges if contiguous
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Return an array of time edges if contiguous</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -2139,7 +2220,8 @@ non-zero points of the functions</p>
 <span class="sig-prename descclassname"><span class="pre">threeML.utils.unique_deterministic_tag.</span></span><span class="sig-name descname"><span class="pre">get_unique_deterministic_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/threeML/utils/unique_deterministic_tag.html#get_unique_deterministic_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.unique_deterministic_tag.get_unique_deterministic_tag" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return a hex string with a one to one correspondence with the given string</p>
+<p>Return a hex string with a one to one correspondence with the given
+string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>

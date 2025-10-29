@@ -9,7 +9,7 @@
   <title>threeML.io.plotting.model_plot module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -158,37 +161,53 @@
 <span class="sig-prename descclassname"><span class="pre">threeML.io.plotting.model_plot.</span></span><span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">analysis_results</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="../_modules/threeML/io/plotting/model_plot.html#plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.io.plotting.model_plot.plot_spectra" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>plotting routine for fitted point source spectra</p>
+<p>Plotting routine for fitted point source spectra.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>analysis_results</strong> – fitted JointLikelihood or BayesianAnalysis objects</p></li>
-<li><p><strong>sources_to_use</strong> – (optional) list of PointSource string names to plot from the analysis</p></li>
-<li><p><strong>energy_unit</strong> – (optional) astropy energy unit in string form (can also be frequency)</p></li>
+<li><p><strong>analysis_results</strong> – fitted JointLikelihood or BayesianAnalysis
+objects</p></li>
+<li><p><strong>sources_to_use</strong> – (optional) list of PointSource string names
+to plot from the analysis</p></li>
+<li><p><strong>energy_unit</strong> – (optional) astropy energy unit in string form
+(can also be frequency)</p></li>
 <li><p><strong>flux_unit</strong> – (optional) astropy flux unit in string form</p></li>
-<li><p><strong>confidence_level</strong> – (optional) confidence level to use (default: 0.68)</p></li>
+<li><p><strong>confidence_level</strong> – (optional) confidence level to use
+(default: 0.68)</p></li>
 <li><p><strong>ene_min</strong> – (optional) minimum energy to plot</p></li>
 <li><p><strong>ene_max</strong> – (optional) maximum energy to plot</p></li>
 <li><p><strong>num_ene</strong> – (optional) number of energies to plot</p></li>
-<li><p><strong>use_components</strong> – (optional) True or False to plot the spectral components</p></li>
-<li><p><strong>components_to_use</strong> – (optional) list of string names of the components to plot: including ‘total’</p></li>
+<li><p><strong>use_components</strong> – (optional) True or False to plot the spectral
+components</p></li>
+<li><p><strong>components_to_use</strong> – (optional) list of string names of the
+components to plot: including ‘total’ will also plot the total
+spectrum</p></li>
+<li><p><strong>sum_sources</strong> – (optional) some all the MLE and Bayesian sources</p></li>
+<li><p><strong>show_contours</strong> – (optional) True or False to plot the contour
+region</p></li>
+<li><p><strong>plot_style_kwargs</strong> – (optional) dictionary of MPL plot styling
+for the best fit curve</p></li>
+<li><p><strong>contour_style_kwargs</strong> – (optional) dictionary of MPL plot
+styling for the contour regions</p></li>
+<li><p><strong>fit_cmap</strong> – MPL color map to iterate over for plotting multiple
+analyses</p></li>
+<li><p><strong>contour_cmap</strong> – MPL color map to iterate over for plotting
+contours for multiple analyses</p></li>
+<li><p><strong>subplot</strong> – subplot to use</p></li>
+<li><p><strong>xscale</strong> – ‘log’ or ‘linear’</p></li>
+<li><p><strong>yscale</strong> – ‘log’ or ‘linear’</p></li>
+<li><p><strong>include_extended</strong> – True or False, also plot extended source
+spectra.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
 </dl>
-<p>will also plot the total spectrum
-:param sum_sources: (optional) some all the MLE and Bayesian sources
-:param show_contours: (optional) True or False to plot the contour region
-:param plot_style_kwargs: (optional) dictionary of MPL plot styling for the best fit curve
-:param contour_style_kwargs: (optional) dictionary of MPL plot styling for the contour regions
-:param fit_cmap: MPL color map to iterate over for plotting multiple analyses
-:param contour_cmap: MPL color map to iterate over for plotting contours for  multiple analyses
-:param subplot: subplot to use
-:param xscale: ‘log’ or ‘linear’
-:param yscale: ‘log’ or ‘linear’
-:param include_extended: True or False, also plot extended source spectra.
-:return:</p>
 </dd>
 </dl>
 

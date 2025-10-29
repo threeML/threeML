@@ -9,7 +9,7 @@
   <title>Fitting XMM-Newton data with the APEC model &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -19,7 +19,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -61,6 +61,8 @@
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -92,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -168,7 +171,7 @@ as well as the pseudo-continuum and over 10,000 individual emission lines.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">init_session</span><span class="p">(</span><span class="n">abund_table</span><span class="o">=</span><span class="s1">'AG89'</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">init_session</span><span class="p">(</span><span class="n">abund_table</span><span class="o">=</span><span class="s2">"AG89"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -315,13 +318,15 @@ Will not thermally broaden lines
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="c1"># 3 keV temperature</span>
+<div class="highlight"><pre><span></span><span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># 3 keV temperature</span>
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="c1"># Normalization, proportional to emission measure</span>
+<span class="n">modapec</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1e-3</span>  <span class="c1"># Normalization, proportional to emission measure</span>
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">redshift</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1"># Source redshift</span>
+<span class="n">modapec</span><span class="o">.</span><span class="n">redshift</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Source redshift</span>
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">abund</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="c1"># The metal abundance of each element is set to 0.3 times the Solar abundance</span>
+<span class="n">modapec</span><span class="o">.</span><span class="n">abund</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">0.3</span>  <span class="c1"># The metal abundance of each element is set to 0.3 times the Solar abundance</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -334,10 +339,10 @@ Will not thermally broaden lines
 <div class="input_area highlight-ipython3 notranslate">
 <div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="c1"># Set up the energy grid</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Set up the energy grid</span>
 
-<span class="n">ktgrid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">,</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">7.0</span><span class="p">,</span><span class="mf">9.0</span><span class="p">,</span><span class="mf">12.0</span><span class="p">,</span><span class="mf">15.0</span><span class="p">]</span> <span class="c1"># Temperature grid</span>
-<br></pre></div>
+<span class="n">ktgrid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]</span>  <span class="c1"># Temperature grid</span>
+</pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -353,35 +358,35 @@ Will not thermally broaden lines
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()):</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">():</span>
     <span class="n">item</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
 
 <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ktgrid</span><span class="p">)</span>
 
 <span class="n">values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">)</span>
-<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'gist_rainbow'</span><span class="p">)</span>
-<span class="n">cNorm</span>  <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">"gist_rainbow"</span><span class="p">)</span>
+<span class="n">cNorm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">scalarMap</span> <span class="o">=</span> <span class="n">cmx</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cNorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">)</span>
-<span class="n">ccc</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">ccc</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
     <span class="n">ccc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalarMap</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
     <span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">ktgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">modapec</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">'kT=</span><span class="si">%g</span><span class="s1"> keV'</span><span class="o">%</span><span class="p">(</span><span class="n">ktgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">modapec</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"kT=</span><span class="si">%g</span><span class="s2"> keV"</span> <span class="o">%</span> <span class="p">(</span><span class="n">ktgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Energy [keV]'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Photon Flux'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">15.</span><span class="p">,</span><span class="mf">1e-8</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Z=0.3 $Z_\odot$ and varying temperature'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Energy [keV]"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Photon Flux"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Z=0.3 $Z_\odot$ and varying temperature"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<br></pre></div>
+</pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -418,7 +423,7 @@ Will not thermally broaden lines
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">Zgrid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]</span> <span class="c1"># Metallicities wrt Solar</span>
+<div class="highlight"><pre><span></span><span class="n">Zgrid</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>  <span class="c1"># Metallicities wrt Solar</span>
 
 <span class="n">modapec</span><span class="o">.</span><span class="n">kT</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span>
 </pre></div>
@@ -431,35 +436,37 @@ Will not thermally broaden lines
 </div>
 <div class="input_area highlight-ipython3 notranslate">
 <div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()):</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">():</span>
     <span class="n">item</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
 
 <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Zgrid</span><span class="p">)</span>
 
 <span class="n">values</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">)</span>
-<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'gist_rainbow'</span><span class="p">)</span>
-<span class="n">cNorm</span>  <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">"gist_rainbow"</span><span class="p">)</span>
+<span class="n">cNorm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">scalarMap</span> <span class="o">=</span> <span class="n">cmx</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cNorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">)</span>
-<span class="n">ccc</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">ccc</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
     <span class="n">ccc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalarMap</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspec</span><span class="p">):</span>
     <span class="n">modapec</span><span class="o">.</span><span class="n">abund</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Zgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">modapec</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">'$Z/Z_\odot$=</span><span class="si">%g</span><span class="s1">'</span><span class="o">%</span><span class="p">(</span><span class="n">Zgrid</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">energies</span><span class="p">,</span> <span class="n">modapec</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"$Z/Z_\odot$=</span><span class="si">%g</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">Zgrid</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Energy [keV]'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Photon Flux'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">15.</span><span class="p">,</span><span class="mf">1e-7</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'kT=1 keV and varying metallicity'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Energy [keV]"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Photon Flux"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"kT=1 keV and varying metallicity"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
-<br></pre></div>
+</pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -502,13 +509,13 @@ Will not thermally broaden lines
 <div class="input_area highlight-ipython3 notranslate">
 <div class="highlight"><pre><span></span><span class="n">phabs</span> <span class="o">=</span> <span class="n">PhAbs</span><span class="p">()</span>
 
-<span class="n">phabs</span><span class="o">.</span><span class="n">NH</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># A value of 1 corresponds to 1e22 cm-2</span>
+<span class="n">phabs</span><span class="o">.</span><span class="n">NH</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># A value of 1 corresponds to 1e22 cm-2</span>
 
-<span class="n">phabs</span><span class="o">.</span><span class="n">NH</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># NH is fixed</span>
+<span class="n">phabs</span><span class="o">.</span><span class="n">NH</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># NH is fixed</span>
 
-<span class="n">phabs</span><span class="o">.</span><span class="n">init_xsect</span><span class="p">(</span><span class="n">abund_table</span><span class="o">=</span><span class="s1">'AG89'</span><span class="p">)</span>
+<span class="n">phabs</span><span class="o">.</span><span class="n">init_xsect</span><span class="p">(</span><span class="n">abund_table</span><span class="o">=</span><span class="s2">"AG89"</span><span class="p">)</span>
 
-<span class="n">modapec</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="c1"># Initial values</span>
+<span class="n">modapec</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># Initial values</span>
 
 <span class="n">modapec</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">0.1</span>
 
@@ -533,8 +540,8 @@ Will not thermally broaden lines
 
 <span class="n">ogip</span> <span class="o">=</span> <span class="n">OGIPLike</span><span class="p">(</span><span class="s2">"ogip"</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="n">xmm_pha</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">xmm_rmf</span><span class="p">,</span> <span class="n">arf_file</span><span class="o">=</span><span class="n">xmm_arf</span><span class="p">)</span>
 
-<span class="n">pts</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s1">'mysource'</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">spectral_shape</span><span class="o">=</span><span class="n">mod_comb</span><span class="p">)</span>
-<br></pre></div>
+<span class="n">pts</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s2">"mysource"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">mod_comb</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <p>Let’s have a look at the loaded spectrum…</p>
@@ -546,14 +553,14 @@ Will not thermally broaden lines
 <div class="input_area highlight-ipython3 notranslate">
 <div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">ogip</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span><span class="n">right</span><span class="o">=</span><span class="mf">14.</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Energy [keV]'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Rate [counts s$^{-1}$ keV$^{-1}$]'</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
-<br><br></pre></div>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">14.0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Energy [keV]"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Rate [counts s$^{-1}$ keV$^{-1}$]"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -572,16 +579,16 @@ Will not thermally broaden lines
 <div class="input_area highlight-ipython3 notranslate">
 <div class="highlight"><pre><span></span><span class="n">ogip</span><span class="o">.</span><span class="n">remove_rebinning</span><span class="p">()</span>
 
-<span class="n">ogip</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s1">'0.5-10.'</span><span class="p">)</span>
+<span class="n">ogip</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">"0.5-10."</span><span class="p">)</span>
 
 <span class="n">ogip</span><span class="o">.</span><span class="n">rebin_on_source</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
 
-<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">DataList</span><span class="p">(</span><span class="n">ogip</span><span class="p">))</span>
+<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">DataList</span><span class="p">(</span><span class="n">ogip</span><span class="p">))</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-<br></pre></div>
+</pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -775,10 +782,12 @@ Values of statistical measures:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate">
-<div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">display_spectrum_model_counts</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span><span class="n">data_color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span><span class="n">model_color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">min_rate</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">display_spectrum_model_counts</span><span class="p">(</span>
+    <span class="n">jl</span><span class="p">,</span> <span class="n">data_color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span> <span class="n">model_color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">min_rate</span><span class="o">=</span><span class="mf">5e-4</span>
+<span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
-<br></pre></div>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">

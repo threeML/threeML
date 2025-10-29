@@ -9,7 +9,7 @@
   <title>threeML.plugins.XYLike module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -126,12 +129,14 @@
 <span class="sig-name descname"><span class="pre">assign_to_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.assign_to_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.assign_to_source" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Assign these data to the given source (instead of to the sum of all sources, which is the default)</p>
+<p>Assign these data to the given source (instead of to the sum of all
+sources, which is the default)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>source_name</strong> – name of the source (must be contained in the likelihood model)</p>
+<p><strong>source_name</strong> – name of the source (must be contained in the
+likelihood model)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>
@@ -172,7 +177,7 @@
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'yerr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike" title="threeML.plugins.XYLike.XYLike"><span class="pre">XYLike</span></a></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.from_dataframe" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Generate a XYLike instance from a Pandas.DataFrame instance</p>
+<p>Generate a XYLike instance from a Pandas.DataFrame instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -180,10 +185,14 @@
 <ul class="simple">
 <li><p><strong>name</strong> – the name for the XYLike instance</p></li>
 <li><p><strong>dataframe</strong> – the input data frame</p></li>
-<li><p><strong>x_column</strong> – name of the column to be used as x (default: ‘x’)</p></li>
-<li><p><strong>y_column</strong> – name of the column to be used as y (default: ‘y’)</p></li>
-<li><p><strong>err_column</strong> – name of the column to be used as error on y (default: ‘yerr’)</p></li>
-<li><p><strong>poisson</strong> – if True, then the err_column is ignored and data are treated as Poisson distributed</p></li>
+<li><p><strong>x_column</strong> – name of the column to be used as x (default:
+‘x’)</p></li>
+<li><p><strong>y_column</strong> – name of the column to be used as y (default:
+‘y’)</p></li>
+<li><p><strong>err_column</strong> – name of the column to be used as error on y
+(default: ‘yerr’)</p></li>
+<li><p><strong>poisson</strong> – if True, then the err_column is ignored and data
+are treated as Poisson distributed</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
@@ -200,7 +209,7 @@
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike" title="threeML.plugins.XYLike.XYLike"><span class="pre">XYLike</span></a></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.from_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.from_function" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Generate an XYLike plugin from an astromodels function instance</p>
+<p>Generate an XYLike plugin from an astromodels function instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -227,9 +236,11 @@
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_text_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike" title="threeML.plugins.XYLike.XYLike"><span class="pre">XYLike</span></a></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.from_text_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.from_text_file" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Instance the plugin starting from a text file generated with the .to_txt() method. Note that a more general
-way of creating a XYLike instance from a text file is to read the file using pandas.DataFrame.from_csv, and
-then use the .from_dataframe method of the XYLike plugin:</p>
+<p>Instance the plugin starting from a text file generated with the
+.to_txt() method. Note that a more general way of creating a XYLike
+instance from a text file is to read the file using
+pandas.DataFrame.from_csv, and then use the .from_dataframe method of
+the XYLike plugin:</p>
 <p>&gt; df = pd.DataFrame.from_csv(filename, …)
 &gt; xyl = XYLike.from_dataframe(“my instance”, df)</p>
 <dl class="field-list simple">
@@ -255,8 +266,8 @@ then use the .from_dataframe method of the XYLike plugin:</p>
 <span class="sig-name descname"><span class="pre">get_log_like</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.get_log_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.get_log_like" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the value of the log-likelihood with the current values for the
-parameters</p>
+<p>Return the value of the log-likelihood with the current values for
+the parameters.</p>
 </dd>
 </dl>
 
@@ -272,8 +283,7 @@ parameters</p>
 <span class="sig-name descname"><span class="pre">get_number_of_data_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.get_number_of_data_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.get_number_of_data_points" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>returns the number of active data points
-:return:</p>
+<p>Returns the number of active data points :return:</p>
 </dd>
 </dl>
 
@@ -282,7 +292,7 @@ parameters</p>
 <span class="sig-name descname"><span class="pre">get_simulated_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike" title="threeML.plugins.XYLike.XYLike"><span class="pre">XYLike</span></a></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.get_simulated_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.get_simulated_dataset" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return a simulated XYLike plugin</p>
+<p>Return a simulated XYLike plugin.</p>
 </dd>
 </dl>
 
@@ -291,20 +301,23 @@ parameters</p>
 <span class="sig-name descname"><span class="pre">goodness_of_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continue_of_failure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.goodness_of_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.goodness_of_fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the goodness of fit of the performed fit</p>
+<p>Returns the goodness of fit of the performed fit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
-<li><p><strong>n_iterations</strong> – number of Monte Carlo simulations to generate</p></li>
-<li><p><strong>continue_of_failure</strong> – whether to continue or not if a fit fails (default: False)</p></li>
+<li><p><strong>n_iterations</strong> – number of Monte Carlo simulations to
+generate</p></li>
+<li><p><strong>continue_of_failure</strong> – whether to continue or not if a fit
+fails (default: False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span>
 </dt>
 <dd class="field-even">
-<p>tuple (goodness of fit, frame with all results, frame with all likelihood values)</p>
+<p>tuple (goodness of fit, frame with all results, frame
+with all likelihood values)</p>
 </dd>
 </dl>
 </dd>
@@ -322,11 +335,12 @@ parameters</p>
 <span class="sig-name descname"><span class="pre">inner_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.inner_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.inner_fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>This is used for the profile likelihood. Keeping fixed all parameters in the
-LikelihoodModel, this method minimize the logLike over the remaining nuisance
-parameters, i.e., the parameters belonging only to the model for this
-particular detector. If there are no nuisance parameters, simply return the
-logLike value.</p>
+<p>This is used for the profile likelihood.</p>
+<p>Keeping fixed all parameters in the LikelihoodModel, this method
+minimize the logLike over the remaining nuisance parameters,
+i.e., the parameters belonging only to the model for this
+particular detector. If there are no nuisance parameters, simply
+return the logLike value.</p>
 </dd>
 </dl>
 
@@ -356,7 +370,8 @@ logLike value.</p>
 <span class="sig-name descname"><span class="pre">set_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">likelihood_model_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.set_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.set_model" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.</p>
+<p>Set the model to be used in the joint minimization. Must be a
+LikelihoodModel instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -372,9 +387,10 @@ logLike value.</p>
 <span class="sig-name descname"><span class="pre">to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.to_csv" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Save the data in a comma-separated-values file (CSV) file. All keywords arguments are passed to the
-pandas.DataFrame.to_csv method (see the documentation from pandas for all possibilities). This gives a very
-high control on the format of the output</p>
+<p>Save the data in a comma-separated-values file (CSV) file. All
+keywords arguments are passed to the pandas.DataFrame.to_csv method
+(see the documentation from pandas for all possibilities). This gives a
+very high control on the format of the output.</p>
 <p>All arguments are forwarded to pandas.DataFrame.to_csv</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
@@ -391,8 +407,9 @@ high control on the format of the output</p>
 <span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.to_dataframe" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns a pandas.DataFrame instance with the data in the ‘x’, ‘y’, and ‘yerr’ column. If the data are Poisson,
-the yerr column will be -99 for every entry</p>
+<p>Returns a pandas.DataFrame instance with the data in the ‘x’, ‘y’,
+and ‘yerr’ column. If the data are Poisson, the yerr column will be -99
+for every entry.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -408,7 +425,8 @@ the yerr column will be -99 for every entry</p>
 <span class="sig-name descname"><span class="pre">to_txt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/plugins/XYLike.html#XYLike.to_txt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.plugins.XYLike.XYLike.to_txt" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Save the dataset in a text file. You can read the content back in a dataframe using:</p>
+<p>Save the dataset in a text file. You can read the content back in a
+dataframe using:</p>
 <p>&gt; df = pandas.DataFrame.from_csv(filename, sep=’ ‘)</p>
 <p>and recreate the XYLike instance as:</p>
 <p>&gt; xyl = XYLike.from_dataframe(df)</p>

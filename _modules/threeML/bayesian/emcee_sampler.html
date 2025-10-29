@@ -8,7 +8,7 @@
   <title>threeML.bayesian.emcee_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -109,15 +112,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for threeML.bayesian.emcee_sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelAssertionViolation</span><span class="p">,</span> <span class="n">use_astromodels_memoization</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.bayesian.sampler_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCMCSampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.detect_notebook</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_inside_notebook</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.parallel.parallel_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelClient</span>
@@ -140,44 +142,42 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">EmceeSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EmceeSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">likelihood_model</span><span class="p">,</span> <span class="n">data_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EmceeSampler.setup">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.emcee_sampler.EmceeSampler.setup">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-              <span class="n">n_burn_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-              <span class="n">n_walkers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
-              <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-              <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_burn_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_walkers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO describe function.</span>
 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO describe function</span>
-
-<span class="sd">        :param n_iterations: </span>
+<span class="sd">        :param n_iterations:</span>
 <span class="sd">        :type n_iterations: int</span>
-<span class="sd">        :param n_burn_in: </span>
+<span class="sd">        :param n_burn_in:</span>
 <span class="sd">        :type n_burn_in: Optional[int]</span>
-<span class="sd">        :param n_walkers: </span>
+<span class="sd">        :param n_walkers:</span>
 <span class="sd">        :type n_walkers: int</span>
-<span class="sd">        :param seed: </span>
-<span class="sd">        :type seed: </span>
-<span class="sd">        :returns: </span>
-
+<span class="sd">        :param seed:</span>
+<span class="sd">        :type seed:</span>
+<span class="sd">        :returns:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        
-        
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setup for Emcee sampler: n_iterations:</span><span class="si">{</span><span class="n">n_iterations</span><span class="si">}</span><span class="s2">, n_burn_in:</span><span class="si">{</span><span class="n">n_burn_in</span><span class="si">}</span><span class="s2">,&quot;</span>
-                  <span class="sa">f</span><span class="s2">&quot;n_walkers: </span><span class="si">{</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2">, seed: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Setup for Emcee sampler: n_iterations:</span><span class="si">{</span><span class="n">n_iterations</span><span class="si">}</span><span class="s2">, n_burn_in:&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_burn_in</span><span class="si">}</span><span class="s2">, n_walkers: </span><span class="si">{</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2">, seed: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_burn_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">n_iterations</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">))</span>
 
         <span class="k">else</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_n_burn_in</span> <span class="o">=</span> <span class="n">n_burn_in</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">)</span>
@@ -189,7 +189,6 @@
         <span class="c1"># we control progress with the config</span>
 
         <span class="k">if</span> <span class="s2">&quot;progress&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">:</span>
-
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;progress&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span> <span class="o">=</span> <span class="kc">True</span></div>
@@ -198,9 +197,7 @@
 <div class="viewcode-block" id="EmceeSampler.sample">
 <a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.emcee_sampler.EmceeSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
-
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
@@ -214,12 +211,10 @@
 
         <span class="n">p0</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_starting_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span><span class="p">))</span>
 
-        <span class="c1"># Deactivate memoization in astromodels, which is useless in this case since we will never use twice the</span>
-        <span class="c1"># same set of parameters</span>
+        <span class="c1"># Deactivate memoization in astromodels, which is useless in this case since we</span>
+        <span class="c1"># will never use twice the same set of parameters</span>
         <span class="k">with</span> <span class="n">use_astromodels_memoization</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;parallel&quot;</span><span class="p">][</span><span class="s2">&quot;use_parallel&quot;</span><span class="p">]:</span>
-
                 <span class="n">c</span> <span class="o">=</span> <span class="n">ParallelClient</span><span class="p">()</span>
                 <span class="n">view</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:]</span>
 
@@ -228,30 +223,25 @@
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior</span>
                 <span class="p">)</span>
 
             <span class="c1"># If a seed is provided, set the random number seed</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
                 <span class="n">sampler</span><span class="o">.</span><span class="n">_random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">)</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start emcee run&quot;</span><span class="p">)</span>
             <span class="c1"># Sample the burn-in</span>
 
             <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">progress_bars</span><span class="p">:</span>
-
                 <span class="k">if</span> <span class="n">is_inside_notebook</span><span class="p">():</span>
-
                     <span class="n">progress</span> <span class="o">=</span> <span class="s2">&quot;notebook&quot;</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">progress</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="n">progress</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
@@ -268,29 +258,30 @@
             <span class="c1"># Run the true sampling</span>
 
             <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
-                <span class="n">initial_state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
+                <span class="n">initial_state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_iterations</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span>
+            <span class="p">)</span>
 
-        <span class="n">acc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean acceptance fraction: </span><span class="si">{</span><span class="n">acc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="o">=</span><span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Compute the corresponding values of the likelihood</span>
 
         <span class="c1"># First we need the prior</span>
-        <span class="n">log_prior</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">]</span>
+        <span class="n">log_prior</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span><span class="p">]</span>
 
         <span class="c1"># Now we get the log posterior and we remove the log prior</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_like_values</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_prior</span>
 
         <span class="c1"># we also want to store the log probability</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_probability_values</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
 

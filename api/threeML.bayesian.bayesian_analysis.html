@@ -9,7 +9,7 @@
   <title>threeML.bayesian.bayesian_analysis module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -133,9 +136,11 @@
 <span class="sig-name descname"><span class="pre">convergence_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples_in_each_subset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_subsets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.convergence_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.convergence_plots" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
-values if the MCMC has converged to the posterior distribution.</p>
-<p>The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
+<p>Compute the mean and variance for subsets of the samples, and plot
+them. They should all be around the same values if the MCMC has
+converged to the posterior distribution.</p>
+<p>The subsamples are taken with two different strategies: the first is to slide a
+fixed-size window, the second
 is to take random samples from the chain (bootstrap)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
@@ -192,10 +197,12 @@ is to take random samples from the chain (bootstrap)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_like_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.log_like_values" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If
-you need to find the values of the parameters which generated a given value of the log. likelihood, remember
-that the samples accessible through the property .raw_samples are ordered in the same way as the vector
-returned by this method.</p>
+<p>Returns the value of the log_likelihood found by the bayesian
+sampler while sampling from the posterior. If you need to find the
+values of the parameters which generated a given value of the log.
+likelihood, remember that the samples accessible through the property
+.raw_samples are ordered in the same way as the vector returned by this
+method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -211,8 +218,15 @@ returned by this method.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_marginal_likelihood</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.log_marginal_likelihood" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Return the log marginal likelihood (evidence) if computed
-:return: marginal_likelihood</p>
+<p>return:</p>
+<p>marginal_likelihood.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Return the log marginal likelihood (evidence) if computed</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -221,10 +235,12 @@ returned by this method.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_probability_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.log_probability_values" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Returns the value of the log_probability (posterior) found by the bayesian sampler while sampling from the posterior. If
-you need to find the values of the parameters which generated a given value of the log. likelihood, remember
-that the samples accessible through the property .raw_samples are ordered in the same way as the vector
-returned by this method.</p>
+<p>Returns the value of the log_probability (posterior) found by the
+bayesian sampler while sampling from the posterior. If you need to find
+the values of the parameters which generated a given value of the log.
+likelihood, remember that the samples accessible through the property
+.raw_samples are ordered in the same way as the vector returned by this
+method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -240,7 +256,7 @@ returned by this method.</p>
 <span class="sig-name descname"><span class="pre">plot_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.plot_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.plot_chains" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Produce a plot of the series of samples for each parameter</p>
+<p>Produce a plot of the series of samples for each parameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -261,8 +277,9 @@ returned by this method.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">raw_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.raw_samples" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Access the samples from the posterior distribution generated by the selected sampler in raw form (i.e.,
-in the format returned by the sampler)</p>
+<p>Access the samples from the posterior distribution generated by the
+selected sampler in raw form (i.e., in the format returned by the
+sampler)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -278,7 +295,7 @@ in the format returned by the sampler)</p>
 <span class="sig-name descname"><span class="pre">restore_MAP_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.restore_MAP_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.restore_MAP_fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Sets the model parameters to the MAP of the probability</p>
+<p>Sets the model parameters to the MAP of the probability.</p>
 </dd>
 </dl>
 
@@ -287,7 +304,8 @@ in the format returned by the sampler)</p>
 <span class="sig-name descname"><span class="pre">restore_median_fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.restore_median_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.restore_median_fit" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Sets the model parameters to the mean of the marginal distributions</p>
+<p>Sets the model parameters to the mean of the marginal
+distributions.</p>
 </dd>
 </dl>
 
@@ -300,12 +318,12 @@ in the format returned by the sampler)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="threeML.bayesian.bayesian_analysis.BayesianAnalysis.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.sample" title="Link to this definition"></a>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.sample" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>sample the posterior of the model with the selected algorithm</p>
-<p>If no algorithm as been set, then the configured default algorithm
-we default parameters will be run</p>
+<p>Sample the posterior of the model with the selected algorithm.</p>
+<p>If no algorithm as been set, then the configured default
+algorithm we default parameters will be run</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
@@ -326,8 +344,8 @@ we default parameters will be run</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../notebooks/api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase" title="threeML.bayesian.sampler_base.SamplerBase"><span class="pre">SamplerBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.sampler" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Access the instance of the sampler used to sample the posterior distribution
-:return: an instance of the sampler</p>
+<p>Access the instance of the sampler used to sample the posterior
+distribution :return: an instance of the sampler.</p>
 </dd>
 </dl>
 
@@ -336,12 +354,14 @@ we default parameters will be run</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.samples" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Access the samples from the posterior distribution generated by the selected sampler</p>
+<p>Access the samples from the posterior distribution generated by the
+selected sampler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p>a dictionary with the samples from the posterior distribution for each parameter</p>
+<p>a dictionary with the samples from the posterior
+distribution for each parameter</p>
 </dd>
 </dl>
 </dd>
@@ -352,16 +372,15 @@ we default parameters will be run</p>
 <span class="sig-name descname"><span class="pre">set_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/bayesian_analysis.html#BayesianAnalysis.set_sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.bayesian_analysis.BayesianAnalysis.set_sampler" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>Set the sampler
-:param sampler_name: (str) Name of sampler</p>
+<p>Set the sampler :param sampler_name: (str) Name of sampler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
-<p><strong>share_spectrum</strong> – (optional) Option to share the spectrum calc</p>
+<p><strong>share_spectrum</strong> – (optional) Option to share the spectrum
+calc between detectors with the same input energy bins</p>
 </dd>
 </dl>
-<p>between detectors with the same input energy bins</p>
 </dd>
 </dl>
 

@@ -9,7 +9,7 @@
   <title>threeML.utils.photometry.filter_set module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -127,9 +130,8 @@
 <span class="sig-name descname"><span class="pre">ab_magnitudes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/photometry/filter_set.html#FilterSet.ab_magnitudes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.ab_magnitudes" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>return the effective stimulus of the model and filter for the given
-magnitude system
-:return: np.ndarray of ab magnitudes</p>
+<p>Return the effective stimulus of the model and filter for the given
+magnitude system :return: np.ndarray of ab magnitudes.</p>
 </dd>
 </dl>
 
@@ -186,8 +188,14 @@ magnitude system
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">native_filter_names</span></span><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.native_filter_names" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>the native filter names
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The native filter names</p>
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -196,8 +204,7 @@ magnitude system
 <span class="sig-name descname"><span class="pre">plot_filters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/photometry/filter_set.html#FilterSet.plot_filters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.plot_filters" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>plot the filter/ transmission curves
-:return: fig</p>
+<p>Plot the filter/ transmission curves :return: fig.</p>
 </dd>
 </dl>
 
@@ -206,9 +213,10 @@ magnitude system
 <span class="sig-name descname"><span class="pre">set_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">differential_flux</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/photometry/filter_set.html#FilterSet.set_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.set_model" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>set the model of that will be used during the convolution. Not that speclite
-considers a differential flux to be in units of erg/s/cm2/lambda so we must convert
-astromodels into the proper units (using astropy units!)</p>
+<p>Set the model of that will be used during the convolution.</p>
+<p>Not that speclite considers a differential flux to be in units
+of erg/s/cm2/lambda so we must convert astromodels into the
+proper units (using astropy units!)</p>
 </dd>
 </dl>
 
@@ -217,7 +225,7 @@ astromodels into the proper units (using astropy units!)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">speclite_filters</span></span><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.speclite_filters" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>exposes the speclite fitlers for simulations</p>
+<p>Exposes the speclite fitlers for simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -233,8 +241,14 @@ astromodels into the proper units (using astropy units!)</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength_bounds</span></span><a class="headerlink" href="#threeML.utils.photometry.filter_set.FilterSet.wavelength_bounds" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>IntervalSet of FWHM bounds of the filters
-:return:</p>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><a class="reference internal" href="../notebooks/api/threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet">IntervalSet</a> of FWHM bounds of the filters</p>
+</dd>
+</dl>
 </dd>
 </dl>
 

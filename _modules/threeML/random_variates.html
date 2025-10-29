@@ -8,7 +8,7 @@
   <title>threeML.random_variates &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -117,9 +120,11 @@
 <div class="viewcode-block" id="RandomVariates">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.random_variates.RandomVariates">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomVariates</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A subclass of np.array which is meant to contain samples for one parameter. This class contains methods to easily</span>
-<span class="sd">    compute properties for the parameter (errors and so on)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of np.array which is meant to contain samples for one</span>
+<span class="sd">    parameter.</span>
+
+<span class="sd">    This class contains methods to easily compute properties for the</span>
+<span class="sd">    parameter (errors and so on)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -135,7 +140,6 @@
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-
         <span class="c1"># see InfoArray.__array_finalize__ for comments</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -143,10 +147,10 @@
         <span class="c1"># Add the value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_orig_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;_orig_value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="c1"># This gets called at the end of any operation, where out_arr is the result of the operation</span>
-        <span class="c1"># We need to update _orig_value so that the final results will have it</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># This gets called at the end of any operation, where out_arr is the result of</span>
+        <span class="c1"># the operation. We need to update _orig_value so that the final results will</span>
+        <span class="c1"># have it</span>
         <span class="n">out_arr</span> <span class="o">=</span> <span class="n">RandomVariates</span><span class="p">(</span><span class="n">out_arr</span><span class="p">)</span>
         <span class="n">out_arr</span><span class="o">.</span><span class="n">_orig_value</span> <span class="o">=</span> <span class="n">out_arr</span><span class="o">.</span><span class="n">median</span>
 
@@ -200,9 +204,10 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">median</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns median value&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns median value.&quot;&quot;&quot;</span>
 
-        <span class="c1"># the np.asarray casting avoids the calls to __new__ and __array_finalize_ of this class</span>
+        <span class="c1"># the np.asarray casting avoids the calls to __new__ and __array_finalize_ of</span>
+        <span class="c1"># this class</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
 
@@ -214,40 +219,39 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sample std value&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sample std value.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sample variance value&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns sample variance value.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns average value&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns average value.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_orig_value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RandomVariates.highest_posterior_density_interval">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.random_variates.RandomVariates.highest_posterior_density_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">highest_posterior_density_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the Highest Posterior Density interval (HPD) for the parameter, for the given credibility level.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Highest Posterior Density interval (HPD) for the</span>
+<span class="sd">        parameter, for the given credibility level.</span>
 
-<span class="sd">        NOTE: the returned interval is the HPD only if the posterior is not multimodal. If it is multimodal, you should</span>
-<span class="sd">        probably report the full posterior, not only an interval.</span>
+<span class="sd">        NOTE: the returned interval is the HPD only if the posterior is not multimodal.</span>
+<span class="sd">        If it is multimodal, you should probably report the full posterior, not only an</span>
+<span class="sd">        interval.</span>
 
 <span class="sd">        :param cl: credibility level (0 &lt; cl &lt; 1)</span>
 <span class="sd">        :return: (low_bound, hi_bound)</span>
@@ -255,9 +259,10 @@
 
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The credibility level should be 0 &lt; cl &lt; 1&quot;</span>
 
-        <span class="c1"># NOTE: we cannot sort the array, because we would destroy the covariance with other physical quantities,</span>
-        <span class="c1"># so we get a copy instead. This copy will live only for the duration of this method (but of course will be</span>
-        <span class="c1"># collected only whenevery the garbage collector decides to).</span>
+        <span class="c1"># NOTE: we cannot sort the array, because we would destroy the covariance with</span>
+        <span class="c1"># other physical quantities, so we get a copy instead. This copy will live only</span>
+        <span class="c1"># for the duration of this method (but of course will be collected only whenever</span>
+        <span class="c1"># the garbage collector decides to).</span>
 
         <span class="n">ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
@@ -266,17 +271,20 @@
         <span class="c1"># This is the probability that the interval should span</span>
         <span class="n">interval_integral</span> <span class="o">=</span> <span class="n">cl</span>
 
-        <span class="c1"># If all values have the same probability, then the hpd is degenerate, but its length is from 0 to</span>
-        <span class="c1"># the value corresponding to the (interval_integral * n)-th sample.</span>
-        <span class="c1"># This is the index of the rightermost element which can be part of the interval</span>
+        <span class="c1"># If all values have the same probability, then the hpd is degenerate, but its</span>
+        <span class="c1"># length is from 0 to the value corresponding to the (interval_integral * n)-th</span>
+        <span class="c1"># sample. This is the index of the rightermost element which can be part of the</span>
+        <span class="c1"># interval</span>
 
         <span class="n">index_of_rightmost_possibility</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">interval_integral</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span>
 
-        <span class="c1"># Compute the index of the last element that is eligible to be the left bound of the interval</span>
+        <span class="c1"># Compute the index of the last element that is eligible to be the left bound of</span>
+        <span class="c1"># the interval</span>
 
         <span class="n">index_of_leftmost_possibility</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">index_of_rightmost_possibility</span>
 
-        <span class="c1"># Now compute the width of all intervals that might be the one we are looking for</span>
+        <span class="c1"># Now compute the width of all intervals that might be the one we are looking</span>
+        <span class="c1"># for</span>
 
         <span class="n">interval_width</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">ordered</span><span class="p">[</span><span class="n">index_of_rightmost_possibility</span><span class="p">:]</span>
@@ -302,12 +310,12 @@
 <div class="viewcode-block" id="RandomVariates.equal_tail_interval">
 <a class="viewcode-back" href="../../notebooks/api/threeML.html#threeML.random_variates.RandomVariates.equal_tail_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">equal_tail_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the equal tail interval, i.e., an interval centered on the median of the distribution with</span>
-<span class="sd">        the same probability on the right and on the left of the mean.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the equal tail interval, i.e., an interval centered on the</span>
+<span class="sd">        median of the distribution with the same probability on the right and</span>
+<span class="sd">        on the left of the mean.</span>
 
-<span class="sd">        If the distribution of the parameter is Gaussian and cl=0.68, this is equivalent to the 1 sigma confidence</span>
-<span class="sd">        interval.</span>
+<span class="sd">        If the distribution of the parameter is Gaussian and cl=0.68,</span>
+<span class="sd">        this is equivalent to the 1 sigma confidence interval.</span>
 
 <span class="sd">        :param cl: confidence level (0 &lt; cl &lt; 1)</span>
 <span class="sd">        :return: (low_bound, hi_bound)</span>
@@ -327,7 +335,6 @@
     <span class="c1"># np.ndarray already has a mean() and a std() methods</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="c1"># Get representation for the HPD</span>
 
         <span class="n">min_bound</span><span class="p">,</span> <span class="n">max_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="mf">0.68</span><span class="p">)</span>
@@ -347,7 +354,6 @@
         <span class="k">return</span> <span class="n">representation</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
 
 </pre></div>

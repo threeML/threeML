@@ -9,7 +9,7 @@
   <title>threeML.bayesian.ultranest_sampler module &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -18,7 +18,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -58,6 +58,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -126,8 +129,7 @@
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/bayesian/ultranest_sampler.html#UltraNestSampler.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.bayesian.ultranest_sampler.UltraNestSampler.sample" title="Link to this definition"></a>
 </dt>
 <dd>
-<p>sample using the UltraNest numerical integration method
-:rtype:</p>
+<p>Sample using the UltraNest numerical integration method :rtype:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span>
 </dt>
@@ -144,29 +146,40 @@
 </dt>
 <dd>
 <p>set up the Ultranest sampler. Consult the documentation:
-<a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler">https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler</a></p>
+<a class="reference external" href="https://johannesbuchner.github.io/UltraNest/ultranest.html">https://johannesbuchner.github.io/UltraNest/ultranest.html</a>?highlight=reactive#
+ultranest.integrator.ReactiveNestedSampler</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span>
 </dt>
 <dd class="field-odd">
 <ul class="simple">
 <li><p><strong>min_num_live_points</strong> (<em>int</em>) – minimum number of live points throughout the run</p></li>
-<li><p><strong>dlogz</strong> (<em>float</em>) – Target evidence uncertainty. This is the std between bootstrapped logz integrators.</p></li>
-<li><p><strong>chain_name</strong> – where to store output files</p></li>
-<li><p><strong>resume</strong> – (‘resume’, ‘resume-similar’, ‘overwrite’ or ‘subfolder’) –</p></li>
+<li><p><strong>dlogz</strong> – Target evidence uncertainty. This is the std between bootstrapped</p></li>
 </ul>
 </dd>
 </dl>
-<p>if ‘overwrite’, overwrite previous data.
+<p>logz integrators.
+:type dlogz: float
+:param chain_name: where to store output files
+:type chain_name:
+:param resume:  (‘resume’, ‘resume-similar’, ‘overwrite’ or ‘subfolder’) –
+if ‘overwrite’, overwrite previous data.
 if ‘subfolder’, create a fresh subdirectory in log_dir.
-if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.
-if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.
+if ‘resume’ or True, continue previous run if available. Only works when
+dimensionality, transform or likelihood are consistent.
+if ‘resume-similar’, continue previous run if available. Only works when
+dimensionality and transform are consistent. If a likelihood difference is
+detected, the existing likelihoods are updated until the live point order
+differs. Otherwise, behaves like resume.
 :type resume: str
-:param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).
+:param wrapped_params:  (list of bools) – indicating whether this parameter
+wraps around (circular parameter).
 :type wrapped_params:
 :param stepsampler:
 :type stepsampler:
-:param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).
+:param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region
+(better for multi-modal problems) or just ellipsoidal sampling (faster for
+high-dimensional, gaussian-like problems).
 :type use_mlfriends: bool
 :returns:</p>
 </dd>

@@ -8,7 +8,7 @@
   <title>threeML.utils.spectrum.share_spectrum &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=ad0ac74c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
@@ -17,7 +17,7 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
@@ -55,6 +55,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/xspec_models.html">Working with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -81,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Photometry_demo.html">Photometric Plugin</a></li>
 </ul>
 
         </div>
@@ -111,9 +114,10 @@
   <h1>Source code for threeML.utils.spectrum.share_spectrum</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.DispersionSpectrumLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">DispersionSpectrumLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.plugins.SpectrumLike</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpectrumLike</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
+
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
@@ -121,10 +125,12 @@
 <a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.share_spectrum.ShareSpectrum">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShareSpectrum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datalist</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Object to check which plugins in datalist can share their spectrum calculation, because</span>
-<span class="sd">        they have the same input energy bins and integration method. Can save a lot of time if the</span>
-<span class="sd">        calculation of the spectrum is slow.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Object to check which plugins in datalist can share their spectrum</span>
+<span class="sd">        calculation, because they have the same input energy bins and</span>
+<span class="sd">        integration method.</span>
+
+<span class="sd">        Can save a lot of time if the calculation of the spectrum is</span>
+<span class="sd">        slow.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># List with different Ebin edges of the plugins</span>
@@ -133,9 +139,10 @@
         <span class="c1"># List with the information which plugins have the same spectrum integration</span>
         <span class="c1"># with same input energy bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_ebin_connect</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1">#TODO add check if same integration method is set</span>
-        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">datalist</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-                                         <span class="nb">list</span><span class="p">(</span><span class="n">datalist</span><span class="o">.</span><span class="n">values</span><span class="p">()))):</span>
+        <span class="c1"># TODO add check if same integration method is set</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">datalist</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">datalist</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">DispersionSpectrumLike</span><span class="p">):</span>
                 <span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">monte_carlo_energies</span>
                 <span class="n">share_spec_possible</span> <span class="o">=</span> <span class="kc">True</span>
@@ -143,10 +150,11 @@
                 <span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">observed_spectrum</span><span class="o">.</span><span class="n">edges</span>
                 <span class="n">share_spec_possible</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> can not share spectrum calculation (Not SpectrumLike or DispersionSpectrumLike)&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="kc">None</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> can not share spectrum calculation (Not SpectrumLike&quot;</span>
+                    <span class="s2">&quot; or DispersionSpectrumLike)&quot;</span>
                 <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_base_plugin_key</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_data_ebin_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
                 <span class="n">share_spec_possible</span> <span class="o">=</span> <span class="kc">False</span>
@@ -159,7 +167,10 @@
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
                             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_ein_edges</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
-                                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> shares the spectrum calculation with plugin </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Plugin </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> shares the spectrum calculation with&quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot; plugin </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="p">)</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">_data_ebin_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                                 <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
                                 <span class="k">break</span>
