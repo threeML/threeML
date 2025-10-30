@@ -27,7 +27,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Working with XSPEC models" href="notebooks/xspec_models.html" />
+    <link rel="next" title="Minimization" href="notebooks/Minimization_tutorial.html" />
     <link rel="prev" title="Logging and Verbosity" href="notebooks/logging.html" /> 
 </head>
 
@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/logging.html">Logging and Verbosity</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Notes for XSPEC Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-version-of-xspec-is-currently-supported">What version of XSPEC is currently supported?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data">Why use 3ML over XSPEC if I am just fitting X-ray data?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#do-i-need-a-new-plugin-for-my-instrument">Do I need a new plugin for my instrument?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-use-xspec-models">Can I use XSPEC models?</a></li>
@@ -67,8 +68,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-plot-unfolded-data-points-along-with-my-fit">How do I plot <em>unfolded data points</em> along with my fit?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/xspec_models.html">Working with XSPEC models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/xspec_models.html#XSPEC-Settings">XSPEC Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Minimization_tutorial.html">Minimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
@@ -125,6 +124,28 @@
 <h1>Notes for XSPEC Users<a class="headerlink" href="#notes-for-xspec-users" title="Link to this heading"></a>
 </h1>
 <p>Users coming from XSPEC typically have a few questions about getting started with 3ML</p>
+<section id="what-version-of-xspec-is-currently-supported">
+<h2>What version of XSPEC is currently supported?<a class="headerlink" href="#what-version-of-xspec-is-currently-supported" title="Link to this heading"></a>
+</h2>
+<p>Starting from version <cite>astromodels`</cite> and <cite>threeML`</cite> 2.5.0 there is currently
+support for XSPEC, either installed with Conda via the <cite>xspec</cite> conda package or
+compiled from source. (see <a class="reference external" href="https://heasarc.gsfc.nasa.gov/docs/software/conda.html">here</a> for more details on the conda package).</p>
+<p><cite>astromodels</cite> 2.5.0 is compatible with XSPEC 12.15.0, while 2.5.1 enables
+support for XSPEC 12.15.1. XSPEC versions lower than 12.12.0 are no longer
+supported.</p>
+<p>If you compiled XSPEC from source, please set the environment variable
+ASTRO_XSPEC_VERSION to the version of XSPEC you are using in the build
+process and make sure to have the HEADAS environment variable set.</p>
+<p>Support for <cite>xspec-modelsonly</cite> conda package has been discontinued.
+Please use the conda package <cite>xspec</cite> instead.</p>
+<p>In <cite>astromodels</cite> 2.5.1 the internal logic for the normalization parameter
+for XSPEC additive models has changed to be consistent with <cite>sherpa</cite> and
+support XSPEC 12.15.1. This means that XS model files in the user data
+folder (usually <cite>~/.astromodels/data/</cite>) need to be regenerated. This should
+be automatically taken care of and transparent to the users, but in case of
+errors, please remove these files manually and try to import XSPEC models
+again to trigger the new file generation.</p>
+</section>
 <section id="why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data">
 <h2>Why use 3ML over XSPEC if I am just fitting X-ray data?<a class="headerlink" href="#why-use-3ml-over-xspec-if-i-am-just-fitting-x-ray-data" title="Link to this heading"></a>
 </h2>
@@ -214,7 +235,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="notebooks/logging.html" class="btn btn-neutral float-left" title="Logging and Verbosity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="notebooks/xspec_models.html" class="btn btn-neutral float-right" title="Working with XSPEC models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="notebooks/Minimization_tutorial.html" class="btn btn-neutral float-right" title="Minimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
