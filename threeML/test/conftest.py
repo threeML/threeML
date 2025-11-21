@@ -6,6 +6,7 @@ from pathlib import Path
 import numba as nb
 import numpy as np
 import pytest
+import astropy.units as u
 from astromodels import (
     Blackbody,
     Gaussian,
@@ -137,8 +138,9 @@ def data_list_bn090217206_nai6_nai9_bgo1():
 @pytest.fixture(scope="function")
 def jl_bn090217206_nai(data_list_bn090217206_nai6):
     powerlaw = Powerlaw()
-
     model = get_grb_model(powerlaw)
+    powerlaw.K = 1 * u.Unit("keV-1 cm-2 s-1")
+    powerlaw.piv = 1 * u.keV
 
     jl = JointLikelihood(model, data_list_bn090217206_nai6, verbose=False)
 
@@ -154,6 +156,8 @@ def jl_bn090217206_nai6_nai9_bgo1(data_list_bn090217206_nai6_nai9_bgo1):
     powerlaw = Powerlaw()
 
     model = get_grb_model(powerlaw)
+    powerlaw.K = 1 * u.Unit("keV-1 cm-2 s-1")
+    powerlaw.piv = 1 * u.keV
 
     jl = JointLikelihood(model, data_list_bn090217206_nai6_nai9_bgo1, verbose=False)
 
@@ -186,7 +190,8 @@ def fitted_jl_bn090217206_nai6_nai9_bgo1(
 
 def set_priors(model):
     powerlaw = model.bn090217206.spectrum.main.Powerlaw
-
+    powerlaw.K.unit = u.Unit("keV-1 cm-2 s-1")
+    powerlaw.piv = 1 * u.keV
     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
 
@@ -220,6 +225,8 @@ def completed_bn090217206_bayesian_analysis(fitted_jl_bn090217206_nai):
     model = jl.likelihood_model
     data_list = jl.data_list
     powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
+    powerlaw.K.unit = u.Unit("keV-1 cm -2 s-1")
+    powerlaw.piv = 1 * u.keV
 
     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
@@ -476,6 +483,8 @@ def photometry_data_model(grond_plugin):
     datalist = DataList(grond_plugin)
 
     model = Model(PointSource("grb", 0, 0, spectral_shape=spec))
+    spec.K = 1 * u.Unit("keV-1 cm-2 s-1")
+    spec.piv = 1 * u.keV
 
     yield model, datalist
 

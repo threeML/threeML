@@ -9,8 +9,10 @@ import matplotlib.pyplot as plt
 import numba as nb
 import numpy as np
 import pandas as pd
+import astropy.units as u
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
+from astromodels.core.units import get_units
 from astromodels.functions.priors import Truncated_gaussian, Uniform_prior
 
 from threeML.config.config import threeML_config
@@ -1211,17 +1213,15 @@ class SpectrumLike(PluginPrototype):
                         idx[i] = int(s[1:])
 
                     else:
-
-                        idx[i] = self._observed_spectrum.containing_bin(float(s))
+                        s = (float(s) * u.keV).to(get_units().energy).value
+                        idx[i] = self._observed_spectrum.containing_bin(s)
 
                 if not idx[0] < idx[1]:
 
-                    log.error(
+                    raise RuntimeError(
                         f"The channel and energy selection ({selections}) are out of "
                         f"order and translates to {idx[0]}-{idx[1]}"
                     )
-
-                    raise RuntimeError()
 
                 # we do the opposite of the exclude command!
                 self._mask[idx[0] : idx[1] + 1] = True
