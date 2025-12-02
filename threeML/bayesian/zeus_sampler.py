@@ -95,7 +95,7 @@ class ZeusSampler(MCMCSampler):
         with use_astromodels_memoization(False):
             if using_mpi:
                 with MPIPoolExecutor() as executor:
-                    sampler = zeus.sampler(
+                    sampler = zeus.EnsembleSampler(
                         logprob_fn=self.get_posterior,
                         nwalkers=self._n_walkers,
                         ndim=n_dim,
@@ -119,7 +119,7 @@ class ZeusSampler(MCMCSampler):
                 c = ParallelClient()
                 view = c[:]
 
-                sampler = zeus.sampler(
+                sampler = zeus.EnsembleSampler(
                     logprob_fn=self.get_posterior,
                     nwalkers=self._n_walkers,
                     ndim=n_dim,
@@ -127,7 +127,7 @@ class ZeusSampler(MCMCSampler):
                 )
 
             else:
-                sampler = zeus.sampler(
+                sampler = zeus.EnsembleSampler(
                     logprob_fn=self.get_posterior, nwalkers=self._n_walkers, ndim=n_dim
                 )
 
