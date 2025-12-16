@@ -106,7 +106,7 @@ Sub-package and plug-in maintainers and point of contacts
 * `cosipy <https://cositools.github.io/cosipy/>`_ - :email:`Israel Martinez Castellanos <imc@umd.edu>`
 * polpy - :email:`Sujay Mate <sujay.mate@gmail.com>`, :email:`Merlin Kole <merlin.kole@unh.edu>`
 * `i3mla <https://github.com/icecube/i3mla>`_ - :email:`Michael Larson <mlarson@icecube.wisc.edu>`
-* gammapy-plugin - 
+* gammapy-plugin - :email:`Tobias Preis <tobias.preis@uibk.ac.at>`
 
 Responsibilities include:
 =========================
