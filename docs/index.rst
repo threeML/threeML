@@ -22,7 +22,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    :hidden:
    
    team
-   notebooks/installation.ipynb
+   installation.md
    intro
    notebooks/configuration.ipynb
    notebooks/logging.ipynb
