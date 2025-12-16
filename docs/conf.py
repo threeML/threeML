@@ -65,7 +65,7 @@ for mod_name in MOCK_MODULES:
 # ones.
 extensions = [
     "nbsphinx",
-    "recommonmark",
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
@@ -74,6 +74,7 @@ extensions = [
     "sphinx_gallery.load_style",
     "sphinx_rtd_dark_mode",
     "sphinxcontrib.email",
+    "sphinx_copybutton",
 ]
 
 napoleon_google_docstring = True
@@ -125,12 +126,12 @@ master_doc = "index"
 
 # General information about the project.
 project = "The Multi-Mission Maximum Likelihood framework"
-copyright = "(2024), the ThreeML developers"
+copyright = "(2025), the ThreeML developers"
 author = "G.Vianello"
 
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 
 # List of patterns, relative to source directory, that match files and
@@ -142,7 +143,6 @@ html_theme = "sphinx_rtd_dark_mode"
 
 html_theme_options = {
     "logo_only": False,
-    "display_version": False,
     "collapse_navigation": True,
     "navigation_depth": 4,
     "prev_next_buttons_location": "bottom",  # top and bottom
@@ -169,6 +169,7 @@ todo_include_todos = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "TheMulti-MissionMaximumLikelihoodframeworkdoc"
+html_baseurl = ""
 
 # -- Options for LaTeX output ---------------------------------------------
 
