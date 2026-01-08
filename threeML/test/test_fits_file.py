@@ -1,6 +1,7 @@
 import astropy.io.fits as fits
 import numpy as np
 import pytest
+from pathlib import Path
 
 from threeML.io.fits_file import FITSExtension, FITSFile
 
@@ -46,7 +47,7 @@ def test_fits_file():
 
         assert np.all(dummy_fits["TEST"].data["TEST_VALUE"] == test_values)
 
-        file_name = "test_fits%d.fits" % i
+        file_name = Path.cwd() / f"test_fits{i}.fits"
 
         dummy_fits.writeto(file_name, overwrite=True)
 
@@ -62,3 +63,5 @@ def test_fits_file():
         assert read_dummy_fits["TEST"].header["TFORM1"] == dtype_keys[i]
 
         assert np.all(read_dummy_fits["TEST"].data["TEST_VALUE"] == test_values)
+
+        file_name.unlink()
