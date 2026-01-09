@@ -62,7 +62,7 @@ jobs:
                     pip install --upgrade --pre --no-deps astromodels
                   fi
                   
-                  pip install --upgrade flake8 coverage pytest-cov cython numba
+                  pip install --upgrade flake8 coverage pytest-cov 
 
                   pip install -e .
               env:
@@ -111,7 +111,7 @@ jobs:
 
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
-                  pip install --upgrade flake8 coverage pytest-cov cython
+                  pip install --upgrade flake8 coverage pytest-cov 
 
                   pip install -e .
             - name: Lint with flake8
