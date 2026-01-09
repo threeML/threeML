@@ -130,7 +130,11 @@ From the polynomial fit, the polynomial is integrated in time over the active so
 $$ B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t $$
 
 
-```python tags=["nbsphinx-thumbnail"]
+```{code-cell} python
+---
+tags: ["nbsphinx-thumbnail"]
+---
+
 gbm_tte.set_background_interval('-24--5','100-200')
 fig = gbm_tte.view_lightcurve(start=-20,stop=200)
 ```
