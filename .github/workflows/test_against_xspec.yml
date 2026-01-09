@@ -144,7 +144,7 @@ jobs:
                       astro_install: "pip install -e git+https://github.com/threeML/astromodels.git@dev#egg=astromodels"
                       extra_deps: "python -m pip install numpy numba packaging"
                     - astro_source: "conda"
-                      astro_install: "echo 'Conda already installed'"
+                      astro_install: "conda install -c threeml -c conda-forge astromodels"
                       extra_deps: ""
 
         steps:
@@ -176,10 +176,10 @@ jobs:
                   pip install --upgrade flake8 coverage pytest-cov cython
                   pip install -e .
               env:
-                  ASTRO_XSPEC_VERSION: 12.15.0
+                  ASTRO_XSPEC_VERSION: 12.15.1
 
             - name: Test xspec
               shell: bash -l {0}
               run: |
                   echo "loading xspec from " $HEADAS
-                  python -m pytest threeML/test/test_AAA_against_xspec.py
+                  python -m pytest threeML/test/test_AAA_against_xspec.py 
