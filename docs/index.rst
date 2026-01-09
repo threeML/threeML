@@ -34,7 +34,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    modeling
    faq
    api/API
-   release_notes
+   CHANGELOG.md
 
 .. nbgallery::
    :caption: Features and examples:
