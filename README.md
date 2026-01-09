@@ -117,5 +117,5 @@ The SVO Filter Profile Service. Rodrigo, C., Solano, E., Bayo, A. http://ivoa.ne
 The Filter Profile Service Access Protocol. Rodrigo, C., Solano, E. http://ivoa.net/documents/Notes/SVOFPSDAL/index.html
 
 
-<img src="https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png"  width="100"> ThreeML is supported by National Science Foundation (NSF) <img src="https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png"  width="100">
+<img src="https://nsf.widen.net/content/txvhzmsofh/png/NSF_Official_logo_High_Res_1200ppi.png?position=c&quality=80&x.portal_shortcode_generated=dnmqqhzz&x.collection_sharename=wc3fwkos&x.app=portals"  width="100"> ThreeML is supported by National Science Foundation (NSF) <img src="https://nsf.widen.net/content/txvhzmsofh/png/NSF_Official_logo_High_Res_1200ppi.png?position=c&quality=80&x.portal_shortcode_generated=dnmqqhzz&x.collection_sharename=wc3fwkos&x.app=portals"  width="100">
 
