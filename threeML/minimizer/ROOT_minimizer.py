@@ -66,7 +66,7 @@ class FuncWrapper(ROOT.Math.IMultiGenFunction):
 
 
 class ROOTMinimizer(LocalMinimizer):
-    valid_setup_keys = ("ftol", "max_function_calls", "strategy")
+    valid_setup_keys = ("ftol", "max_function_calls", "strategy", "algo_type")
 
     def __init__(self, function, parameters, verbosity=0, setup_dict=None):
         super(ROOTMinimizer, self).__init__(function, parameters, verbosity, setup_dict)

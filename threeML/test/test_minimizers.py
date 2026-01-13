@@ -108,6 +108,15 @@ def test_ROOT_complete(jl_bn090217206_nai):
 
     do_contours_check(jl_bn090217206_nai, "minuit")
 
+    root_minimize = LocalMinimization("ROOT")
+    root_minimize.setup(
+        ftol=1e-3, max_function_calls=10000, strategy=2, algo_type="minimize"
+    )
+
+    do_analysis(jl_bn090217206_nai, root_minimize)
+
+    do_contours_check(jl_bn090217206_nai, "minuit")
+
 
 def test_grid(jl_bn090217206_nai):
     jl = jl_bn090217206_nai
