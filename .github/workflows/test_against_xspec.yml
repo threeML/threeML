@@ -139,13 +139,13 @@ jobs:
                       extra_deps: ""
                     - astro_source: "master"
                       astro_install: |
-                        "conda uninstall astromodels -y" 
-                        "pip install -e git+https://github.com/threeML/astromodels.git@master#egg=astromodels"
+                        conda uninstall astromodels -y
+                        python -m pip install -e git+https://github.com/threeML/astromodels.git@master#egg=astromodels
                       extra_deps: "python -m pip install numpy numba"
                     - astro_source: "dev"
                       astro_install: |
-                        "conda uninstall astromodels -y" 
-                        "pip install -e git+https://github.com/threeML/astromodels.git@dev#egg=astromodels"
+                        conda uninstall astromodels -y
+                        python -m pip install -e git+https://github.com/threeML/astromodels.git@dev#egg=astromodels
                       extra_deps: "python -m pip install numpy numba packaging"
                     - astro_source: "conda"
                       astro_install: "conda install -c threeml -c conda-forge astromodels"
