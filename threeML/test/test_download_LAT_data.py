@@ -7,7 +7,7 @@ from threeML.config import threeML_config
 from threeML import download_LLE_trigger_data
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 from threeML.io.network import internet_connection_is_active
-from threeML.utils.data_download.Fermi_LAT import download_LAT_data
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -34,7 +34,6 @@ skip_if_LAT_is_not_available = pytest.mark.skipif(
 
 
 @skip_if_internet_is_not_available
-@pytest.mark.xfail
 @skip_if_LAT_is_not_available
 def test_download_LAT_data():
     # Crab
