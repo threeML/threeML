@@ -5,6 +5,7 @@ from threeML.catalogs.FermiLAT import FermiLATSourceCatalog, FermiPySourceCatalo
 from threeML.catalogs.FermiLLE import FermiLLEBurstCatalog
 from threeML.catalogs.Swift import SwiftGRBCatalog
 from threeML.io.network import internet_connection_is_active
+from astropy.table import Table
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -43,7 +44,6 @@ def test_gbm_catalog():
     _ = gbm_catalog.query_sources("GRB080916009")
 
 
-# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_LAT_catalog():
     lat_catalog = FermiLATSourceCatalog()
@@ -58,7 +58,6 @@ def test_LAT_catalog():
     assert lat_catalog.dec_center == dec
 
 
-# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_LLE_catalog():
     lle_catalog = FermiLLEBurstCatalog()
@@ -75,7 +74,19 @@ def test_LLE_catalog():
     _ = lle_catalog.query('trigger_type == "GRB"')
 
 
-# @pytest.mark.xfail
+@skip_if_internet_is_not_available
+def test_fermipy_catalog():
+    fp_catalog = FermiPySourceCatalog()
+
+    _ = fp_catalog.cone_search(0.0, 0.0, 300.0)
+
+    assert fp_catalog.ra_center == 0.0
+    assert fp_catalog.dec_center == 0.0
+
+    tab = fp_catalog.search_around_source("Crab", 5.0)
+    assert isinstance(tab, Table)
+
+
 @skip_if_internet_is_not_available
 def test_swift_catalog():
     swift_catalog = SwiftGRBCatalog()
