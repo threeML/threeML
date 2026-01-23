@@ -118,7 +118,7 @@ jobs:
           pip install git+https://github.com/threeml/hawc_hal.git
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels # uninstall it otherwise will used cached one
-            pip istall --pre -U astromodels
+            pip install --pre -U astromodels
           fi
           pip install -e .
         env:
