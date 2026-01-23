@@ -1,5 +1,5 @@
 name: Docs
-on: [push, release]
+on: [push, release, pull_request]
 
 jobs:
   fast_notebooks:
@@ -42,7 +42,6 @@ jobs:
             pip install --pre -U astromodels 
           fi
           pip install -e .
-
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
       - name: Conda list
