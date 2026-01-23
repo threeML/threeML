@@ -1,7 +1,11 @@
 import pytest
 
 from threeML.catalogs.FermiGBM import FermiGBMBurstCatalog
-from threeML.catalogs.FermiLAT import FermiLATSourceCatalog, FermiPySourceCatalog
+from threeML.catalogs.FermiLAT import (
+    FermiLATSourceCatalog,
+    FermiPySourceCatalog,
+    have_fermipy,
+)
 from threeML.catalogs.FermiLLE import FermiLLEBurstCatalog
 from threeML.catalogs.Swift import SwiftGRBCatalog
 from threeML.io.network import internet_connection_is_active
@@ -9,6 +13,9 @@ from astropy.table import Table
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
+)
+skip_if_fermipy_is_not_installed = pytest.mark.skipif(
+    not have_fermipy, reason="No fermipy installed"
 )
 
 
@@ -75,6 +82,7 @@ def test_LLE_catalog():
 
 
 @skip_if_internet_is_not_available
+@skip_if_fermipy_is_not_installed
 def test_fermipy_catalog():
     fp_catalog = FermiPySourceCatalog()
 
