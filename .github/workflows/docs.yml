@@ -8,45 +8,49 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: 3.11
+             auto-update-conda: true
+             auto-activate-base: false
+             mamba-version: "*"
+             architecture: x64 
+             activate-environment: test_env
+             python-version: 3.11
+             channels: threeml, conda-forge, fermi
+             environment-file: ci/environment.yml 
+             use-only-tar-bz2: false
+
+      # is that really needed?
       - name: install latex
-        uses: xu-cheng/texlive-action/small@v1
-          
-      - name: Init Environment
+        uses: xu-cheng/texlive-action@v3
+        with: 
+          scheme: small
+
+      - name: Install notebook dependencies 
         shell: bash -l {0}
         run: |
           set -e
-          # brew update
-          # brew install --cask basictex
- 
-          pip install -U numpy scipy matplotlib
-          pip install -U jupytext jupyterthemes jupyter_latex_envs
-          pip install -U astropy
-          pip install emcee ultranest
-          
-          
-          pip install zeus-mcmc
-          #pip install git+https://github.com/desihub/speclite.git
-          pip install --upgrade speclite
-          pip install "black<24"
-          pip install astromodels
-          
-          
+          mamba install -c conda-forge jupytext jupyterthemes jupyter_latex_envs black
+
       - name: Install the package
         shell: bash -l {0}
         run: |
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
+            mamba remove --force astromodels # rm astromodels without rm dependencies
+            mamba install -c threeml/label/dev -c conda-forge astromodels -y
           else
-            pip install --upgrade astromodels
+            mamba install -c threeml -c conda-forge astromodels -y
           fi
+
           pip install -e .
+
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
 
       - name: Execute the notebooks
         shell: bash -l {0}
