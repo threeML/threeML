@@ -91,7 +91,7 @@ def test_fermipy_catalog():
     assert fp_catalog.ra_center == 0.0
     assert fp_catalog.dec_center == 0.0
 
-    tab = fp_catalog.search_around_source("Crab", 5.0)
+    ra, dec, tab = fp_catalog.search_around_source("Crab", 5.0)
     assert isinstance(tab, Table)
 
 
