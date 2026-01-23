@@ -40,10 +40,7 @@ jobs:
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels # rm astromodels without rm dependencies
             pip install --pre -U astromodels 
-          else
-            mamba install -c threeml -c conda-forge astromodels
           fi
-
           pip install -e .
 
         env:
