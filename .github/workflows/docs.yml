@@ -31,16 +31,17 @@ jobs:
         shell: bash -l {0}
         run: |
           set -e
-          mamba install -c conda-forge jupytext jupyterthemes jupyter_latex_envs black
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
+
 
       - name: Install the package
         shell: bash -l {0}
         run: |
           if [[ "${ISDEV}" == "true" ]]; then
             mamba remove --force astromodels # rm astromodels without rm dependencies
-            mamba install -c threeml/label/dev -c conda-forge astromodels -y
+            pip install --pre -U astromodels 
           else
-            mamba install -c threeml -c conda-forge astromodels -y
+            mamba install -c threeml -c conda-forge astromodels
           fi
 
           pip install -e .
@@ -112,31 +113,16 @@ jobs:
         run: |
           # Make sure we fail in case of error
           set -e
-          miniconda_os=Linux
-          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-
-          # miniconda_os=MacOSX
-          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-          # brew update
-          # brew install --cask basictex
-
-          # eval "$(/usr/libexec/path_helper)"
-          # sudo apt-get install texlive
-
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install "black<24"
           pip install --upgrade speclite
           pip install git+https://github.com/threeml/hawc_hal.git
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
+            mamba remove --force astromodels # uninstall it otherwise will used cached one
+            pip istall --pre -U astromodels
           fi
           pip install -e .
         env:
@@ -197,35 +183,16 @@ jobs:
         run: |
           # Make sure we fail in case of error
           set -e
-          miniconda_os=Linux
-          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
 
-          # miniconda_os=MacOSX
-          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-          # brew update
-          # brew install --cask basictex
-
-          # eval "$(/usr/libexec/path_helper)"
-          # sudo apt-get install texlive
-
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs libopenblas
-          
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install "black<24" 
-          pip install --upgrade speclite fermipy
-
-          # Update gtburst
-          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.11/site-packages/fermitools/GtBurst/updater.py
-          python $CONDA_PREFIX/lib/python3.11/site-packages/fermitools/GtBurst/updater.py
-          
+          pip install --upgrade speclite
+                    
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
             #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
           fi
           pip install -e .
         env:
@@ -291,35 +258,16 @@ jobs:
       - name: Init Environment
         shell: bash -l {0}
         run: |
-          # Make sure we fail in case of error
           set -e
-          miniconda_os=Linux
-          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-
-          # miniconda_os=MacOSX
-          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-          # brew update
-          # brew install --cask basictex
-
-          # eval "$(/usr/libexec/path_helper)"
-          # sudo apt-get install texlive
-
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
-
-          # mamba install xspec-data -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install zeus_mcmc dynesty "black<24" 
           pip install --upgrade speclite
-          #pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
+            mamba remove --force astromodels
+            pip install --pre -U astromodels
           fi
           pip install -e .
         env:
@@ -396,21 +344,19 @@ jobs:
           # eval "$(/usr/libexec/path_helper)"
           # sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install zeus_mcmc dynesty "black<24"
+          pip install black 
           pip install --upgrade speclite
           #pip install git+https://github.com/desihub/speclite.git
           #pip install --no-binary :all: root_numpy
           
           if [[ "${ISDEV}" == "true" ]]; then
+            mamba remove --force astromodels
             pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
           fi
           pip install -e .
         env:
@@ -449,8 +395,6 @@ jobs:
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
-
-          
           
   upload_notebooks:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
@@ -461,28 +405,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -499,7 +442,7 @@ jobs:
           path: docs/notebooks
           
       - name: Sleep for 10 min
-        uses: juliangruber/sleep-action@v1
+        uses: juliangruber/sleep-action@v2
         with:
           time: 10m
           
@@ -594,7 +537,6 @@ jobs:
           pip3 install sphinxcontrib-email
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
@@ -604,28 +546,27 @@ jobs:
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
 
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v4
         with:
           name: api-stubs-for-${{ github.sha }}
-          path: docs/notebooks/api
+          path: docs/api
 
 
       - name: Build and Commit
         uses: sphinx-notes/pages@v2
         with:
           documentation_path: docs
-          sphinx_version: 5.1.1
+          sphinx_version: 9.0.4
           requirements_path: docs/requirements.txt
 
-
       - name: Push changes
-        if: github.event_name == 'push' #&& startsWith(github.event.ref, 'refs/tags')
+        if: github.event_name == 'push'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
