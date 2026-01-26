@@ -65,6 +65,17 @@ else:
 skip_if_zeus_is_not_available = pytest.mark.skipif(
     not has_zeus, reason="No zeus available"
 )
+try:
+    import nautilus
+
+    print(nautilus.__doc__)
+except ModuleNotFoundError:
+    has_nautilus = False
+else:
+    has_nautilus = True
+skip_if_nautilus_is_not_available = pytest.mark.skipif(
+    not has_nautilus, reason="No nautilus available"
+)
 
 
 def remove_priors(model):
@@ -214,6 +225,24 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     assert bayes.sample() is None
 
     bayes.sampler.setup(n_iterations=200, n_walkers=20)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
+
+@skip_if_nautilus_is_not_available
+def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("nautilus")
+    assert bayes.sample() is None
+
+    bayes.sampler.setup(n_live=2000)
 
     bayes.sample()
 
