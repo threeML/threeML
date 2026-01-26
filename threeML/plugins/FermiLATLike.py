@@ -181,7 +181,7 @@ class LikelihoodModelConverter:
                 "</source>\n",
             )
         )
-        src = FuncFactory.minidom.parseString(src).getElementsByTagName("source")[0]
+        src = FuncFactory.minidom.parse_string(src).getElementsByTagName("source")[0]
         src = FuncFactory.Source(src)
 
         src.spectrum = FuncFactory.FileFunction()
