@@ -86,7 +86,7 @@ threeml-2.5.0              |          py311_0        50.0 MB  threeml
                         ...
 ```
 with the important part being the `threeml` at the end of the line. If it says 
-`conda-forge` check that the `threeml` channel has a hihger priority than the 
+`conda-forge` check that the `threeml` channel has a higher priority than the 
 `conda-forge` one.
 
 ```bash
