@@ -25,7 +25,7 @@ def capture_arguments(func, *args, **kwargs):
 try:
     import nautilus
 
-except Exception:
+except ModuleNotFoundError:
     has_nautilus: bool = False
 
 else:
@@ -34,7 +34,6 @@ else:
 
 try:
     # see if we have mpi and/or are using parallel
-
     from mpi4py import MPI
 
     if MPI.COMM_WORLD.Get_size() > 1:  # need parallel capabilities
@@ -45,7 +44,7 @@ try:
 
     else:
         using_mpi: bool = False
-except Exception:
+except ModuleNotFoundError:
     using_mpi: bool = False
 
 log = setup_logger(__name__)
