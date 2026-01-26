@@ -1,5 +1,14 @@
 name: Docs
-on: [push, release, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - dev
+  release:
+
 
 jobs:
   fast_notebooks:

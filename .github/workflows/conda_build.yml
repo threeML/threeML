@@ -1,7 +1,14 @@
 name: Conda Build and Publish
 on:
     push:
+      branches:
+        - master
+        - dev
+
     pull_request:
+      branches:
+        - master
+        - dev
     schedule:
         - cron: "0 11 * * *"
 
