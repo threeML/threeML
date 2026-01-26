@@ -8,20 +8,6 @@ from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
 
-
-def capture_arguments(func, *args, **kwargs):
-    # Get the function's signature
-    signature = inspect.signature(func)
-
-    # Bind the provided arguments to the function's parameters
-    bound_args = signature.bind(*args, **kwargs)
-
-    # Convert the bound arguments to a dictionary
-    arg_dict = bound_args.arguments
-
-    return arg_dict
-
-
 try:
     import nautilus
 
