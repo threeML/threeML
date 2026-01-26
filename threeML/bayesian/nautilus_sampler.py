@@ -1,5 +1,4 @@
 import inspect
-from typing import Any, Dict, List, Optional
 
 import numpy as np
 from astromodels import use_astromodels_memoization
