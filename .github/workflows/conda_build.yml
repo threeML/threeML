@@ -72,11 +72,8 @@ jobs:
                   echo "Running on development branch: ${ISDEV} "
                 
                   if [[ "${ISDEV}" == "true" ]]; then
-
-                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-                  
+                    mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   fi
-
                   if [[ ${{matrix.python-version}} == 3.9 ]];
                   then
                     mamba install -c conda-forge "numpy<1.24"
@@ -93,7 +90,11 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa
+                  mamba install -c conda-forge boa icu
+
+                  conda config --set conda_build.pkg_format 2
+                  conda config --set conda_build.zstd_compression_level 19
+
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
