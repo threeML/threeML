@@ -235,6 +235,7 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
+@pytest.mark.filterwarnings("ignore:You provided")
 @skip_if_nautilus_is_not_available
 def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes, _ = completed_bn090217206_bayesian_analysis
@@ -242,7 +243,7 @@ def test_nautilus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     bayes.set_sampler("nautilus")
     assert bayes.sample() is None
 
-    bayes.sampler.setup(n_live=2000)
+    bayes.sampler.setup(n_live=2000, f_live=0.009, n_shell=5, faulty_keyword=False)
 
     bayes.sample()
 
