@@ -30,24 +30,24 @@ DOCS = Path(__file__).parent
 # -- Generate API documentation ------------------------------------------------
 
 
-def run_apidoc(app):
-    """Generage API documentation."""
-    import better_apidoc
-
-    better_apidoc.APP = app
-    better_apidoc.main(
-        [
-            "better-apidoc",
-            # "-t",
-            # str(docs / "_templates"),
-            "--force",
-            "--no-toc",
-            "--separate",
-            "-o",
-            str(DOCS / "api"),
-            str(DOCS / ".." / "threeML"),
-        ]
-    )
+# def run_apidoc(app):
+#    """Generage API documentation."""
+#    import better_apidoc
+#
+#    better_apidoc.APP = app
+#    better_apidoc.main(
+#        [
+#            "better-apidoc",
+#            # "-t",
+#            # str(docs / "_templates"),
+#            "--force",
+#            "--no-toc",
+#            "--separate",
+#            "-o",
+#            str(DOCS / "api"),
+#            str(DOCS / ".." / "threeML"),
+#        ]
+#    )
 
 
 MOCK_MODULES = ["fermipy"]
@@ -254,5 +254,5 @@ texinfo_documents = [
 ]
 
 
-def setup(app):
-    app.connect("builder-inited", run_apidoc)
+# def setup(app):
+#    app.connect("builder-inited", run_apidoc)
