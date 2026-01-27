@@ -51,14 +51,12 @@ jobs:
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
-                  mamba-version: "*"
                   miniforge-variant: Miniforge3
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
-                  channels: threeml, conda-forge, fermi
                   use-only-tar-bz2: false
-                  architecture: ${{ matrix.architecture }}
+                  channel-priority: true
             - name: Init Env
               shell: bash -l {0}
               run: |
