@@ -60,6 +60,10 @@ jobs:
             - name: Init Env
               shell: bash -l {0}
               run: |
+                  if [[ ${{ matrix.os }} == "macos-15-intel" ]]
+                    mamba install -c conda-forge icu libxml2 libarchive --force-reinstall
+                  fi
+
                   pip install tomli
                   export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
