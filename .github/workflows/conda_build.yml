@@ -23,7 +23,7 @@ jobs:
                 os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
                 python-version: [3.9, 3.11]
                 include:
-                  - environment: ci/environment_fermi.yml
+                  - environment: ci/environment.yml
                     architecture: x64
                   - environment: ci/environment_macos-latest.yml
                     architecture: arm64
@@ -52,11 +52,12 @@ jobs:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   miniforge-variant: Miniforge3
+                  miniforge-version: latest
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
-                  channel-priority: true
+                  channel-priority: strict 
 
             - name: Init Env
               shell: bash -l {0}
