@@ -89,7 +89,7 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa 
+                  mamba install -c conda-forge boa icu libarchive conda-build -n base
 
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
@@ -178,7 +178,7 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa conda-build
+                  mamba install -c conda-forge boa icu libarchive conda-build -n base
 
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
