@@ -96,15 +96,15 @@ jobs:
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  ls -l ${CONDA}/envs/test_env/conda-bld/*/*
+                  ls -l ${CONDA}/conda-bld/*/*
 
-                  conda search -c ${CONDA}/envs/test_env/conda-bld/ threeml --offline --use-local --info
+                  conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
             - name: Install it
               shell: bash -l {0}
               run: |
                   #conda install --use-local -c conda-forge threeml
-                  conda install -c ${CONDA}/envs/test_env/conda-bld/ --strict-channel-priority --use-local threeml
+                  conda install -c ${CONDA}/conda-bld/ --strict-channel-priority --use-local threeml
 
             - name: Test conda build
               shell: bash -l {0}
@@ -185,9 +185,9 @@ jobs:
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  ls -l ${CONDA}/envs/test_env/conda-bld/*/*
+                  ls -l ${CONDA}/conda-bld/*/*
 
-                  conda search -c ${CONDA}/envs/test_env/conda-bld/ threeml --offline --use-local --info
+                  conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
 
             - name: Publish to Conda
@@ -206,15 +206,15 @@ jobs:
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/linux-64/*.tar.bz2 --force $LABEL
 
                   elif [[ ${{matrix.os}} == macos-latest ]]; then
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-64/*.tar.bz2 --force $LABEL
 
                   fi
 
