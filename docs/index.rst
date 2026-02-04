@@ -50,6 +50,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/flux_examples.ipynb
    notebooks/Fermipy_LAT.ipynb
    notebooks/LAT_Transient_Builder_Example.ipynb
+   notebooks/grb_130427A_GBM+LAT.ipynb
    notebooks/Time-energy-fit.ipynb
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
