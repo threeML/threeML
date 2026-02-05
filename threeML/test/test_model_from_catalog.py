@@ -103,25 +103,25 @@ def do_the_test(cat_name):
 
         fa_fits = model_fits[astro_name].spectrum.main.shape(en)
         fa_cat = model_cat[astro_name].spectrum.main.shape(en)
-        
+
         if cat_name == "4FGL-DR4":
 
             if astro_name in model_vo.sources:
                 fa_vo = model_vo[astro_name](en).to(u.cm**-2 / u.s / u.MeV)
             else:
                 fa_vo = np.nan
-            
+
             assert np.allclose(f_fermipy, fa_vo)
 
             if name == "4FGL J0534.5+2201s":
-    
+
                 assert np.isclose(
                     model_vo[astro_name](
                         model_vo[astro_name]["spectrum.main.Log_parabola"].piv.value
                     ),
                     model_vo[astro_name]["spectrum.main.Log_parabola"].K.value,
                 )
-            
+
         assert np.allclose(f_fermipy, fa_fits) and np.allclose(f_fermipy, fa_cat)
 
         if isinstance(model_cat[astro_name], PointSource):
@@ -142,7 +142,7 @@ def do_the_test(cat_name):
 
         if cat_name == "4FGL-DR4":
             plt.loglog(e, e**2 * fa_vo, "y-.", label="from VO", alpha=0.7)
-        
+
         plt.title(name)
         plt.legend(title=model_fits[astro_name].spectrum.main.shape.name)
 
@@ -155,7 +155,7 @@ def do_the_test(cat_name):
         plt.show()
 
 
-#@pytest.mark.xfail
+# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
 def test_read_model_from_catalogs():
