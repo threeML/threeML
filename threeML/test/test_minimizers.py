@@ -94,13 +94,13 @@ def test_minuit_complete(jl_bn090217206_nai):
     do_contours_check(jl_bn090217206_nai, "minuit")
 
 
-#@pytest.mark.skip(reason="ROOT minimizer currently results in Segmentation Fault")
+@pytest.mark.skip(reason="ROOT minimizer currently results in Segmentation Fault")
 @skip_if_ROOT_is_not_available
 def test_ROOT_simple(jl_bn090217206_nai):
     do_analysis(jl_bn090217206_nai, "ROOT")
 
 
-#@pytest.mark.skip(reason="ROOT minimizer currently results in Segmentation Fault")
+@pytest.mark.skip(reason="ROOT minimizer currently results in Segmentation Fault")
 @skip_if_ROOT_is_not_available
 def test_ROOT_complete(jl_bn090217206_nai):
     root = LocalMinimization("ROOT")
