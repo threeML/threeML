@@ -61,7 +61,7 @@ def do_the_test(cat_name):
     _ = lat_catalog.cone_search(ra, dec, radius=30.0)
     model_cat = lat_catalog.get_model(use_association_name=False)
 
-    if cat_name == "4FGL-DR3":
+    if cat_name == "4FGL-DR4":
         lat_catalog = FermiLATSourceCatalog()
         _ = lat_catalog.cone_search(ra, dec, radius=30.0)
         model_vo = lat_catalog.get_model(use_association_name=False)
@@ -103,26 +103,26 @@ def do_the_test(cat_name):
 
         fa_fits = model_fits[astro_name].spectrum.main.shape(en)
         fa_cat = model_cat[astro_name].spectrum.main.shape(en)
-        if cat_name == "4FGL-DR3" and name == "4FGL J0534.5+2201s":
-            # print(model_vo[astro_name])
-            # print(e)
-            # print(f_fermipy)
-            assert np.isclose(
-                model_vo[astro_name](
-                    model_vo[astro_name]["spectrum.main.Log_parabola"].piv.value
-                ),
-                model_vo[astro_name]["spectrum.main.Log_parabola"].K.value,
-            )
-            #            print(fa_fits)
-            #            print(fa_cat)
-            fa_vo = model_vo[astro_name](en)  # TODO: there something weird happens ...
-            # print(fa_vo)
+        
+        if cat_name == "4FGL-DR4":
 
+            if astro_name in model_vo.sources:
+                fa_vo = model_vo[astro_name](en).to(u.cm**-2 / u.s / u.MeV)
+            else:
+                fa_vo = np.nan
+            
+            assert np.allclose(f_fermipy, fa_vo)
+
+            if name == "4FGL J0534.5+2201s":
+    
+                assert np.isclose(
+                    model_vo[astro_name](
+                        model_vo[astro_name]["spectrum.main.Log_parabola"].piv.value
+                    ),
+                    model_vo[astro_name]["spectrum.main.Log_parabola"].K.value,
+                )
+            
         assert np.allclose(f_fermipy, fa_fits) and np.allclose(f_fermipy, fa_cat)
-
-        assert cat_name != "4FGL-DR3" or np.allclose(
-            f_fermipy, fa_vo
-        )  # TODO: this fails
 
         if isinstance(model_cat[astro_name], PointSource):
             pos_fits = model_fits[astro_name].position.sky_coord
@@ -140,9 +140,9 @@ def do_the_test(cat_name):
         plt.loglog(e, e**2 * fa_fits, "r--", label="from ROI fits", alpha=0.7)
         plt.loglog(e, e**2 * fa_cat, "g:", label="from catalog", alpha=0.7)
 
-        #         if cat_name == "4FGL-DR3":
-        #             plt.loglog(e, e**2 * fa_vo, "y-.", label="from VO", alpha=0.7)
-        #
+        if cat_name == "4FGL-DR4":
+            plt.loglog(e, e**2 * fa_vo, "y-.", label="from VO", alpha=0.7)
+        
         plt.title(name)
         plt.legend(title=model_fits[astro_name].spectrum.main.shape.name)
 
@@ -155,7 +155,7 @@ def do_the_test(cat_name):
         plt.show()
 
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
 def test_read_model_from_catalogs():
@@ -166,7 +166,7 @@ def test_read_model_from_catalogs():
     ra, dec, table = lat_catalog.search_around_source("Crab", radius=20.0)
 
     tstart = "2010-01-01 00:00:00"
-    tstop = "2010-01-02 00:00:00"
+    tstop = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
@@ -189,7 +189,7 @@ def test_read_model_from_catalogs():
     irfs = evclass_irf[int(config["selection"]["evclass"])]
     config["gtlike"] = {"irfs": irfs, "edisp": False}
 
-    for cat_name in ["4FGL-DR3"]:  # ["4FGL", "4FGL-DR2", "4FGL-DR3"]:
+    for cat_name in ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4"]:
         the_config = copy.deepcopy(config)
         tmp = "$CONDA_PREFIX/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits"
         model_dict = {
