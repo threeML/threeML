@@ -9,6 +9,8 @@ on:
       - dev
   release:
 
+permissions:
+  pull-requests: write
 
 jobs:
   fast_notebooks:
@@ -79,7 +81,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
@@ -150,7 +152,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
@@ -229,7 +231,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
@@ -301,7 +303,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
@@ -398,7 +400,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -412,27 +414,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -443,7 +445,7 @@ jobs:
 
           ls docs/notebooks
           
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
@@ -459,6 +461,12 @@ jobs:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ github.ref }}
+        
+      - name: Documentation link for pull request
+        if: github.event_name == 'pull_request'
+        uses: readthedocs/actions/preview@v1
+        with:
+          project-slug: "threeml"
 
 
   api_doc:
@@ -499,7 +507,7 @@ jobs:
           sphinx-apidoc -f -o docs/api/ threeML
 
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: api-stubs-for-${{ github.sha }}
           path: docs/api
@@ -552,13 +560,13 @@ jobs:
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
 
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: api-stubs-for-${{ github.sha }}
           path: docs/api
