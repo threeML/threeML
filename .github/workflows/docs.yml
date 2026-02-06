@@ -455,12 +455,21 @@ jobs:
         with:
           time: 10m
           
+      - name: Set commit ref for RTD
+        id: set_commit_ref
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "commit_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+          
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
         with:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
-          commit_ref: ${{ github.ref }}
+          commit_ref: ${{ steps.set_commit_ref.outputs.commit_ref }}
         
       - name: Documentation link for pull request
         if: github.event_name == 'pull_request'
