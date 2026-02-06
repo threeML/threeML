@@ -30,24 +30,103 @@ DOCS = Path(__file__).parent
 # -- Generate API documentation ------------------------------------------------
 
 def run_apidoc(app):
-   """Generate API documentation."""
+   """Download API stubs from GitHub Actions artifact or generate them locally."""
    import subprocess
-   from sphinx.ext import apidoc
+   import requests
+   import zipfile
+   import io
+   from pathlib import Path
    
-   # Get the package path and output path
+   api_dir = DOCS / "api"
+   api_dir.mkdir(exist_ok=True)
+   
+   # Check if API stubs already exist
+   if list(api_dir.glob("*.rst")):
+       return  # Already have API stubs
+   
+   # Try to download from GitHub Actions artifact if GITHUB_TOKEN is available
+   github_token = os.environ.get("GITHUB_TOKEN")
+   commit_sha = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH") or os.environ.get("READTHEDOCS_VERSION", "")
+   
+   if github_token and commit_sha and len(commit_sha) == 40:
+       # Try to get commit SHA from git if not in environment
+       try:
+           result = subprocess.run(
+               ["git", "rev-parse", "HEAD"],
+               capture_output=True,
+               text=True,
+               cwd=DOCS.parent,
+           )
+           if result.returncode == 0:
+               commit_sha = result.stdout.strip()
+       except Exception:
+           pass
+       
+       if commit_sha and len(commit_sha) == 40:
+           artifact_name = f"api-stubs-for-{commit_sha}"
+           repo = "threeML/threeML"
+           
+           # Get the workflow run for this commit
+           headers = {
+               "Authorization": f"token {github_token}",
+               "Accept": "application/vnd.github.v3+json"
+           }
+           url = f"https://api.github.com/repos/{repo}/actions/runs"
+           params = {"head_sha": commit_sha, "per_page": 1}
+           
+           try:
+               response = requests.get(url, headers=headers, params=params, timeout=10)
+               if response.status_code == 200:
+                   runs = response.json().get("workflow_runs", [])
+                   if runs:
+                       run_id = runs[0]["id"]
+                       
+                       # Get artifacts for this run
+                       artifacts_url = f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts"
+                       response = requests.get(artifacts_url, headers=headers, timeout=10)
+                       if response.status_code == 200:
+                           artifacts = response.json().get("artifacts", [])
+                           api_artifact = next((a for a in artifacts if a["name"] == artifact_name), None)
+                           if api_artifact:
+                               # Download the artifact
+                               download_url = api_artifact["archive_download_url"]
+                               response = requests.get(download_url, headers=headers, timeout=30, stream=True)
+                               if response.status_code == 200:
+                                   zip_data = io.BytesIO(response.content)
+                                   with zipfile.ZipFile(zip_data) as zip_file:
+                                       zip_file.extractall(api_dir)
+                                   print(f"Successfully downloaded API stubs for {commit_sha}")
+                                   return  # Successfully downloaded
+           except Exception:
+               # Fall through to local generation
+               print(f"Failed to download API stubs for {commit_sha}")
+               pass
+   
+   # Fallback: generate API stubs locally using sphinx-apidoc
    package_path = DOCS.parent / "threeML"
-   output_path = DOCS / "api"
+   output_path = api_dir
    
-   # Use sphinx-apidoc (built into Sphinx, no external dependency)
-   apidoc.main([
-       "sphinx-apidoc",
-       "--force",  # Overwrite existing files
-       "--no-toc",  # Don't create a table of contents file
-       "--separate",  # Put documentation for each module on its own page
-       "-o",
-       str(output_path),
-       str(package_path),
-   ])
+   # Use sphinx-apidoc command-line tool
+   try:
+       print(f"Generating API stubs locally using sphinx-apidoc")
+       subprocess.run(
+           [
+               "sphinx-apidoc",
+               "--force",
+               "--no-toc",
+               "--separate",
+               "-o",
+               str(output_path),
+               str(package_path),
+           ],
+           check=True,
+           cwd=DOCS.parent,
+       )
+   except (subprocess.CalledProcessError, FileNotFoundError):
+       print(f"Failed to generate API stubs locally using sphinx-apidoc")
+       # If sphinx-apidoc fails or isn't available, that's okay
+       # The build will continue without API docs
+       pass
 
 
 MOCK_MODULES = ["fermipy"]
@@ -104,6 +183,10 @@ if "GITHUB_TOKEN" in os.environ:
     # Check if this is a PR build (external version type)
     is_pr_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
     rtds_action_error_if_missing = not is_pr_build
+
+    # Readthedocs provides the current version/branch name in an environment 
+    # variable. For PR builds, we use the PR
+    rtds_action_commit_ref = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH")
 
 
 sphinx_gallery_conf = {

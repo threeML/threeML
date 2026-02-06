@@ -444,17 +444,7 @@ jobs:
         run: |
 
           ls docs/notebooks
-          
-      - uses: actions/upload-artifact@v6
-        with:
-          name: notebooks-for-${{ github.sha }}
-          path: docs/notebooks
-          
-      - name: Sleep for 10 min
-        uses: juliangruber/sleep-action@v2
-        with:
-          time: 10m
-          
+      
       - name: Set commit ref for RTD
         id: set_commit_ref
         run: |
@@ -463,6 +453,16 @@ jobs:
           else
             echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
+          
+      - uses: actions/upload-artifact@v6
+        with:
+          name: notebooks-for-${{ steps.set_commit_ref.outputs.commit_ref }}
+          path: docs/notebooks
+          
+      - name: Sleep for 10 min
+        uses: juliangruber/sleep-action@v2
+        with:
+          time: 10m
           
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
@@ -515,10 +515,18 @@ jobs:
 
           sphinx-apidoc -f -o docs/api/ threeML
 
-
+      - name: Set commit ref for RTD
+        id: set_commit_ref
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "commit_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+      
       - uses: actions/upload-artifact@v6
         with:
-          name: api-stubs-for-${{ github.sha }}
+          name: api-stubs-for-${{ steps.set_commit_ref.outputs.commit_ref }}
           path: docs/api
 
 
