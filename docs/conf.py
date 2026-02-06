@@ -97,7 +97,12 @@ if "GITHUB_TOKEN" in os.environ:
     # # A GitHub personal access token is required, more info below
     rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
-    rtds_action_error_if_missing = True
+    # For PR builds, don't fail if artifacts aren't ready yet
+    # The first automatic build might run before artifacts are ready
+    # The webhook-triggered build (after artifacts are ready) will succeed
+    # Check if this is a PR build (external version type)
+    is_pr_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
+    rtds_action_error_if_missing = not is_pr_build
 
 
 sphinx_gallery_conf = {
