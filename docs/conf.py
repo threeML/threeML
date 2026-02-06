@@ -31,22 +31,23 @@ DOCS = Path(__file__).parent
 
 def run_apidoc(app):
    """Generate API documentation."""
-   import better_apidoc
-
-   better_apidoc.APP = app
-   better_apidoc.main(
-       [
-           "better-apidoc",
-           # "-t",
-           # str(docs / "_templates"),
-           "--force",
-           "--no-toc",
-           "--separate",
-           "-o",
-           str(DOCS / "api"),
-           str(DOCS / ".." / "threeML"),
-       ]
-   )
+   import subprocess
+   from sphinx.ext import apidoc
+   
+   # Get the package path and output path
+   package_path = DOCS.parent / "threeML"
+   output_path = DOCS / "api"
+   
+   # Use sphinx-apidoc (built into Sphinx, no external dependency)
+   apidoc.main([
+       "sphinx-apidoc",
+       "--force",  # Overwrite existing files
+       "--no-toc",  # Don't create a table of contents file
+       "--separate",  # Put documentation for each module on its own page
+       "-o",
+       str(output_path),
+       str(package_path),
+   ])
 
 
 MOCK_MODULES = ["fermipy"]
