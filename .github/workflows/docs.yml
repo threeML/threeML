@@ -406,7 +406,7 @@ jobs:
           path: docs/notebooks
           
   upload_notebooks:
-    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
+    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks,api_doc]
     name: "Upload notebooks and trigger RTD"
     runs-on: macos-latest
     
@@ -458,6 +458,12 @@ jobs:
         with:
           name: notebooks-for-${{ steps.set_commit_ref.outputs.commit_ref }}
           path: docs/notebooks
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: api-stubs-for-${{ steps.set_commit_ref.outputs.commit_ref }}
+          path: docs/api
+
           
       - name: Sleep for 10 min
         uses: juliangruber/sleep-action@v2
