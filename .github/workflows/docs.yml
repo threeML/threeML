@@ -577,15 +577,24 @@ jobs:
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
+      - name: Set commit ref for RTD
+        id: set_commit_ref
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "commit_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/download-artifact@v7
         with:
-          name: notebooks-for-${{ github.sha }}
+          name: notebooks-for-${{ steps.set_commit_ref.outputs.commit_ref }}
           path: docs/notebooks
 
 
       - uses: actions/download-artifact@v7
         with:
-          name: api-stubs-for-${{ github.sha }}
+          name: api-stubs-for-${{ steps.set_commit_ref.outputs.commit_ref }}
           path: docs/api
 
 
