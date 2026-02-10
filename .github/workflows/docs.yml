@@ -458,25 +458,37 @@ jobs:
         with:
           name: notebooks-for-${{ steps.set_commit_ref.outputs.commit_ref }}
           path: docs/notebooks
-
-      - uses: actions/download-artifact@v7
-        with:
-          name: api-stubs-for-${{ steps.set_commit_ref.outputs.commit_ref }}
-          path: docs/api
-
           
       - name: Sleep for 10 min
         uses: juliangruber/sleep-action@v2
         with:
           time: 10m
           
-      - name: Trigger RTDs build
+      - name: Trigger RTDs build (Branches)
+        if: github.event_name != 'pull_request'
         uses: dfm/rtds-action@main
         with:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ steps.set_commit_ref.outputs.commit_ref }}
-        
+      
+      - name: Trigger RTDs Build (Pull Requests)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          RTD_TOKEN: ${{ secrets.RTD_AUTH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RTD_PROJECT: "threeml" 
+        run: |
+          VERSION_SLUG="external-${PR_NUMBER}"
+          echo "Triggering build for PR version: $VERSION_SLUG"
+          
+          # We use curl to hit the API v3 directly
+          curl -X POST \
+            -H "Authorization: Token $RTD_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://readthedocs.org/api/v3/projects/$RTD_PROJECT/versions/$VERSION_SLUG/builds/"
+
       - name: Documentation link for pull request
         if: github.event_name == 'pull_request'
         uses: readthedocs/actions/preview@v1
