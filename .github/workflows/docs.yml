@@ -480,7 +480,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           RTD_PROJECT: "threeml" 
         run: |
-          VERSION_SLUG="external-${PR_NUMBER}"
+          VERSION_SLUG="${PR_NUMBER}"
           echo "Triggering build for PR version: $VERSION_SLUG"
           
           # We use curl to hit the API v3 directly
