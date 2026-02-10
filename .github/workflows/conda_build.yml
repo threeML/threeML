@@ -44,7 +44,7 @@ jobs:
                   activate-environment: "test_env"
                   auto-activate: false
                   miniforge-variant: Miniforge3
-                  miniforge-version: latest
+                  miniforge-version: "25.11.0-1"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
@@ -89,22 +89,22 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa icu libarchive conda-build
+                  mamba install -c conda-forge boa icu libarchive conda-build -n base
 
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  ls -l ${CONDA}/envs/test_env/conda-bld/*/*
+                  ls -l ${CONDA}/conda-bld/*/*
 
-                  conda search -c ${CONDA}/envs/test_env/conda-bld/ threeml --offline --use-local --info
+                  conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
             - name: Install it
               shell: bash -l {0}
               run: |
                   #conda install --use-local -c conda-forge threeml
-                  conda install -c ${CONDA}/envs/test_env/conda-bld/ --strict-channel-priority --use-local threeml
+                  conda install -c ${CONDA}/conda-bld/ --strict-channel-priority --use-local threeml
 
             - name: Test conda build
               shell: bash -l {0}
@@ -154,7 +154,7 @@ jobs:
                   activate-environment: "test_env"
                   auto-activate: false
                   miniforge-variant: Miniforge3
-                  miniforge-version: latest
+                  miniforge-version: "25.11.0-1"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
@@ -178,16 +178,16 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa icu libarchive conda-build
+                  mamba install -c conda-forge boa icu libarchive conda-build -n base
 
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  ls -l ${CONDA}/envs/test_env/conda-bld/*/*
+                  ls -l ${CONDA}/conda-bld/*/*
 
-                  conda search -c ${CONDA}/envs/test_env/conda-bld/ threeml --offline --use-local --info
+                  conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
 
             - name: Publish to Conda
@@ -206,15 +206,15 @@ jobs:
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/linux-64/*.tar.bz2 --force $LABEL
 
                   elif [[ ${{matrix.os}} == macos-latest ]]; then
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-64/*.tar.bz2 --force $LABEL
 
                   fi
 
