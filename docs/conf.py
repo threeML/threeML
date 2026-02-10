@@ -231,7 +231,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "The Multi-Mission Maximum Likelihood framework"
-copyright = "(2025), the ThreeML developers"
+copyright = "(2026), the ThreeML developers"
 author = "G.Vianello"
 
 # This is also used if you do content translation via gettext catalogs.
