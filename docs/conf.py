@@ -113,8 +113,8 @@ def run_apidoc(app):
            [
                "sphinx-apidoc",
                "--force",
-               "--no-toc",
-               "--separate",
+               #"--no-toc",
+               #"--separate",
                "-o",
                str(output_path),
                str(package_path),
@@ -181,9 +181,10 @@ if "GITHUB_TOKEN" in os.environ:
     # The first automatic build might run before artifacts are ready
     # The webhook-triggered build (after artifacts are ready) will succeed
     # Check if this is a PR build (external version type)
-    is_pr_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
-    rtds_action_error_if_missing = not is_pr_build
-
+    # is_pr_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
+    # rtds_action_error_if_missing = not is_pr_build
+    rtds_action_error_if_missing = True
+    
     # Readthedocs provides the current version/branch name in an environment 
     # variable. For PR builds, we use the PR
     rtds_action_commit_ref = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH")
