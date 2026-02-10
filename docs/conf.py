@@ -41,13 +41,16 @@ def run_apidoc(app):
    api_dir.mkdir(exist_ok=True)
    
    # Check if API stubs already exist
-   if list(api_dir.glob("*.rst")):
-       return  # Already have API stubs
+#    if list(api_dir.glob("*.rst")):
+#        return  # Already have API stubs
    
    # Try to download from GitHub Actions artifact if GITHUB_TOKEN is available
    github_token = os.environ.get("GITHUB_TOKEN")
    commit_sha = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH") or os.environ.get("READTHEDOCS_VERSION", "")
-   
+   print(f"github_token: {github_token}")
+   print(f"commit_sha: {commit_sha}")
+   print(f"len(commit_sha): {len(commit_sha)}")
+
    if github_token and commit_sha and len(commit_sha) == 40:
        # Try to get commit SHA from git if not in environment
        try:
@@ -123,10 +126,15 @@ def run_apidoc(app):
            cwd=DOCS.parent,
        )
    except (subprocess.CalledProcessError, FileNotFoundError):
-       print(f"Failed to generate API stubs locally using sphinx-apidoc")
-       # If sphinx-apidoc fails or isn't available, that's okay
-       # The build will continue without API docs
-       pass
+        # If we are in a PR build and download failed, we must fail the build
+        # so the webhook can trigger a retry later.
+        if os.environ.get("READTHEDOCS_VERSION_TYPE") == "external":
+            print(f"Artifacts missing for PR {commit_sha}. Failing build to wait for CI webhook.")
+            sys.exit(1)
+
+        # Fall through to local generation (only for non-PR builds or local dev)
+        print(f"Failed to download API stubs for {commit_sha}")
+        pass
 
 
 MOCK_MODULES = ["fermipy"]
@@ -184,7 +192,7 @@ if "GITHUB_TOKEN" in os.environ:
     # is_pr_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
     # rtds_action_error_if_missing = not is_pr_build
     rtds_action_error_if_missing = True
-    
+
     # Readthedocs provides the current version/branch name in an environment 
     # variable. For PR builds, we use the PR
     rtds_action_commit_ref = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH")
@@ -344,4 +352,4 @@ texinfo_documents = [
 
 
 def setup(app):
-   app.connect("builder-inited", run_apidoc)
+    app.connect("builder-inited", run_apidoc)
