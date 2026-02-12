@@ -167,12 +167,21 @@ def parallel_computation(
 
         finally:
             # This gets executed in any case, even if there is an exception
-
+            # Shut down via Client API first so engines exit cleanly (avoid SIGTERM
+            # which causes "Event loop stopped before Future completed" in engine logs)
             log.info("\nShutting down ipcluster...")
-
-            ipycluster_process.send_signal(signal.SIGINT)
-
-            ipycluster_process.wait()
+            try:
+                rc.shutdown(hub=True, block=True)
+            except Exception as e:
+                log.debug("Client shutdown failed (cluster may already be down): %s", e)
+            # If the process is still running (e.g. ipcluster parent), stop it
+            if ipycluster_process.poll() is None:
+                ipycluster_process.send_signal(signal.SIGINT)
+                try:
+                    ipycluster_process.wait(timeout=15)
+                except subprocess.TimeoutExpired:
+                    ipycluster_process.kill()
+                    ipycluster_process.wait()
 
     else:
         # Using an already started cluster
