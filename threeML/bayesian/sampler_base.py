@@ -1,6 +1,7 @@
 import abc
 import collections
 import math
+import weakref
 from typing import Dict, Optional
 
 import numpy as np
@@ -316,6 +317,26 @@ class SamplerBase(metaclass=abc.ABCMeta):
 
         return log_like + log_prior
 
+    def get_posterior_proxy(self):
+        """
+        Return a weakref-backed posterior callable.
+
+        This prevents external samplers from keeping a strong reference to this
+        SamplerBase instance via a bound method.
+        """
+
+        sampler_ref = weakref.ref(self)
+
+        def posterior(trial_values):
+            sampler = sampler_ref()
+
+            if sampler is None:
+                return -np.inf
+
+            return sampler.get_posterior(trial_values)
+
+        return posterior
+
     def _log_prior(self, trial_values) -> float:
         """Compute the sum of log-priors, used in the parallel tempering
         sampling."""
@@ -458,14 +479,21 @@ class UnitCubeSampler(SamplerBase):
         # construction of the class)
         self._update_free_parameters()
 
+        sampler_ref = weakref.ref(self)
+
         def loglike(trial_values, ndim=None, params=None):
+            sampler = sampler_ref()
+
+            if sampler is None:
+                return -np.inf
+
             # NOTE: the _log_like function DOES NOT assign trial_values to the
             # parameters
 
-            for i, parameter in enumerate(self._free_parameters.values()):
+            for i, parameter in enumerate(sampler._free_parameters.values()):
                 parameter.value = trial_values[i]
 
-            log_like = self._log_like(trial_values)
+            log_like = sampler._log_like(trial_values)
 
             return log_like
 
@@ -477,10 +505,15 @@ class UnitCubeSampler(SamplerBase):
         if return_copy:
 
             def prior(cube):
+                sampler = sampler_ref()
+
+                if sampler is None:
+                    return cube.copy()
+
                 params = cube.copy()
 
                 for i, (parameter_name, parameter) in enumerate(
-                    self._free_parameters.items()
+                    sampler._free_parameters.items()
                 ):
                     try:
                         params[i] = parameter.prior.from_unit_cube(params[i])
@@ -496,8 +529,13 @@ class UnitCubeSampler(SamplerBase):
         else:
 
             def prior(params, ndim=None, nparams=None):
+                sampler = sampler_ref()
+
+                if sampler is None:
+                    return
+
                 for i, (parameter_name, parameter) in enumerate(
-                    self._free_parameters.items()
+                    sampler._free_parameters.items()
                 ):
                     try:
                         params[i] = parameter.prior.from_unit_cube(params[i])

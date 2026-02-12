@@ -98,12 +98,12 @@ class EmceeSampler(MCMCSampler):
                 view = c[:]
 
                 sampler = emcee.EnsembleSampler(
-                    self._n_walkers, n_dim, self.get_posterior, pool=view
+                    self._n_walkers, n_dim, self.get_posterior_proxy(), pool=view
                 )
 
             else:
                 sampler = emcee.EnsembleSampler(
-                    self._n_walkers, n_dim, self.get_posterior
+                    self._n_walkers, n_dim, self.get_posterior_proxy()
                 )
 
             # If a seed is provided, set the random number seed
