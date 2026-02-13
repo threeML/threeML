@@ -104,9 +104,18 @@ conda install -c threeml -c conda-forge astromodels threeml
 If you want to install the dev version add the label dev:
 ```bash
 conda install -c threeml/label/dev -c conda-forge astromodels threeml
-
 ```
 
+In case you still run into issues with `threeML` and `astromodels` coming from `conda-forge`
+you can enforce the origin via
+```bash
+conda install threeml::astromodels threeml::threeml
+```
+
+or in case of the dev versions
+```bash
+conda install threeml/label/dev::astromodels threeml/label/dev::threeml
+```
 
 ## pip
 
