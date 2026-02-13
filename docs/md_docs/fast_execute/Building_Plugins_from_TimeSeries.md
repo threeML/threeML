@@ -164,7 +164,7 @@ gbm_tte_reloaded = TimeSeriesBuilder.from_gbm_tte('nai3_tte',
                                           restore_background='background_store.h5')
 ```
 
-```python tags=["nbsphinx-thumbnail"]
+```python
 fig = gbm_tte_reloaded.view_lightcurve(-10,200)
 ```
 
