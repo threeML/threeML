@@ -37,11 +37,11 @@ Responsibilities include:
 - Make decisions on the scope, content and development priorities for the *ThreeML* package.
 - Support and grow the *ThreeML* team (help find people-power and funding)
 - Support and coordinate the use of *ThreeML* for scientific or technical studies and papers
-- Organise and drive all non-technical aspects of the project on a day-to-day basis.
+- Organize and drive all non-technical aspects of the project on a day-to-day basis.
 - Keep an overview and help coordinate all activities that have some involvement of *ThreeML*, such as e.g. papers, presentations or posters about or using *ThreeML* at gamma-ray or X-ray astronomy meetings or conferences, or tutorials at schools / workshops on gamma-ray astronomy data analysis.
 - Manage the *ThreeML* developer / maintainer / contributor team. Distribute tasks and assign responsibilities to other *ThreeML* developers.
 - Ensure that anyone interested in contributing to *ThreeML* development has good resources (documentation, communication, mentoring) to get started. Specifically: maintain the *ThreeML* developer documentation that describes all aspects of *ThreeML* development (code, testing, documentation, processes).
-- Organise *ThreeML* developer calls and coding sprints via *ThreeML*-meetings
+- Organize *ThreeML* developer calls and coding sprints via *ThreeML*-meetings
 - Schedule *ThreeML* releases and define which fixes and features go in which release, taking the needs of people and projects using *ThreeML* as well as available manpower for developments into account. Either execute releases directly or assign a release manager.
 - Monitor and assign of issues and pull requests,
 - Ensure *ThreeML* infrastructure is well set up and maintained (issue tracker and pull requests on Github, continuous integration tests, documentation builds, releases and distribution).
@@ -50,12 +50,8 @@ Responsibilities include:
 
 * Nicola Omodei (PI) - Stanford University
 * Niccolò Di Lalla (Release manager, IXPE) - Stanford University
-* somenone (HAWC) - Institution
 * Israel Martinez Castellanos (cosipy) - NSFC
-* somenone (polpy) - Institution
-* Michael Larson (i3mla) - Institution
-* somenone (polarpy) - Institution
-
+* Tobias Preis (gammapy-plugin) - University of Innsbruck
 
 
 Principal Investigator
@@ -104,7 +100,7 @@ Sub-package and plug-in maintainers and point of contacts
 * ixpepy -  :email:`Niccolò Di Lalla <niccolo.dilalla@stanford.edu>` 
 * hawc_hal - :email:`Xiaojie Wang <xwang32@mtu.edu>`
 * `cosipy <https://cositools.github.io/cosipy/>`_ - :email:`Israel Martinez Castellanos <imc@umd.edu>`
-* polpy - :email:`Sujay Mate <sujay.mate@gmail.com>`, :email:`Merlin Kole <merlin.kole@unh.edu>`
+* polpy - :email:`Sujay Mate <sujay.mate@gmail.com>`
 * `i3mla <https://github.com/icecube/i3mla>`_ - :email:`Michael Larson <mlarson@icecube.wisc.edu>`
 * gammapy-plugin - :email:`Tobias Preis <tobias.preis@uibk.ac.at>`
 

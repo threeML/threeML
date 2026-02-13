@@ -3,7 +3,7 @@
 common framework. Thus, installing all the pieces can be a bit of a task for the
 user. In order to make this a less painless process, we have packaged most of
 the external dependencies into `conda` (see below). However, if you want more
-control over your install, 3ML is available on PyPI via pip. If you have issues
+control over your install, 3ML is also available on PyPI via pip. If you have issues
 with the installs, first check that you have properly installed all the external
 dependencies that *you* plan on using. Are their libraries accessible on you
 system's standard paths? If you think that you have everything setup properly
@@ -11,26 +11,32 @@ and the install does not work for you, please [submit an
 issue](https://github.com/threeML/threeML/issues) and we will do our best to
 find a solution.
 
-## TL;DR
-**careful with dependencies!**
+## In a nutshell:
 
-with `conda` without `XSPEC`
+Run the following commands if you want to install 3ML and astromodels:
+
+* with `conda` without `XSPEC`
 ```bash
 conda install -c threeml -c conda-forge astromodels threeml
 ```
 
-with `conda` with `XSPEC`
+* with `conda` with `XSPEC`
 ```bash
 conda install -c https://heasarc.gsfc.nasa.gov/FTP/software/conda/ -c conda-forge xspec python=3.11
 conda install -c threeml -c conda-forge astromodels threeml
 ```
 
-with `pip` (please take care of dependencies beforehand!)
+* with `conda` with `fermitools` and `fermipy`
+```bash
+conda install -c threeml -c fermi -c conda-forge fermitools astromodels threeml fermipy
+```
+
+* with `pip` (please take care of dependencies beforehand!)
 ```bash
 pip install astromodels threeml
 ```
 
-in case you want the development versions:
+* in case you want the development versions:
 ```bash
 conda install -c threeml/label/dev -c conda-forge astromodels threeml
 ```
@@ -124,6 +130,11 @@ pip install threeml
 If you need to build other dependencies such as pagmo, multinest, XSPEC, etc.,
 it is recommended you do this **before** installing astromodels!
 
+If you want to install the dev version add the `--pre` option:
+```bash
+pip install --upgrade --pre astromodels threeml
+
+```
 
 ## XSPEC models
 We allow the ability to use the models provided by 
@@ -187,7 +198,7 @@ You need to set up packages such as AERIE (for HAWC), or the Fermi Science
 Tools, before running the script, otherwise some of the functionalities will not
 work.
 
-* AERIE for HAWC: make sure that this works before running the script:
+* `AERIE` for HAWC: make sure that this works before running the script:
 
 ```bash
 > liff-PointSourceExpectation --version
@@ -201,18 +212,32 @@ INFO [CommandLineConfigurator.cc, ParseCommandLine:137]:
 If it doesn't, you need to set up the HAWC environment (refer to the
 appropriate documentation)
 
-* Fermi Science Tools for Fermi/LAT analysis: make sure that this works: 
+* `fermitools` and `fermipy` for Fermi/LAT analysis: make sure that this works: 
 ```bash
 > gtirfs ...  P8R2_TRANSIENT100_V6::EDISP0 P8R2_TRANSIENT100_V6::EDISP1 ...
 ``` 
-If it doesn't, you need to configure and set up the Fermi Science Tools.
+If it doesn't, you need to install `fermitools` and `fermipy` with conda in the 
+same environment:
 
-* ROOT: ROOT is not required by 3ML, but it provides the Minuit2 minimizer which can 
+```bash
+conda install -c fermi -c conda-forge fermitools fermipy
+```
+
+* `ROOT`: `ROOT` is not required by 3ML, but it provides the Minuit2 minimizer which can 
 be used in 3ML. If you have ROOT, make sure that this works before running the script:
 ```bash
 > root-config --version
-5.34/36
+6.36.06
 ```
+
+```{note}
+There is currently a known incompatibility on some systems between ROOT and 3ML, causing 
+the following error while trying to use the ROOT minimizer:
+
+```bash
+TypeError: no python-side overrides supported (failed to include Python.h)
+```
+While this issue is being investigated, we recommend using the `minuit` minimizer directly.
 
 ## Install from source (advanced)
 
