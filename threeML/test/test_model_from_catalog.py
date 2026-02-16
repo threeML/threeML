@@ -11,9 +11,9 @@ from astropy.coordinates import SkyCoord
 from threeML import (
     FermiLATSourceCatalog,
     FermiPySourceCatalog,
-    download_LAT_data,
     is_plugin_available,
 )
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 from threeML.catalogs.catalog_utils import _sanitize_fgl_name
 from threeML.io.logging import setup_logger
 from threeML.io.network import internet_connection_is_active
@@ -61,7 +61,7 @@ def do_the_test(cat_name):
     _ = lat_catalog.cone_search(ra, dec, radius=30.0)
     model_cat = lat_catalog.get_model(use_association_name=False)
 
-    if cat_name == "4FGL-DR3":
+    if cat_name == "4FGL-DR4":
         lat_catalog = FermiLATSourceCatalog()
         _ = lat_catalog.cone_search(ra, dec, radius=30.0)
         model_vo = lat_catalog.get_model(use_association_name=False)
@@ -98,28 +98,31 @@ def do_the_test(cat_name):
             assert source["SpatialModel"] == "PointSource"
 
         e, f_fermipy = gta.get_source_dnde(name)
-        e = 10**e
+        en = np.power(10, e) * u.MeV
+        f_fermipy *= u.Unit("cm-2 s-1 MeV-1")
 
-        fa_fits = (
-            (model_fits[astro_name].spectrum.main.shape(e * u.MeV))
-            .to(u.cm**-2 / u.s / u.MeV)
-            .value
-        )
-        fa_cat = (
-            (model_cat[astro_name].spectrum.main.shape(e * u.MeV))
-            .to(u.cm**-2 / u.s / u.MeV)
-            .value
-        )
+        fa_fits = model_fits[astro_name].spectrum.main.shape(en)
+        fa_cat = model_cat[astro_name].spectrum.main.shape(en)
 
-        if cat_name == "4FGL-DR3":
-            fa_vo = (
-                (model_vo[astro_name](e * u.MeV)).to(u.cm**-2 / u.s / u.MeV).value
-                if astro_name in model_vo.sources
-                else np.nan
-            )
+        if cat_name == "4FGL-DR4":
+
+            if astro_name in model_vo.sources:
+                fa_vo = model_vo[astro_name](en).to(u.cm**-2 / u.s / u.MeV)
+            else:
+                fa_vo = np.nan
+
+            assert np.allclose(f_fermipy, fa_vo)
+
+            if name == "4FGL J0534.5+2201s":
+
+                assert np.isclose(
+                    model_vo[astro_name](
+                        model_vo[astro_name]["spectrum.main.Log_parabola"].piv.value
+                    ),
+                    model_vo[astro_name]["spectrum.main.Log_parabola"].K.value,
+                )
 
         assert np.allclose(f_fermipy, fa_fits) and np.allclose(f_fermipy, fa_cat)
-        assert cat_name != "4FGL-DR3" or np.allclose(f_fermipy, fa_vo)
 
         if isinstance(model_cat[astro_name], PointSource):
             pos_fits = model_fits[astro_name].position.sky_coord
@@ -137,7 +140,7 @@ def do_the_test(cat_name):
         plt.loglog(e, e**2 * fa_fits, "r--", label="from ROI fits", alpha=0.7)
         plt.loglog(e, e**2 * fa_cat, "g:", label="from catalog", alpha=0.7)
 
-        if cat_name == "4FGL-DR3":
+        if cat_name == "4FGL-DR4":
             plt.loglog(e, e**2 * fa_vo, "y-.", label="from VO", alpha=0.7)
 
         plt.title(name)
@@ -152,11 +155,11 @@ def do_the_test(cat_name):
         plt.show()
 
 
+# @pytest.mark.xfail
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-@pytest.mark.xfail
 def test_read_model_from_catalogs():
-    # Find crab and download data from Jan 01 2010 to Jan 2 2010 (needed for fermipy
+    # Find crab and download data from Jan 01 2010 to Jan 8 2010 (needed for fermipy
     # instance)
 
     lat_catalog = FermiLATSourceCatalog()
@@ -168,23 +171,15 @@ def test_read_model_from_catalogs():
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
 
-    try:
-        evfile, scfile = download_LAT_data(
-            ra,
-            dec,
-            20.0,
-            tstart,
-            tstop,
-            time_type="Gregorian",
-            destination_directory="Crab_data",
-        )
-
-    except RuntimeError:
-        log.warning("Problems with LAT data download, will not proceed with tests.")
-
-        return
-
-    # Configuration for Fermipy
+    evfile, scfile = download_LAT_data(
+        ra,
+        dec,
+        20.0,
+        tstart,
+        tstop,
+        time_type="Gregorian",
+        destination_directory="Crab_data",
+    )
 
     config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
 
@@ -194,7 +189,7 @@ def test_read_model_from_catalogs():
     irfs = evclass_irf[int(config["selection"]["evclass"])]
     config["gtlike"] = {"irfs": irfs, "edisp": False}
 
-    for cat_name in ["4FGL", "4FGL-DR2", "4FGL-DR3"]:
+    for cat_name in ["4FGL", "4FGL-DR2", "4FGL-DR3", "4FGL-DR4"]:
         the_config = copy.deepcopy(config)
         tmp = "$CONDA_PREFIX/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits"
         model_dict = {
