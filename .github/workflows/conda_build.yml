@@ -24,14 +24,11 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
-                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
-                    architecture: arm64
                     os: macos-latest
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
-                    architecture: x64
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -135,14 +132,11 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
-                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
-                    architecture: arm64
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
-                    architecture: x64
         steps:
             - name: Checkout
               uses: actions/checkout@v4
