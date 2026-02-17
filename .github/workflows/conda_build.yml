@@ -201,15 +201,15 @@ jobs:
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/linux-64/threeml*.conda --force $LABEL
 
                   elif [[ ${{matrix.os}} == macos-latest ]]; then
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-arm64/threeml*.conda --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-64/threeml*.conda --force $LABEL
 
                   fi
 
