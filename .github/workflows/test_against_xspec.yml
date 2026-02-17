@@ -1,7 +1,15 @@
 name: Test Against XSPEC
 
 on:
+    pull_request: 
+      branches:
+        - master
+        - dev
+
     push:
+      branches:
+        - master
+        - dev
     schedule:
         - cron: "0 22 * * 0"
 
@@ -38,7 +46,7 @@ jobs:
               uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
-                  auto-activate-base: false
+                  auto-activate: false
                   miniforge-version: latest
                   architecture: "x64"
                   python-version: 3.11
@@ -115,7 +123,7 @@ jobs:
                   python -m pip install --upgrade pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov cython
+                  pip install --upgrade flake8 coverage pytest-cov 
                   pip install -e .
 
             - name: Test xspec
@@ -138,13 +146,17 @@ jobs:
                       astro_install: "pip install --upgrade astromodels"
                       extra_deps: ""
                     - astro_source: "master"
-                      astro_install: "pip install -e git+https://github.com/threeML/astromodels.git@master#egg=astromodels"
+                      astro_install: |
+                        conda uninstall astromodels -y
+                        python -m pip install -e git+https://github.com/threeML/astromodels.git@master#egg=astromodels
                       extra_deps: "python -m pip install numpy numba"
                     - astro_source: "dev"
-                      astro_install: "pip install -e git+https://github.com/threeML/astromodels.git@dev#egg=astromodels"
+                      astro_install: |
+                        conda uninstall astromodels -y
+                        python -m pip install -e git+https://github.com/threeML/astromodels.git@dev#egg=astromodels
                       extra_deps: "python -m pip install numpy numba packaging"
                     - astro_source: "conda"
-                      astro_install: "echo 'Conda already installed'"
+                      astro_install: "conda install -c threeml -c conda-forge astromodels"
                       extra_deps: ""
 
         steps:
@@ -155,7 +167,7 @@ jobs:
               uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
-                  auto-activate-base: false
+                  auto-activate: false
                   miniforge-version: latest
                   architecture: "x64"
                   python-version: 3.11
@@ -173,13 +185,13 @@ jobs:
                   python -m pip install --upgrade pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov cython
+                  pip install --upgrade flake8 coverage pytest-cov 
                   pip install -e .
               env:
-                  ASTRO_XSPEC_VERSION: 12.15.0
+                  ASTRO_XSPEC_VERSION: 12.15.1
 
             - name: Test xspec
               shell: bash -l {0}
               run: |
                   echo "loading xspec from " $HEADAS
-                  python -m pytest threeML/test/test_AAA_against_xspec.py
+                  python -m pytest threeML/test/test_AAA_against_xspec.py 

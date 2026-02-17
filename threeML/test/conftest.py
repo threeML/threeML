@@ -48,11 +48,20 @@ def setup_ipcluster():
 
     yield ipycluster_process
 
-    ipycluster_process.send_signal(signal.SIGINT)
+    # Shut down via Client API first so engines exit cleanly (avoids SIGTERM
+    # and "Event loop stopped before Future completed" / zombie messages in logs)
+    try:
+        from ipyparallel import Client
 
-    time.sleep(10.0)
-
-    ipycluster_process.kill()
+        client = Client()
+        client.shutdown(hub=True, block=True)
+    except Exception:
+        pass  # cluster may already be down or unavailable
+    if ipycluster_process.poll() is None:
+        ipycluster_process.send_signal(signal.SIGINT)
+        time.sleep(10.0)
+        if ipycluster_process.poll() is None:
+            ipycluster_process.kill()
 
 
 # This is run automatically before *every* test (autouse=True)

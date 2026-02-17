@@ -6,7 +6,7 @@ Users coming from XSPEC typically have a few questions about getting started wit
 What version of XSPEC is currently supported?
 ---------------------------------------------
 
-Starting from version `astromodels`` and `threeML`` 2.5.0 there is currently 
+Starting from version ``astromodels`` and ``threeML`` 2.5.0 there is currently 
 support for XSPEC, either installed with Conda via the `xspec` conda package or 
 compiled from source. (see `here <https://heasarc.gsfc.nasa.gov/docs/software/conda.html>`_ for more details on the conda package).
 
@@ -81,7 +81,7 @@ How do I fake a dummy response to fit optical data or a background model?
 How do I choose the likelihood statistic for my fit?
 ----------------------------------------------------
 - It is possible, but if your PHA files are formatted correctly, we probe them and choose the **correct** likelihood for your data.
-- We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called $\chi^2$ regime. This is an incorrect and bad practice. 
+- We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called :math:`\chi^2` regime. This is an incorrect and bad practice. 
 
 How do I plot *unfolded data points* along with my fit?
 -------------------------------------------------------

@@ -1,7 +1,15 @@
 name: Conda Build and Publish
 on:
     push:
+      branches:
+        - master
+        - dev
+      tags:
+        - "v*"
     pull_request:
+      branches:
+        - master
+        - dev
     schedule:
         - cron: "0 11 * * *"
 
@@ -17,43 +25,36 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
-                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
-                    architecture: arm64
                     os: macos-latest
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
-                    architecture: x64
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            - name: XCode
-              uses: maxim-lobanov/setup-xcode@v1
-              with:
-                  xcode-version: latest
-              if: runner.os == 'macOS'
-            - name: Set up Python
-              uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ matrix.python-version }}
+
             - name: Add conda ${{ matrix.python-version }} to system path
               uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
-                  auto-activate-base: false
-                  mamba-version: "*"
+                  auto-activate: false
+                  miniforge-variant: Miniforge3
+                  miniforge-version: "25.11.0-1"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
-                  channels: threeml, conda-forge, fermi
                   use-only-tar-bz2: false
-                  architecture: ${{ matrix.architecture }}
+
             - name: Init Env
               shell: bash -l {0}
               run: |
+                  if [[ ${{ matrix.os }} == "macos-15-intel" ]]; then
+                    mamba install -c conda-forge icu libxml2 libarchive --force-reinstall
+                  fi
+
                   pip install tomli
                   export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
@@ -65,44 +66,47 @@ jobs:
                   echo "Running on development branch: ${ISDEV} "
                 
                   if [[ "${ISDEV}" == "true" ]]; then
-
-                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-                  
+                    mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   fi
-
                   if [[ ${{matrix.python-version}} == 3.9 ]];
                   then
                     mamba install -c conda-forge "numpy<1.24"
                   fi
+                  mamba install codecov pytest-cov
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+
             - name: Conda list
               shell: bash -l {0}
               run: |
                   conda list
+
             - name: Build the Distribution
               shell: bash -l {0}
               run: |
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa
+                  mamba install -c conda-forge boa icu libarchive conda-build -n base
+
+                  conda config --set conda_build.pkg_format 2
+                  conda config --set conda_build.zstd_compression_level 19
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
-                  ls -l ${CONDA}/envs/test_env/conda-bld/*/*
+                  ls -l ${CONDA}/conda-bld/*/*
 
-                  conda search -c ${CONDA}/envs/test_env/conda-bld/ threeml --offline --use-local --info
+                  conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
+
             - name: Install it
               shell: bash -l {0}
               run: |
                   #conda install --use-local -c conda-forge threeml
-                  conda install -c ${CONDA}/envs/test_env/conda-bld/ --strict-channel-priority --use-local threeml
+                  conda install -c ${CONDA}/conda-bld/ --strict-channel-priority --use-local threeml
 
             - name: Test conda build
               shell: bash -l {0}
               run: |
-
                 if [[ ${{matrix.python-version}} != 3.9 || ${{matrix.os}} != macos-15-intel ]]; then
 
                   wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
@@ -111,7 +115,6 @@ jobs:
                 fi
 
                 python -m pytest -vv --cov=threeML --cov-report=xml
-
               env:
                   PYTEST_ADDOPTS: "--color=yes"
                   OMP_NUM_THREADS: 1
@@ -130,14 +133,11 @@ jobs:
                 python-version: [3.9, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
-                    architecture: x64
                   - environment: ci/environment_macos-latest.yml
                     os: macos-latest
-                    architecture: arm64
                   - environment: ci/environment.yml
                     os: macos-15-intel
                     python-version: 3.9
-                    architecture: x64
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -147,14 +147,14 @@ jobs:
               uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: "test_env"
-                  auto-activate-base: false
-                  miniforge-version: latest
+                  auto-activate: false
+                  miniforge-variant: Miniforge3
+                  miniforge-version: "25.11.0-1"
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ${{ matrix.environment }}
-                  channels: threeml, conda-forge, fermi
                   use-only-tar-bz2: false
-                  architecture: ${{ matrix.architecture }}
+
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -173,9 +173,16 @@ jobs:
                   # Build package
 
                   #conda install conda-build -n base
-                  mamba install -c conda-forge boa
+                  mamba install -c conda-forge boa icu libarchive conda-build -n base
+
+                  conda config --set conda_build.pkg_format 2
+                  conda config --set conda_build.zstd_compression_level 19
 
                   conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
+
+                  ls -l ${CONDA}/conda-bld/*/*
+
+                  conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
 
             - name: Publish to Conda
@@ -194,15 +201,15 @@ jobs:
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/linux-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/linux-64/threeml*.conda --force $LABEL
 
                   elif [[ ${{matrix.os}} == macos-latest ]]; then
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-arm64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-arm64/threeml*.conda --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/envs/test_env/conda-bld/osx-64/*.tar.bz2 --force $LABEL
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml ${CONDA}/conda-bld/osx-64/threeml*.conda --force $LABEL
 
                   fi
 
