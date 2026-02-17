@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.parallel.parallel_client &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -150,7 +154,7 @@
 
 
 <div class="viewcode-block" id="get_base_prefix_compat">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.get_base_prefix_compat">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.get_base_prefix_compat">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_base_prefix_compat</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get base/real prefix, or sys.prefix if there is none.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span>
@@ -162,14 +166,14 @@
 
 
 <div class="viewcode-block" id="in_virtualenv">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.in_virtualenv">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.in_virtualenv">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">in_virtualenv</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">get_base_prefix_compat</span><span class="p">()</span> <span class="o">!=</span> <span class="n">sys</span><span class="o">.</span><span class="n">prefix</span></div>
 
 
 
 <div class="viewcode-block" id="NoParallelEnvironment">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.NoParallelEnvironment">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.NoParallelEnvironment">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NoParallelEnvironment</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
@@ -181,7 +185,7 @@
 
 
 <div class="viewcode-block" id="parallel_computation">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.parallel_computation">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.parallel_computation">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">parallel_computation</span><span class="p">(</span>
     <span class="n">profile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -290,12 +294,21 @@
 
         <span class="k">finally</span><span class="p">:</span>
             <span class="c1"># This gets executed in any case, even if there is an exception</span>
-
+            <span class="c1"># Shut down via Client API first so engines exit cleanly (avoid SIGTERM</span>
+            <span class="c1"># which causes &quot;Event loop stopped before Future completed&quot; in engine logs)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Shutting down ipcluster...&quot;</span><span class="p">)</span>
-
-            <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">)</span>
-
-            <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">hub</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Client shutdown failed (cluster may already be down): </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="c1"># If the process is still running (e.g. ipcluster parent), stop it</span>
+            <span class="k">if</span> <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+                    <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+                    <span class="n">ipycluster_process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Using an already started cluster</span>
@@ -310,7 +323,7 @@
 
 
 <div class="viewcode-block" id="is_parallel_computation_active">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.is_parallel_computation_active">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.is_parallel_computation_active">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_parallel_computation_active</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">threeML_config</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">use_parallel</span><span class="p">)</span></div>
 
@@ -343,7 +356,7 @@
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">direct_view</span><span class="p">()</span><span class="o">.</span><span class="n">use_dill</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ParallelClient.get_number_of_engines">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.get_number_of_engines">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.get_number_of_engines">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="nf">get_number_of_engines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direct_view</span><span class="p">())</span></div>
 
@@ -405,7 +418,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_amr</span>
 
 <div class="viewcode-block" id="ParallelClient.execute_with_progress_bar">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.execute_with_progress_bar">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient.execute_with_progress_bar">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="nf">execute_with_progress_bar</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;progress&quot;</span>
         <span class="p">):</span>
@@ -436,7 +449,7 @@
     <span class="c1"># activate the parallel mode (see above)</span>
 
 <div class="viewcode-block" id="ParallelClient">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.parallel.html#threeML.parallel.parallel_client.ParallelClient">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ParallelClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
@@ -454,7 +467,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.spectrum package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -18,8 +19,10 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -27,8 +30,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="threeML.utils.spectrum.binned_spectrum module" href="threeML.utils.spectrum.binned_spectrum.html" />
-    <link rel="prev" title="threeML.utils.polarization.binned_polarization module" href="threeML.utils.polarization.binned_polarization.html" /> 
+    <link rel="next" title="threeML.utils.statistics package" href="threeML.utils.statistics.html" />
+    <link rel="prev" title="threeML.utils.polarization package" href="threeML.utils.polarization.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,7 +56,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -66,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -74,13 +77,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -119,194 +123,1253 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a>
 </h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html">threeML.utils.spectrum.binned_spectrum module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.INTERVAL_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.add_inverse_variance_weighted()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.clone()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.count_errors</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.counts</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.exposure</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.from_pandas()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.from_time_series()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.instrument"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.instrument</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.is_poisson"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.is_poisson</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.mission"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.mission</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channel"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.n_channel</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channels"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.n_channels</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.quality"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.quality</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rate_errors"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.rate_errors</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.rates</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.scale_factor"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.scale_factor</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.sys_errors</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.to_pandas()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.total_count</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.total_count_error</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.total_rate</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.total_rate_error</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstart"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.tstart</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstop"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrum.tstop</span></code></a></li>
+</section>
+<section id="module-threeML.utils.spectrum.binned_spectrum">
+<span id="threeml-utils-spectrum-binned-spectrum-module"></span><h2>threeML.utils.spectrum.binned_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.binned_spectrum" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet" title="threeML.utils.spectrum.binned_spectrum.ChannelSet"><span class="pre">ChannelSet</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.Quality" title="threeML.utils.spectrum.binned_spectrum.Quality"><span class="pre">Quality</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="threeML.utils.html#threeML.utils.histogram.Histogram" title="threeML.utils.histogram.Histogram"><code class="xref py py-class docutils literal notranslate"><span class="pre">Histogram</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.INTERVAL_TYPE">
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.INTERVAL_TYPE" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>alias of <a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.Channel" title="threeML.utils.spectrum.binned_spectrum.Channel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Channel</span></code></a></p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted">
+<span class="sig-name descname"><span class="pre">add_inverse_variance_weighted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.add_inverse_variance_weighted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone">
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Make a new spectrum with new counts and errors and all other
+parameters the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>new_counts</strong> – new counts for the spectrum</p></li>
+<li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumWithDispersion</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumWithDispersion.clone()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumWithDispersion.from_time_series()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.response"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumWithDispersion.response</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">count_errors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.count_errors" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>count error per channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">counts</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.counts" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>counts per channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exposure</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.exposure" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Exposure in seconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>exposure</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.from_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Build a spectrum from data contained within a pandas data frame.</p>
+<p>The required columns are:</p>
+<p>‘emin’: low energy bin edge
+‘emax’: high energy bin edge
+‘counts’: the counts in each bin</p>
+<p>Optional column names are:</p>
+<p>‘count_errors’: errors on the counts for non-Poisson data
+‘sys_errors’: systematic error per channel
+‘quality’ list of 3ML quality flags ‘good’, ‘warn’, ‘bad’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>pandas_dataframe</strong> – data frame containing information to be read into</p>
+</dd>
+</dl>
+<p>spectrum
+:param exposure: the exposure  of the spectrum
+:param scale_factor: the scale factor of the spectrum
+:param is_poisson: if the data are Poisson distributed
+:param mission: (optional) the mission name
+:param instrument: (optional) the instrument name
+:return:</p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series" title="Link to this definition"></a>
+</dt>
+<dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>time_series</strong></p></li>
+<li><p><strong>use_poly</strong></p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Channel"><code class="docutils literal notranslate"><span class="pre">Channel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Channel.channel_width"><code class="docutils literal notranslate"><span class="pre">Channel.channel_width</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.instrument">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">instrument</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.instrument" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.is_poisson">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_poisson</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.is_poisson" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.mission">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mission</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.mission" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channel">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channel" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.n_channels" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.quality">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">quality</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.Quality" title="threeML.utils.spectrum.binned_spectrum.Quality"><span class="pre">Quality</span></a></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.quality" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rate_errors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rate_errors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rate_errors" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>If the spectrum has no Poisson error (POISSER is False in the
+header), this will return the STAT_ERR column :return: errors on the
+rates.</p>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rates</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.rates" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>rates per channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.scale_factor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.scale_factor" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sys_errors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.sys_errors" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Systematic errors per channel. This is nonzero only if the SYS_ERR
+column is present in the input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>the systematic errors stored in the input spectrum</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas">
+<span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrum.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Make a pandas table from the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>use_rate</strong> – if the table should use rates or counts</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>total counts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_count_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_count_error" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>total count error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_rate</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>total rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_rate_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.total_rate_error" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>total rate error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstart">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstart</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstart" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstop">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstop</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.tstop" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrumWithDispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_poisson</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrum</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone">
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_sys_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Make a new spectrum with new counts and errors and all other
+parameters the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>new_sys_errors</strong></p></li>
+<li><p><strong>new_exposure</strong></p></li>
+<li><p><strong>new_scale_factor</strong></p></li>
+<li><p><strong>new_counts</strong> – new counts for the spectrum</p></li>
+<li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet"><code class="docutils literal notranslate"><span class="pre">ChannelSet</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">ChannelSet.INTERVAL_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.channels_widths"><code class="docutils literal notranslate"><span class="pre">ChannelSet.channels_widths</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response"><code class="docutils literal notranslate"><span class="pre">ChannelSet.from_instrument_response()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#BinnedSpectrumWithDispersion.from_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series" title="Link to this definition"></a>
+</dt>
+<dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>time_series</strong></p></li>
+<li><p><strong>use_poly</strong></p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality"><code class="docutils literal notranslate"><span class="pre">Quality</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.bad"><code class="docutils literal notranslate"><span class="pre">Quality.bad</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good"><code class="docutils literal notranslate"><span class="pre">Quality.create_all_good()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip"><code class="docutils literal notranslate"><span class="pre">Quality.from_ogip()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.get_slice"><code class="docutils literal notranslate"><span class="pre">Quality.get_slice()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.good"><code class="docutils literal notranslate"><span class="pre">Quality.good</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.n_elements"><code class="docutils literal notranslate"><span class="pre">Quality.n_elements</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip"><code class="docutils literal notranslate"><span class="pre">Quality.to_ogip()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.warn"><code class="docutils literal notranslate"><span class="pre">Quality.warn</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.response">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">response</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.response" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Channel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">Channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_if_inverted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Channel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Channel" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="threeML.utils.html#threeML.utils.interval.Interval" title="threeML.utils.interval.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Channel.channel_width">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_width</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Channel.channel_width" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">ChannelSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#ChannelSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="threeML.utils.html#threeML.utils.interval.IntervalSet" title="threeML.utils.interval.IntervalSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSet</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet.INTERVAL_TYPE">
+<span class="sig-name descname"><span class="pre">INTERVAL_TYPE</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.INTERVAL_TYPE" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>alias of <a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.Channel" title="threeML.utils.spectrum.binned_spectrum.Channel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Channel</span></code></a></p>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet.channels_widths">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channels_widths</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.channels_widths" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_instrument_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instrument_response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#ChannelSet.from_instrument_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Build EBOUNDS interval from an instrument response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>instrument_response</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum.</span></span><span class="sig-name descname"><span class="pre">Quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.bad">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">bad</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.bad" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.create_all_good">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_all_good</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_channels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.create_all_good"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Construct a quality object with all good channels :param n_channels:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.from_ogip">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_ogip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ogip_quality</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.from_ogip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Read in quality from an OGIP file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>cls</strong></p></li>
+<li><p><strong>ogip_quality</strong></p></li>
 </ul>
-</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.get_slice">
+<span class="sig-name descname"><span class="pre">get_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.get_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.get_slice" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.good">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">good</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.good" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.n_elements">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_elements</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.n_elements" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.to_ogip">
+<span class="sig-name descname"><span class="pre">to_ogip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum.html#Quality.to_ogip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>makes a quality array following the OGIP standards:
+0 = good
+2 = warn
+5 = bad</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum.Quality.warn">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">warn</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum.Quality.warn" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.spectrum.binned_spectrum_set">
+<span id="threeml-utils-spectrum-binned-spectrum-set-module"></span><h2>threeML.utils.spectrum.binned_spectrum_set module<a class="headerlink" href="#module-threeML.utils.spectrum.binned_spectrum_set" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.binned_spectrum_set.</span></span><span class="sig-name descname"><span class="pre">BinnedSpectrumSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binned_spectrum_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum_set.html#BinnedSpectrumSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.count_errors_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">count_errors_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.count_errors_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.counts_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">counts_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.counts_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.exposure_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exposure_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.exposure_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.n_channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_channels</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.n_channels" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.quality_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">quality_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.quality_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.rate_errors_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rate_errors_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.rate_errors_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.rates_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rates_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.rates_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.reference_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">reference_time</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.reference_time" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum_set.html#BinnedSpectrumSet.sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sort" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Sort the bin spectra in place according to time :return:</p>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sys_errors_per_bin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sys_errors_per_bin</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sys_errors_per_bin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_intervals">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">time_intervals</span></span><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_intervals" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_to_index">
+<span class="sig-name descname"><span class="pre">time_to_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/binned_spectrum_set.html#BinnedSpectrumSet.time_to_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_to_index" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Get the index of the input time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>time</strong> – time to search for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>integer</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.spectrum.pha_spectrum">
+<span id="threeml-utils-spectrum-pha-spectrum-module"></span><h2>threeML.utils.spectrum.pha_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.pha_spectrum" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.pha_spectrum.</span></span><span class="sig-name descname"><span class="pre">PHASpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pha_file_or_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII" title="threeML.utils.OGIP.pha.PHAII"><span class="pre">PHAII</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="threeML.io.html#threeML.io.fits_file.FITSFile" title="threeML.io.fits_file.FITSFile"><span class="pre">FITSFile</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="threeML.utils.OGIP.html#threeML.utils.OGIP.response.InstrumentResponse" title="threeML.utils.OGIP.response.InstrumentResponse"><span class="pre">InstrumentResponse</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrumWithDispersion</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.ancillary_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ancillary_file</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.ancillary_file" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns the ancillary file definied in the header, or None if there
+is none defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>a path to a file, or None</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.background_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">background_file</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.background_file" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns the background file definied in the header, or None if there
+is none defined :return: a path to a file, or None.</p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.clone">
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="threeML.utils.spectrum.pha_spectrum.PHASpectrum"><span class="pre">PHASpectrum</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.clone" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Make a new spectrum with new counts and errors and all other
+parameters the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>new_exposure</strong> – the new exposure for the clone</p></li>
+<li><p><strong>new_scale_factor</strong> – the new scale factor for the clone</p></li>
+<li><p><strong>new_counts</strong> – new counts for the spectrum</p></li>
+<li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html">threeML.utils.spectrum.binned_spectrum_set module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.count_errors_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.count_errors_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.counts_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.counts_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.exposure_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.exposure_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.n_channels"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.n_channels</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.quality_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.quality_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.rate_errors_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.rate_errors_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.rates_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.rates_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.reference_time"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.reference_time</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sort"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.sort()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.sys_errors_per_bin"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.sys_errors_per_bin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_intervals"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.time_intervals</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.binned_spectrum_set.html#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet.time_to_index"><code class="docutils literal notranslate"><span class="pre">BinnedSpectrumSet.time_to_index()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>new pha spectrum</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.filename">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">filename</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.filename" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dispersion_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.from_dispersion_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.grouping">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">grouping</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.grouping" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.response_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">response_file</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.response_file" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns the response file definied in the header, or None if there
+is none defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>a path to a file, or None</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.scale_factor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.scale_factor" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>This is a scale factor (in the BACKSCAL keyword) which must be used
+to rescale background and source regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping">
+<span class="sig-name descname"><span class="pre">set_ogip_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.set_ogip_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>If the counts are rebinned, this updates the grouping :param
+grouping:</p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum">
+<span class="sig-name descname"><span class="pre">to_binned_spectrum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><span class="pre">BinnedSpectrumWithDispersion</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrum.to_binned_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Convert directly to as Binned Spectrum :returns:</p>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.pha_spectrum.</span></span><span class="sig-name descname"><span class="pre">PHASpectrumSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pha_file_or_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="threeML.utils.OGIP.html#threeML.utils.OGIP.pha.PHAII" title="threeML.utils.OGIP.pha.PHAII"><span class="pre">PHAII</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arf_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet" title="threeML.utils.spectrum.binned_spectrum_set.BinnedSpectrumSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedSpectrumSet</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.ancillary_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ancillary_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.ancillary_file" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns the ancillary file definied in the header, or None if there
+is none defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>a path to a file, or None</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.background_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">background_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.background_file" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns the background file definied in the header, or None if there
+is none defined :return: a path to a file, or None.</p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.clone">
+<span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.clone" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Make a new spectrum with new counts and errors and all other
+parameters the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>new_counts</strong> – new counts for the spectrum</p></li>
+<li><p><strong>new_count_errors</strong> – new errors from the spectrum</p></li>
 </ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html">threeML.utils.spectrum.pha_spectrum module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum"><code class="docutils literal notranslate"><span class="pre">PHASpectrum</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.ancillary_file"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.ancillary_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.background_file"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.background_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.clone"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.clone()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.filename"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.filename</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.from_dispersion_spectrum"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.from_dispersion_spectrum()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.grouping"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.grouping</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.response_file"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.response_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.scale_factor"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.scale_factor</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.set_ogip_grouping"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.set_ogip_grouping()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrum.to_binned_spectrum"><code class="docutils literal notranslate"><span class="pre">PHASpectrum.to_binned_spectrum()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.ancillary_file"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.ancillary_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.background_file"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.background_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.clone"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.clone()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.filename"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.filename</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.from_dispersion_spectrum()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.grouping"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.grouping</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.response_file"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.response_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.scale_factor"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.scale_factor</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.pha_spectrum.html#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping"><code class="docutils literal notranslate"><span class="pre">PHASpectrumSet.set_ogip_grouping()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.spectrum.share_spectrum.html">threeML.utils.spectrum.share_spectrum module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.share_spectrum.html#threeML.utils.spectrum.share_spectrum.ShareSpectrum"><code class="docutils literal notranslate"><span class="pre">ShareSpectrum</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.share_spectrum.html#threeML.utils.spectrum.share_spectrum.ShareSpectrum.base_plugin_key"><code class="docutils literal notranslate"><span class="pre">ShareSpectrum.base_plugin_key</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.share_spectrum.html#threeML.utils.spectrum.share_spectrum.ShareSpectrum.data_ebin_connect"><code class="docutils literal notranslate"><span class="pre">ShareSpectrum.data_ebin_connect</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.share_spectrum.html#threeML.utils.spectrum.share_spectrum.ShareSpectrum.data_ein_edges"><code class="docutils literal notranslate"><span class="pre">ShareSpectrum.data_ein_edges</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html">threeML.utils.spectrum.spectrum_likelihood module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">BinnedStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_background_counts"><code class="docutils literal notranslate"><span class="pre">BinnedStatistic.get_randomized_background_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_background_errors"><code class="docutils literal notranslate"><span class="pre">BinnedStatistic.get_randomized_background_errors()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">BinnedStatistic.get_randomized_source_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_source_errors"><code class="docutils literal notranslate"><span class="pre">BinnedStatistic.get_randomized_source_errors()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedGaussianBackgroundStatistic"><code class="docutils literal notranslate"><span class="pre">GaussianObservedGaussianBackgroundStatistic</span></code></a></li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic"><code class="docutils literal notranslate"><span class="pre">GaussianObservedStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">GaussianObservedStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">GaussianObservedStatistic.get_randomized_source_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_errors"><code class="docutils literal notranslate"><span class="pre">GaussianObservedStatistic.get_randomized_source_errors()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic"><code class="docutils literal notranslate"><span class="pre">NotAvailableStatistic</span></code></a></li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic"><code class="docutils literal notranslate"><span class="pre">PoissonObservedGaussianBackgroundStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">PoissonObservedGaussianBackgroundStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_background_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedGaussianBackgroundStatistic.get_randomized_background_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_background_errors"><code class="docutils literal notranslate"><span class="pre">PoissonObservedGaussianBackgroundStatistic.get_randomized_background_errors()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic"><code class="docutils literal notranslate"><span class="pre">PoissonObservedIdealBackgroundStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">PoissonObservedIdealBackgroundStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_randomized_background_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedIdealBackgroundStatistic.get_randomized_background_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedIdealBackgroundStatistic.get_randomized_source_counts()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic"><code class="docutils literal notranslate"><span class="pre">PoissonObservedModeledBackgroundStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">PoissonObservedModeledBackgroundStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_randomized_background_errors"><code class="docutils literal notranslate"><span class="pre">PoissonObservedModeledBackgroundStatistic.get_randomized_background_errors()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedModeledBackgroundStatistic.get_randomized_source_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.synthetic_background_plugin"><code class="docutils literal notranslate"><span class="pre">PoissonObservedModeledBackgroundStatistic.synthetic_background_plugin</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic"><code class="docutils literal notranslate"><span class="pre">PoissonObservedNoBackgroundStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">PoissonObservedNoBackgroundStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedNoBackgroundStatistic.get_randomized_source_counts()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic"><code class="docutils literal notranslate"><span class="pre">PoissonObservedPoissonBackgroundStatistic</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_current_value"><code class="docutils literal notranslate"><span class="pre">PoissonObservedPoissonBackgroundStatistic.get_current_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_background_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedPoissonBackgroundStatistic.get_randomized_background_counts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.spectrum.spectrum_likelihood.html#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts"><code class="docutils literal notranslate"><span class="pre">PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>new pha spectrum</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.filename">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.filename" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dispersion_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dispersion_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion" title="threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion"><span class="pre">BinnedSpectrumWithDispersion</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'observed'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrum" title="threeML.utils.spectrum.pha_spectrum.PHASpectrum"><span class="pre">PHASpectrum</span></a></span></span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.from_dispersion_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.from_dispersion_spectrum" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.grouping">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">grouping</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.grouping" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.response_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">response_file</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.response_file" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns the response file definied in the header, or None if there
+is none defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>a path to a file, or None</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.scale_factor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">scale_factor</span></span><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.scale_factor" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>This is a scale factor (in the BACKSCAL keyword) which must be used
+to rescale background and source regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping">
+<span class="sig-name descname"><span class="pre">set_ogip_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grouping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/pha_spectrum.html#PHASpectrumSet.set_ogip_grouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.pha_spectrum.PHASpectrumSet.set_ogip_grouping" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>If the counts are rebinned, this updates the grouping :param
+grouping:</p>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.spectrum.share_spectrum">
+<span id="threeml-utils-spectrum-share-spectrum-module"></span><h2>threeML.utils.spectrum.share_spectrum module<a class="headerlink" href="#module-threeML.utils.spectrum.share_spectrum" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.share_spectrum.ShareSpectrum">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.share_spectrum.</span></span><span class="sig-name descname"><span class="pre">ShareSpectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datalist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/share_spectrum.html#ShareSpectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.share_spectrum.ShareSpectrum" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.share_spectrum.ShareSpectrum.base_plugin_key">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">base_plugin_key</span></span><a class="headerlink" href="#threeML.utils.spectrum.share_spectrum.ShareSpectrum.base_plugin_key" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.share_spectrum.ShareSpectrum.data_ebin_connect">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">data_ebin_connect</span></span><a class="headerlink" href="#threeML.utils.spectrum.share_spectrum.ShareSpectrum.data_ebin_connect" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.share_spectrum.ShareSpectrum.data_ein_edges">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">data_ein_edges</span></span><a class="headerlink" href="#threeML.utils.spectrum.share_spectrum.ShareSpectrum.data_ein_edges" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.spectrum.spectrum_likelihood">
+<span id="threeml-utils-spectrum-spectrum-likelihood-module"></span><h2>threeML.utils.spectrum.spectrum_likelihood module<a class="headerlink" href="#module-threeML.utils.spectrum.spectrum_likelihood" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">BinnedStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#BinnedStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#BinnedStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_background_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_background_counts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#BinnedStatistic.get_randomized_background_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_background_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_background_errors">
+<span class="sig-name descname"><span class="pre">get_randomized_background_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#BinnedStatistic.get_randomized_background_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_background_errors" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#BinnedStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_source_errors">
+<span class="sig-name descname"><span class="pre">get_randomized_source_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#BinnedStatistic.get_randomized_source_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic.get_randomized_source_errors" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.GaussianObservedGaussianBackgroundStatistic">
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">GaussianObservedGaussianBackgroundStatistic</span></span><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedGaussianBackgroundStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>alias of <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic" title="threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotAvailableStatistic</span></code></a></p>
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">GaussianObservedStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#GaussianObservedStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#GaussianObservedStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#GaussianObservedStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_errors">
+<span class="sig-name descname"><span class="pre">get_randomized_source_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#GaussianObservedStatistic.get_randomized_source_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.GaussianObservedStatistic.get_randomized_source_errors" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">NotAvailableStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#NotAvailableStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.NotAvailableStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">PoissonObservedGaussianBackgroundStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedGaussianBackgroundStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedGaussianBackgroundStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_background_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_background_counts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedGaussianBackgroundStatistic.get_randomized_background_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_background_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_background_errors">
+<span class="sig-name descname"><span class="pre">get_randomized_background_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedGaussianBackgroundStatistic.get_randomized_background_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_background_errors" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedGaussianBackgroundStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">PoissonObservedIdealBackgroundStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedIdealBackgroundStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedIdealBackgroundStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_randomized_background_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_background_counts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedIdealBackgroundStatistic.get_randomized_background_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_randomized_background_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedIdealBackgroundStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedIdealBackgroundStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">PoissonObservedModeledBackgroundStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedModeledBackgroundStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedModeledBackgroundStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_randomized_background_errors">
+<span class="sig-name descname"><span class="pre">get_randomized_background_errors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedModeledBackgroundStatistic.get_randomized_background_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_randomized_background_errors" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedModeledBackgroundStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.synthetic_background_plugin">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">synthetic_background_plugin</span></span><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedModeledBackgroundStatistic.synthetic_background_plugin" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">PoissonObservedNoBackgroundStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedNoBackgroundStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedNoBackgroundStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedNoBackgroundStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedNoBackgroundStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.spectrum.spectrum_likelihood.</span></span><span class="sig-name descname"><span class="pre">PoissonObservedPoissonBackgroundStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_plugin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedPoissonBackgroundStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic" title="threeML.utils.spectrum.spectrum_likelihood.BinnedStatistic"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinnedStatistic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_current_value">
+<span class="sig-name descname"><span class="pre">get_current_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precalc_fluxes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedPoissonBackgroundStatistic.get_current_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_current_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_background_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_background_counts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedPoissonBackgroundStatistic.get_randomized_background_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_background_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts">
+<span class="sig-name descname"><span class="pre">get_randomized_source_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_model_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/spectrum/spectrum_likelihood.html#PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.spectrum.spectrum_likelihood.PoissonObservedPoissonBackgroundStatistic.get_randomized_source_counts" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
 </section>
 <section id="module-threeML.utils.spectrum">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.utils.spectrum" title="Link to this heading"></a>
@@ -319,14 +1382,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="threeML.utils.polarization.binned_polarization.html" class="btn btn-neutral float-left" title="threeML.utils.polarization.binned_polarization module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="threeML.utils.spectrum.binned_spectrum.html" class="btn btn-neutral float-right" title="threeML.utils.spectrum.binned_spectrum module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="threeML.utils.polarization.html" class="btn btn-neutral float-left" title="threeML.utils.polarization package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="threeML.utils.statistics.html" class="btn btn-neutral float-right" title="threeML.utils.statistics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

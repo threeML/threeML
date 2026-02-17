@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.spectrum.binned_spectrum &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -125,7 +129,7 @@
 
 
 <div class="viewcode-block" id="Channel">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Channel">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Channel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Interval</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">channel_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -134,12 +138,12 @@
 
 
 <div class="viewcode-block" id="ChannelSet">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ChannelSet</span><span class="p">(</span><span class="n">IntervalSet</span><span class="p">):</span>
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">Channel</span>
 
 <div class="viewcode-block" id="ChannelSet.from_instrument_response">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.ChannelSet.from_instrument_response">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_instrument_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instrument_response</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build EBOUNDS interval from an instrument response.</span>
@@ -160,7 +164,7 @@
 
 
 <div class="viewcode-block" id="Quality">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Quality</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quality</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simple class to formalize the quality flags used in spectra :param</span>
@@ -193,7 +197,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quality</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Quality.get_slice">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.get_slice">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.get_slice">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Quality</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quality</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:])</span></div>
 
@@ -215,7 +219,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quality</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Quality.from_ogip">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.from_ogip">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_ogip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ogip_quality</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read in quality from an OGIP file.</span>
@@ -243,7 +247,7 @@
 
 
 <div class="viewcode-block" id="Quality.to_ogip">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.to_ogip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_ogip</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        makes a quality array following the OGIP standards:</span>
@@ -263,7 +267,7 @@
 
 
 <div class="viewcode-block" id="Quality.create_all_good">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.Quality.create_all_good">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_all_good</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a quality object with all good channels :param n_channels:</span>
@@ -279,7 +283,7 @@
 
 
 <div class="viewcode-block" id="BinnedSpectrum">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinnedSpectrum</span><span class="p">(</span><span class="n">Histogram</span><span class="p">):</span>
     <span class="n">INTERVAL_TYPE</span> <span class="o">=</span> <span class="n">Channel</span>
 
@@ -533,7 +537,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instrument</span>
 
 <div class="viewcode-block" id="BinnedSpectrum.clone">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.clone">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">new_counts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -574,7 +578,7 @@
 
 
 <div class="viewcode-block" id="BinnedSpectrum.from_pandas">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_pandas">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_pandas</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -649,7 +653,7 @@
 
 
 <div class="viewcode-block" id="BinnedSpectrum.to_pandas">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.to_pandas">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_rate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a pandas table from the spectrum.</span>
 
@@ -686,7 +690,7 @@
 
 
 <div class="viewcode-block" id="BinnedSpectrum.from_time_series">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.from_time_series">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">from_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -774,7 +778,7 @@
         <span class="k">return</span> <span class="n">new_spectrum</span>
 
 <div class="viewcode-block" id="BinnedSpectrum.add_inverse_variance_weighted">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrum.add_inverse_variance_weighted">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_inverse_variance_weighted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span><span class="p">,</span> <span class="s2">&quot;The bins are not equal&quot;</span>
 
@@ -849,7 +853,7 @@
 
 
 <div class="viewcode-block" id="BinnedSpectrumWithDispersion">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinnedSpectrumWithDispersion</span><span class="p">(</span><span class="n">BinnedSpectrum</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -910,7 +914,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response</span>
 
 <div class="viewcode-block" id="BinnedSpectrumWithDispersion.from_time_series">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.from_time_series">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_time_series</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span>
@@ -951,7 +955,7 @@
 
 
 <div class="viewcode-block" id="BinnedSpectrumWithDispersion.clone">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.spectrum.html#threeML.utils.spectrum.binned_spectrum.BinnedSpectrumWithDispersion.clone">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">new_counts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1015,7 +1019,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

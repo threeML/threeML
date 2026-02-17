@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.fitted_objects package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -18,8 +19,10 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -27,8 +30,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="threeML.utils.fitted_objects.fitted_point_sources module" href="threeML.utils.fitted_objects.fitted_point_sources.html" />
-    <link rel="prev" title="threeML.utils.data_download.Fermi_LAT.download_LLE_data module" href="threeML.utils.data_download.Fermi_LAT.download_LLE_data.html" /> 
+    <link rel="next" title="threeML.utils.photometry package" href="threeML.utils.photometry.html" />
+    <link rel="prev" title="threeML.utils.data_download.Fermi_LAT package" href="threeML.utils.data_download.Fermi_LAT.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,7 +56,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -66,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -74,13 +77,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -119,58 +123,372 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a>
 </h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html">threeML.utils.fitted_objects.fitted_point_sources module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.DifferentialFluxConversion"><code class="docutils literal notranslate"><span class="pre">DifferentialFluxConversion</span></code></a></li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler"><code class="docutils literal notranslate"><span class="pre">FittedPointSourceSpectralHandler</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler.components"><code class="docutils literal notranslate"><span class="pre">FittedPointSourceSpectralHandler.components</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler.is_dimensionless"><code class="docutils literal notranslate"><span class="pre">FittedPointSourceSpectralHandler.is_dimensionless</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion"><code class="docutils literal notranslate"><span class="pre">FluxConversion</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.conversion_factor"><code class="docutils literal notranslate"><span class="pre">FluxConversion.conversion_factor</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.is_dimensionless"><code class="docutils literal notranslate"><span class="pre">FluxConversion.is_dimensionless</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.model"><code class="docutils literal notranslate"><span class="pre">FluxConversion.model</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.IntegralFluxConversion"><code class="docutils literal notranslate"><span class="pre">IntegralFluxConversion</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.InvalidUnitError"><code class="docutils literal notranslate"><span class="pre">InvalidUnitError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.NotCompositeModelError"><code class="docutils literal notranslate"><span class="pre">NotCompositeModelError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_point_sources.html#threeML.utils.fitted_objects.fitted_point_sources.trap_integral"><code class="docutils literal notranslate"><span class="pre">trap_integral()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html">threeML.utils.fitted_objects.fitted_source_handler module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.average"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.average</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.lower_error"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.lower_error</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.median"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.median</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.samples"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.samples</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.update_tag"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.update_tag()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.upper_error"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.upper_error</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.values"><code class="docutils literal notranslate"><span class="pre">GenericFittedSourceHandler.values</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer"><code class="docutils literal notranslate"><span class="pre">VariatesContainer</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.average"><code class="docutils literal notranslate"><span class="pre">VariatesContainer.average</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.lower_error"><code class="docutils literal notranslate"><span class="pre">VariatesContainer.lower_error</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.median"><code class="docutils literal notranslate"><span class="pre">VariatesContainer.median</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.samples"><code class="docutils literal notranslate"><span class="pre">VariatesContainer.samples</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.upper_error"><code class="docutils literal notranslate"><span class="pre">VariatesContainer.upper_error</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.values"><code class="docutils literal notranslate"><span class="pre">VariatesContainer.values</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threeML.utils.fitted_objects.fitted_source_handler.html#threeML.utils.fitted_objects.fitted_source_handler.transform"><code class="docutils literal notranslate"><span class="pre">transform()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
+</section>
+<section id="module-threeML.utils.fitted_objects.fitted_point_sources">
+<span id="threeml-utils-fitted-objects-fitted-point-sources-module"></span><h2>threeML.utils.fitted_objects.fitted_point_sources module<a class="headerlink" href="#module-threeML.utils.fitted_objects.fitted_point_sources" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.DifferentialFluxConversion">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">DifferentialFluxConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#DifferentialFluxConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.DifferentialFluxConversion" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion" title="threeML.utils.fitted_objects.fitted_point_sources.FluxConversion"><code class="xref py py-class docutils literal notranslate"><span class="pre">FluxConversion</span></code></a></p>
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">FittedPointSourceSpectralHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.68</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_tailed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_differential_flux</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#FittedPointSourceSpectralHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler" title="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericFittedSourceHandler</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler.components">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">components</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler.components" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the components of the function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler.is_dimensionless">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_dimensionless</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FittedPointSourceSpectralHandler.is_dimensionless" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FluxConversion">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">FluxConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#FluxConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.conversion_factor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">conversion_factor</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.conversion_factor" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>The conversion factor needed to finalize the model into the proper
+units after computations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.is_dimensionless">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_dimensionless</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.is_dimensionless" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.model">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion.model" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>The model converted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>a model in the proper units</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.IntegralFluxConversion">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">IntegralFluxConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#IntegralFluxConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.IntegralFluxConversion" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.utils.fitted_objects.fitted_point_sources.FluxConversion" title="threeML.utils.fitted_objects.fitted_point_sources.FluxConversion"><code class="xref py py-class docutils literal notranslate"><span class="pre">FluxConversion</span></code></a></p>
+</dd>
+</dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.InvalidUnitError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">InvalidUnitError</span></span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#InvalidUnitError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.InvalidUnitError" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd>
+</dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.NotCompositeModelError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">NotCompositeModelError</span></span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#NotCompositeModelError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.NotCompositeModelError" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd>
+</dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_point_sources.trap_integral">
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_point_sources.</span></span><span class="sig-name descname"><span class="pre">trap_integral</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_point_sources.html#trap_integral"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_point_sources.trap_integral" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.fitted_objects.fitted_source_handler">
+<span id="threeml-utils-fitted-objects-fitted-source-handler-module"></span><h2>threeML.utils.fitted_objects.fitted_source_handler module<a class="headerlink" href="#module-threeML.utils.fitted_objects.fitted_source_handler" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_source_handler.</span></span><span class="sig-name descname"><span class="pre">GenericFittedSourceHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_tailed</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">independent_variable_range</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_source_handler.html#GenericFittedSourceHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.average">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">average</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.average" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the average of the variates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.lower_error">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lower_error</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.lower_error" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the lower error of the variates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.median">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">median</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.median" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the median of the variates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.samples">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.samples" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the raw samples of the variates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.update_tag">
+<span class="sig-name descname"><span class="pre">update_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_source_handler.html#GenericFittedSourceHandler.update_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.update_tag" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.upper_error">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upper_error</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.upper_error" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the upper error of the variates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.values">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">values</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.GenericFittedSourceHandler.values" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>The VariatesContainer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_source_handler.</span></span><span class="sig-name descname"><span class="pre">VariatesContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_tailed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_source_handler.html#VariatesContainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.average">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">average</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.average" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the transformed average</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.lower_error">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lower_error</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.lower_error" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the transformed lower error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.median">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">median</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.median" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the transformed median</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.samples">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.samples" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the transformed raw samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.upper_error">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upper_error</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.upper_error" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the transformed upper error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.values">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">values</span></span><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.VariatesContainer.values" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>the list of of RandomVariates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="threeML.utils.fitted_objects.fitted_source_handler.transform">
+<span class="sig-prename descclassname"><span class="pre">threeML.utils.fitted_objects.fitted_source_handler.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/fitted_objects/fitted_source_handler.html#transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.fitted_objects.fitted_source_handler.transform" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>A wrapper to call the _transform method for outputs of Variates
+container class :param method:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
 </section>
 <section id="module-threeML.utils.fitted_objects">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.utils.fitted_objects" title="Link to this heading"></a>
@@ -183,14 +501,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="threeML.utils.data_download.Fermi_LAT.download_LLE_data.html" class="btn btn-neutral float-left" title="threeML.utils.data_download.Fermi_LAT.download_LLE_data module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="threeML.utils.fitted_objects.fitted_point_sources.html" class="btn btn-neutral float-right" title="threeML.utils.fitted_objects.fitted_point_sources module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="threeML.utils.data_download.Fermi_LAT.html" class="btn btn-neutral float-left" title="threeML.utils.data_download.Fermi_LAT package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="threeML.utils.photometry.html" class="btn btn-neutral float-right" title="threeML.utils.photometry package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

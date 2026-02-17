@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.io.logging &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -136,7 +140,7 @@
 
 
 <div class="viewcode-block" id="invalid_plugin_name">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.invalid_plugin_name">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.invalid_plugin_name">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">invalid_plugin_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_variable_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -154,7 +158,7 @@
 
 
 <div class="viewcode-block" id="get_path_of_log_dir">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.get_path_of_log_dir">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.get_path_of_log_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_log_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the path to the logging directory.&quot;&quot;&quot;</span>
 
@@ -171,7 +175,7 @@
 
 
 <div class="viewcode-block" id="get_path_of_log_file">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.get_path_of_log_file">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.get_path_of_log_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path_of_log_file</span><span class="p">(</span><span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the path of the log files.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">log_file</span> <span class="ow">in</span> <span class="n">_log_file_names</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_file</span><span class="si">}</span><span class="s2"> is not one of </span><span class="si">{</span><span class="n">_log_file_names</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -251,7 +255,7 @@
 
 
 <div class="viewcode-block" id="LoggingState">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.LoggingState">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.LoggingState">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LoggingState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -290,7 +294,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="LoggingState.restore_last_state">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.LoggingState.restore_last_state">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.LoggingState.restore_last_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">restore_last_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threeML_usr_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threeML_usr_log_handler_state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threeML_console_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span>
@@ -306,7 +310,7 @@
 
 
 <div class="viewcode-block" id="LoggingState.silence_logs">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.LoggingState.silence_logs">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.LoggingState.silence_logs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">silence_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># store the state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_store_state</span><span class="p">()</span>
@@ -321,7 +325,7 @@
 
 
 <div class="viewcode-block" id="LoggingState.loud_logs">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.LoggingState.loud_logs">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.LoggingState.loud_logs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">loud_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># store the state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_store_state</span><span class="p">()</span>
@@ -336,7 +340,7 @@
 
 
 <div class="viewcode-block" id="LoggingState.debug_logs">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.LoggingState.debug_logs">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.LoggingState.debug_logs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">debug_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># store the state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_store_state</span><span class="p">()</span>
@@ -358,7 +362,7 @@
 
 
 <div class="viewcode-block" id="silence_progress_bars">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.silence_progress_bars">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.silence_progress_bars">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">silence_progress_bars</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn off the progress bars.&quot;&quot;&quot;</span>
 
@@ -367,7 +371,7 @@
 
 
 <div class="viewcode-block" id="activate_progress_bars">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.activate_progress_bars">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.activate_progress_bars">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">activate_progress_bars</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn on the progress bars.&quot;&quot;&quot;</span>
     <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">][</span><span class="s2">&quot;progress_bars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;on&quot;</span></div>
@@ -375,7 +379,7 @@
 
 
 <div class="viewcode-block" id="toggle_progress_bars">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.toggle_progress_bars">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.toggle_progress_bars">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">toggle_progress_bars</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Toggle the state of the progress bars.&quot;&quot;&quot;</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">][</span><span class="s2">&quot;progress_bars&quot;</span><span class="p">]</span>
@@ -385,7 +389,7 @@
 
 
 <div class="viewcode-block" id="silence_warnings">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.silence_warnings">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.silence_warnings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">silence_warnings</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Supress warning messages in console and file usr logs.&quot;&quot;&quot;</span>
 
@@ -398,7 +402,7 @@
 
 
 <div class="viewcode-block" id="activate_warnings">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.activate_warnings">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.activate_warnings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">activate_warnings</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Supress warning messages in console and file usr logs.&quot;&quot;&quot;</span>
 
@@ -411,7 +415,7 @@
 
 
 <div class="viewcode-block" id="update_logging_level">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.update_logging_level">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.update_logging_level">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_logging_level</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the logging level to the console.&quot;&quot;&quot;</span>
     <span class="n">threeML_console_log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
@@ -421,7 +425,7 @@
 
 
 <div class="viewcode-block" id="silence_logs">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.silence_logs">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.silence_logs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">silence_logs</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn off all logging.&quot;&quot;&quot;</span>
 
@@ -434,7 +438,7 @@
 
 
 <div class="viewcode-block" id="quiet_mode">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.quiet_mode">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.quiet_mode">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">quiet_mode</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn off all logging and progress bars.&quot;&quot;&quot;</span>
 
@@ -446,7 +450,7 @@
 
 
 <div class="viewcode-block" id="loud_mode">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.loud_mode">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.loud_mode">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">loud_mode</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn on all progress bars and logging.&quot;&quot;&quot;</span>
 
@@ -458,7 +462,7 @@
 
 
 <div class="viewcode-block" id="activate_logs">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.activate_logs">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.activate_logs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">activate_logs</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Re-activate silenced logs.&quot;&quot;&quot;</span>
 
@@ -471,7 +475,7 @@
 
 
 <div class="viewcode-block" id="debug_mode">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.debug_mode">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.debug_mode">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">debug_mode</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Activate debug in the console.&quot;&quot;&quot;</span>
 
@@ -481,7 +485,7 @@
 
 
 <div class="viewcode-block" id="silence_console_log">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.silence_console_log">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.silence_console_log">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">silence_console_log</span><span class="p">(</span><span class="n">and_progress_bars</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Temporarily silence the console and progress bars.&quot;&quot;&quot;</span>
@@ -509,7 +513,7 @@
 
 
 <div class="viewcode-block" id="setup_logger">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.io.html#threeML.io.logging.setup_logger">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.logging.setup_logger">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">setup_logger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
     <span class="c1"># A logger with name name will be created</span>
     <span class="c1"># and then add it to the print stream</span>
@@ -549,7 +553,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

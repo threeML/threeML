@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.data_builders.fermi package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -18,8 +19,10 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -27,7 +30,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="threeML.utils.data_builders.fermi.gbm_data module" href="threeML.utils.data_builders.fermi.gbm_data.html" />
+    <link rel="next" title="threeML.utils.data_download package" href="threeML.utils.data_download.html" />
     <link rel="prev" title="threeML.utils.data_builders package" href="threeML.utils.data_builders.html" /> 
 </head>
 
@@ -53,7 +56,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -66,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -74,13 +77,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -120,95 +124,559 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a>
 </h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html">threeML.utils.data_builders.fermi.gbm_data module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata"><code class="docutils literal notranslate"><span class="pre">GBMCdata</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.det_name"><code class="docutils literal notranslate"><span class="pre">GBMCdata.det_name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.energies"><code class="docutils literal notranslate"><span class="pre">GBMCdata.energies</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.mission"><code class="docutils literal notranslate"><span class="pre">GBMCdata.mission</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.n_channels"><code class="docutils literal notranslate"><span class="pre">GBMCdata.n_channels</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.trigger_time"><code class="docutils literal notranslate"><span class="pre">GBMCdata.trigger_time</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.tstart"><code class="docutils literal notranslate"><span class="pre">GBMCdata.tstart</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.tstop"><code class="docutils literal notranslate"><span class="pre">GBMCdata.tstop</span></code></a></li>
+</section>
+<section id="module-threeML.utils.data_builders.fermi.gbm_data">
+<span id="threeml-utils-data-builders-fermi-gbm-data-module"></span><h2>threeML.utils.data_builders.fermi.gbm_data module<a class="headerlink" href="#module-threeML.utils.data_builders.fermi.gbm_data" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.data_builders.fermi.gbm_data.</span></span><span class="sig-name descname"><span class="pre">GBMCdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cdata_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/gbm_data.html#GBMCdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.det_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">det_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.det_name" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return the name of the instrument and detector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.energies">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energies</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.energies" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.mission">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mission</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.mission" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Return the name of the mission</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.n_channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.n_channels" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.trigger_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">trigger_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.trigger_time" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.tstart">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstart</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.tstart" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMCdata.tstop">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstop</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMCdata.tstop" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.data_builders.fermi.gbm_data.</span></span><span class="sig-name descname"><span class="pre">GBMTTEFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ttefile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/gbm_data.html#GBMTTEFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.arrival_times">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">arrival_times</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.arrival_times" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.deadtime">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">deadtime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.deadtime" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.det_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">det_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.det_name" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return the name of the instrument and detector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.energies">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energies</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.energies" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.mission">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mission</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.mission" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Return the name of the mission</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.n_channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.n_channels" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.trigger_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">trigger_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.trigger_time" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.tstart">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstart</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.tstart" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.tstop">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstop</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.tstop" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.data_builders.fermi.lat_data">
+<span id="threeml-utils-data-builders-fermi-lat-data-module"></span><h2>threeML.utils.data_builders.fermi.lat_data module<a class="headerlink" href="#module-threeML.utils.data_builders.fermi.lat_data" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.data_builders.fermi.lat_data.</span></span><span class="sig-name descname"><span class="pre">LLEFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lle_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsp_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_data.html#LLEFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.arrival_times">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">arrival_times</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.arrival_times" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The GTI/energy filtered arrival times in MET</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.energies">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energies</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.energies" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>The GTI/energy filtered pha energies</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.energy_edges">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">energy_edges</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.energy_edges" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.instrument">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">instrument</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.instrument" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return the name of the instrument and detector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.is_in_gti">
+<span class="sig-name descname"><span class="pre">is_in_gti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_data.html#LLEFile.is_in_gti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.is_in_gti" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Checks if a time falls within a GTI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>time</strong> – time in MET</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>bool</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">livetime</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime_start">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">livetime_start</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime_start" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime_stop">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">livetime_stop</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime_stop" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.mission">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mission</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.mission" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>return:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Return the name of the mission</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.n_channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_channels</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.n_channels" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.trigger_time">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">trigger_time</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.trigger_time" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>trigger time in MET.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>Gets the trigger time in MET</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>return</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.tstart">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstart</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.tstart" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_data.LLEFile.tstop">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstop</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_data.LLEFile.tstop" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.utils.data_builders.fermi.lat_transient_builder">
+<span id="threeml-utils-data-builders-fermi-lat-transient-builder-module"></span><h2>threeML.utils.data_builders.fermi.lat_transient_builder module<a class="headerlink" href="#module-threeML.utils.data_builders.fermi.lat_transient_builder" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.data_builders.fermi.lat_transient_builder.</span></span><span class="sig-name descname"><span class="pre">LATLikelihoodParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#LATLikelihoodParameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#LATLikelihoodParameter.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.display" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.get_disp_value">
+<span class="sig-name descname"><span class="pre">get_disp_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#LATLikelihoodParameter.get_disp_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.get_disp_value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.is_set">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_set</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.is_set" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.name" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.value">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.value" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.data_builders.fermi.lat_transient_builder.</span></span><span class="sig-name descname"><span class="pre">LATObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ft2_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">livetime_cube</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">liketype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triggername</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#LATObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.event_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">event_file</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.event_file" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.exposure_map">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exposure_map</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.exposure_map" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.ft2_file">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ft2_file</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.ft2_file" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.liketype">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">liketype</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.liketype" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.livetime_cube">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">livetime_cube</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.livetime_cube" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.to_LATLike">
+<span class="sig-name descname"><span class="pre">to_LATLike</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#LATObservation.to_LATLike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.to_LATLike" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.triggername">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">triggername</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.triggername" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.tstart">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstart</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.tstart" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.tstop">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tstop</span></span><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.tstop" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.utils.data_builders.fermi.lat_transient_builder.</span></span><span class="sig-name descname"><span class="pre">TransientLATDataBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triggername</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">init_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#TransientLATDataBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#TransientLATDataBuilder.display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.display" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Display the current set parameters.</p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.from_saved_configuration">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_saved_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triggername</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#TransientLATDataBuilder.from_saved_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.from_saved_configuration" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Load a saved yaml configuration for the given trigger name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>triggername</strong> – Trigger name of the source in YYMMDDXXX</p></li>
+<li><p><strong>config_file</strong> – the saved yaml configuration to use</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.arrival_times"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.arrival_times</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.deadtime"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.deadtime</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.det_name"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.det_name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.energies"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.energies</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.mission"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.mission</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.n_channels"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.n_channels</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.trigger_time"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.trigger_time</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.tstart"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.tstart</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.gbm_data.html#threeML.utils.data_builders.fermi.gbm_data.GBMTTEFile.tstop"><code class="docutils literal notranslate"><span class="pre">GBMTTEFile.tstop</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html">threeML.utils.data_builders.fermi.lat_data module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile"><code class="docutils literal notranslate"><span class="pre">LLEFile</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.arrival_times"><code class="docutils literal notranslate"><span class="pre">LLEFile.arrival_times</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.energies"><code class="docutils literal notranslate"><span class="pre">LLEFile.energies</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.energy_edges"><code class="docutils literal notranslate"><span class="pre">LLEFile.energy_edges</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.instrument"><code class="docutils literal notranslate"><span class="pre">LLEFile.instrument</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.is_in_gti"><code class="docutils literal notranslate"><span class="pre">LLEFile.is_in_gti()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime"><code class="docutils literal notranslate"><span class="pre">LLEFile.livetime</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime_start"><code class="docutils literal notranslate"><span class="pre">LLEFile.livetime_start</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.livetime_stop"><code class="docutils literal notranslate"><span class="pre">LLEFile.livetime_stop</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.mission"><code class="docutils literal notranslate"><span class="pre">LLEFile.mission</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.n_channels"><code class="docutils literal notranslate"><span class="pre">LLEFile.n_channels</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.trigger_time"><code class="docutils literal notranslate"><span class="pre">LLEFile.trigger_time</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.tstart"><code class="docutils literal notranslate"><span class="pre">LLEFile.tstart</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_data.html#threeML.utils.data_builders.fermi.lat_data.LLEFile.tstop"><code class="docutils literal notranslate"><span class="pre">LLEFile.tstop</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html">threeML.utils.data_builders.fermi.lat_transient_builder module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter"><code class="docutils literal notranslate"><span class="pre">LATLikelihoodParameter</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.display"><code class="docutils literal notranslate"><span class="pre">LATLikelihoodParameter.display()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.get_disp_value"><code class="docutils literal notranslate"><span class="pre">LATLikelihoodParameter.get_disp_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.is_set"><code class="docutils literal notranslate"><span class="pre">LATLikelihoodParameter.is_set</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.name"><code class="docutils literal notranslate"><span class="pre">LATLikelihoodParameter.name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATLikelihoodParameter.value"><code class="docutils literal notranslate"><span class="pre">LATLikelihoodParameter.value</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation"><code class="docutils literal notranslate"><span class="pre">LATObservation</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.event_file"><code class="docutils literal notranslate"><span class="pre">LATObservation.event_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.exposure_map"><code class="docutils literal notranslate"><span class="pre">LATObservation.exposure_map</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.ft2_file"><code class="docutils literal notranslate"><span class="pre">LATObservation.ft2_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.liketype"><code class="docutils literal notranslate"><span class="pre">LATObservation.liketype</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.livetime_cube"><code class="docutils literal notranslate"><span class="pre">LATObservation.livetime_cube</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.to_LATLike"><code class="docutils literal notranslate"><span class="pre">LATObservation.to_LATLike()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.triggername"><code class="docutils literal notranslate"><span class="pre">LATObservation.triggername</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.tstart"><code class="docutils literal notranslate"><span class="pre">LATObservation.tstart</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.LATObservation.tstop"><code class="docutils literal notranslate"><span class="pre">LATObservation.tstop</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder"><code class="docutils literal notranslate"><span class="pre">TransientLATDataBuilder</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.display"><code class="docutils literal notranslate"><span class="pre">TransientLATDataBuilder.display()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.from_saved_configuration"><code class="docutils literal notranslate"><span class="pre">TransientLATDataBuilder.from_saved_configuration()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.run"><code class="docutils literal notranslate"><span class="pre">TransientLATDataBuilder.run()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.save_configuration"><code class="docutils literal notranslate"><span class="pre">TransientLATDataBuilder.save_configuration()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.utils.data_builders.fermi.lat_transient_builder.html#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.to_LATLike"><code class="docutils literal notranslate"><span class="pre">TransientLATDataBuilder.to_LATLike()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="threeML.utils.data_builders.fermi.test.html">threeML.utils.data_builders.fermi.test module</a></li>
-</ul>
-</div>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_previous_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recompute_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#TransientLATDataBuilder.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.run" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Run GtBurst to produce the files needed for the FermiLATLike
+plugin.</p>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.save_configuration">
+<span class="sig-name descname"><span class="pre">save_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#TransientLATDataBuilder.save_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.save_configuration" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Save the current configuration to a yaml file for use later.
+Suggested extension is .yml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>filename</strong> – the yaml file name to save to</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.to_LATLike">
+<span class="sig-name descname"><span class="pre">to_LATLike</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/utils/data_builders/fermi/lat_transient_builder.html#TransientLATDataBuilder.to_LATLike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.utils.data_builders.fermi.lat_transient_builder.TransientLATDataBuilder.to_LATLike" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="threeml-utils-data-builders-fermi-test-module">
+<h2>threeML.utils.data_builders.fermi.test module<a class="headerlink" href="#threeml-utils-data-builders-fermi-test-module" title="Link to this heading"></a>
+</h2>
 </section>
 <section id="module-threeML.utils.data_builders.fermi">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.utils.data_builders.fermi" title="Link to this heading"></a>
@@ -222,13 +690,13 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="threeML.utils.data_builders.html" class="btn btn-neutral float-left" title="threeML.utils.data_builders package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="threeML.utils.data_builders.fermi.gbm_data.html" class="btn btn-neutral float-right" title="threeML.utils.data_builders.fermi.gbm_data module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="threeML.utils.data_download.html" class="btn btn-neutral float-right" title="threeML.utils.data_download package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

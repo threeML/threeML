@@ -1,0 +1,1238 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Changelog &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Analysis Results" href="notebooks/Analysis_results_showcase.html" />
+    <link rel="prev" title="threeML.utils.time_series package" href="api/threeML.utils.time_series.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            The Multi-Mission Maximum Likelihood framework
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="team.html">Project &amp; Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Minimization_tutorial.html">Minimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/sampler_docs.html">Bayesian Sampler Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v2-4">v2.4</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v2-4-3-2025-02-06">v2.4.3 (2025-02-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-4-2-2024-05-31">v2.4.2 (2024-05-31)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-4-1-2023-11-04">v2.4.1 (2023-11-04)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-4-0-2022-09-28">v2.4.0 (2022-09-28)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-3">v2.3</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v2-3-2-2022-07-27">v2.3.2 (2022-07-27)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-3-1-2022-07-12">v2.3.1 (2022-07-12)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-3-0-2022-05-25">v2.3.0 (2022-05-25)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-2">v2.2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v2-2-4-2021-08-30">v2.2.4 (2021-08-30)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-2-3-2021-08-20">v2.2.3 (2021-08-20)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-2-2-2021-05-18">v2.2.2 (2021-05-18)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-2-1-2021-04-07">v2.2.1 (2021-04-07)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-2-0-2021-04-05">v2.2.0 (2021-04-05)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-1">v2.1</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v2-1-3-2021-01-24">v2.1.3 (2021-01-24)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-1-2-2021-01-24">v2.1.2 (2021-01-24)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-1-1-2020-12-17">v2.1.1 (2020-12-17)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-1-0-2020-12-16">v2.1.0 (2020-12-16)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v2-0">v2.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v2-0-3-2020-12-08">v2.0.3 (2020-12-08)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-0-2-2020-11-03">v2.0.2 (2020-11-03)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-0-1-2020-10-30">v2.0.1 (2020-10-30)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v2-0-0-2020-10-22">v2.0.0 (2020-10-22)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-2">v1.2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v1-2-0-2020-09-11">v1.2.0 (2020-09-11)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1">v1.1</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-1-2020-05-11">v1.1.1 (2020-05-11)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-0-2020-04-30">v1.1.0 (2020-04-30)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-0">v1.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-9-2020-04-28">v1.0.9 (2020-04-28)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-8-2020-04-25">v1.0.8 (2020-04-25)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-7-2020-04-22">v1.0.7 (2020-04-22)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-6-2020-04-17">v1.0.6 (2020-04-17)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-5-2020-04-17">v1.0.5 (2020-04-17)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-4-2020-04-15">v1.0.4 (2020-04-15)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-3-2020-04-15">v1.0.3 (2020-04-15)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-2-2020-04-11">v1.0.2 (2020-04-11)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-1-2020-04-10">v1.0.1 (2020-04-10)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-0-2020-04-10">v1.0.0 (2020-04-10)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-4">v0.4</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v0-4-2-2020-03-06">v0.4.2 (2020-03-06)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-1">v0.1</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v0-1-0-2016-04-19">v0.1.0 (2016-04-19)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">0.1.0 (2016-04-14)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-0">v0.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v0-0-5-2015-02-06">v0.0.5 (2015-02-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-0-4-2015-02-06">v0.0.4 (2015-02-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-0-3-2015-02-06">v0.0.3 (2015-02-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-0-2-2015-02-06">v0.0.2 (2015-02-06)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-0-1-2015-02-06">v0.0.1 (2015-02-06)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Photometry_demo.html">Photometric Plugin</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">The Multi-Mission Maximum Likelihood framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Changelog</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a>
+</h1>
+<section id="v2-4">
+<h2>v2.4<a class="headerlink" href="#v2-4" title="Link to this heading"></a>
+</h2>
+<section id="v2-4-3-2025-02-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.4.3">v2.4.3</a> (2025-02-06)<a class="headerlink" href="#v2-4-3-2025-02-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.4.2...v2.4.3">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Revert “Polpy dev” <a class="reference external" href="https://github.com/threeML/threeML/pull/640">#640</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/639">#639</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Polpy dev <a class="reference external" href="https://github.com/threeML/threeML/pull/638">#638</a> (<a class="reference external" href="https://github.com/hellohancheng">hellohancheng</a>)</p></li>
+<li><p>Fix installation in Python 3.12 <a class="reference external" href="https://github.com/threeML/threeML/pull/631">#631</a> (<a class="reference external" href="https://github.com/israelmcmc">israelmcmc</a>)</p></li>
+</ul>
+</section>
+<section id="v2-4-2-2024-05-31">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.4.2">v2.4.2</a> (2024-05-31)<a class="headerlink" href="#v2-4-2-2024-05-31" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.4.1...v2.4.2">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/630">#630</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/629">#629</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+</ul>
+</section>
+<section id="v2-4-1-2023-11-04">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.4.1">v2.4.1</a> (2023-11-04)<a class="headerlink" href="#v2-4-1-2023-11-04" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.4.0...v2.4.1">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Corrupted Double Linked List Error when using the ROOT minimizer <a class="reference external" href="https://github.com/threeML/threeML/issues/605">#605</a></p></li>
+<li><p>“FitFailed: MIGRAD call failed. This is usually due to unconstrained parameters.” <a class="reference external" href="https://github.com/threeML/threeML/issues/604">#604</a></p></li>
+<li><p>After installation, Issue with: “From threeml import * “ <a class="reference external" href="https://github.com/threeML/threeML/issues/603">#603</a></p></li>
+<li><p>Error with Gtburst and LAT transient builder plugin <a class="reference external" href="https://github.com/threeML/threeML/issues/598">#598</a></p></li>
+<li><p>Help analyze Fermi GBM and Fermi LAT standard data <a class="reference external" href="https://github.com/threeML/threeML/issues/597">#597</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/594">#594</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/593">#593</a></p></li>
+<li><p>use 3ML to analyze Fermi GRB problem? <a class="reference external" href="https://github.com/threeML/threeML/issues/591">#591</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/590">#590</a></p></li>
+<li><p>Install threeML for Mac <a class="reference external" href="https://github.com/threeML/threeML/issues/589">#589</a></p></li>
+<li><p>Error getting install_3ML.sh script to install <a class="reference external" href="https://github.com/threeML/threeML/issues/584">#584</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/580">#580</a></p></li>
+<li><p>unable to analyse LAT data <a class="reference external" href="https://github.com/threeML/threeML/issues/518">#518</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/627">#627</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Various bug fixes <a class="reference external" href="https://github.com/threeML/threeML/pull/626">#626</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Nuatilus <a class="reference external" href="https://github.com/threeML/threeML/pull/623">#623</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix tests <a class="reference external" href="https://github.com/threeML/threeML/pull/617">#617</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Fermipylike small updates <a class="reference external" href="https://github.com/threeML/threeML/pull/612">#612</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Fixing error message in OGIP/response.py <a class="reference external" href="https://github.com/threeML/threeML/pull/611">#611</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Quick fix: missing comma <a class="reference external" href="https://github.com/threeML/threeML/pull/609">#609</a> (<a class="reference external" href="https://github.com/xboluna">xboluna</a>)</p></li>
+<li><p>Update documentation for the HAL plugin <a class="reference external" href="https://github.com/threeML/threeML/pull/608">#608</a> (<a class="reference external" href="https://github.com/torresramiro350">torresramiro350</a>)</p></li>
+<li><p>remove unnecessary folder creation <a class="reference external" href="https://github.com/threeML/threeML/pull/606">#606</a> (<a class="reference external" href="https://github.com/JohannesBuchner">JohannesBuchner</a>)</p></li>
+<li><p>reuse extended event class files too <a class="reference external" href="https://github.com/threeML/threeML/pull/596">#596</a> (<a class="reference external" href="https://github.com/maklinger">maklinger</a>)</p></li>
+<li><p>Paralell errors <a class="reference external" href="https://github.com/threeML/threeML/pull/592">#592</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Updates to fermipy plugin pt 1 <a class="reference external" href="https://github.com/threeML/threeML/pull/552">#552</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Ixpe dev <a class="reference external" href="https://github.com/threeML/threeML/pull/501">#501</a> (<a class="reference external" href="https://github.com/omodei">omodei</a>)</p></li>
+</ul>
+</section>
+<section id="v2-4-0-2022-09-28">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.4.0">v2.4.0</a> (2022-09-28)<a class="headerlink" href="#v2-4-0-2022-09-28" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.3.2...v2.4.0">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Install problem <a class="reference external" href="https://github.com/threeML/threeML/issues/583">#583</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/579">#579</a></p></li>
+<li><p>Installation with Fermitools <a class="reference external" href="https://github.com/threeML/threeML/issues/577">#577</a></p></li>
+<li><p>threeml, astromodels, fermitools, fermipy can be used together? <a class="reference external" href="https://github.com/threeML/threeML/issues/574">#574</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/573">#573</a></p></li>
+<li><p>Combined LAT and GBM Analysis <a class="reference external" href="https://github.com/threeML/threeML/issues/570">#570</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/569">#569</a></p></li>
+<li><p>twopc PPC plots don’t work <a class="reference external" href="https://github.com/threeML/threeML/issues/568">#568</a></p></li>
+<li><p>MLE minimization algorithms: an appropriate choice <a class="reference external" href="https://github.com/threeML/threeML/issues/567">#567</a></p></li>
+<li><p>Install threeml, fermitools and fermipy  <a class="reference external" href="https://github.com/threeML/threeML/issues/566">#566</a></p></li>
+<li><p>fit Fermi GBM data? <a class="reference external" href="https://github.com/threeML/threeML/issues/565">#565</a></p></li>
+<li><p>Importing chain file from the threeML BayesianAnalysis results over to Xspec <a class="reference external" href="https://github.com/threeML/threeML/issues/562">#562</a></p></li>
+<li><p>plot_spectra() unable to propagate errors and plot <a class="reference external" href="https://github.com/threeML/threeML/issues/560">#560</a></p></li>
+<li><p>Double Bayesian evidence values <a class="reference external" href="https://github.com/threeML/threeML/issues/559">#559</a></p></li>
+<li><p>XS_gauss() equivalent width <a class="reference external" href="https://github.com/threeML/threeML/issues/558">#558</a></p></li>
+<li><p>OGIPLike plugin cannot find spectra: get_path_of_data_file() <a class="reference external" href="https://github.com/threeML/threeML/issues/556">#556</a></p></li>
+<li><p>collections.Sequence is deprecated in Python 3.7 and removed in python 3.10 <a class="reference external" href="https://github.com/threeML/threeML/issues/555">#555</a></p></li>
+<li><p>Use from astromodels Xspec import * error <a class="reference external" href="https://github.com/threeML/threeML/issues/549">#549</a></p></li>
+<li><p>How do I install a stable threeml module? <a class="reference external" href="https://github.com/threeML/threeML/issues/544">#544</a></p></li>
+<li><p>Getting error while trying to build likelihood using Fermi LAT data <a class="reference external" href="https://github.com/threeML/threeML/issues/529">#529</a></p></li>
+<li><p>Using XSTAR atable.fits like in XSPEC <a class="reference external" href="https://github.com/threeML/threeML/issues/527">#527</a></p></li>
+<li><p>Unable to install threeML using the install_3ML.sh script <a class="reference external" href="https://github.com/threeML/threeML/issues/520">#520</a></p></li>
+<li><p>Photometric failing with new speclite  <a class="reference external" href="https://github.com/threeML/threeML/issues/484">#484</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Fix docs <a class="reference external" href="https://github.com/threeML/threeML/pull/586">#586</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/581">#581</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>try switch to 3.9; remove version pinning in dependencies <a class="reference external" href="https://github.com/threeML/threeML/pull/571">#571</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Backround normalization as nuisance parameters for FermipyLike <a class="reference external" href="https://github.com/threeML/threeML/pull/564">#564</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Fix check for covariance matrix <a class="reference external" href="https://github.com/threeML/threeML/pull/563">#563</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Fix string + int <a class="reference external" href="https://github.com/threeML/threeML/pull/551">#551</a> (<a class="reference external" href="https://github.com/bwgref">bwgref</a>)</p></li>
+<li><p>Sampler cleanup <a class="reference external" href="https://github.com/threeML/threeML/pull/547">#547</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>“Unhashable” error fix <a class="reference external" href="https://github.com/threeML/threeML/pull/540">#540</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Switch to minuit for notebooks <a class="reference external" href="https://github.com/threeML/threeML/pull/539">#539</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Switch fermipy test to minuit minimizer <a class="reference external" href="https://github.com/threeML/threeML/pull/538">#538</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Added the scaling factor to the background counts and errors <a class="reference external" href="https://github.com/threeML/threeML/pull/536">#536</a> (<a class="reference external" href="https://github.com/omodei">omodei</a>)</p></li>
+<li><p>Rsp extras <a class="reference external" href="https://github.com/threeML/threeML/pull/533">#533</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added an easy setter for normal xcalib constant <a class="reference external" href="https://github.com/threeML/threeML/pull/522">#522</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>add riemann sum integral and add setters <a class="reference external" href="https://github.com/threeML/threeML/pull/521">#521</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v2-3">
+<h2>v2.3<a class="headerlink" href="#v2-3" title="Link to this heading"></a>
+</h2>
+<section id="v2-3-2-2022-07-27">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.3.2">v2.3.2</a> (2022-07-27)<a class="headerlink" href="#v2-3-2-2022-07-27" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.3.1...v2.3.2">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Can BAT and XRT data be downloaded automatically in 3ML? <a class="reference external" href="https://github.com/threeML/threeML/issues/548">#548</a></p></li>
+</ul>
+</section>
+<section id="v2-3-1-2022-07-12">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.3.1">v2.3.1</a> (2022-07-12)<a class="headerlink" href="#v2-3-1-2022-07-12" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.3.0...v2.3.1">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Display of XMM response fails (ThreeML v. 2.3.0.dev2) <a class="reference external" href="https://github.com/threeML/threeML/issues/545">#545</a></p></li>
+<li><p>. <a class="reference external" href="https://github.com/threeML/threeML/issues/543">#543</a></p></li>
+<li><p>Deprecated call to collections.Sequence in analysis_results.py <a class="reference external" href="https://github.com/threeML/threeML/issues/541">#541</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>update logging to rich <a class="reference external" href="https://github.com/threeML/threeML/pull/546">#546</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v2-3-0-2022-05-25">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.3.0">v2.3.0</a> (2022-05-25)<a class="headerlink" href="#v2-3-0-2022-05-25" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.2.4...v2.3.0">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>plot_spectra correct for bayesian result? <a class="reference external" href="https://github.com/threeML/threeML/issues/509">#509</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Not able to import xspec models <a class="reference external" href="https://github.com/threeML/threeML/issues/534">#534</a></p></li>
+<li><p>Is 3ML ready for a Python 3.9 environment? <a class="reference external" href="https://github.com/threeML/threeML/issues/530">#530</a></p></li>
+<li><p>Problem while creating point source object and model <a class="reference external" href="https://github.com/threeML/threeML/issues/514">#514</a></p></li>
+<li><p>Memory leak when simulating datasets with bayesian analysis objects from table models <a class="reference external" href="https://github.com/threeML/threeML/issues/513">#513</a></p></li>
+<li><p>Error building custom model <a class="reference external" href="https://github.com/threeML/threeML/issues/510">#510</a></p></li>
+<li><p>Typo in threeML/plugins/SpectrumLike.py, Line 1105 <a class="reference external" href="https://github.com/threeML/threeML/issues/497">#497</a></p></li>
+<li><p>Problem with RSP2 files <a class="reference external" href="https://github.com/threeML/threeML/issues/491">#491</a></p></li>
+<li><p>Installation with XSPEC models fails <a class="reference external" href="https://github.com/threeML/threeML/issues/486">#486</a></p></li>
+<li><p>Fermi-LAT plugins failing again <a class="reference external" href="https://github.com/threeML/threeML/issues/482">#482</a></p></li>
+<li><p>Residual Plots, Local Models, Source Positioning <a class="reference external" href="https://github.com/threeML/threeML/issues/477">#477</a></p></li>
+<li><p>Compatibility with empirical or PCA-based BXA background <a class="reference external" href="https://github.com/threeML/threeML/issues/476">#476</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/537">#537</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Fix division by zero issue <a class="reference external" href="https://github.com/threeML/threeML/pull/535">#535</a> (<a class="reference external" href="https://github.com/rwiller">rwiller</a>)</p></li>
+<li><p>fix for pandas version 1.4 <a class="reference external" href="https://github.com/threeML/threeML/pull/531">#531</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>rename nonposy -&gt; nonpositive <a class="reference external" href="https://github.com/threeML/threeML/pull/517">#517</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>TimeSeries background Selection without polynomial fitting <a class="reference external" href="https://github.com/threeML/threeML/pull/516">#516</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Bug fixes <a class="reference external" href="https://github.com/threeML/threeML/pull/515">#515</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Fix prop again <a class="reference external" href="https://github.com/threeML/threeML/pull/512">#512</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>corrected incorrect error propagation <a class="reference external" href="https://github.com/threeML/threeML/pull/511">#511</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Typos in the docs for the optional dependencies <a class="reference external" href="https://github.com/threeML/threeML/pull/508">#508</a> (<a class="reference external" href="https://github.com/DougBurke">DougBurke</a>)</p></li>
+<li><p>make warning text for infinite likelihood useful <a class="reference external" href="https://github.com/threeML/threeML/pull/507">#507</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Cleanup pha <a class="reference external" href="https://github.com/threeML/threeML/pull/506">#506</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Mike lat tbuild <a class="reference external" href="https://github.com/threeML/threeML/pull/505">#505</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix bayes test <a class="reference external" href="https://github.com/threeML/threeML/pull/504">#504</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>tiny topy in README <a class="reference external" href="https://github.com/threeML/threeML/pull/502">#502</a> (<a class="reference external" href="https://github.com/hamogu">hamogu</a>)</p></li>
+<li><p>Lat trans builder <a class="reference external" href="https://github.com/threeML/threeML/pull/500">#500</a> (<a class="reference external" href="https://github.com/omodei">omodei</a>)</p></li>
+<li><p>Background deadtime <a class="reference external" href="https://github.com/threeML/threeML/pull/499">#499</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Fixed the typo in Spectrum.py causing Issue #497 <a class="reference external" href="https://github.com/threeML/threeML/pull/498">#498</a> (<a class="reference external" href="https://github.com/rwiller">rwiller</a>)</p></li>
+<li><p>Add parameters &amp; test script <a class="reference external" href="https://github.com/threeML/threeML/pull/493">#493</a> (<a class="reference external" href="https://github.com/xboluna">xboluna</a>)</p></li>
+<li><p>Add downloaded Crab data files for docs <a class="reference external" href="https://github.com/threeML/threeML/pull/445">#445</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Extended sources in FermipyLike <a class="reference external" href="https://github.com/threeML/threeML/pull/443">#443</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v2-2">
+<h2>v2.2<a class="headerlink" href="#v2-2" title="Link to this heading"></a>
+</h2>
+<section id="v2-2-4-2021-08-30">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.2.4">v2.2.4</a> (2021-08-30)<a class="headerlink" href="#v2-2-4-2021-08-30" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.2.3...v2.2.4">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>An error occurred while using the xspec model. <a class="reference external" href="https://github.com/threeML/threeML/issues/490">#490</a></p></li>
+<li><p>expose hidden cells in the documentation <a class="reference external" href="https://github.com/threeML/threeML/issues/487">#487</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Cleaning up <a class="reference external" href="https://github.com/threeML/threeML/pull/496">#496</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Docker deploy <a class="reference external" href="https://github.com/threeML/threeML/pull/495">#495</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Gbm data download <a class="reference external" href="https://github.com/threeML/threeML/pull/494">#494</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Faster docs <a class="reference external" href="https://github.com/threeML/threeML/pull/489">#489</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v2-2-3-2021-08-20">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.2.3">v2.2.3</a> (2021-08-20)<a class="headerlink" href="#v2-2-3-2021-08-20" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.2.2...v2.2.3">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>test against xspec failing <a class="reference external" href="https://github.com/threeML/threeML/issues/483">#483</a></p></li>
+<li><p>BIC and DIC, which one should I use to judge? <a class="reference external" href="https://github.com/threeML/threeML/issues/479">#479</a></p></li>
+<li><p>Obtain light curve <a class="reference external" href="https://github.com/threeML/threeML/issues/474">#474</a></p></li>
+<li><p>XSPEC models cannot be retrieved by load_analysis_results <a class="reference external" href="https://github.com/threeML/threeML/issues/473">#473</a></p></li>
+<li><p>Model selection. <a class="reference external" href="https://github.com/threeML/threeML/issues/472">#472</a></p></li>
+<li><p>Negative Flux and disable log transformation <a class="reference external" href="https://github.com/threeML/threeML/issues/469">#469</a></p></li>
+<li><p>Can threeML &amp;HAL plot tsmap and do morphology ? <a class="reference external" href="https://github.com/threeML/threeML/issues/466">#466</a></p></li>
+<li><p>emcee version incompatibility with naima <a class="reference external" href="https://github.com/threeML/threeML/issues/435">#435</a></p></li>
+<li><p>Background normalization as nuisance parameters in FermipyLike plugin <a class="reference external" href="https://github.com/threeML/threeML/issues/434">#434</a></p></li>
+<li><p>Alternative to root_numpy <a class="reference external" href="https://github.com/threeML/threeML/issues/404">#404</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Photo simulations <a class="reference external" href="https://github.com/threeML/threeML/pull/488">#488</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Corner config <a class="reference external" href="https://github.com/threeML/threeML/pull/485">#485</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>update conda build version and cache <a class="reference external" href="https://github.com/threeML/threeML/pull/481">#481</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>view_lightcurves for given echans <a class="reference external" href="https://github.com/threeML/threeML/pull/475">#475</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Bayes fixes <a class="reference external" href="https://github.com/threeML/threeML/pull/471">#471</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Allow specification of parameters to be plotted in analysis_results.corner_plot <a class="reference external" href="https://github.com/threeML/threeML/pull/470">#470</a> (<a class="reference external" href="https://github.com/xboluna">xboluna</a>)</p></li>
+<li><p>Various fixes <a class="reference external" href="https://github.com/threeML/threeML/pull/468">#468</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added fermi trigger catalog <a class="reference external" href="https://github.com/threeML/threeML/pull/467">#467</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Added APEC docs <a class="reference external" href="https://github.com/threeML/threeML/pull/465">#465</a> (<a class="reference external" href="https://github.com/domeckert">domeckert</a>)</p></li>
+</ul>
+</section>
+<section id="v2-2-2-2021-05-18">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.2.2">v2.2.2</a> (2021-05-18)<a class="headerlink" href="#v2-2-2-2021-05-18" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.2.1...v2.2.2">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>OGIPLike won’t accept background model <a class="reference external" href="https://github.com/threeML/threeML/issues/460">#460</a></p></li>
+<li><p>OverflowError when positive error is inf <a class="reference external" href="https://github.com/threeML/threeML/issues/451">#451</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Installation link in README.md doesn’t point to the right location <a class="reference external" href="https://github.com/threeML/threeML/issues/457">#457</a></p></li>
+<li><p>import threeML fails <a class="reference external" href="https://github.com/threeML/threeML/issues/449">#449</a></p></li>
+<li><p>Add ptemcee sampler <a class="reference external" href="https://github.com/threeML/threeML/issues/441">#441</a></p></li>
+<li><p>Simulated data from LAT plugins. <a class="reference external" href="https://github.com/threeML/threeML/issues/422">#422</a></p></li>
+<li><p>test_parallel_pagmo fails <a class="reference external" href="https://github.com/threeML/threeML/issues/419">#419</a></p></li>
+<li><p>Conda really slow in solving the environment with fermi on linux <a class="reference external" href="https://github.com/threeML/threeML/issues/418">#418</a></p></li>
+<li><p>Proper import __all__ statements <a class="reference external" href="https://github.com/threeML/threeML/issues/400">#400</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>More typing <a class="reference external" href="https://github.com/threeML/threeML/pull/463">#463</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix 460 <a class="reference external" href="https://github.com/threeML/threeML/pull/461">#461</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Small bug fix in restore_median_fit <a class="reference external" href="https://github.com/threeML/threeML/pull/459">#459</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>fixed uncertainy formatter and added tests <a class="reference external" href="https://github.com/threeML/threeML/pull/458">#458</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Set install cronjob <a class="reference external" href="https://github.com/threeML/threeML/pull/456">#456</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>update cache action to version 2 <a class="reference external" href="https://github.com/threeML/threeML/pull/455">#455</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+</ul>
+</section>
+<section id="v2-2-1-2021-04-07">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.2.1">v2.2.1</a> (2021-04-07)<a class="headerlink" href="#v2-2-1-2021-04-07" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.2.0...v2.2.1">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>make sure we raise errors when needed <a class="reference external" href="https://github.com/threeML/threeML/pull/454">#454</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Added import numpy statements <a class="reference external" href="https://github.com/threeML/threeML/pull/453">#453</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+</ul>
+</section>
+<section id="v2-2-0-2021-04-05">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.2.0">v2.2.0</a> (2021-04-05)<a class="headerlink" href="#v2-2-0-2021-04-05" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.1.3...v2.2.0">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Update to Iminuit 2.0 interface.  <a class="reference external" href="https://github.com/threeML/threeML/issues/392">#392</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>fermitools and python 3.8 in the CI tests <a class="reference external" href="https://github.com/threeML/threeML/issues/444">#444</a></p></li>
+<li><p>fermipy doc failing during fit.  <a class="reference external" href="https://github.com/threeML/threeML/issues/436">#436</a></p></li>
+<li><p>Fit (point) source positions in FermypyLike <a class="reference external" href="https://github.com/threeML/threeML/issues/427">#427</a></p></li>
+<li><p>Couldn’t import plugin FermiLATLike <a class="reference external" href="https://github.com/threeML/threeML/issues/405">#405</a></p></li>
+<li><p>Energy dependent light curve viewing in TimeSeriesBuilder <a class="reference external" href="https://github.com/threeML/threeML/issues/399">#399</a></p></li>
+<li><p>RuntimeError while performing JointLikelihood analysis on LAT data <a class="reference external" href="https://github.com/threeML/threeML/issues/397">#397</a></p></li>
+<li><p>Docs missing plots and notebook with errors <a class="reference external" href="https://github.com/threeML/threeML/issues/374">#374</a></p></li>
+<li><p>ThreeML HTTP 503 SERVICE UNAVAILABLE for conda channel <a class="reference external" href="https://github.com/threeML/threeML/issues/371">#371</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Update homebrew in the docs workflow <a class="reference external" href="https://github.com/threeML/threeML/pull/452">#452</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Tweak workflows <a class="reference external" href="https://github.com/threeML/threeML/pull/450">#450</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Fix import statements <a class="reference external" href="https://github.com/threeML/threeML/pull/448">#448</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Try to update rtds-action to fail if it can’t find the docs <a class="reference external" href="https://github.com/threeML/threeML/pull/446">#446</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Update fermi EventClasses/IRFs <a class="reference external" href="https://github.com/threeML/threeML/pull/442">#442</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>np.bool deprecation warning <a class="reference external" href="https://github.com/threeML/threeML/pull/439">#439</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Configure fermipy logging to be less verbose <a class="reference external" href="https://github.com/threeML/threeML/pull/440">#440</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Restore model parameters after likelihood contour calculation <a class="reference external" href="https://github.com/threeML/threeML/pull/438">#438</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Add fermipy docs <a class="reference external" href="https://github.com/threeML/threeML/pull/437">#437</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Use logger instead of sys.stderr.write <a class="reference external" href="https://github.com/threeML/threeML/pull/432">#432</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Allow fitting the source position with the fermipy plugin <a class="reference external" href="https://github.com/threeML/threeML/pull/430">#430</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Small bug fix/enhancement in fermi catalog <a class="reference external" href="https://github.com/threeML/threeML/pull/429">#429</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Fermi-LAT data download: Specify energy range &amp; bug fix <a class="reference external" href="https://github.com/threeML/threeML/pull/426">#426</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Feature fast flux <a class="reference external" href="https://github.com/threeML/threeML/pull/425">#425</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Small cleanup <a class="reference external" href="https://github.com/threeML/threeML/pull/424">#424</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Anastasia Tsvetkova <a class="reference external" href="https://github.com/threeML/threeML/pull/423">#423</a> (<a class="reference external" href="https://github.com/anastasia-tsvetkova">anastasia-tsvetkova</a>)</p></li>
+<li><p>Nb docs live <a class="reference external" href="https://github.com/threeML/threeML/pull/417">#417</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix pha reading <a class="reference external" href="https://github.com/threeML/threeML/pull/416">#416</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Test pyxspec <a class="reference external" href="https://github.com/threeML/threeML/pull/415">#415</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Feature improve plotting <a class="reference external" href="https://github.com/threeML/threeML/pull/414">#414</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix minuit some more <a class="reference external" href="https://github.com/threeML/threeML/pull/413">#413</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Feature logging <a class="reference external" href="https://github.com/threeML/threeML/pull/412">#412</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Feature omegaconf <a class="reference external" href="https://github.com/threeML/threeML/pull/411">#411</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Update iminuit interface to &gt;=v2.0 <a class="reference external" href="https://github.com/threeML/threeML/pull/409">#409</a> (<a class="reference external" href="https://github.com/cescalara">cescalara</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v2-1">
+<h2>v2.1<a class="headerlink" href="#v2-1" title="Link to this heading"></a>
+</h2>
+<section id="v2-1-3-2021-01-24">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.1.3">v2.1.3</a> (2021-01-24)<a class="headerlink" href="#v2-1-3-2021-01-24" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.1.2...v2.1.3">Full Changelog</a></p>
+</section>
+<section id="v2-1-2-2021-01-24">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.1.2">v2.1.2</a> (2021-01-24)<a class="headerlink" href="#v2-1-2-2021-01-24" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.1.1...v2.1.2">Full Changelog</a></p>
+<p><strong>Implemented enhancements:</strong></p>
+<ul class="simple">
+<li><p>Feature logging <a class="reference external" href="https://github.com/threeML/threeML/pull/402">#402</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Background fitters as plugins.  <a class="reference external" href="https://github.com/threeML/threeML/pull/401">#401</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Not able to do hypothesis probability test using models from Xspec. Gets error specified function is not a known function.  <a class="reference external" href="https://github.com/threeML/threeML/issues/345">#345</a></p></li>
+<li><p>FermipyLike.py needs new IRFS for P305 <a class="reference external" href="https://github.com/threeML/threeML/issues/322">#322</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Use of xspec model <a class="reference external" href="https://github.com/threeML/threeML/issues/408">#408</a></p></li>
+<li><p>Help with threeML fit <a class="reference external" href="https://github.com/threeML/threeML/issues/365">#365</a></p></li>
+<li><p>Version for astroquery <a class="reference external" href="https://github.com/threeML/threeML/issues/343">#343</a></p></li>
+<li><p>Too many samples in fit are thrown <a class="reference external" href="https://github.com/threeML/threeML/issues/323">#323</a></p></li>
+<li><p>internet_connection_is_active fails <a class="reference external" href="https://github.com/threeML/threeML/issues/315">#315</a></p></li>
+<li><p>Plot XYLike data points on fit result <a class="reference external" href="https://github.com/threeML/threeML/issues/305">#305</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Better logging <a class="reference external" href="https://github.com/threeML/threeML/pull/410">#410</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix import path <a class="reference external" href="https://github.com/threeML/threeML/pull/407">#407</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Logging2 <a class="reference external" href="https://github.com/threeML/threeML/pull/406">#406</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Faster photo <a class="reference external" href="https://github.com/threeML/threeML/pull/403">#403</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Logging <a class="reference external" href="https://github.com/threeML/threeML/pull/398">#398</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>starting to add github workflow <a class="reference external" href="https://github.com/threeML/threeML/pull/396">#396</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>New features <a class="reference external" href="https://github.com/threeML/threeML/pull/395">#395</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Feature tqdm <a class="reference external" href="https://github.com/threeML/threeML/pull/394">#394</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v2-1-1-2020-12-17">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.1.1">v2.1.1</a> (2020-12-17)<a class="headerlink" href="#v2-1-1-2020-12-17" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.1.0...v2.1.1">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Help with GBM data analysis <a class="reference external" href="https://github.com/threeML/threeML/issues/391">#391</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Feature pathlib <a class="reference external" href="https://github.com/threeML/threeML/pull/393">#393</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v2-1-0-2020-12-16">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.1.0">v2.1.0</a> (2020-12-16)<a class="headerlink" href="#v2-1-0-2020-12-16" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.0.3...v2.1.0">Full Changelog</a></p>
+<p><strong>Implemented enhancements:</strong></p>
+<ul class="simple">
+<li><p>Ar hdf5 <a class="reference external" href="https://github.com/threeML/threeML/pull/386">#386</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>HD5 locking <a class="reference external" href="https://github.com/threeML/threeML/issues/389">#389</a></p></li>
+<li><p>test_hawc.py does not support hawc_hal <a class="reference external" href="https://github.com/threeML/threeML/issues/327">#327</a></p></li>
+</ul>
+</section>
+</section>
+<section id="v2-0">
+<h2>v2.0<a class="headerlink" href="#v2-0" title="Link to this heading"></a>
+</h2>
+<section id="v2-0-3-2020-12-08">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.0.3">v2.0.3</a> (2020-12-08)<a class="headerlink" href="#v2-0-3-2020-12-08" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.0.2...v2.0.3">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Root minimizer broken? <a class="reference external" href="https://github.com/threeML/threeML/issues/387">#387</a></p></li>
+<li><p>Incompatibility(?) with fermipy 1.0.0? <a class="reference external" href="https://github.com/threeML/threeML/issues/385">#385</a></p></li>
+<li><p>Joint spectral analysis of Fermi GBM and LAT  <a class="reference external" href="https://github.com/threeML/threeML/issues/370">#370</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Fix to support fermipy 1.0.0. <a class="reference external" href="https://github.com/threeML/threeML/pull/390">#390</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Root minimizer <a class="reference external" href="https://github.com/threeML/threeML/pull/388">#388</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+</ul>
+</section>
+<section id="v2-0-2-2020-11-03">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.0.2">v2.0.2</a> (2020-11-03)<a class="headerlink" href="#v2-0-2-2020-11-03" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.0.1...v2.0.2">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>HAL documentation <a class="reference external" href="https://github.com/threeML/threeML/pull/384">#384</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+</ul>
+</section>
+<section id="v2-0-1-2020-10-30">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.0.1">v2.0.1</a> (2020-10-30)<a class="headerlink" href="#v2-0-1-2020-10-30" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.0.0...v2.0.1">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Catalog tests failing with astropy 4.1 <a class="reference external" href="https://github.com/threeML/threeML/issues/382">#382</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Fix test catalog <a class="reference external" href="https://github.com/threeML/threeML/pull/383">#383</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+</ul>
+</section>
+<section id="v2-0-0-2020-10-22">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.0.0">v2.0.0</a> (2020-10-22)<a class="headerlink" href="#v2-0-0-2020-10-22" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.2.0...v2.0.0">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>perform time-resolved analysis <a class="reference external" href="https://github.com/threeML/threeML/issues/379">#379</a></p></li>
+<li><p>How to know the goodness of spectral fit? <a class="reference external" href="https://github.com/threeML/threeML/issues/378">#378</a></p></li>
+<li><p>Using Spectral Fits to Calculate Fluxes <a class="reference external" href="https://github.com/threeML/threeML/issues/377">#377</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Root6 compatibility <a class="reference external" href="https://github.com/threeML/threeML/pull/380">#380</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v1-2">
+<h2>v1.2<a class="headerlink" href="#v1-2" title="Link to this heading"></a>
+</h2>
+<section id="v1-2-0-2020-09-11">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.2.0">v1.2.0</a> (2020-09-11)<a class="headerlink" href="#v1-2-0-2020-09-11" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.1.1...v1.2.0">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Cannot display OGIP-like (XMM pn) spectra <a class="reference external" href="https://github.com/threeML/threeML/issues/372">#372</a></p></li>
+<li><p>download_LAT_data returns multiple files for large time interval <a class="reference external" href="https://github.com/threeML/threeML/issues/356">#356</a></p></li>
+<li><p>add transformation for 1D contours <a class="reference external" href="https://github.com/threeML/threeML/pull/330">#330</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Bayesian analysis in python 2.7 <a class="reference external" href="https://github.com/threeML/threeML/issues/369">#369</a></p></li>
+<li><p>Help with GTBurst GUI within Jupyter Notebook <a class="reference external" href="https://github.com/threeML/threeML/issues/366">#366</a></p></li>
+<li><p>How to build pha, bak and rsp files via TimeSeriesBuilder? <a class="reference external" href="https://github.com/threeML/threeML/issues/364">#364</a></p></li>
+<li><p>How to configure and set up the Fermi Science Tools? <a class="reference external" href="https://github.com/threeML/threeML/issues/363">#363</a></p></li>
+<li><p>Builds failing (master not compatible with numpy 1.12 anymore) <a class="reference external" href="https://github.com/threeML/threeML/issues/329">#329</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Fix download lat data <a class="reference external" href="https://github.com/threeML/threeML/pull/376">#376</a> (<a class="reference external" href="https://github.com/omodei">omodei</a>)</p></li>
+<li><p>Fix tests and install <a class="reference external" href="https://github.com/threeML/threeML/pull/375">#375</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>fix int conversion <a class="reference external" href="https://github.com/threeML/threeML/pull/373">#373</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add functionality to FermiLatLike plugin <a class="reference external" href="https://github.com/threeML/threeML/pull/368">#368</a> (<a class="reference external" href="https://github.com/xboluna">xboluna</a>)</p></li>
+<li><p>Update to keys for results in ultranest_sampler <a class="reference external" href="https://github.com/threeML/threeML/pull/367">#367</a> (<a class="reference external" href="https://github.com/xboluna">xboluna</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v1-1">
+<h2>v1.1<a class="headerlink" href="#v1-1" title="Link to this heading"></a>
+</h2>
+<section id="v1-1-1-2020-05-11">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.1.1">v1.1.1</a> (2020-05-11)<a class="headerlink" href="#v1-1-1-2020-05-11" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.1.0...v1.1.1">Full Changelog</a></p>
+</section>
+<section id="v1-1-0-2020-04-30">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.1.0">v1.1.0</a> (2020-04-30)<a class="headerlink" href="#v1-1-0-2020-04-30" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.9...v1.1.0">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Balrog builder <a class="reference external" href="https://github.com/threeML/threeML/pull/362">#362</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v1-0">
+<h2>v1.0<a class="headerlink" href="#v1-0" title="Link to this heading"></a>
+</h2>
+<section id="v1-0-9-2020-04-28">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.9">v1.0.9</a> (2020-04-28)<a class="headerlink" href="#v1-0-9-2020-04-28" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.8...v1.0.9">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Add more samplers <a class="reference external" href="https://github.com/threeML/threeML/pull/361">#361</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>updated zeus interface <a class="reference external" href="https://github.com/threeML/threeML/pull/360">#360</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v1-0-8-2020-04-25">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.8">v1.0.8</a> (2020-04-25)<a class="headerlink" href="#v1-0-8-2020-04-25" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.7...v1.0.8">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Feature numba <a class="reference external" href="https://github.com/threeML/threeML/pull/359">#359</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v1-0-7-2020-04-22">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.7">v1.0.7</a> (2020-04-22)<a class="headerlink" href="#v1-0-7-2020-04-22" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.6...v1.0.7">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Hotfix bkg model <a class="reference external" href="https://github.com/threeML/threeML/pull/358">#358</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v1-0-6-2020-04-17">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.6">v1.0.6</a> (2020-04-17)<a class="headerlink" href="#v1-0-6-2020-04-17" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.5...v1.0.6">Full Changelog</a></p>
+</section>
+<section id="v1-0-5-2020-04-17">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.5">v1.0.5</a> (2020-04-17)<a class="headerlink" href="#v1-0-5-2020-04-17" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.4...v1.0.5">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Installation with pip fails for python 2.7.16 <a class="reference external" href="https://github.com/threeML/threeML/issues/355">#355</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Docs update <a class="reference external" href="https://github.com/threeML/threeML/pull/351">#351</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v1-0-4-2020-04-15">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.4">v1.0.4</a> (2020-04-15)<a class="headerlink" href="#v1-0-4-2020-04-15" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.3...v1.0.4">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>OGIPLike trying to read missing background file when keyword is set to ‘ ‘ <a class="reference external" href="https://github.com/threeML/threeML/issues/352">#352</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Channel numbers for SpectrumLike  <a class="reference external" href="https://github.com/threeML/threeML/issues/286">#286</a></p></li>
+</ul>
+</section>
+<section id="v1-0-3-2020-04-15">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.3">v1.0.3</a> (2020-04-15)<a class="headerlink" href="#v1-0-3-2020-04-15" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.2...v1.0.3">Full Changelog</a></p>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>Error installing threeML <a class="reference external" href="https://github.com/threeML/threeML/issues/344">#344</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>fix loading of background when file is empty string <a class="reference external" href="https://github.com/threeML/threeML/pull/354">#354</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fix the setting of model to the bayes class <a class="reference external" href="https://github.com/threeML/threeML/pull/353">#353</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>rm pagmo req for pip <a class="reference external" href="https://github.com/threeML/threeML/pull/350">#350</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v1-0-2-2020-04-11">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.2">v1.0.2</a> (2020-04-11)<a class="headerlink" href="#v1-0-2-2020-04-11" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.1...v1.0.2">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Feature new bayes <a class="reference external" href="https://github.com/threeML/threeML/pull/349">#349</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+</section>
+<section id="v1-0-1-2020-04-10">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.1">v1.0.1</a> (2020-04-10)<a class="headerlink" href="#v1-0-1-2020-04-10" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v1.0.0...v1.0.1">Full Changelog</a></p>
+</section>
+<section id="v1-0-0-2020-04-10">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v1.0.0">v1.0.0</a> (2020-04-10)<a class="headerlink" href="#v1-0-0-2020-04-10" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.4.2...v1.0.0">Full Changelog</a></p>
+<p><strong>Implemented enhancements:</strong></p>
+<ul class="simple">
+<li><p>Jmb py2to3 <a class="reference external" href="https://github.com/threeML/threeML/pull/346">#346</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>New versioner <a class="reference external" href="https://github.com/threeML/threeML/pull/347">#347</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v0-4">
+<h2>v0.4<a class="headerlink" href="#v0-4" title="Link to this heading"></a>
+</h2>
+<section id="v0-4-2-2020-03-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.4.2">v0.4.2</a> (2020-03-06)<a class="headerlink" href="#v0-4-2-2020-03-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.1.0...v0.4.2">Full Changelog</a></p>
+<p><strong>Implemented enhancements:</strong></p>
+<ul class="simple">
+<li><p>Improve configuration file handling <a class="reference external" href="https://github.com/threeML/threeML/issues/114">#114</a></p></li>
+<li><p>get_errors() should return a pandas <a class="reference external" href="https://github.com/threeML/threeML/issues/76">#76</a></p></li>
+<li><p>Background subtracted data <a class="reference external" href="https://github.com/threeML/threeML/issues/70">#70</a></p></li>
+<li><p>Add get_number_of_data_points() to prototype  <a class="reference external" href="https://github.com/threeML/threeML/issues/57">#57</a></p></li>
+<li><p>Jointlikehood display <a class="reference external" href="https://github.com/threeML/threeML/issues/51">#51</a></p></li>
+<li><p>Plotting of spectra <a class="reference external" href="https://github.com/threeML/threeML/issues/45">#45</a></p></li>
+<li><p>Use panda for results <a class="reference external" href="https://github.com/threeML/threeML/issues/44">#44</a></p></li>
+<li><p>Implement pyopt minimizer <a class="reference external" href="https://github.com/threeML/threeML/issues/43">#43</a></p></li>
+<li><p>Adding PolyChord <a class="reference external" href="https://github.com/threeML/threeML/issues/33">#33</a></p></li>
+<li><p>Dependencies and Notebook <a class="reference external" href="https://github.com/threeML/threeML/issues/10">#10</a></p></li>
+<li><p>MCMC calculation in examples folder appears to be obsolete <a class="reference external" href="https://github.com/threeML/threeML/issues/5">#5</a></p></li>
+<li><p>Bayesian tutorial <a class="reference external" href="https://github.com/threeML/threeML/pull/226">#226</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Config and colors for ogip <a class="reference external" href="https://github.com/threeML/threeML/pull/106">#106</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add quality reading to ogip <a class="reference external" href="https://github.com/threeML/threeML/pull/88">#88</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/87">#87</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Bayesblocks <a class="reference external" href="https://github.com/threeML/threeML/pull/86">#86</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Save LRT to pha <a class="reference external" href="https://github.com/threeML/threeML/pull/81">#81</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pha write and temporal binner <a class="reference external" href="https://github.com/threeML/threeML/pull/79">#79</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Adding chain consumer corner plot <a class="reference external" href="https://github.com/threeML/threeML/pull/71">#71</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Ogip model plot and fixes to TTELike + OGIPLike <a class="reference external" href="https://github.com/threeML/threeML/pull/65">#65</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Adding SpectralFlux class <a class="reference external" href="https://github.com/threeML/threeML/pull/61">#61</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Update tte like <a class="reference external" href="https://github.com/threeML/threeML/pull/60">#60</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Plotting of models <a class="reference external" href="https://github.com/threeML/threeML/pull/50">#50</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Make pretty tte plots <a class="reference external" href="https://github.com/threeML/threeML/pull/47">#47</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>background selections outside of data intervals crashing background fits in time series <a class="reference external" href="https://github.com/threeML/threeML/issues/273">#273</a></p></li>
+<li><p>Counts spectrum shows data points for detectors beyond its energy selection criteria.  <a class="reference external" href="https://github.com/threeML/threeML/issues/259">#259</a></p></li>
+<li><p>JointLikelihoodSet parallel loosing track of parameter paths <a class="reference external" href="https://github.com/threeML/threeML/issues/218">#218</a></p></li>
+<li><p>reading of certain fits types failing. <a class="reference external" href="https://github.com/threeML/threeML/issues/187">#187</a></p></li>
+<li><p>rebiller tuple unpacking <a class="reference external" href="https://github.com/threeML/threeML/issues/166">#166</a></p></li>
+<li><p>ROOT minimizer fail <a class="reference external" href="https://github.com/threeML/threeML/issues/160">#160</a></p></li>
+<li><p>SpectralFlux fails with nuisance parameters <a class="reference external" href="https://github.com/threeML/threeML/issues/107">#107</a></p></li>
+<li><p>GOF failing due to lacking callback <a class="reference external" href="https://github.com/threeML/threeML/issues/102">#102</a></p></li>
+<li><p>Produced PHA files are not compatible with XSPEC <a class="reference external" href="https://github.com/threeML/threeML/issues/94">#94</a></p></li>
+<li><p>Simulated datasets crash because they do not have a native quality member <a class="reference external" href="https://github.com/threeML/threeML/issues/92">#92</a></p></li>
+<li><p>Tests failing <a class="reference external" href="https://github.com/threeML/threeML/issues/90">#90</a></p></li>
+<li><p>LAT Like display <a class="reference external" href="https://github.com/threeML/threeML/issues/64">#64</a></p></li>
+<li><p>contours failing (possibly related to the get_child issue) <a class="reference external" href="https://github.com/threeML/threeML/issues/55">#55</a></p></li>
+<li><p>parameter bound = None causes error <a class="reference external" href="https://github.com/threeML/threeML/issues/54">#54</a></p></li>
+<li><p>Response and GBM files <a class="reference external" href="https://github.com/threeML/threeML/issues/53">#53</a></p></li>
+<li><p>Non-convergence?  <a class="reference external" href="https://github.com/threeML/threeML/issues/29">#29</a></p></li>
+<li><p>Exposure in FermiGBMLikeTTE <a class="reference external" href="https://github.com/threeML/threeML/issues/26">#26</a></p></li>
+<li><p>fix negative rates in plot <a class="reference external" href="https://github.com/threeML/threeML/pull/269">#269</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>pytest -vv -rs –pyargs threeML -k “ermipy” fails <a class="reference external" href="https://github.com/threeML/threeML/issues/337">#337</a></p></li>
+<li><p>Problem with installation and testing <a class="reference external" href="https://github.com/threeML/threeML/issues/336">#336</a></p></li>
+<li><p>‘pytest -vv -rs –pyargs threeML’ Fails  <a class="reference external" href="https://github.com/threeML/threeML/issues/335">#335</a></p></li>
+<li><p>test_FermipyLike fails <a class="reference external" href="https://github.com/threeML/threeML/issues/332">#332</a></p></li>
+<li><p>FermiGBMBurstCatalog() stopped working <a class="reference external" href="https://github.com/threeML/threeML/issues/320">#320</a></p></li>
+<li><p>fixing build tests <a class="reference external" href="https://github.com/threeML/threeML/issues/319">#319</a></p></li>
+<li><p>FermiLATSourceCatalog fails  <a class="reference external" href="https://github.com/threeML/threeML/issues/317">#317</a></p></li>
+<li><p>add build for pypolychord and getdist into docker and/or condo <a class="reference external" href="https://github.com/threeML/threeML/issues/309">#309</a></p></li>
+<li><p>Synchrotron spectrum <a class="reference external" href="https://github.com/threeML/threeML/issues/307">#307</a></p></li>
+<li><p>crash writing fit results with only unitless free parameters to fits file <a class="reference external" href="https://github.com/threeML/threeML/issues/287">#287</a></p></li>
+<li><p>Dropping ROOT for iminuit <a class="reference external" href="https://github.com/threeML/threeML/issues/283">#283</a></p></li>
+<li><p>pip install issue: execfile <a class="reference external" href="https://github.com/threeML/threeML/issues/279">#279</a></p></li>
+<li><p>conda from master <a class="reference external" href="https://github.com/threeML/threeML/issues/275">#275</a></p></li>
+<li><p>ROI definitions in HAWCLike <a class="reference external" href="https://github.com/threeML/threeML/issues/258">#258</a></p></li>
+<li><p>VOTable Depreciation <a class="reference external" href="https://github.com/threeML/threeML/issues/257">#257</a></p></li>
+<li><p>from threeML import  problem with corner.py <a class="reference external" href="https://github.com/threeML/threeML/issues/252">#252</a></p></li>
+<li><p>gfortran <a class="reference external" href="https://github.com/threeML/threeML/issues/251">#251</a></p></li>
+<li><p>Light curve plotting limit <a class="reference external" href="https://github.com/threeML/threeML/issues/243">#243</a></p></li>
+<li><p>IO error with import threeML <a class="reference external" href="https://github.com/threeML/threeML/issues/239">#239</a></p></li>
+<li><p>Python2 kernel in jupyter notebook dies while running the code <a class="reference external" href="https://github.com/threeML/threeML/issues/238">#238</a></p></li>
+<li><p>nuisance parameters as instrumental model <a class="reference external" href="https://github.com/threeML/threeML/issues/234">#234</a></p></li>
+<li><p>properties of the spectra and choosing sources for SpectrumLike <a class="reference external" href="https://github.com/threeML/threeML/issues/229">#229</a></p></li>
+<li><p>possibility of having custom properties of the model nodes <a class="reference external" href="https://github.com/threeML/threeML/issues/228">#228</a></p></li>
+<li><p>Background Modeling <a class="reference external" href="https://github.com/threeML/threeML/issues/227">#227</a></p></li>
+<li><p>Fortran issue for mac when installing 3ML <a class="reference external" href="https://github.com/threeML/threeML/issues/216">#216</a></p></li>
+<li><p>typo in installation script <a class="reference external" href="https://github.com/threeML/threeML/issues/214">#214</a></p></li>
+<li><p>ROOT minimizer returns covariance matrix with only NaNs <a class="reference external" href="https://github.com/threeML/threeML/issues/213">#213</a></p></li>
+<li><p>PyGMO minimizer  expects alrogrithm name or instance? <a class="reference external" href="https://github.com/threeML/threeML/issues/211">#211</a></p></li>
+<li><p>“The fit failed to converge.” messages do not leave useful information <a class="reference external" href="https://github.com/threeML/threeML/issues/210">#210</a></p></li>
+<li><p>“Current minimum stored after fit and current do not correspond!” messages with all PyGMO algorithms <a class="reference external" href="https://github.com/threeML/threeML/issues/209">#209</a></p></li>
+<li><p>hierarchical way to address model components <a class="reference external" href="https://github.com/threeML/threeML/issues/208">#208</a></p></li>
+<li><p>HAWC, writing model map <a class="reference external" href="https://github.com/threeML/threeML/issues/207">#207</a></p></li>
+<li><p>XS_gabs model is not correctly imported <a class="reference external" href="https://github.com/threeML/threeML/issues/206">#206</a></p></li>
+<li><p>issues with installation of astromodels by dependency from 3ML  <a class="reference external" href="https://github.com/threeML/threeML/issues/194">#194</a></p></li>
+<li><p>Reloading a fit with external parameters <a class="reference external" href="https://github.com/threeML/threeML/issues/185">#185</a></p></li>
+<li><p>LRT with different minimizers per model <a class="reference external" href="https://github.com/threeML/threeML/issues/180">#180</a></p></li>
+<li><p>models with too many parameters causing crash due to numpy <a class="reference external" href="https://github.com/threeML/threeML/issues/178">#178</a></p></li>
+<li><p>analysis results and propagate <a class="reference external" href="https://github.com/threeML/threeML/issues/170">#170</a></p></li>
+<li><p>Fit with a combination of models including Composite  <a class="reference external" href="https://github.com/threeML/threeML/issues/159">#159</a></p></li>
+<li><p>PHA class to replace PHAContainer <a class="reference external" href="https://github.com/threeML/threeML/issues/139">#139</a></p></li>
+<li><p>Add GBM GRB catalog reader for catalogs <a class="reference external" href="https://github.com/threeML/threeML/issues/130">#130</a></p></li>
+<li><p>Add bad quality flags to LLE plugin <a class="reference external" href="https://github.com/threeML/threeML/issues/127">#127</a></p></li>
+<li><p>Speed up significance binning in EventList <a class="reference external" href="https://github.com/threeML/threeML/issues/126">#126</a></p></li>
+<li><p>add Pyopt and MULTINEST to hawc docker <a class="reference external" href="https://github.com/threeML/threeML/issues/125">#125</a></p></li>
+<li><p>docker and test <a class="reference external" href="https://github.com/threeML/threeML/issues/119">#119</a></p></li>
+<li><p>Time dependent likelihood <a class="reference external" href="https://github.com/threeML/threeML/issues/113">#113</a></p></li>
+<li><p>Results of SpectralFlux.model_flux are out of order <a class="reference external" href="https://github.com/threeML/threeML/issues/108">#108</a></p></li>
+<li><p>get_errors() complaining when doing an error estimate <a class="reference external" href="https://github.com/threeML/threeML/issues/101">#101</a></p></li>
+<li><p>Mac OS 10.10 installation and compilation with anaconda <a class="reference external" href="https://github.com/threeML/threeML/issues/97">#97</a></p></li>
+<li><p>Event list unbinned MLE fitting <a class="reference external" href="https://github.com/threeML/threeML/issues/67">#67</a></p></li>
+<li><p>OGIP Rebinner and errors <a class="reference external" href="https://github.com/threeML/threeML/issues/62">#62</a></p></li>
+<li><p>Combining XRT and XSPEC examples <a class="reference external" href="https://github.com/threeML/threeML/issues/40">#40</a></p></li>
+<li><p>Reduce size of data for GBM example <a class="reference external" href="https://github.com/threeML/threeML/issues/37">#37</a></p></li>
+<li><p>Apply GBM gain correction to files <a class="reference external" href="https://github.com/threeML/threeML/issues/36">#36</a></p></li>
+<li><p>Missing gbm folder in examples <a class="reference external" href="https://github.com/threeML/threeML/issues/34">#34</a></p></li>
+<li><p>check math? <a class="reference external" href="https://github.com/threeML/threeML/issues/32">#32</a></p></li>
+<li><p>missing function make_index <a class="reference external" href="https://github.com/threeML/threeML/issues/28">#28</a></p></li>
+<li><p>no FermiGBMLikeTTE? <a class="reference external" href="https://github.com/threeML/threeML/issues/27">#27</a></p></li>
+<li><p>Problem when trying to Bayes sample <a class="reference external" href="https://github.com/threeML/threeML/issues/24">#24</a></p></li>
+<li><p>from threeML import * broken <a class="reference external" href="https://github.com/threeML/threeML/issues/19">#19</a></p></li>
+<li><p>location of package version info in threeML <a class="reference external" href="https://github.com/threeML/threeML/issues/18">#18</a></p></li>
+<li><p>Plugin to Support Binned Likelihood Profiles <a class="reference external" href="https://github.com/threeML/threeML/issues/16">#16</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Fix install script <a class="reference external" href="https://github.com/threeML/threeML/pull/342">#342</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Fix builds nicco <a class="reference external" href="https://github.com/threeML/threeML/pull/340">#340</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Update tests and Fermi catalog to work with the latest version (19) o… <a class="reference external" href="https://github.com/threeML/threeML/pull/338">#338</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>fix minuit for new interface <a class="reference external" href="https://github.com/threeML/threeML/pull/334">#334</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>update to the new yaml specifications for loading <a class="reference external" href="https://github.com/threeML/threeML/pull/321">#321</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Flpsc <a class="reference external" href="https://github.com/threeML/threeML/pull/318">#318</a> (<a class="reference external" href="https://github.com/omodei">omodei</a>)</p></li>
+<li><p>Fix: Create MCMC chains directory only on first engine if running par… <a class="reference external" href="https://github.com/threeML/threeML/pull/316">#316</a> (<a class="reference external" href="https://github.com/felixthebeard">felixthebeard</a>)</p></li>
+<li><p>updated comment on giacomos significance formula <a class="reference external" href="https://github.com/threeML/threeML/pull/314">#314</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add properties <a class="reference external" href="https://github.com/threeML/threeML/pull/313">#313</a> (<a class="reference external" href="https://github.com/BjoernBiltzinger">BjoernBiltzinger</a>)</p></li>
+<li><p>Add plot_spectra() to main scope, like legacy plot_point_source_spectra is. <a class="reference external" href="https://github.com/threeML/threeML/pull/312">#312</a> (<a class="reference external" href="https://github.com/colasri">colasri</a>)</p></li>
+<li><p>Verbose hotfix <a class="reference external" href="https://github.com/threeML/threeML/pull/311">#311</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Sorting tte data <a class="reference external" href="https://github.com/threeML/threeML/pull/310">#310</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>free_point_sources_within_radius() in Fermi.py <a class="reference external" href="https://github.com/threeML/threeML/pull/308">#308</a> (<a class="reference external" href="https://github.com/ke-fang">ke-fang</a>)</p></li>
+<li><p>Bugfix in plot color, and catch other cases. <a class="reference external" href="https://github.com/threeML/threeML/pull/304">#304</a> (<a class="reference external" href="https://github.com/colasri">colasri</a>)</p></li>
+<li><p>Polar <a class="reference external" href="https://github.com/threeML/threeML/pull/303">#303</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Set active measurements list <a class="reference external" href="https://github.com/threeML/threeML/pull/302">#302</a> (<a class="reference external" href="https://github.com/colasri">colasri</a>)</p></li>
+<li><p>fix a small bug at 611 which crashes with older version of liff <a class="reference external" href="https://github.com/threeML/threeML/pull/301">#301</a> (<a class="reference external" href="https://github.com/zhoouhaoo">zhoouhaoo</a>)</p></li>
+<li><p>remove recompute of loglike <a class="reference external" href="https://github.com/threeML/threeML/pull/300">#300</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add cstat bkg to timeseries <a class="reference external" href="https://github.com/threeML/threeML/pull/299">#299</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>uncertainty_formatter constistency <a class="reference external" href="https://github.com/threeML/threeML/pull/298">#298</a> (<a class="reference external" href="https://github.com/colasri">colasri</a>)</p></li>
+<li><p>Call calc_TS every time it might be needed just to be sure <a class="reference external" href="https://github.com/threeML/threeML/pull/297">#297</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Extended flux <a class="reference external" href="https://github.com/threeML/threeML/pull/296">#296</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Radial plot <a class="reference external" href="https://github.com/threeML/threeML/pull/295">#295</a> (<a class="reference external" href="https://github.com/colasri">colasri</a>)</p></li>
+<li><p>make HAWC radial profiles work with energy bins <a class="reference external" href="https://github.com/threeML/threeML/pull/294">#294</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Trace plot <a class="reference external" href="https://github.com/threeML/threeML/pull/293">#293</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Mpi mn <a class="reference external" href="https://github.com/threeML/threeML/pull/291">#291</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Small fix in XYLike::plot() <a class="reference external" href="https://github.com/threeML/threeML/pull/290">#290</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>added upper/lower limits <a class="reference external" href="https://github.com/threeML/threeML/pull/289">#289</a> (<a class="reference external" href="https://github.com/cbrisboi">cbrisboi</a>)</p></li>
+<li><p>Fix error when reading in fit results with one free parameter <a class="reference external" href="https://github.com/threeML/threeML/pull/288">#288</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Fix radial profiles <a class="reference external" href="https://github.com/threeML/threeML/pull/285">#285</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Add optional additional likelihood samples <a class="reference external" href="https://github.com/threeML/threeML/pull/284">#284</a> (<a class="reference external" href="https://github.com/cbrisboi">cbrisboi</a>)</p></li>
+<li><p>Photo tests <a class="reference external" href="https://github.com/threeML/threeML/pull/282">#282</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Xylike tests <a class="reference external" href="https://github.com/threeML/threeML/pull/281">#281</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Multinest test <a class="reference external" href="https://github.com/threeML/threeML/pull/280">#280</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Move old examples <a class="reference external" href="https://github.com/threeML/threeML/pull/278">#278</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>update <a class="reference external" href="https://github.com/threeML/threeML/pull/277">#277</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Faq <a class="reference external" href="https://github.com/threeML/threeML/pull/276">#276</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Cust plug docs <a class="reference external" href="https://github.com/threeML/threeML/pull/274">#274</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed non-updating intervals <a class="reference external" href="https://github.com/threeML/threeML/pull/272">#272</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Exception handling for old versions of aerie <a class="reference external" href="https://github.com/threeML/threeML/pull/271">#271</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Simplify spec likelihood <a class="reference external" href="https://github.com/threeML/threeML/pull/270">#270</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Code cleanup <a class="reference external" href="https://github.com/threeML/threeML/pull/267">#267</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add error out <a class="reference external" href="https://github.com/threeML/threeML/pull/266">#266</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Astroq update <a class="reference external" href="https://github.com/threeML/threeML/pull/265">#265</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>typo <a class="reference external" href="https://github.com/threeML/threeML/pull/264">#264</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>update docs on models <a class="reference external" href="https://github.com/threeML/threeML/pull/263">#263</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>updates to docs <a class="reference external" href="https://github.com/threeML/threeML/pull/262">#262</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>More docs1 <a class="reference external" href="https://github.com/threeML/threeML/pull/261">#261</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>More docs1 <a class="reference external" href="https://github.com/threeML/threeML/pull/260">#260</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Hawklike getnumberofdatapoints <a class="reference external" href="https://github.com/threeML/threeML/pull/256">#256</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Move ogip <a class="reference external" href="https://github.com/threeML/threeML/pull/254">#254</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add bkg warning <a class="reference external" href="https://github.com/threeML/threeML/pull/253">#253</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed bug in bkg ratio plot <a class="reference external" href="https://github.com/threeML/threeML/pull/250">#250</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>allow spectrumlike from bins to understand tstart and stop <a class="reference external" href="https://github.com/threeML/threeML/pull/249">#249</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add significance per interval <a class="reference external" href="https://github.com/threeML/threeML/pull/248">#248</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added logZ to results <a class="reference external" href="https://github.com/threeML/threeML/pull/247">#247</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Hdp conv <a class="reference external" href="https://github.com/threeML/threeML/pull/246">#246</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fix assign_to_source <a class="reference external" href="https://github.com/threeML/threeML/pull/245">#245</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Time bin display <a class="reference external" href="https://github.com/threeML/threeML/pull/242">#242</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Plotting <a class="reference external" href="https://github.com/threeML/threeML/pull/241">#241</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Radial profiles for HAWC <a class="reference external" href="https://github.com/threeML/threeML/pull/237">#237</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>HAWCLike::display for arbitrary locations <a class="reference external" href="https://github.com/threeML/threeML/pull/236">#236</a> (<a class="reference external" href="https://github.com/henrikef">henrikef</a>)</p></li>
+<li><p>Bkg modeling <a class="reference external" href="https://github.com/threeML/threeML/pull/232">#232</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Spectrum source select <a class="reference external" href="https://github.com/threeML/threeML/pull/231">#231</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed typos <a class="reference external" href="https://github.com/threeML/threeML/pull/225">#225</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Spectra plot improve <a class="reference external" href="https://github.com/threeML/threeML/pull/224">#224</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>found some issues trying to do bayesian analysis <a class="reference external" href="https://github.com/threeML/threeML/pull/222">#222</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>test writing no bkg pha <a class="reference external" href="https://github.com/threeML/threeML/pull/221">#221</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>fixed scaling <a class="reference external" href="https://github.com/threeML/threeML/pull/220">#220</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed bug in trigger number search <a class="reference external" href="https://github.com/threeML/threeML/pull/219">#219</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>typo in installation script <a class="reference external" href="https://github.com/threeML/threeML/pull/215">#215</a> (<a class="reference external" href="https://github.com/hfdavidyu">hfdavidyu</a>)</p></li>
+<li><p>Trigdata <a class="reference external" href="https://github.com/threeML/threeML/pull/212">#212</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>bug importing multinest priors <a class="reference external" href="https://github.com/threeML/threeML/pull/205">#205</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>Bkg issues <a class="reference external" href="https://github.com/threeML/threeML/pull/203">#203</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>installation instructions case segfault if astromodels is not upgraded <a class="reference external" href="https://github.com/threeML/threeML/pull/202">#202</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>test and patch for verifying types of required keywords <a class="reference external" href="https://github.com/threeML/threeML/pull/201">#201</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>Read bins bug <a class="reference external" href="https://github.com/threeML/threeML/pull/200">#200</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>plotting ratio residuals <a class="reference external" href="https://github.com/threeML/threeML/pull/198">#198</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>Support for adding instances of BinnedSpectrum <a class="reference external" href="https://github.com/threeML/threeML/pull/196">#196</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>added check for rsp1 that is rsp2 <a class="reference external" href="https://github.com/threeML/threeML/pull/195">#195</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix spectrum ext name <a class="reference external" href="https://github.com/threeML/threeML/pull/193">#193</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Integral-friendly <a class="reference external" href="https://github.com/threeML/threeML/pull/192">#192</a> (<a class="reference external" href="https://github.com/volodymyrss">volodymyrss</a>)</p></li>
+<li><p>added folders to packages <a class="reference external" href="https://github.com/threeML/threeML/pull/191">#191</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>moved to custom AB getter <a class="reference external" href="https://github.com/threeML/threeML/pull/190">#190</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Spectrum set <a class="reference external" href="https://github.com/threeML/threeML/pull/189">#189</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fits file formats <a class="reference external" href="https://github.com/threeML/threeML/pull/188">#188</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>switch to ordereddict <a class="reference external" href="https://github.com/threeML/threeML/pull/186">#186</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>allow for force write of rsps <a class="reference external" href="https://github.com/threeML/threeML/pull/184">#184</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Bayes model selection <a class="reference external" href="https://github.com/threeML/threeML/pull/183">#183</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>set_ROI options <a class="reference external" href="https://github.com/threeML/threeML/pull/182">#182</a> (<a class="reference external" href="https://github.com/zhoouhaoo">zhoouhaoo</a>)</p></li>
+<li><p>added custom options in config for residual plots <a class="reference external" href="https://github.com/threeML/threeML/pull/181">#181</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>switch to scale factor <a class="reference external" href="https://github.com/threeML/threeML/pull/179">#179</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed typos <a class="reference external" href="https://github.com/threeML/threeML/pull/177">#177</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Move corner to ar <a class="reference external" href="https://github.com/threeML/threeML/pull/176">#176</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix bayes plot <a class="reference external" href="https://github.com/threeML/threeML/pull/174">#174</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed a rounding error <a class="reference external" href="https://github.com/threeML/threeML/pull/173">#173</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Plot dless models <a class="reference external" href="https://github.com/threeML/threeML/pull/172">#172</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Photo like <a class="reference external" href="https://github.com/threeML/threeML/pull/171">#171</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added backscale factor to spectrum plot <a class="reference external" href="https://github.com/threeML/threeML/pull/169">#169</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Small fixes <a class="reference external" href="https://github.com/threeML/threeML/pull/167">#167</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">set_bin_list</span></code> method to <code class="docutils literal notranslate"><span class="pre">HAWCLike</span></code> to allow use of non-contiguous … <a class="reference external" href="https://github.com/threeML/threeML/pull/165">#165</a> (<a class="reference external" href="https://github.com/sammarinelli">sammarinelli</a>)</p></li>
+<li><p>Add gv spec comments <a class="reference external" href="https://github.com/threeML/threeML/pull/164">#164</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>More spectrum work <a class="reference external" href="https://github.com/threeML/threeML/pull/163">#163</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>hot fix adding in TELESCOPE keyword <a class="reference external" href="https://github.com/threeML/threeML/pull/162">#162</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added default minimizer to the config file <a class="reference external" href="https://github.com/threeML/threeML/pull/161">#161</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>switched temporal binner to a child of time interval set <a class="reference external" href="https://github.com/threeML/threeML/pull/158">#158</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>naming error in sims <a class="reference external" href="https://github.com/threeML/threeML/pull/157">#157</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add repr to plugins <a class="reference external" href="https://github.com/threeML/threeML/pull/156">#156</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix backscale <a class="reference external" href="https://github.com/threeML/threeML/pull/155">#155</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>checking for both unicode and str type when reading RSP <a class="reference external" href="https://github.com/threeML/threeML/pull/154">#154</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fix double download of compressed file <a class="reference external" href="https://github.com/threeML/threeML/pull/153">#153</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added useful errors to RSP set for intelligent catching <a class="reference external" href="https://github.com/threeML/threeML/pull/152">#152</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Integrate time_interval class <a class="reference external" href="https://github.com/threeML/threeML/pull/151">#151</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>deals with GBM RSP2 files that have a single coverage interval… lik… <a class="reference external" href="https://github.com/threeML/threeML/pull/150">#150</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>From event list <a class="reference external" href="https://github.com/threeML/threeML/pull/148">#148</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Change background save file <a class="reference external" href="https://github.com/threeML/threeML/pull/147">#147</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pha ii to 2d <a class="reference external" href="https://github.com/threeML/threeML/pull/146">#146</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Save event list background <a class="reference external" href="https://github.com/threeML/threeML/pull/145">#145</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Beginning to add spectrum class <a class="reference external" href="https://github.com/threeML/threeML/pull/143">#143</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>PHA Fits class <a class="reference external" href="https://github.com/threeML/threeML/pull/141">#141</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Improve model plotting <a class="reference external" href="https://github.com/threeML/threeML/pull/140">#140</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add bad quality to lle <a class="reference external" href="https://github.com/threeML/threeML/pull/138">#138</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add data <a class="reference external" href="https://github.com/threeML/threeML/pull/137">#137</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Rsp2 and bug fix <a class="reference external" href="https://github.com/threeML/threeML/pull/136">#136</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Catalog additions and LLE <a class="reference external" href="https://github.com/threeML/threeML/pull/134">#134</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Speedup significance <a class="reference external" href="https://github.com/threeML/threeML/pull/131">#131</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>a few more percent covered <a class="reference external" href="https://github.com/threeML/threeML/pull/123">#123</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/122">#122</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>not ready for XRT tests <a class="reference external" href="https://github.com/threeML/threeML/pull/121">#121</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/120">#120</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/118">#118</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add coverage <a class="reference external" href="https://github.com/threeML/threeML/pull/117">#117</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Importing HAWCLike was causing an error because the hawn module was n… <a class="reference external" href="https://github.com/threeML/threeML/pull/116">#116</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Time dep likelihood <a class="reference external" href="https://github.com/threeML/threeML/pull/115">#115</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/112">#112</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Config safety <a class="reference external" href="https://github.com/threeML/threeML/pull/110">#110</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix spectral flux and add frequency units <a class="reference external" href="https://github.com/threeML/threeML/pull/109">#109</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added covariance computation to jointlikelihood set <a class="reference external" href="https://github.com/threeML/threeML/pull/104">#104</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added callback to goodness of fit minimizer setting <a class="reference external" href="https://github.com/threeML/threeML/pull/103">#103</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Add log p to bayesian <a class="reference external" href="https://github.com/threeML/threeML/pull/100">#100</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/99">#99</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/98">#98</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest–&gt; more tests <a class="reference external" href="https://github.com/threeML/threeML/pull/96">#96</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix pha write <a class="reference external" href="https://github.com/threeML/threeML/pull/95">#95</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added native quality to PHAContainer for simulated datasets <a class="reference external" href="https://github.com/threeML/threeML/pull/93">#93</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/91">#91</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Pytest <a class="reference external" href="https://github.com/threeML/threeML/pull/89">#89</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Rsp additions (display DRM) <a class="reference external" href="https://github.com/threeML/threeML/pull/84">#84</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>added channel selection to set active measurements as well as exclusi… <a class="reference external" href="https://github.com/threeML/threeML/pull/83">#83</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>make ebounds and mc_energies default as floats to avoid overflow in a… <a class="reference external" href="https://github.com/threeML/threeML/pull/82">#82</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fixing small comments <a class="reference external" href="https://github.com/threeML/threeML/pull/80">#80</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Address gv small comments <a class="reference external" href="https://github.com/threeML/threeML/pull/77">#77</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Combined changes <a class="reference external" href="https://github.com/threeML/threeML/pull/75">#75</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>fixed error in component plotting <a class="reference external" href="https://github.com/threeML/threeML/pull/72">#72</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>~Parallel background <a class="reference external" href="https://github.com/threeML/threeML/pull/69">#69</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Minor updates to OGIP related files <a class="reference external" href="https://github.com/threeML/threeML/pull/66">#66</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Switched swift to new OGIPLike <a class="reference external" href="https://github.com/threeML/threeML/pull/63">#63</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Hawc extended source <a class="reference external" href="https://github.com/threeML/threeML/pull/42">#42</a> (<a class="reference external" href="https://github.com/giacomov">giacomov</a>)</p></li>
+<li><p>Add xrt spec gbm demo <a class="reference external" href="https://github.com/threeML/threeML/pull/41">#41</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>updated name <a class="reference external" href="https://github.com/threeML/threeML/pull/39">#39</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>removed some gbm data to reduce storage and update demo accordingly <a class="reference external" href="https://github.com/threeML/threeML/pull/38">#38</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Iss28 <a class="reference external" href="https://github.com/threeML/threeML/pull/31">#31</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Fix to Iss26 <a class="reference external" href="https://github.com/threeML/threeML/pull/30">#30</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>MULTINEST integrated into BayesianAnalysis <a class="reference external" href="https://github.com/threeML/threeML/pull/22">#22</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>GBM_TTE is ready.  <a class="reference external" href="https://github.com/threeML/threeML/pull/21">#21</a> (<a class="reference external" href="https://github.com/grburgess">grburgess</a>)</p></li>
+<li><p>Code cleanup <a class="reference external" href="https://github.com/threeML/threeML/pull/17">#17</a> (<a class="reference external" href="https://github.com/giacomov">giacomov</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v0-1">
+<h2>v0.1<a class="headerlink" href="#v0-1" title="Link to this heading"></a>
+</h2>
+<section id="v0-1-0-2016-04-19">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.1.0">v0.1.0</a> (2016-04-19)<a class="headerlink" href="#v0-1-0-2016-04-19" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/0.1.0...v0.1.0">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Shared pointers in the HAWC likelihood package <a class="reference external" href="https://github.com/threeML/threeML/issues/14">#14</a></p></li>
+</ul>
+</section>
+<section id="id1">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/0.1.0">0.1.0</a> (2016-04-14)<a class="headerlink" href="#id1" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.0.5...0.1.0">Full Changelog</a></p>
+<p><strong>Implemented enhancements:</strong></p>
+<ul class="simple">
+<li><p>Modify setup so that the boost.python wrapper is built only on demand <a class="reference external" href="https://github.com/threeML/threeML/issues/9">#9</a></p></li>
+<li><p>Add README? <a class="reference external" href="https://github.com/threeML/threeML/issues/2">#2</a></p></li>
+</ul>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Cannot find configuration file <a class="reference external" href="https://github.com/threeML/threeML/issues/8">#8</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>io module in 3ML may clash with system io module <a class="reference external" href="https://github.com/threeML/threeML/issues/4">#4</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>nTransits calculation for HAWCLike <a class="reference external" href="https://github.com/threeML/threeML/pull/13">#13</a> (<a class="reference external" href="https://github.com/cdr397">cdr397</a>)</p></li>
+<li><p>Add hook for LiFF calculation of TS <a class="reference external" href="https://github.com/threeML/threeML/pull/7">#7</a> (<a class="reference external" href="https://github.com/sybenzvi">sybenzvi</a>)</p></li>
+<li><p>Switch LiFF module name to liff_3ML. <a class="reference external" href="https://github.com/threeML/threeML/pull/6">#6</a> (<a class="reference external" href="https://github.com/sybenzvi">sybenzvi</a>)</p></li>
+<li><p>Change header order so setup.py works on OS X. <a class="reference external" href="https://github.com/threeML/threeML/pull/3">#3</a> (<a class="reference external" href="https://github.com/sybenzvi">sybenzvi</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="v0-0">
+<h2>v0.0<a class="headerlink" href="#v0-0" title="Link to this heading"></a>
+</h2>
+<section id="v0-0-5-2015-02-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.0.5">v0.0.5</a> (2015-02-06)<a class="headerlink" href="#v0-0-5-2015-02-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.0.4...v0.0.5">Full Changelog</a></p>
+</section>
+<section id="v0-0-4-2015-02-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.0.4">v0.0.4</a> (2015-02-06)<a class="headerlink" href="#v0-0-4-2015-02-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.0.3...v0.0.4">Full Changelog</a></p>
+</section>
+<section id="v0-0-3-2015-02-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.0.3">v0.0.3</a> (2015-02-06)<a class="headerlink" href="#v0-0-3-2015-02-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.0.2...v0.0.3">Full Changelog</a></p>
+</section>
+<section id="v0-0-2-2015-02-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.0.2">v0.0.2</a> (2015-02-06)<a class="headerlink" href="#v0-0-2-2015-02-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v0.0.1...v0.0.2">Full Changelog</a></p>
+</section>
+<section id="v0-0-1-2015-02-06">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v0.0.1">v0.0.1</a> (2015-02-06)<a class="headerlink" href="#v0-0-1-2015-02-06" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/235a6495be88f54885d00517ebde6abe283a7aab...v0.0.1">Full Changelog</a></p>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Unm workshop <a class="reference external" href="https://github.com/threeML/threeML/pull/1">#1</a> (<a class="reference external" href="https://github.com/giacomov">giacomov</a>)</p></li>
+</ul>
+<p>* <em>This Changelog was automatically generated by <a class="reference external" href="https://github.com/github-changelog-generator/github-changelog-generator">github_changelog_generator</a></em></p>
+</section>
+</section>
+</section>
+
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api/threeML.utils.time_series.html" class="btn btn-neutral float-left" title="threeML.utils.time_series package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="notebooks/Analysis_results_showcase.html" class="btn btn-neutral float-right" title="Analysis Results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.data_builders.time_series_builder &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -181,14 +185,14 @@
 
 
 <div class="viewcode-block" id="BinningMethodError">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.BinningMethodError">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.BinningMethodError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinningMethodError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TimeSeriesBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -324,7 +328,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.set_active_time_interval">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.set_active_time_interval">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.set_active_time_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_active_time_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval to be used during the analysis. For now, only</span>
 <span class="sd">        one interval can be selected. This may be updated in the future to</span>
@@ -394,7 +398,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.fit_polynomial">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.fit_polynomial">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.fit_polynomial">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit_polynomial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the polynominals to the selected time intervals.</span>
 
@@ -406,7 +410,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.set_background_interval">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.set_background_interval">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.set_background_interval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_background_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">intervals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time interval to fit the background. Multiple intervals can</span>
 <span class="sd">        be input as separate arguments Specified as &#39;tmin-tmax&#39;. Intervals are</span>
@@ -486,7 +490,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.write_pha_from_binner">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.write_pha_from_binner">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.write_pha_from_binner">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_pha_from_binner</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -538,7 +542,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.get_background_parameters">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.get_background_parameters">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.get_background_parameters">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_background_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a pandas DataFrame containing the background polynomial</span>
 <span class="sd">        coefficients for each channel.&quot;&quot;&quot;</span>
@@ -547,7 +551,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.save_background">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.save_background">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.save_background">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the background to and HDF5 file. The filename does not need an</span>
 <span class="sd">        extension. The filename will be saved as &lt;filename&gt;_bkg.h5.</span>
@@ -565,7 +569,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.view_lightcurve">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.view_lightcurve">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.view_lightcurve">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">view_lightcurve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span>
@@ -654,7 +658,7 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TimeSeriesBuilder.read_bins">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.read_bins">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.read_bins">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_series_builder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the temporal bins from another *binned* TimeSeriesBuilder</span>
 <span class="sd">        instance and apply those bins to this instance.</span>
@@ -672,7 +676,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.create_time_bins">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.create_time_bins">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.create_time_bins">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_time_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create time bins from start to stop with a given method (constant,</span>
 <span class="sd">        siginificance, bayesblocks, custom). Each method has required keywords</span>
@@ -776,7 +780,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.to_spectrumlike">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.to_spectrumlike">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.to_spectrumlike">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_spectrumlike</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">from_bins</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1006,7 +1010,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_gbm_tte">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_gbm_tte">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_gbm_tte">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_gbm_tte</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1193,7 +1197,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_gbm_cspec_or_ctime">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_gbm_cspec_or_ctime">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_gbm_cspec_or_ctime">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_gbm_cspec_or_ctime</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1330,7 +1334,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_lat_lle">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_lat_lle">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_lat_lle">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_lat_lle</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1416,7 +1420,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_phaII">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_phaII">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_phaII">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_phaII</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -1425,7 +1429,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_konus_pha">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_konus_pha">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_konus_pha">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_konus_pha</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1475,7 +1479,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_polar_spectrum">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_polar_spectrum">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_polar_spectrum">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_polar_spectrum</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1527,7 +1531,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.from_polar_polarization">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.from_polar_polarization">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.from_polar_polarization">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_polar_polarization</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1579,7 +1583,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesBuilder.to_polarlike">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.data_builders.html#threeML.utils.data_builders.TimeSeriesBuilder.to_polarlike">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.data_builders.html#threeML.utils.data_builders.time_series_builder.TimeSeriesBuilder.to_polarlike">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_polarlike</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">from_bins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1772,7 +1776,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

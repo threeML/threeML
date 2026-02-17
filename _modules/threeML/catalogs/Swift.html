@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.catalogs.Swift &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -134,7 +138,7 @@
 
 
 <div class="viewcode-block" id="SwiftGRBCatalog">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SwiftGRBCatalog</span><span class="p">(</span><span class="n">VirtualObservatoryCatalog</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The Swift GRB catalog. Search for GRBs  by trigger number, location,</span>
@@ -155,7 +159,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_other_obs_instruments</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.apply_format">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.apply_format">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.apply_format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">apply_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="n">new_table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span>
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
@@ -227,7 +231,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_other_observings_instruments</span>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.query_other_observing_instruments">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">query_other_observing_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">instruments</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Search for observations that were also seen by the requested</span>
 <span class="sd">        instrument. to see what instruments are available, use the</span>
@@ -345,7 +349,7 @@
         <span class="k">return</span> <span class="n">trigger_number</span>
 
 <div class="viewcode-block" id="SwiftGRBCatalog.get_other_observation_information">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_other_observation_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a structured pandas table containing the other observing</span>
 <span class="sd">        instruments, their GCNs and if obtainable, their trigger numbers/ data</span>
@@ -406,7 +410,7 @@
 
 
 <div class="viewcode-block" id="SwiftGRBCatalog.get_other_instrument_information">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_other_instrument_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the detectors used for spectral analysis as well as their</span>
 <span class="sd">        background intervals. Peak flux and fluence intervals are also returned</span>
@@ -479,7 +483,7 @@
 
 
 <div class="viewcode-block" id="SwiftGRBCatalog.get_redshift">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_redshift</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the redshift and redshift type from the searched sources.</span>
 
@@ -536,7 +540,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

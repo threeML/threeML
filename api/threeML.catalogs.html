@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.catalogs package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -18,8 +19,10 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -27,8 +30,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="threeML.catalogs.Fermi module" href="threeML.catalogs.Fermi.html" />
-    <link rel="prev" title="threeML.bayesian.zeus_sampler module" href="threeML.bayesian.zeus_sampler.html" /> 
+    <link rel="next" title="threeML.classicMLE package" href="threeML.classicMLE.html" />
+    <link rel="prev" title="threeML.bayesian package" href="threeML.bayesian.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,7 +56,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -66,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -74,13 +77,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -118,127 +122,578 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a>
 </h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.Fermi.html">threeML.catalogs.Fermi module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog.apply_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.get_detector_information"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog.get_detector_information()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiGBMBurstCatalog.get_model"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog.get_model()</span></code></a></li>
+</section>
+<section id="module-threeML.catalogs.Fermi">
+<span id="threeml-catalogs-fermi-module"></span><h2>threeML.catalogs.Fermi module<a class="headerlink" href="#module-threeML.catalogs.Fermi" title="Link to this heading"></a>
+</h2>
+</section>
+<section id="module-threeML.catalogs.FermiGBM">
+<span id="threeml-catalogs-fermigbm-module"></span><h2>threeML.catalogs.FermiGBM module<a class="headerlink" href="#module-threeML.catalogs.FermiGBM" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiGBM.FermiGBMBurstCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.FermiGBM.</span></span><span class="sig-name descname"><span class="pre">FermiGBMBurstCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiGBM.html#FermiGBMBurstCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog" title="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.apply_format">
+<span class="sig-name descname"><span class="pre">apply_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiGBM.html#FermiGBMBurstCatalog.apply_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.apply_format" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_detector_information">
+<span class="sig-name descname"><span class="pre">get_detector_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiGBM.html#FermiGBMBurstCatalog.get_detector_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_detector_information" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return the detectors used for spectral analysis as well as their
+background intervals. Peak flux and fluence intervals are also returned
+as well as best fit models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>detector information dictionary</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'band'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fluence'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiGBM.html#FermiGBMBurstCatalog.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_model" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model
+form. You can choose band, comp, plaw, or sbpl models corresponding to
+the models fitted in the GBM catalog. The interval for the fit can be
+the ‘fluence’ or ‘peak’ interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>model</strong> – one of ‘band’ (default), ‘comp’, ‘plaw’, ‘sbpl’</p></li>
+<li><p><strong>interval</strong> – ‘peak’ or ‘fluence’ (default)</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiGBMTriggerCatalog"><code class="docutils literal notranslate"><span class="pre">FermiGBMTriggerCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiGBMTriggerCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiGBMTriggerCatalog.apply_format()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>a dictionary of 3ML likelihood models that can be
+fitted</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.FermiGBM.</span></span><span class="sig-name descname"><span class="pre">FermiGBMTriggerCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiGBM.html#FermiGBMTriggerCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog" title="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog.apply_format">
+<span class="sig-name descname"><span class="pre">apply_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiGBM.html#FermiGBMTriggerCatalog.apply_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog.apply_format" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.catalogs.FermiLAT">
+<span id="threeml-catalogs-fermilat-module"></span><h2>threeML.catalogs.FermiLAT module<a class="headerlink" href="#module-threeML.catalogs.FermiLAT" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLAT.FermiLATSourceCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.FermiLAT.</span></span><span class="sig-name descname"><span class="pre">FermiLATSourceCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLAT.html#FermiLATSourceCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiLATSourceCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog" title="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLAT.FermiLATSourceCatalog.apply_format">
+<span class="sig-name descname"><span class="pre">apply_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLAT.html#FermiLATSourceCatalog.apply_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.apply_format" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_association_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npred_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLAT.html#FermiLATSourceCatalog.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Build the model with FGL sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>use_association_name</strong> – use the name of the associated
+source (stored in assoc_name column)</p></li>
+<li><p><strong>exposure</strong> – exposure in cm2 * seconds (can be calculated
+with gtexposure)</p></li>
+<li><p><strong>npred_min</strong> – minimum number of predicted events.</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiLATSourceCatalog"><code class="docutils literal notranslate"><span class="pre">FermiLATSourceCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiLATSourceCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiLATSourceCatalog.apply_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiLATSourceCatalog.get_model"><code class="docutils literal notranslate"><span class="pre">FermiLATSourceCatalog.get_model()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>model</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLAT.FermiPySourceCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.FermiLAT.</span></span><span class="sig-name descname"><span class="pre">FermiPySourceCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'4FGL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLAT.html#FermiPySourceCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiPySourceCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.catalogs.FermiLAT.FermiLATSourceCatalog" title="threeML.catalogs.FermiLAT.FermiLATSourceCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">FermiLATSourceCatalog</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLAT.FermiPySourceCatalog.cone_search">
+<span class="sig-name descname"><span class="pre">cone_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLAT.html#FermiPySourceCatalog.cone_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLAT.FermiPySourceCatalog.cone_search" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Searches for sources in a cone of given radius and center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>ra</strong> – decimal degrees, R.A. of the center of the cone</p></li>
+<li><p><strong>dec</strong> – decimal degrees, Dec. of the center of the cone</p></li>
+<li><p><strong>radius</strong> – radius in degrees</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiLLEBurstCatalog"><code class="docutils literal notranslate"><span class="pre">FermiLLEBurstCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.FermiLLEBurstCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiLLEBurstCatalog.apply_format()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>a table with the list of sources</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.catalogs.FermiLLE">
+<span id="threeml-catalogs-fermille-module"></span><h2>threeML.catalogs.FermiLLE module<a class="headerlink" href="#module-threeML.catalogs.FermiLLE" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLLE.FermiLLEBurstCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.FermiLLE.</span></span><span class="sig-name descname"><span class="pre">FermiLLEBurstCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLLE.html#FermiLLEBurstCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLLE.FermiLLEBurstCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog" title="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.FermiLLE.FermiLLEBurstCatalog.apply_format">
+<span class="sig-name descname"><span class="pre">apply_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/FermiLLE.html#FermiLLEBurstCatalog.apply_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.FermiLLE.FermiLLEBurstCatalog.apply_format" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.catalogs.Swift">
+<span id="threeml-catalogs-swift-module"></span><h2>threeML.catalogs.Swift module<a class="headerlink" href="#module-threeML.catalogs.Swift" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.Swift.</span></span><span class="sig-name descname"><span class="pre">SwiftGRBCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <a class="reference internal" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog" title="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog.apply_format">
+<span class="sig-name descname"><span class="pre">apply_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog.apply_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.apply_format" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information">
+<span class="sig-name descname"><span class="pre">get_other_instrument_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog.get_other_instrument_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return the detectors used for spectral analysis as well as their
+background intervals. Peak flux and fluence intervals are also returned
+as well as best fit models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p>observing information dataframe indexed by source</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information">
+<span class="sig-name descname"><span class="pre">get_other_observation_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog.get_other_observation_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Returns a structured pandas table containing the other observing
+instruments, their GCNs and if obtainable, their trigger numbers/ data
+identifiers. Currently, the trigger number is only obtained for Fermi-
+LAT-GBM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift">
+<span class="sig-name descname"><span class="pre">get_redshift</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog.get_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Get the redshift and redshift type from the searched sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog.other_observing_instruments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">other_observing_instruments</span></span><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.other_observing_instruments" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments">
+<span class="sig-name descname"><span class="pre">query_other_observing_instruments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">instruments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/Swift.html#SwiftGRBCatalog.query_other_observing_instruments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Search for observations that were also seen by the requested
+instrument. to see what instruments are available, use the
+.other_observing_instruments call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>instruments</strong> – other instruments</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.catalogs.VirtualObservatoryCatalog">
+<span id="threeml-catalogs-virtualobservatorycatalog-module"></span><h2>threeML.catalogs.VirtualObservatoryCatalog module<a class="headerlink" href="#module-threeML.catalogs.VirtualObservatoryCatalog" title="Link to this heading"></a>
+</h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.ConeSearchFailed">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.VirtualObservatoryCatalog.</span></span><span class="sig-name descname"><span class="pre">ConeSearchFailed</span></span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#ConeSearchFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.ConeSearchFailed" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+</dd>
+</dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.VirtualObservatoryCatalog.</span></span><span class="sig-name descname"><span class="pre">VirtualObservatoryCatalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.apply_format">
+<span class="sig-name descname"><span class="pre">apply_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.apply_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.apply_format" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search">
+<span class="sig-name descname"><span class="pre">cone_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.cone_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Searches for sources in a cone of given radius and center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>ra</strong> – decimal degrees, R.A. of the center of the cone</p></li>
+<li><p><strong>dec</strong> – decimal degrees, Dec. of the center of the cone</p></li>
+<li><p><strong>radius</strong> – radius in degrees</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.ModelFrom3FGL"><code class="docutils literal notranslate"><span class="pre">ModelFrom3FGL</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.ModelFrom3FGL.fix_point_sources_within_radius"><code class="docutils literal notranslate"><span class="pre">ModelFrom3FGL.fix_point_sources_within_radius()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Fermi.html#threeML.catalogs.Fermi.ModelFrom3FGL.free_point_sources_within_radius"><code class="docutils literal notranslate"><span class="pre">ModelFrom3FGL.free_point_sources_within_radius()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>a table with the list of sources</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.dec_center">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dec_center</span></span><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.dec_center" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.get_model" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>query the entire VO table for the given logical argument. Queries are in the
+form of pandas queries:
+<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quer">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.quer</a>
+y.html</p>
+<p>To obtain a preview of the availble columns, try catalog.variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>query</strong> – pandas style query string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources">
+<span class="sig-name descname"><span class="pre">query_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sources</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.query_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Query for the specific source names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p><strong>sources</strong> – source(s) to search for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.ra_center">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ra_center</span></span><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.ra_center" title="Link to this definition"></a>
+</dt>
+<dd></dd>
+</dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.result">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">result</span></span><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.result" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Return a searchable pandas dataframe of results from the last query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.search_around_source">
+<span class="sig-name descname"><span class="pre">search_around_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/VirtualObservatoryCatalog.html#VirtualObservatoryCatalog.search_around_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.search_around_source" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Search for sources around the named source. The coordinates of the
+provided source are resolved using the astropy.coordinates.name_resolve
+facility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>source_name</strong> – name of the source, like “Crab”</p></li>
+<li><p><strong>radius</strong> – radius of the search, in degrees</p></li>
 </ul>
-</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>(ra, dec, table), where ra,dec are the coordinates of
+the source as resolved by astropy, and table is a table with
+the list of sources</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</section>
+<section id="module-threeML.catalogs.catalog_utils">
+<span id="threeml-catalogs-catalog-utils-module"></span><h2>threeML.catalogs.catalog_utils module<a class="headerlink" href="#module-threeML.catalogs.catalog_utils" title="Link to this heading"></a>
+</h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="threeML.catalogs.catalog_utils.ModelFromFGL">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">threeML.catalogs.catalog_utils.</span></span><span class="sig-name descname"><span class="pre">ModelFromFGL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_center</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sources</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.catalog_utils.ModelFromFGL.fix_extended_sources_within_radius">
+<span class="sig-name descname"><span class="pre">fix_extended_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.fix_extended_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.fix_extended_sources_within_radius" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Fixes the parameters for the point sources within the given radius
+of the center of the search cone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>radius</strong> – radius in degree</p></li>
+<li><p><strong>normalization_only</strong> – if True, fixes only the normalization
+of the source (default: True)</p></li>
 </ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.FermiGBM.html">threeML.catalogs.FermiGBM module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.FermiGBM.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiGBM.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog.apply_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiGBM.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_detector_information"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog.get_detector_information()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiGBM.html#threeML.catalogs.FermiGBM.FermiGBMBurstCatalog.get_model"><code class="docutils literal notranslate"><span class="pre">FermiGBMBurstCatalog.get_model()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>none</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.catalog_utils.ModelFromFGL.fix_point_sources_within_radius">
+<span class="sig-name descname"><span class="pre">fix_point_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.fix_point_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.fix_point_sources_within_radius" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Fixes the parameters for the point sources within the given radius
+of the center of the search cone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>radius</strong> – radius in degree</p></li>
+<li><p><strong>normalization_only</strong> – if True, fixes only the normalization
+of the source (default: True)</p></li>
 </ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.FermiGBM.html#threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog"><code class="docutils literal notranslate"><span class="pre">FermiGBMTriggerCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiGBM.html#threeML.catalogs.FermiGBM.FermiGBMTriggerCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiGBMTriggerCatalog.apply_format()</span></code></a></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>none</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.catalog_utils.ModelFromFGL.free_extended_sources_within_radius">
+<span class="sig-name descname"><span class="pre">free_extended_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.free_extended_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.free_extended_sources_within_radius" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Free the parameters for the point sources within the given radius of
+the center of the search cone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>radius</strong> – radius in degree</p></li>
+<li><p><strong>normalization_only</strong> – if True, frees only the normalization
+of the source (default: True)</p></li>
 </ul>
-</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>none</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threeML.catalogs.catalog_utils.ModelFromFGL.free_point_sources_within_radius">
+<span class="sig-name descname"><span class="pre">free_point_sources_within_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/threeML/catalogs/catalog_utils.html#ModelFromFGL.free_point_sources_within_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#threeML.catalogs.catalog_utils.ModelFromFGL.free_point_sources_within_radius" title="Link to this definition"></a>
+</dt>
+<dd>
+<p>Free the parameters for the point sources within the given radius of
+the center of the search cone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span>
+</dt>
+<dd class="field-odd">
+<ul class="simple">
+<li><p><strong>radius</strong> – radius in degree</p></li>
+<li><p><strong>normalization_only</strong> – if True, frees only the normalization
+of the source (default: True)</p></li>
 </ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.FermiLAT.html">threeML.catalogs.FermiLAT module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.FermiLAT.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog"><code class="docutils literal notranslate"><span class="pre">FermiLATSourceCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiLAT.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiLATSourceCatalog.apply_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiLAT.html#threeML.catalogs.FermiLAT.FermiLATSourceCatalog.get_model"><code class="docutils literal notranslate"><span class="pre">FermiLATSourceCatalog.get_model()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.FermiLAT.html#threeML.catalogs.FermiLAT.FermiPySourceCatalog"><code class="docutils literal notranslate"><span class="pre">FermiPySourceCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiLAT.html#threeML.catalogs.FermiLAT.FermiPySourceCatalog.cone_search"><code class="docutils literal notranslate"><span class="pre">FermiPySourceCatalog.cone_search()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.FermiLLE.html">threeML.catalogs.FermiLLE module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.FermiLLE.html#threeML.catalogs.FermiLLE.FermiLLEBurstCatalog"><code class="docutils literal notranslate"><span class="pre">FermiLLEBurstCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.FermiLLE.html#threeML.catalogs.FermiLLE.FermiLLEBurstCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">FermiLLEBurstCatalog.apply_format()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.Swift.html">threeML.catalogs.Swift module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog.apply_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_instrument_information"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog.get_other_instrument_information()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_other_observation_information"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog.get_other_observation_information()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog.get_redshift"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog.get_redshift()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog.other_observing_instruments"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog.other_observing_instruments</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.Swift.html#threeML.catalogs.Swift.SwiftGRBCatalog.query_other_observing_instruments"><code class="docutils literal notranslate"><span class="pre">SwiftGRBCatalog.query_other_observing_instruments()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html">threeML.catalogs.VirtualObservatoryCatalog module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.ConeSearchFailed"><code class="docutils literal notranslate"><span class="pre">ConeSearchFailed</span></code></a></li>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.apply_format"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.apply_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.cone_search"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.cone_search()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.dec_center"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.dec_center</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.get_model"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.get_model()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.query()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.query_sources"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.query_sources()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.ra_center"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.ra_center</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.result"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.result</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.VirtualObservatoryCatalog.html#threeML.catalogs.VirtualObservatoryCatalog.VirtualObservatoryCatalog.search_around_source"><code class="docutils literal notranslate"><span class="pre">VirtualObservatoryCatalog.search_around_source()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1">
-<a class="reference internal" href="threeML.catalogs.catalog_utils.html">threeML.catalogs.catalog_utils module</a><ul>
-<li class="toctree-l2">
-<a class="reference internal" href="threeML.catalogs.catalog_utils.html#threeML.catalogs.catalog_utils.ModelFromFGL"><code class="docutils literal notranslate"><span class="pre">ModelFromFGL</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.catalog_utils.html#threeML.catalogs.catalog_utils.ModelFromFGL.fix_extended_sources_within_radius"><code class="docutils literal notranslate"><span class="pre">ModelFromFGL.fix_extended_sources_within_radius()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.catalog_utils.html#threeML.catalogs.catalog_utils.ModelFromFGL.fix_point_sources_within_radius"><code class="docutils literal notranslate"><span class="pre">ModelFromFGL.fix_point_sources_within_radius()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.catalog_utils.html#threeML.catalogs.catalog_utils.ModelFromFGL.free_extended_sources_within_radius"><code class="docutils literal notranslate"><span class="pre">ModelFromFGL.free_extended_sources_within_radius()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threeML.catalogs.catalog_utils.html#threeML.catalogs.catalog_utils.ModelFromFGL.free_point_sources_within_radius"><code class="docutils literal notranslate"><span class="pre">ModelFromFGL.free_point_sources_within_radius()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span>
+</dt>
+<dd class="field-even">
+<p>none</p>
+</dd>
+</dl>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
 </section>
 <section id="module-threeML.catalogs">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-threeML.catalogs" title="Link to this heading"></a>
@@ -251,14 +706,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="threeML.bayesian.zeus_sampler.html" class="btn btn-neutral float-left" title="threeML.bayesian.zeus_sampler module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="threeML.catalogs.Fermi.html" class="btn btn-neutral float-right" title="threeML.catalogs.Fermi module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="threeML.bayesian.html" class="btn btn-neutral float-left" title="threeML.bayesian package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="threeML.classicMLE.html" class="btn btn-neutral float-right" title="threeML.classicMLE package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

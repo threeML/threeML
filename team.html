@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project &amp; Team &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -18,8 +19,10 @@
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -27,7 +30,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="notebooks/installation.html" />
+    <link rel="next" title="Installation" href="installation.html" />
     <link rel="prev" title="3ML" href="index.html" /> 
 </head>
 
@@ -75,7 +78,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#grants">Grants</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/logging.html">Logging and Verbosity</a></li>
@@ -88,7 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -96,13 +99,14 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -135,15 +139,15 @@
   <section id="project-team">
 <h1>Project &amp; Team<a class="headerlink" href="#project-team" title="Link to this heading"></a>
 </h1>
-<p>This page describes the <em>TheeML</em> project organisation and the main roles and responsibilities in the <em>TheeML</em> team.
+<p>This page describes the <em>ThreeML</em> project organisation and the main roles and responsibilities in the <em>ThreeML</em> team.
 This structure was set in place in 2024, but we expect this structure to evolve over the coming years,
-adapting to the size and composition of the <em>TheeML</em> development team, and the requirements and needs of scientists and
-projects using <em>TheeML</em>.
-If you would like to become part of the <em>TheeML</em> team, please get in contact. <strong>Help is always welcome!</strong></p>
+adapting to the size and composition of the <em>ThreeML</em> development team, and the requirements and needs of scientists and
+projects using <em>ThreeML</em>.
+If you would like to become part of the <em>ThreeML</em> team, please get in contact. <strong>Help is always welcome!</strong></p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a>
 </h2>
-<p>The following sections describe the major roles and responsibilities in the <em>TheeML</em> team:</p>
+<p>The following sections describe the major roles and responsibilities in the <em>ThreeML</em> team:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#coordination-committee">Coordination Committee</a></p></li>
 <li><p><a class="reference internal" href="#principal-investigator">Principal Investigator</a></p></li>
@@ -157,57 +161,54 @@ If you would like to become part of the <em>TheeML</em> team, please get in cont
 <section id="coordination-committee">
 <h2>Coordination Committee<a class="headerlink" href="#coordination-committee" title="Link to this heading"></a>
 </h2>
-<p>The <em>TheeML</em> coordination committee (CC) is the board that is responsible to promote, coordinate and steer <em>TheeML</em> developments.
-It also serves as main contact point for the <em>TheeML</em> project.
-The CC is composed by the <em>TheeML</em> principal investigator, release manager, and plug-ins point of contacts.</p>
+<p>The <em>ThreeML</em> coordination committee (CC) is the board that is responsible to promote, coordinate and steer <em>ThreeML</em> developments.
+It also serves as main contact point for the <em>ThreeML</em> project.
+The CC is composed by the <em>ThreeML</em> principal investigator, release manager, and plug-ins point of contacts.</p>
 <section id="responsibilities-include">
 <h3>Responsibilities include:<a class="headerlink" href="#responsibilities-include" title="Link to this heading"></a>
 </h3>
 <ul class="simple">
-<li><p>Being the point of contact for the <em>TheeML</em> project.</p></li>
-<li><p>Promote the use of <em>TheeML</em> by new projects.</p></li>
+<li><p>Being the point of contact for the <em>ThreeML</em> project.</p></li>
+<li><p>Promote the use of <em>ThreeML</em> by new projects.</p></li>
 <li><p>Keep the overview of ongoing activities, schedules and action items and follow up to make sure all important things get done.</p></li>
-<li><p>Make decisions on the scope, content and development priorities for the <em>TheeML</em> package.</p></li>
-<li><p>Support and grow the <em>TheeML</em> team (help find people-power and funding)</p></li>
-<li><p>Support and coordinate the use of <em>TheeML</em> for scientific or technical studies and papers</p></li>
-<li><p>Organise and drive all non-technical aspects of the project on a day-to-day basis.</p></li>
-<li><p>Keep an overview and help coordinate all activities that have some involvement of <em>TheeML</em>, such as e.g. papers, presentations or posters about or using <em>TheeML</em> at gamma-ray or X-ray astronomy meetings or conferences, or tutorials at schools / workshops on gamma-ray astronomy data analysis.</p></li>
-<li><p>Manage the <em>TheeML</em> developer / maintainer / contributor team. Distribute tasks and assign responsibilities to other <em>TheeML</em> developers.</p></li>
-<li><p>Ensure that anyone interested in contributing to <em>TheeML</em> development has good resources (documentation, communication, mentoring) to get started. Specifically: maintain the <em>TheeML</em> developer documentation that describes all aspects of <em>TheeML</em> development (code, testing, documentation, processes).</p></li>
-<li><p>Organise <em>TheeML</em> developer calls and coding sprints via <em>TheeML</em>-meetings</p></li>
-<li><p>Schedule <em>TheeML</em> releases and define which fixes and features go in which release, taking the needs of people and projects using <em>TheeML</em> as well as available manpower for developments into account. Either execute releases directly or assign a release manager.</p></li>
+<li><p>Make decisions on the scope, content and development priorities for the <em>ThreeML</em> package.</p></li>
+<li><p>Support and grow the <em>ThreeML</em> team (help find people-power and funding)</p></li>
+<li><p>Support and coordinate the use of <em>ThreeML</em> for scientific or technical studies and papers</p></li>
+<li><p>Organize and drive all non-technical aspects of the project on a day-to-day basis.</p></li>
+<li><p>Keep an overview and help coordinate all activities that have some involvement of <em>ThreeML</em>, such as e.g. papers, presentations or posters about or using <em>ThreeML</em> at gamma-ray or X-ray astronomy meetings or conferences, or tutorials at schools / workshops on gamma-ray astronomy data analysis.</p></li>
+<li><p>Manage the <em>ThreeML</em> developer / maintainer / contributor team. Distribute tasks and assign responsibilities to other <em>ThreeML</em> developers.</p></li>
+<li><p>Ensure that anyone interested in contributing to <em>ThreeML</em> development has good resources (documentation, communication, mentoring) to get started. Specifically: maintain the <em>ThreeML</em> developer documentation that describes all aspects of <em>ThreeML</em> development (code, testing, documentation, processes).</p></li>
+<li><p>Organize <em>ThreeML</em> developer calls and coding sprints via <em>ThreeML</em>-meetings</p></li>
+<li><p>Schedule <em>ThreeML</em> releases and define which fixes and features go in which release, taking the needs of people and projects using <em>ThreeML</em> as well as available manpower for developments into account. Either execute releases directly or assign a release manager.</p></li>
 <li><p>Monitor and assign of issues and pull requests,</p></li>
-<li><p>Ensure <em>TheeML</em> infrastructure is well set up and maintained (issue tracker and pull requests on Github, continuous integration tests, documentation builds, releases and distribution).</p></li>
+<li><p>Ensure <em>ThreeML</em> infrastructure is well set up and maintained (issue tracker and pull requests on Github, continuous integration tests, documentation builds, releases and distribution).</p></li>
 </ul>
 <p><strong>Current CC members:</strong></p>
 <ul class="simple">
 <li><p>Nicola Omodei (PI) - Stanford University</p></li>
 <li><p>Niccolò Di Lalla (Release manager, IXPE) - Stanford University</p></li>
-<li><p>somenone (HAWC) - Institution</p></li>
 <li><p>Israel Martinez Castellanos (cosipy) - NSFC</p></li>
-<li><p>somenone (polpy) - Institution</p></li>
-<li><p>Michael Larson (i3mla) - Institution</p></li>
-<li><p>somenone (polarpy) - Institution</p></li>
+<li><p>Tobias Preis (gammapy-plugin) - University of Innsbruck</p></li>
 </ul>
 </section>
 </section>
 <section id="principal-investigator">
 <h2>Principal Investigator<a class="headerlink" href="#principal-investigator" title="Link to this heading"></a>
 </h2>
-<p>The <em>TheeML</em> Principal Investigator (PI) is in charge of seeking funding,
-they overview the work and work closely with the <em>TheeML</em> coordination committee, lead developers, contributors and users.</p>
+<p>The <em>ThreeML</em> Principal Investigator (PI) is in charge of seeking funding,
+they overview the work and work closely with the <em>ThreeML</em> coordination committee, lead developers, contributors and users.</p>
 <section id="id1">
 <h3>Responsibilities include:<a class="headerlink" href="#id1" title="Link to this heading"></a>
 </h3>
 <ul class="simple">
-<li><p>Maintain <em>TheeML</em> communication channels (mailing lists, slack, github, …)</p></li>
-<li><p>Serve as <em>TheeML</em> coordination committee secretary (schedule and moderate calls; give status reports; write minutes)</p></li>
-<li><p>Serve on the <em>TheeML</em> coordination committee, as the link between CC and the development team.</p></li>
-<li><p>Appoint the <em>TheeML</em>  managers (non-technical lead) and lead developers (technical lead)</p></li>
-<li><p>Organise <em>TheeML</em> user calls and training events via <em>TheeML</em>-meetings</p></li>
+<li><p>Maintain <em>ThreeML</em> communication channels (mailing lists, slack, github, …)</p></li>
+<li><p>Serve as <em>ThreeML</em> coordination committee secretary (schedule and moderate calls; give status reports; write minutes)</p></li>
+<li><p>Serve on the <em>ThreeML</em> coordination committee, as the link between CC and the development team.</p></li>
+<li><p>Appoint the <em>ThreeML</em>  managers (non-technical lead) and lead developers (technical lead)</p></li>
+<li><p>Organise <em>ThreeML</em> user calls and training events via <em>ThreeML</em>-meetings</p></li>
 <li><p>Review the documents are properly reviewed and eventually decisions made by the CC.</p></li>
 </ul>
-<p><strong>Current TheeML PI:</strong></p>
+<p><strong>Current ThreeML PI:</strong></p>
 <ul class="simple">
 <li><p>Nicola Omodei - Stanford University</p></li>
 </ul>
@@ -216,22 +217,22 @@ they overview the work and work closely with the <em>TheeML</em> coordination co
 <section id="lead-developers">
 <h2>Lead developers<a class="headerlink" href="#lead-developers" title="Link to this heading"></a>
 </h2>
-<p>The lead developers are the technical executive leads for the <em>TheeML</em> project.
-The lead developers are appointed by the <em>TheeML</em> coordination committee,
-and work closely with the <em>TheeML</em> coordination committee, project managers and contributors.</p>
+<p>The lead developers are the technical executive leads for the <em>ThreeML</em> project.
+The lead developers are appointed by the <em>ThreeML</em> coordination committee,
+and work closely with the <em>ThreeML</em> coordination committee, project managers and contributors.</p>
 <section id="id2">
 <h3>Responsibilities include:<a class="headerlink" href="#id2" title="Link to this heading"></a>
 </h3>
 <ul class="simple">
 <li><p>Organize and drive all technical aspects of the project on a day-to-day basis. Keep the overview of ongoing activities, schedules and action items and follow up to make sure all important things get done.</p></li>
-<li><p>Evaluating new pull requests for quality, API consistency and <em>TheeML</em> coding standards,</p></li>
+<li><p>Evaluating new pull requests for quality, API consistency and <em>ThreeML</em> coding standards,</p></li>
 <li><p>Supporting developers on tasks associated to the sub-package(s),</p></li>
-<li><p>Taking care of the global design of the sub-package(s) in the context of the global <em>TheeML</em> architecture, participating to the User Support for questions related to the sub-package(s).</p></li>
+<li><p>Taking care of the global design of the sub-package(s) in the context of the global <em>ThreeML</em> architecture, participating to the User Support for questions related to the sub-package(s).</p></li>
 <li><p>Solve, comment, or re-assign issues and pull requests.</p></li>
 </ul>
-<p><strong>Current TheeML lead developers:</strong></p>
+<p><strong>Current ThreeML lead developers:</strong></p>
 <ul class="simple">
-<li><p>Niccolò Di Lalla (Relesse manager) - Stanford University</p></li>
+<li><p>Niccolò Di Lalla (Release manager) - Stanford University</p></li>
 <li><p>Nicola Omodei  (PI) - Stanford University</p></li>
 </ul>
 </section>
@@ -292,14 +293,6 @@ and work closely with the <em>TheeML</em> coordination committee, project manage
             );
         }
     )
-);</script>, <script type="text/javascript">document.write(
-    "<n pynff=\"ersrerapr rkgreany\" uers=\"znvygb:zreyva\056xbyr\100hau\056rqh\">Zreyva Xbyr<\057n>".replace(/[a-zA-Z]/g,
-        function(c){
-            return String.fromCharCode(
-                (c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26
-            );
-        }
-    )
 );</script></p></li>
 <li><p><a class="reference external" href="https://github.com/icecube/i3mla">i3mla</a> - <script type="text/javascript">document.write(
     "<n pynff=\"ersrerapr rkgreany\" uers=\"znvygb:zynefba\100vprphor\056jvfp\056rqh\">Zvpunry Ynefba<\057n>".replace(/[a-zA-Z]/g,
@@ -310,7 +303,15 @@ and work closely with the <em>TheeML</em> coordination committee, project manage
         }
     )
 );</script></p></li>
-<li><p>gammapy-plugin -</p></li>
+<li><p>gammapy-plugin - <script type="text/javascript">document.write(
+    "<n pynff=\"ersrerapr rkgreany\" uers=\"znvygb:gbovnf\056cervf\100hvox\056np\056ng\">Gbovnf Cervf<\057n>".replace(/[a-zA-Z]/g,
+        function(c){
+            return String.fromCharCode(
+                (c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26
+            );
+        }
+    )
+);</script></p></li>
 </ul>
 <section id="id3">
 <h3>Responsibilities include:<a class="headerlink" href="#id3" title="Link to this heading"></a>
@@ -318,8 +319,8 @@ and work closely with the <em>TheeML</em> coordination committee, project manage
 <ul class="simple">
 <li><p>Solve, comment or reassign issues and pull requests.</p></li>
 <li><p>support development on tasks associated to the sub-package(s),</p></li>
-<li><p>evaluating new pull requests for quality, API consistency and <em>TheeML</em> coding standards,</p></li>
-<li><p>taking care of the global design of the sub-package(s) in the context of the global <em>TheeML</em> architecture,</p></li>
+<li><p>evaluating new pull requests for quality, API consistency and <em>ThreeML</em> coding standards,</p></li>
+<li><p>taking care of the global design of the sub-package(s) in the context of the global <em>ThreeML</em> architecture,</p></li>
 <li><p>participating to the User Support for questions related to the sub-package(s).</p></li>
 </ul>
 </section>
@@ -327,8 +328,8 @@ and work closely with the <em>TheeML</em> coordination committee, project manage
 <section id="contributors-and-previous-core-developers">
 <h2>Contributors and previous core developers<a class="headerlink" href="#contributors-and-previous-core-developers" title="Link to this heading"></a>
 </h2>
-<p>Some of the original <em>TheeML</em> developer have left the academia or move to different jobs.
-Nonetheless we want to acknowledge their original involvement and vision in creating <em>TheeML</em>.</p>
+<p>Some of the original <em>ThreeML</em> developer have left the academia or move to different jobs.
+Nonetheless we want to acknowledge their original involvement and vision in creating <em>ThreeML</em>.</p>
 <ul class="simple">
 <li><p>Giacomo Vianello</p></li>
 <li><p>Michael Burgess</p></li>
@@ -339,13 +340,13 @@ Nonetheless we want to acknowledge their original involvement and vision in crea
 <section id="supporting-institutions">
 <h2>Supporting institutions<a class="headerlink" href="#supporting-institutions" title="Link to this heading"></a>
 </h2>
-<p>People involved in <em>TheeML</em> are coming from different institutions, laboratories and universities.
+<p>People involved in <em>ThreeML</em> are coming from different institutions, laboratories and universities.
 We acknowledge them for their daily support.</p>
 </section>
 <section id="grants">
 <h2>Grants<a class="headerlink" href="#grants" title="Link to this heading"></a>
 </h2>
-<p>Grants that are supporting the development of <em>TheeML</em>:</p>
+<p>Grants that are supporting the development of <em>ThreeML</em>:</p>
 <ul class="simple">
 <li><p>National Science Foundation (NSF): award number: 2011759 P.I.: Nicola Omodei (Stanford University)</p></li>
 </ul>
@@ -358,13 +359,13 @@ We acknowledge them for their daily support.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="3ML" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="notebooks/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

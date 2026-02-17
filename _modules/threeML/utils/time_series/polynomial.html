@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.utils.time_series.polynomial &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -148,7 +152,7 @@
 
 
 <div class="viewcode-block" id="Polynomial">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Polynomial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">is_integral</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A polynomial.</span>
@@ -188,7 +192,7 @@
             <span class="p">)</span>
 
 <div class="viewcode-block" id="Polynomial.from_previous_fit">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.from_previous_fit">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.from_previous_fit">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_previous_fit</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">covariance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Polynomial&quot;</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;restoring polynomial from previous fit&quot;</span><span class="p">)</span>
@@ -256,7 +260,7 @@
         <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="Polynomial.set_covariace_matrix">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.set_covariace_matrix">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.set_covariace_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_covariace_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span> <span class="o">=</span> <span class="n">matrix</span></div>
 
@@ -266,7 +270,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cov_matrix</span>
 
 <div class="viewcode-block" id="Polynomial.integral">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the integral of the polynomial between xmin and xmax.&quot;&quot;&quot;</span>
 
@@ -277,7 +281,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i_plus_1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i_plus_1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Polynomial.integral_error">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral_error">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.Polynomial.integral_error">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">integral_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the integral error of an interval :param xmin: start of the</span>
 <span class="sd">        interval :param xmax: stop of the interval :return: interval error.&quot;&quot;&quot;</span>
@@ -291,7 +295,7 @@
 
 
 <div class="viewcode-block" id="polyfit">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.polyfit">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.polyfit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">polyfit</span><span class="p">(</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">y</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -472,7 +476,7 @@
 
 
 <div class="viewcode-block" id="unbinned_polyfit">
-<a class="viewcode-back" href="../../../../notebooks/api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.unbinned_polyfit">[docs]</a>
+<a class="viewcode-back" href="../../../../api/threeML.utils.time_series.html#threeML.utils.time_series.polynomial.unbinned_polyfit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unbinned_polyfit</span><span class="p">(</span>
     <span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">grade</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -634,7 +638,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

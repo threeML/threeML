@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.minimizer.grid_minimizer &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -126,14 +130,14 @@
 
 
 <div class="viewcode-block" id="AllFitFailed">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.AllFitFailed">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.AllFitFailed">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AllFitFailed</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="GridMinimizer">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GridMinimizer</span><span class="p">(</span><span class="n">GlobalMinimizer</span><span class="p">):</span>
     <span class="n">valid_setup_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="s2">&quot;second_minimization&quot;</span><span class="p">,</span> <span class="s2">&quot;callbacks&quot;</span><span class="p">)</span>
 
@@ -184,7 +188,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GridMinimizer.add_callback">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.add_callback">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.add_callback">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This adds a callback function which is called after each point in</span>
 <span class="sd">        the grid has been used.</span>
@@ -200,7 +204,7 @@
 
 
 <div class="viewcode-block" id="GridMinimizer.remove_callbacks">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.remove_callbacks">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.remove_callbacks">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all callbacks added with add_callback.</span>
 
@@ -210,7 +214,7 @@
 
 
 <div class="viewcode-block" id="GridMinimizer.add_parameter_to_grid">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.add_parameter_to_grid">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.minimizer.html#threeML.minimizer.grid_minimizer.GridMinimizer.add_parameter_to_grid">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_parameter_to_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a parameter to the grid.</span>
 
@@ -361,7 +365,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

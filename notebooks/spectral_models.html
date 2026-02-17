@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spectral Models &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
@@ -19,12 +20,14 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
       <script src="../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
       <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
@@ -56,7 +59,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
@@ -88,7 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -96,13 +99,14 @@
 <li class="toctree-l1"><a class="reference internal" href="random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -161,7 +165,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:09:24 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py#45" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">45</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">21:45:27 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The naima package is not available. Models that depend on it will not be         </span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py#43" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">43</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                         </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
 </pre>
 </div>
@@ -170,7 +174,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it  </span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py#67" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">67</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it  </span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">functions.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/functions.py#65" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">65</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">will not be available.                                                            </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">               </span>
 </pre>
 </div>
@@ -179,7 +183,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:09:25 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The ebltable package is not available. Models that depend on it will not be     </span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/functions_1D/absorption.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">absorption.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/functions_1D/absorption.py#34" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">34</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">         </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> The ebltable package is not available. Models that depend on it will not be     </span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/absorption.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">absorption.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/functions_1D/absorption.py#33" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">33</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">available                                                                        </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                </span>
 </pre>
 </div>
@@ -237,6 +241,7 @@
 
     <span class="c1"># noinspection PyPep8Naming</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">piv</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+
         <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">piv</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">K</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -349,14 +354,17 @@
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_unit</span><span class="p">,</span> <span class="n">y_unit</span><span class="p">):</span>
+
         <span class="c1"># The normalization has the same units as the y</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">y_unit</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+
         <span class="c1"># check is the function is being called with units</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">astropy_units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+
             <span class="c1"># get the values</span>
             <span class="n">a_</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">value</span>
 
@@ -364,6 +372,7 @@
             <span class="n">unit_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_unit</span>
 
         <span class="k">else</span><span class="p">:</span>
+
             <span class="c1"># we do not need to do anything here</span>
             <span class="n">a_</span> <span class="o">=</span> <span class="n">a</span>
 
@@ -463,7 +472,7 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area rendered_html docutils container">
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">23:09:26 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/astromodels/functions/template_model.py#124" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">124</span></a>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #00ff00; text-decoration-color: #00ff00">21:45:28 </span><span style="color: #af5fd7; text-decoration-color: #af5fd7">WARNING </span> <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold"> Energy unit is not a Quantity instance, so units has not been provided.    </span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/template_model.py" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">template_model.py</span></a><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">:</span><a href="file:///usr/share/miniconda/envs/test_env/lib/python3.11/site-packages/astromodels/functions/template_model.py#125" target="_blank"><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">125</span></a>
 <span style="color: #00ff00; text-decoration-color: #00ff00">         </span>         <span style="color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold">Using keV.                                                                  </span><span style="color: #7f7f7f; text-decoration-color: #7f7f7f">                     </span>
 </pre>
 </div>
@@ -494,8 +503,11 @@ $1 \; \mathrm{\frac{1}{keV\,s\,cm^{2}}}$</div>
 </div>
 <div class="input_area highlight-ipython3 notranslate">
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alpha_grid</span><span class="p">:</span>
+
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beta_grid</span><span class="p">:</span>
+
         <span class="k">for</span> <span class="n">xp</span> <span class="ow">in</span> <span class="n">xp_grid</span><span class="p">:</span>
+
             <span class="c1"># change our model parameters</span>
             <span class="n">model</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">a</span>
             <span class="n">model</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">b</span>
@@ -579,7 +591,7 @@ array([1.49086966e+00, 1.43117010e+00, 1.37151134e+00, 1.31187019e+00,
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

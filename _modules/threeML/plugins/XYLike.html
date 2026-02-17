@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.XYLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -143,7 +147,7 @@
 
 
 <div class="viewcode-block" id="XYLike">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">XYLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -255,7 +259,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_name</span>
 
 <div class="viewcode-block" id="XYLike.from_function">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_function">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_function">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_function</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -292,7 +296,7 @@
 
 
 <div class="viewcode-block" id="XYLike.from_dataframe">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_dataframe">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_dataframe">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dataframe</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -341,7 +345,7 @@
 
 
 <div class="viewcode-block" id="XYLike.from_text_file">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_text_file">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.from_text_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_text_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Instance the plugin starting from a text file generated with the</span>
@@ -364,7 +368,7 @@
 
 
 <div class="viewcode-block" id="XYLike.to_dataframe">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_dataframe">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_dataframe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a pandas.DataFrame instance with the data in the &#39;x&#39;, &#39;y&#39;,</span>
 <span class="sd">        and &#39;yerr&#39; column. If the data are Poisson, the yerr column will be -99</span>
@@ -393,7 +397,7 @@
 
 
 <div class="viewcode-block" id="XYLike.to_txt">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_txt">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_txt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the dataset in a text file. You can read the content back in a</span>
 <span class="sd">        dataframe using:</span>
@@ -414,7 +418,7 @@
 
 
 <div class="viewcode-block" id="XYLike.to_csv">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_csv">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.to_csv">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the data in a comma-separated-values file (CSV) file. All</span>
 <span class="sd">        keywords arguments are passed to the pandas.DataFrame.to_csv method</span>
@@ -432,7 +436,7 @@
 
 
 <div class="viewcode-block" id="XYLike.assign_to_source">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.assign_to_source">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.assign_to_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">assign_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign these data to the given source (instead of to the sum of all</span>
 <span class="sd">        sources, which is the default)</span>
@@ -480,7 +484,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_errors</span>
 
 <div class="viewcode-block" id="XYLike.set_model">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.set_model">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.set_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model_instance</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization. Must be a</span>
 <span class="sd">        LikelihoodModel instance.</span>
@@ -557,7 +561,7 @@
         <span class="k">return</span> <span class="n">expectation</span>
 
 <div class="viewcode-block" id="XYLike.get_log_like">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_log_like">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_log_like">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of the log-likelihood with the current values for</span>
 <span class="sd">        the parameters.&quot;&quot;&quot;</span>
@@ -587,7 +591,7 @@
 
 
 <div class="viewcode-block" id="XYLike.get_simulated_dataset">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_simulated_dataset">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_simulated_dataset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;XYLike&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a simulated XYLike plugin.&quot;&quot;&quot;</span>
 
@@ -660,7 +664,7 @@
         <span class="k">return</span> <span class="n">new_xy</span>
 
 <div class="viewcode-block" id="XYLike.plot">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.plot">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
@@ -694,7 +698,7 @@
 
 
 <div class="viewcode-block" id="XYLike.inner_fit">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.inner_fit">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.inner_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This is used for the profile likelihood.</span>
 
@@ -709,13 +713,13 @@
 
 
 <div class="viewcode-block" id="XYLike.get_model">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_model">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_total_expectation</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="XYLike.fit">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.fit">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">function</span><span class="p">:</span> <span class="n">Function</span><span class="p">,</span>
@@ -748,7 +752,7 @@
 
 
 <div class="viewcode-block" id="XYLike.goodness_of_fit">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.goodness_of_fit">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.goodness_of_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">goodness_of_fit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">continue_of_failure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
@@ -768,7 +772,7 @@
 
 
 <div class="viewcode-block" id="XYLike.get_number_of_data_points">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_number_of_data_points">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.XYLike.XYLike.get_number_of_data_points">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of active data points :return:&quot;&quot;&quot;</span>
 
@@ -800,7 +804,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

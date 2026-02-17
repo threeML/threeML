@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.bayesian.dynesty_sampler &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -139,7 +143,7 @@
 
 
 <div class="viewcode-block" id="fill_docs">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.fill_docs">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.fill_docs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fill_docs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">:</span>
@@ -151,7 +155,7 @@
 
 
 <div class="viewcode-block" id="DynestyPool">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynestyPool</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple wrapper for `dview`.&quot;&quot;&quot;</span>
 
@@ -160,7 +164,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dview</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DynestyPool.map">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool.map">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyPool.map">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dview</span><span class="o">.</span><span class="n">map_sync</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">tasks</span><span class="p">)</span></div>
 </div>
@@ -168,7 +172,7 @@
 
 
 <div class="viewcode-block" id="DynestyNestedSampler">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynestyNestedSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">has_dynesty</span><span class="p">,</span> <span class="s2">&quot;You must install Dynesty to use this sampler&quot;</span>
@@ -178,7 +182,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DynestyNestedSampler.setup">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.setup">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.setup">[docs]</a>
     <span class="nd">@fill_docs</span><span class="p">(</span><span class="n">BASE_URL</span><span class="o">=</span><span class="n">DYNESTY_DOC_URL</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -228,7 +232,7 @@
 
 
 <div class="viewcode-block" id="DynestyNestedSampler.sample">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.sample">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyNestedSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the Dynesty NestedSampler class</span>
 
@@ -340,7 +344,7 @@
 
 
 <div class="viewcode-block" id="DynestyDynamicSampler">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynestyDynamicSampler</span><span class="p">(</span><span class="n">UnitCubeSampler</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">has_dynesty</span><span class="p">,</span> <span class="s2">&quot;You must install Dynesty to use this sampler&quot;</span>
@@ -350,7 +354,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DynestyDynamicSampler.setup">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.setup">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.setup">[docs]</a>
     <span class="nd">@fill_docs</span><span class="p">(</span><span class="n">BASE_URL</span><span class="o">=</span><span class="n">DYNESTY_DOC_URL</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -392,7 +396,7 @@
 
 
 <div class="viewcode-block" id="DynestyDynamicSampler.sample">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.sample">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.dynesty_sampler.DynestyDynamicSampler.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the Dynestey DynamicNestedSampler class.</span>
 
@@ -506,7 +510,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

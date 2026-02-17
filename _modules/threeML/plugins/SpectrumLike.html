@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>threeML.plugins.SpectrumLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
@@ -17,8 +18,10 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
       <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
@@ -50,7 +53,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../team.html">Project &amp; Team</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/logging.html">Logging and Verbosity</a></li>
@@ -63,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/API.html#threeml">threeML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
 <ul>
@@ -71,13 +74,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/random_variates.html">Random Variates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb080916C.html">Analyzing GRB 080916C with Fermi-GBM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Fermipy_LAT.html">Fermi-LAT via FermiPyLike</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/LAT_Transient_Builder_Example.html">Analysis of GRB 190114C with Fermi-LAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/grb_130427A_GBM%2BLAT.html">Joint analysis of GRB 130427A with GBM, LLE and LAT data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
@@ -164,7 +168,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SpectrumLike</span><span class="p">(</span><span class="n">PluginPrototype</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -912,7 +916,7 @@
         <span class="k">return</span> <span class="n">observation</span>
 
 <div class="viewcode-block" id="SpectrumLike.from_background">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.from_background">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.from_background">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_background</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">spectrum_like</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract a SpectrumLike plugin from the background of another</span>
@@ -939,7 +943,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.from_function">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.from_function">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.from_function">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_function</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1103,7 +1107,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.assign_to_source">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.assign_to_source">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.assign_to_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">assign_to_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign these data to the given source (instead of to the sum of all</span>
 <span class="sd">        sources, which is the default)</span>
@@ -1137,7 +1141,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_like_model</span>
 
 <div class="viewcode-block" id="SpectrumLike.get_pha_files">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_pha_files">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_pha_files">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_pha_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BinnedSpectrum</span><span class="p">]:</span>
 
         <span class="n">info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BinnedSpectrum</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1154,7 +1158,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.set_active_measurements">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_active_measurements">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_active_measurements">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_active_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the measurements to be used during the analysis. Use as many</span>
 <span class="sd">        ranges as you need, and you can specify either energies or channels to</span>
@@ -1506,7 +1510,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_apply_mask_to_original_vectors</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SpectrumLike.get_simulated_dataset">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_simulated_dataset">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_simulated_dataset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_dataset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">new_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1724,7 +1728,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_storage</span>
 
 <div class="viewcode-block" id="SpectrumLike.rebin_on_background">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.rebin_on_background">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.rebin_on_background">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rebin_on_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_number_of_counts</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Rebin the spectrum guaranteeing the provided minimum number of</span>
 <span class="sd">        counts in each background bin. This is usually required for spectra</span>
@@ -1769,7 +1773,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.rebin_on_source">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.rebin_on_source">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.rebin_on_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rebin_on_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_number_of_counts</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Rebin the spectrum guaranteeing the provided minimum number of</span>
 <span class="sd">        counts in each source bin.</span>
@@ -1836,7 +1840,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Now using </span><span class="si">%s</span><span class="s2"> bins&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rebinner</span><span class="o">.</span><span class="n">n_bins</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SpectrumLike.remove_rebinning">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.remove_rebinning">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.remove_rebinning">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_rebinning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the rebinning scheme set with rebin_on_background.</span>
 
@@ -1982,7 +1986,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="SpectrumLike.get_log_like">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_log_like">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_log_like">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_log_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls the likelihood from the pre-setup likelihood evaluator that</span>
 <span class="sd">        &quot;knows&quot; of the currently set noise models.</span>
@@ -1999,14 +2003,14 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.inner_fit">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.inner_fit">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.inner_fit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inner_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_like</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="SpectrumLike.set_model">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_model">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihoodModel</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model to be used in the joint minimization.&quot;&quot;&quot;</span>
 
@@ -2071,7 +2075,7 @@
             <span class="p">)</span>
 
 <div class="viewcode-block" id="SpectrumLike.get_model">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_model">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precalc_fluxes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The model integrated over the energy bins. Note that it only returns</span>
 <span class="sd">        the  model for the currently active channels/measurements.</span>
@@ -2123,7 +2127,7 @@
             <span class="p">)</span>
 
 <div class="viewcode-block" id="SpectrumLike.get_background_model">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_background_model">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_background_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_background_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">without_mask</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The background model integrated over the energy bins. Note that it</span>
 <span class="sd">        only returns the  model for the currently active channels/measurements.</span>
@@ -2342,7 +2346,7 @@
         <span class="k">return</span> <span class="n">differential_flux</span><span class="p">,</span> <span class="n">integral</span>
 
 <div class="viewcode-block" id="SpectrumLike.use_effective_area_correction">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.use_effective_area_correction">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.use_effective_area_correction">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">use_effective_area_correction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">min_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
@@ -2391,7 +2395,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.fix_effective_area_correction">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.fix_effective_area_correction">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.fix_effective_area_correction">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fix_effective_area_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fix the multiplicative factor (see use_effective_area_correction) to</span>
 <span class="sd">        the provided value (default: 1)</span>
@@ -2405,7 +2409,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.set_model_integrate_method">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_model_integrate_method">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_model_integrate_method">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_model_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the integrate method for the model integration :param method:</span>
 
@@ -2451,7 +2455,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="SpectrumLike.set_background_integrate_method">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_background_integrate_method">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.set_background_integrate_method">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_background_integrate_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the integrate method for the background integration :param</span>
 <span class="sd">        method: (str) which method should be used (simpson or trapz)&quot;&quot;&quot;</span>
@@ -2852,7 +2856,7 @@
             <span class="k">return</span> <span class="n">significance</span>
 
 <div class="viewcode-block" id="SpectrumLike.write_pha">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.write_pha">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.write_pha">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_pha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;this is in progress&quot;</span><span class="p">)</span></div>
@@ -2862,7 +2866,7 @@
         <span class="c1"># dispersion like</span>
 
 <div class="viewcode-block" id="SpectrumLike.view_count_spectrum">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.view_count_spectrum">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.view_count_spectrum">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">view_count_spectrum</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plot_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -3341,7 +3345,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
 <div class="viewcode-block" id="SpectrumLike.get_number_of_data_points">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_number_of_data_points">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.get_number_of_data_points">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_number_of_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of active data bins :return:&quot;&quot;&quot;</span>
 
@@ -3351,7 +3355,7 @@
 
 
 <div class="viewcode-block" id="SpectrumLike.display">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.display">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.display">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">())</span></div>
@@ -3627,7 +3631,7 @@
         <span class="k">return</span> <span class="n">rebinned_quantities</span>
 
 <div class="viewcode-block" id="SpectrumLike.display_model">
-<a class="viewcode-back" href="../../../notebooks/api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.display_model">[docs]</a>
+<a class="viewcode-back" href="../../../api/threeML.plugins.html#threeML.plugins.SpectrumLike.SpectrumLike.display_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">display_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
@@ -3938,7 +3942,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright (2024), the ThreeML developers.</p>
+    <p>&#169; Copyright (2026), the ThreeML developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
