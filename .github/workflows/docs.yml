@@ -449,18 +449,18 @@ jobs:
 
           ls docs/notebooks
       
-      - name: Set commit ref for RTD
-        id: set_commit_ref
+      - name: Set commit sha for RTD
+        id: set_commit_sha
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "commit_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
           else
-            echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
           
       - uses: actions/upload-artifact@v6
         with:
-          name: notebooks-for-${{ steps.set_commit_ref.outputs.commit_ref }}
+          name: notebooks-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/notebooks
           
       - name: Sleep for 10 min
@@ -474,7 +474,7 @@ jobs:
         with:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
-          commit_ref: ${{ steps.set_commit_ref.outputs.commit_ref }}
+          commit_ref: ${{ github.ref }}
       
       - name: Trigger RTDs Build (Pull Requests)
         if: github.event_name == 'pull_request'
@@ -537,18 +537,18 @@ jobs:
 
           sphinx-apidoc -f -o docs/api/ threeML
 
-      - name: Set commit ref for RTD
-        id: set_commit_ref
+      - name: Set commit sha for RTD
+        id: set_commit_sha
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "commit_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
           else
-            echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
       
       - uses: actions/upload-artifact@v6
         with:
-          name: api-stubs-for-${{ steps.set_commit_ref.outputs.commit_ref }}
+          name: api-stubs-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/api
 
 
@@ -599,24 +599,24 @@ jobs:
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
-      - name: Set commit ref for RTD
-        id: set_commit_ref
+      - name: Set commit sha for RTD
+        id: set_commit_sha
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "commit_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
           else
-            echo "commit_ref=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
 
       - uses: actions/download-artifact@v7
         with:
-          name: notebooks-for-${{ steps.set_commit_ref.outputs.commit_ref }}
+          name: notebooks-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/notebooks
 
 
       - uses: actions/download-artifact@v7
         with:
-          name: api-stubs-for-${{ steps.set_commit_ref.outputs.commit_ref }}
+          name: api-stubs-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/api
 
 
