@@ -255,7 +255,7 @@ def _conolve_and_convert(diff_flux, factor, response, wavelength, zero_point, N)
         diff_flux[n] *= factor[n] * response[n] * wavelength[n] / _hc_constant
 
     # this will be in some funky units so we convert to 1/ cm2 s
-    synthetic_flux = np.trapz(diff_flux, wavelength) * _final_convert
+    synthetic_flux = np.trapezoid(diff_flux, wavelength) * _final_convert
 
     ratio = synthetic_flux / zero_point
 
