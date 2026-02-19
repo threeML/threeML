@@ -59,11 +59,7 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
-                  else
-                    sudo apt install libhdf5-dev
                   fi
-
-                  pip install git+https://github.com/PyTables/PyTables.git
 
                   pip install astromodels
 
@@ -116,13 +112,7 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
-                  else
-                    sudo apt install libhdf5-dev
-
                   fi
-
-                  pip install git+https://github.com/PyTables/PyTables.git
-
 
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
@@ -154,7 +144,7 @@ jobs:
             fail-fast: false
             matrix:
                 os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
-                python-version: [3.9, 3.10, 3.11]
+                python-version: ["3.9", "3.10", "3.11"]
                 include:
                   - environment: ci/environment_fermi.yml
                     architecture: x64
