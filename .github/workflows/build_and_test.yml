@@ -41,7 +41,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11","3.14"]
+                python-version: ["3.9","3.10","3.11"]
                 os: ["ubuntu-latest", "macos-latest", "macos-15-intel"]
         runs-on:  ${{ matrix.os }}
         steps:
@@ -59,9 +59,6 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
-                  else;
-                    apt-get update
-                    apt-get install -y --no-install-recommends libhdf5-dev
                   fi
 
                   pip install git+https://github.com/PyTables/PyTables.git
@@ -99,7 +96,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11","3.14"]
+                python-version: ["3.9","3.10","3.11"]
                 os: [ "ubuntu-latest", "macos-latest", "macos-15-intel"]
         runs-on: ${{ matrix.os }}
         steps:
@@ -117,9 +114,6 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
-                  else;
-                    apt-get update
-                    apt-get install -y --no-install-recommends libhdf5-dev
                   fi
 
                   pip install git+https://github.com/PyTables/PyTables.git
@@ -155,7 +149,7 @@ jobs:
             fail-fast: false
             matrix:
                 os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
-                python-version: [3.9, 3.11, 3.14]
+                python-version: [3.9, 3.10, 3.11]
                 include:
                   - environment: ci/environment_fermi.yml
                     architecture: x64
@@ -166,9 +160,6 @@ jobs:
                     os: macos-15-intel
                     python-version: 3.9
                     architecture: x64
-                  - environment: ci/environment_xspec.yml
-                    os: ubuntu-latest
-                    python-version: 3.14
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
