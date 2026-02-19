@@ -59,6 +59,8 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
+                  else
+                    sudo apt install libhdf5-dev
                   fi
 
                   pip install git+https://github.com/PyTables/PyTables.git
@@ -114,6 +116,9 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
+                  else
+                    sudo apt install libhdf5-dev
+
                   fi
 
                   pip install git+https://github.com/PyTables/PyTables.git
