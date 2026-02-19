@@ -59,7 +59,12 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
+                  else;
+                    apt-get update
+                    apt-get install -y --no-install-recommends libhdf5-dev
                   fi
+
+                  pip install git+https://github.com/PyTables/PyTables.git
 
                   pip install astromodels
 
@@ -112,7 +117,13 @@ jobs:
                   then
                     brew update
                     brew install hdf5 lzo c-blosc
+                  else;
+                    apt-get update
+                    apt-get install -y --no-install-recommends libhdf5-dev
                   fi
+
+                  pip install git+https://github.com/PyTables/PyTables.git
+
 
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
