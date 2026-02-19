@@ -115,7 +115,6 @@
              
   <h1>Source code for threeML.bayesian.nautilus_sampler</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astromodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_astromodels_memoization</span>
@@ -124,27 +123,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">threeML_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
 
-
-<div class="viewcode-block" id="capture_arguments">
-<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.nautilus_sampler.capture_arguments">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">capture_arguments</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="c1"># Get the function&#39;s signature</span>
-    <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-
-    <span class="c1"># Bind the provided arguments to the function&#39;s parameters</span>
-    <span class="n">bound_args</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="c1"># Convert the bound arguments to a dictionary</span>
-    <span class="n">arg_dict</span> <span class="o">=</span> <span class="n">bound_args</span><span class="o">.</span><span class="n">arguments</span>
-
-    <span class="k">return</span> <span class="n">arg_dict</span></div>
-
-
-
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">nautilus</span>
 
-<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="n">has_nautilus</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">else</span><span class="p">:</span>
@@ -153,7 +135,6 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># see if we have mpi and/or are using parallel</span>
-
     <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
 
     <span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># need parallel capabilities</span>
@@ -164,7 +145,7 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">using_mpi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="n">using_mpi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -185,141 +166,63 @@
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.nautilus_sampler.NautilusSampler.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">n_live</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
-        <span class="n">n_update</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">enlarge_per_dim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span>
-        <span class="n">n_points_min</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">split_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">n_networks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">neural_network_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span>
-        <span class="n">prior_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-        <span class="n">prior_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span>
-        <span class="n">likelihood_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-        <span class="n">likelihood_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span>
-        <span class="n">n_batch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">n_like_new_bound</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">vectorized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">pass_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">filepath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">resume</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">f_live</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-        <span class="n">n_shell</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">n_eff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
-        <span class="n">discard_exploration</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">n_live</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup the nautilus sampler.</span>
-
 <span class="sd">        See: https://nautilus-sampler.readthedocs.io/en/stable/index.html</span>
+<span class="sd">        and https://doi.org/10.1093/mnras/stad2441</span>
 
-<span class="sd">        :param n_live: Number of so-called live points. New bounds are constructed so</span>
-<span class="sd">        that they encompass the live points. Default is 3000.</span>
+<span class="sd">        :param n_live: Number of livepoints, default is 3000</span>
 <span class="sd">        :type n_live: int</span>
-<span class="sd">        :param n_update: The maximum number of additions to the live set before a new</span>
-<span class="sd">        bound is created. If None, use n_live. Default is None.</span>
-<span class="sd">        :type n_update: Optional[int]</span>
-<span class="sd">        :param enlarge_per_dim: Along each dimension, outer ellipsoidal bounds are</span>
-<span class="sd">        enlarged by this factor. Default is 1.1.</span>
-<span class="sd">        :type enlarge_per_dim: float</span>
-<span class="sd">        :param n_points_min: The minimum number of points each ellipsoid should have.</span>
-<span class="sd">        Effectively, ellipsoids with less than twice that number will not be split</span>
-<span class="sd">        further. If None, uses n_points_min = n_dim + 50. Default is None.</span>
-<span class="sd">        :type n_points_min: Optional[int]</span>
-<span class="sd">        :param split_threshold: hreshold used for splitting the multi-ellipsoidal bound</span>
-<span class="sd">        used for sampling. If the volume of the bound prior enlarging is larger than</span>
-<span class="sd">        split_threshold times the target volume, the multi-ellipsiodal bound is split</span>
-<span class="sd">        further, if possible. Default is 100.</span>
-<span class="sd">        :type split_threshold: int</span>
-<span class="sd">        :param n_networks: Number of networks used in the estimator. Default is 4.</span>
-<span class="sd">        :type n_networks: int</span>
-<span class="sd">        :param neural_network_kwargs: Non-default keyword arguments passed to the</span>
-<span class="sd">        constructor of MLPRegressor.</span>
-<span class="sd">        :type neural_network_kwargs: Dict[Any]</span>
-<span class="sd">        :param prior_args: List of extra positional arguments for prior. Only used if</span>
-<span class="sd">        prior is a function.</span>
-<span class="sd">        :type prior_args: List[Any]</span>
-<span class="sd">        :param prior_kwargs: Dictionary of extra keyword arguments for prior. Only used</span>
-<span class="sd">        if prior is a function.</span>
-<span class="sd">        :type prior_kwargs: Dict[Any]</span>
-<span class="sd">        :param likelihood_args: List of extra positional arguments for likelihood.</span>
-<span class="sd">        :type likelihood_args: List[Any]</span>
-<span class="sd">        :param likelihood_kwargs: Dictionary of extra keyword arguments for likelihood.</span>
-<span class="sd">        :type likelihood_kwargs: Dict[Any]</span>
-<span class="sd">        :param n_batch: Number of likelihood evaluations that are performed at each</span>
-<span class="sd">        step. If likelihood evaluations are parallelized, should be multiple of the</span>
-<span class="sd">        number of parallel processes. Very large numbers can lead to new bounds being</span>
-<span class="sd">        created long after n_update additions to the live set have been achieved. This</span>
-<span class="sd">        will not cause any bias but could reduce efficiency. Default is 100.</span>
-<span class="sd">        :type n_batch: int</span>
-<span class="sd">        :param n_like_new_bound: The maximum number of likelihood calls before a new</span>
-<span class="sd">        bounds is created. If None, use 10 times n_live. Default is None.</span>
-<span class="sd">        :type n_like_new_bound: Optional[int]</span>
-<span class="sd">        :param vectorized: If True, the likelihood function can receive multiple input</span>
-<span class="sd">        sets at once. For example, if the likelihood function receives arrays, it should</span>
-<span class="sd">        be able to take an array with shape (n_points, n_dim) and return an array with</span>
-<span class="sd">        shape (n_points). Similarly, if the likelihood function accepts dictionaries, it</span>
-<span class="sd">        should be able to process dictionaries where each value is an array with shape</span>
-<span class="sd">        (n_points). Default is False.</span>
-<span class="sd">        :type vectorized: bool</span>
-<span class="sd">        :param pass_dict: If True, the likelihood function expects model parameters as</span>
-<span class="sd">        dictionaries. If False, it expects regular numpy arrays. Default is to set it to</span>
-<span class="sd">        True if prior was a nautilus.Prior instance and False otherwise</span>
-<span class="sd">        :type pass_dict: Optional[bool]</span>
-<span class="sd">        :param pool: Pool used for parallelization of likelihood calls and sampler</span>
-<span class="sd">        calculations. If None, no parallelization is performed. If an integer, the</span>
-<span class="sd">        sampler will use a multiprocessing.Pool object with the specified number of</span>
-<span class="sd">        processes. Finally, if specifying a tuple, the first one specifies the pool used</span>
-<span class="sd">        for likelihood calls and the second one the pool for sampler calculations.</span>
-<span class="sd">        Default is None.</span>
-<span class="sd">        :type pool: Optional[int]</span>
-<span class="sd">        :param seed: Seed for random number generation used for reproducible results</span>
-<span class="sd">        accross different runs. If None, results are not reproducible. Default is None.</span>
-<span class="sd">        :type seed: Optional[int]</span>
-<span class="sd">        :param filepath: ath to the file where results are saved. Must have a ‘.h5’ or</span>
-<span class="sd">        ‘.hdf5’ extension. If None, no results are written. Default is None.</span>
-<span class="sd">        :type filepath: Optional[str]</span>
-<span class="sd">        :param resume: If True, resume from previous run if filepath exists. If False,</span>
-<span class="sd">        start from scratch and overwrite any previous file. Default is True.</span>
-<span class="sd">        :type resume: bool</span>
-<span class="sd">        :param f_live: Maximum fraction of the evidence contained in the live set before</span>
-<span class="sd">        building the initial shells terminates. Default is 0.01.</span>
-<span class="sd">        :type f_live: float</span>
-<span class="sd">        :param n_shell: Minimum number of points in each shell. The algorithm will</span>
-<span class="sd">        sample from the shells until this is reached. Default is the batch size of the</span>
-<span class="sd">        sampler which is 100 unless otherwise specified.</span>
-<span class="sd">        :type n_shell: Optional[int]</span>
-<span class="sd">        :param n_eff: Minimum effective sample size. The algorithm will sample from the</span>
-<span class="sd">        shells until this is reached. Default is 10000.</span>
-
-<span class="sd">        :type n_eff: int</span>
-<span class="sd">        :param discard_exploration: Whether to discard points drawn in the exploration</span>
-<span class="sd">        phase. This is required for a fully unbiased posterior and evidence estimate.</span>
-<span class="sd">        Default is False.</span>
-<span class="sd">        :type discard_exploration: bool</span>
-<span class="sd">        :param verbose: If True, print additional information. Default is False.</span>
-<span class="sd">        :type verbose: bool</span>
-<span class="sd">        :returns:</span>
+<span class="sd">        :param verbose: Verbosity, default is false</span>
+<span class="sd">        :type n_live: bool</span>
+<span class="sd">        :param kwargs: Additional keyword arguments for the Nautilus Sampler.</span>
+<span class="sd">            Please refer to the official documentation. Defaults to the Nautilus</span>
+<span class="sd">            defaults.</span>
+<span class="sd">        :type kwargs: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">arg_dict</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="c1"># get the allowed keys from the function definitions</span>
+        <span class="n">allowed_setup_keys</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+        <span class="n">allowed_sampler_keys</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">Sampler</span><span class="o">.</span><span class="n">run</span><span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># Remove the &quot;self&quot; key from the dictionary (if present) as it&#39;s not an argument</span>
-        <span class="n">arg_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sampler_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arg_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arg_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="o">-</span><span class="mi">5</span><span class="p">:])</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">allowed_setup_keys</span><span class="p">:</span>
+                <span class="n">sampler_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">allowed_sampler_keys</span><span class="p">:</span>
+                <span class="n">run_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;You provided </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> with a value of </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> wich is not available&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot; for neither the Nautilus initalization nor the run function. &quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;We will skip it.&quot;</span>
+                <span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n_live&quot;</span><span class="p">:</span> <span class="n">n_live</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sampler_dict</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">run_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="NautilusSampler.sample">
 <a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.nautilus_sampler.NautilusSampler.sample">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the UltraNest numerical integration method :rtype:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample using the Nautilus sampler</span>
 
-<span class="sd">        :returns:</span>
+<span class="sd">        :param quiet: Flag for anti-verbosity, defaults to false</span>
+<span class="sd">        :type quiet: bool</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :type kwargs: dict</span>
+
+<span class="sd">        :rtype: np.array</span>
+<span class="sd">        :returns: samples</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_setup</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You forgot to setup the sampler!&quot;</span><span class="p">)</span>
@@ -390,7 +293,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_samples_dictionary</span><span class="p">()</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">evidence</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_marginal_likelihood</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">log_z</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_build_results</span><span class="p">()</span>
 
