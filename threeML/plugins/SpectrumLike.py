@@ -3729,7 +3729,7 @@ class SpectrumLike(PluginPrototype):
 
 @nb.njit(fastmath=True, cache=True)
 def _trapz(x, y):
-    return np.trapezoid(x, y)
+    return np.trapz(x, y)
 
 
 @nb.njit(fastmath=True, cache=True)

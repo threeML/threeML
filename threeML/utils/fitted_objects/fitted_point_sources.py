@@ -19,7 +19,7 @@ log = setup_logger(__name__)
 
 @nb.njit(fastmath=True, cache=True)
 def _trapz(x, y):
-    return np.trapezoid(x, y)
+    return np.trapz(x, y)
 
 
 class NotCompositeModelError(RuntimeError):
