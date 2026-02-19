@@ -96,7 +96,7 @@ class ZeusSampler(MCMCSampler):
             if using_mpi:
                 with MPIPoolExecutor() as executor:
                     sampler = zeus.EnsembleSampler(
-                        logprob_fn=self.get_posterior,
+                        logprob_fn=self.get_posterior_proxy(),
                         nwalkers=self._n_walkers,
                         ndim=n_dim,
                         pool=executor,
@@ -120,7 +120,7 @@ class ZeusSampler(MCMCSampler):
                 view = c[:]
 
                 sampler = zeus.EnsembleSampler(
-                    logprob_fn=self.get_posterior,
+                    logprob_fn=self.get_posterior_proxy(),
                     nwalkers=self._n_walkers,
                     ndim=n_dim,
                     pool=view,
@@ -128,7 +128,9 @@ class ZeusSampler(MCMCSampler):
 
             else:
                 sampler = zeus.EnsembleSampler(
-                    logprob_fn=self.get_posterior, nwalkers=self._n_walkers, ndim=n_dim
+                    logprob_fn=self.get_posterior_proxy(),
+                    nwalkers=self._n_walkers,
+                    ndim=n_dim,
                 )
 
             # If a seed is provided, set the random number seed
