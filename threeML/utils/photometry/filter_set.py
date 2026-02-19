@@ -1,4 +1,5 @@
 from builtins import object, zip
+from packaging.version import Version
 
 import astropy.constants as constants
 import astropy.units as astro_units
@@ -7,6 +8,13 @@ import numpy as np
 import speclite.filters as spec_filters
 
 from threeML.utils.interval import IntervalSet
+
+np_version = Version(np.__version__)
+if np_version < Version("2.0.0"):
+    trapezoid = np.trapz
+else:
+    trapezoid = np.trapezoid
+
 
 _final_convert = (
     (
@@ -255,7 +263,7 @@ def _conolve_and_convert(diff_flux, factor, response, wavelength, zero_point, N)
         diff_flux[n] *= factor[n] * response[n] * wavelength[n] / _hc_constant
 
     # this will be in some funky units so we convert to 1/ cm2 s
-    synthetic_flux = np.trapezoid(diff_flux, wavelength) * _final_convert
+    synthetic_flux = trapezoid(diff_flux, wavelength) * _final_convert
 
     ratio = synthetic_flux / zero_point
 
