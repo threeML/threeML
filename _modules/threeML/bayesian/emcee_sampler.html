@@ -221,12 +221,12 @@
                 <span class="n">view</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:]</span>
 
                 <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="n">view</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior_proxy</span><span class="p">(),</span> <span class="n">pool</span><span class="o">=</span><span class="n">view</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior_proxy</span><span class="p">()</span>
                 <span class="p">)</span>
 
             <span class="c1"># If a seed is provided, set the random number seed</span>

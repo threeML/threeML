@@ -116,6 +116,7 @@
   <h1>Source code for threeML.classicMLE.joint_likelihood</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">object</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -170,6 +171,28 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">NotANumberInLikelihood</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_WeakMinusLogLikeProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Callable proxy that avoids strong references to JointLikelihood.</span>
+
+<span class="sd">    Some minimizers (notably iminuit) can keep the objective callable alive</span>
+<span class="sd">    longer than expected. If the callable is a bound method, that can retain</span>
+<span class="sd">    the entire JointLikelihood/DataList/plugin graph. Using a weakref-backed</span>
+<span class="sd">    proxy breaks that retention chain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jl</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jl_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">trial_values</span><span class="p">):</span>
+        <span class="n">jl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jl_ref</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">jl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">minimization</span><span class="o">.</span><span class="n">FIT_FAILED</span>
+
+        <span class="k">return</span> <span class="n">jl</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">(</span><span class="o">*</span><span class="n">trial_values</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="JointLikelihood">
@@ -243,6 +266,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_callback</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_analysis_results</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span> <span class="o">=</span> <span class="n">_WeakMinusLogLikeProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_assign_model_to_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;REGISTERING MODEL&quot;</span><span class="p">)</span>
@@ -394,7 +418,7 @@
                     <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span>
 
                 <span class="n">global_minimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_minimizer</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="p">,</span>
                     <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -432,7 +456,7 @@
 
                 <span class="c1"># Now set up secondary minimizer</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer_type</span><span class="o">.</span><span class="n">get_second_minimization_instance</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -441,7 +465,7 @@
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;starting local optimization&quot;</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_minimizer</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
                 <span class="p">)</span>
 
             <span class="c1"># Perform the fit, but first flush stdout (so if we have verbose=True the</span>
@@ -661,7 +685,6 @@
             <span class="k">raise</span> <span class="n">NoFitYet</span><span class="p">()</span>
 
         <span class="c1"># Then restore the best fit</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimizer</span><span class="o">.</span><span class="n">restore_best_fit</span><span class="p">()</span>
 
         <span class="c1"># Check minimal assumptions about the procedure</span>
@@ -814,7 +837,7 @@
                 <span class="p">]</span>
 
                 <span class="n">this_minimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_minimizer</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">minus_log_like_profile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_minus_log_like_proxy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span>
                 <span class="p">)</span>
 
                 <span class="n">this_p1min</span> <span class="o">=</span> <span class="n">pa</span><span class="p">[</span><span class="n">start_index</span> <span class="o">*</span> <span class="n">p1_split_steps</span><span class="p">]</span>

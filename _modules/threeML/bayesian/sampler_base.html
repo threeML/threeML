@@ -117,6 +117,7 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -449,6 +450,29 @@
         <span class="k">return</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">log_prior</span></div>
 
 
+<div class="viewcode-block" id="SamplerBase.get_posterior_proxy">
+<a class="viewcode-back" href="../../../api/threeML.bayesian.html#threeML.bayesian.sampler_base.SamplerBase.get_posterior_proxy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_posterior_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a weakref-backed posterior callable.</span>
+
+<span class="sd">        This prevents external samplers from keeping a strong reference to this</span>
+<span class="sd">        SamplerBase instance via a bound method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sampler_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">posterior</span><span class="p">(</span><span class="n">trial_values</span><span class="p">):</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_ref</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+            <span class="k">return</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_posterior</span><span class="p">(</span><span class="n">trial_values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">posterior</span></div>
+
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sum of log-priors, used in the parallel tempering</span>
 <span class="sd">        sampling.&quot;&quot;&quot;</span>
@@ -597,14 +621,21 @@
         <span class="c1"># construction of the class)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_free_parameters</span><span class="p">()</span>
 
+        <span class="n">sampler_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
         <span class="k">def</span><span class="w"> </span><span class="nf">loglike</span><span class="p">(</span><span class="n">trial_values</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_ref</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
             <span class="c1"># NOTE: the _log_like function DOES NOT assign trial_values to the</span>
             <span class="c1"># parameters</span>
 
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
                 <span class="n">parameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">trial_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
-            <span class="n">log_like</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_like</span><span class="p">(</span><span class="n">trial_values</span><span class="p">)</span>
+            <span class="n">log_like</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_log_like</span><span class="p">(</span><span class="n">trial_values</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">log_like</span>
 
@@ -616,10 +647,15 @@
         <span class="k">if</span> <span class="n">return_copy</span><span class="p">:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">prior</span><span class="p">(</span><span class="n">cube</span><span class="p">):</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_ref</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">cube</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
                 <span class="n">params</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="n">sampler</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">):</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">from_unit_cube</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -635,8 +671,13 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">prior</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nparams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler_ref</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span>
+
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="n">sampler</span><span class="o">.</span><span class="n">_free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">):</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">from_unit_cube</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
