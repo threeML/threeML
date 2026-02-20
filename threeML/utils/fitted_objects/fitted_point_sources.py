@@ -1,6 +1,7 @@
 __author__ = "grburgess"
 
 import collections
+from packaging.version import Version
 
 import numba as nb
 import numpy as np
@@ -16,10 +17,16 @@ from threeML.utils.fitted_objects.fitted_source_handler import (
 
 log = setup_logger(__name__)
 
+np_version = Version(np.__version__)
+if np_version < Version("2.0.0"):
+    trapezoid = np.trapz
+else:
+    trapezoid = np.trapezoid
+
 
 @nb.njit(fastmath=True, cache=True)
 def _trapz(x, y):
-    return np.trapz(x, y)
+    return trapezoid(x, y)
 
 
 class NotCompositeModelError(RuntimeError):
