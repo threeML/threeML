@@ -1,5 +1,6 @@
 import collections
 import sys
+import weakref
 from builtins import object, range, zip
 
 import matplotlib.pyplot as plt
@@ -45,6 +46,28 @@ class ReducingNumberOfSteps(Warning):
 
 class NotANumberInLikelihood(Warning):
     pass
+
+
+class _WeakMinusLogLikeProxy(object):
+    """
+    Callable proxy that avoids strong references to JointLikelihood.
+
+    Some minimizers (notably iminuit) can keep the objective callable alive
+    longer than expected. If the callable is a bound method, that can retain
+    the entire JointLikelihood/DataList/plugin graph. Using a weakref-backed
+    proxy breaks that retention chain.
+    """
+
+    def __init__(self, jl):
+        self._jl_ref = weakref.ref(jl)
+
+    def __call__(self, *trial_values):
+        jl = self._jl_ref()
+
+        if jl is None:
+            return minimization.FIT_FAILED
+
+        return jl.minus_log_like_profile(*trial_values)
 
 
 class JointLikelihood(object):
@@ -116,6 +139,7 @@ class JointLikelihood(object):
         self._minimizer_callback = None
 
         self._analysis_results = None
+        self._minus_log_like_proxy = _WeakMinusLogLikeProxy(self)
 
     def _assign_model_to_data(self, model) -> None:
         log.debug("REGISTERING MODEL")
@@ -265,7 +289,7 @@ class JointLikelihood(object):
                     verbosity = 1
 
                 global_minimizer = self._get_minimizer(
-                    self.minus_log_like_profile,
+                    self._minus_log_like_proxy,
                     self._free_parameters,
                     verbosity=verbosity,
                 )
@@ -303,7 +327,7 @@ class JointLikelihood(object):
 
                 # Now set up secondary minimizer
                 self._minimizer = self._minimizer_type.get_second_minimization_instance(
-                    self.minus_log_like_profile, self._free_parameters
+                    self._minus_log_like_proxy, self._free_parameters
                 )
 
             else:
@@ -312,7 +336,7 @@ class JointLikelihood(object):
                 log.debug("starting local optimization")
 
                 self._minimizer = self._get_minimizer(
-                    self.minus_log_like_profile, self._free_parameters
+                    self._minus_log_like_proxy, self._free_parameters
                 )
 
             # Perform the fit, but first flush stdout (so if we have verbose=True the
@@ -526,7 +550,6 @@ class JointLikelihood(object):
             raise NoFitYet()
 
         # Then restore the best fit
-
         self._minimizer.restore_best_fit()
 
         # Check minimal assumptions about the procedure
@@ -679,7 +702,7 @@ class JointLikelihood(object):
                 ]
 
                 this_minimizer = self._get_minimizer(
-                    self.minus_log_like_profile, self._free_parameters
+                    self._minus_log_like_proxy, self._free_parameters
                 )
 
                 this_p1min = pa[start_index * p1_split_steps]

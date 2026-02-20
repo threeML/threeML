@@ -2,6 +2,7 @@ import pytest
 
 from threeML import display_spectrum_model_counts
 from threeML.utils.binner import NotEnoughData
+import matplotlib.pyplot as plt
 
 
 def test_OGIP_plotting(
@@ -22,6 +23,8 @@ def test_OGIP_plotting(
 
     NaI6.view_count_spectrum(plot_errors=False, show_bad_channels=False)
 
+    plt.close("all")
+
     _ = display_spectrum_model_counts(jl)
 
     _ = display_spectrum_model_counts(
@@ -35,6 +38,8 @@ def test_OGIP_plotting(
     _ = display_spectrum_model_counts(jl, data=("wrong"))
 
     _ = display_spectrum_model_counts(jl, min_rate=1e-8)
+
+    plt.close("all")
 
     with pytest.raises(NotEnoughData):
         _ = display_spectrum_model_counts(jl, min_rate=1e8)
@@ -59,3 +64,5 @@ def test_OGIP_plotting(
         show_background=True,
         source_only=True,
     )
+
+    plt.close("all")

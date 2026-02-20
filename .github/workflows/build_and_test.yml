@@ -5,6 +5,11 @@ on:
         - "README.md"
         - "**/docs/**"
         - ".github/workflows/docs.yml"
+      branches:
+        - master
+        - dev
+      tags:
+        - "v*"
 
     pull_request:
       branches:
@@ -12,7 +17,7 @@ on:
         - dev
 
     schedule:
-        - cron: "0 11 * * *"
+        - cron: "0 11 * * 1"
 
 jobs:
     skip_duplicate:
@@ -62,7 +67,7 @@ jobs:
                     pip install --upgrade --pre --no-deps astromodels
                   fi
                   
-                  pip install --upgrade flake8 coverage pytest-cov cython numba
+                  pip install --upgrade flake8 coverage pytest-cov 
 
                   pip install -e .
               env:
@@ -111,7 +116,7 @@ jobs:
 
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
-                  pip install --upgrade flake8 coverage pytest-cov cython
+                  pip install --upgrade flake8 coverage pytest-cov 
 
                   pip install -e .
             - name: Lint with flake8
@@ -163,7 +168,7 @@ jobs:
               uses: conda-incubator/setup-miniconda@v3
               with:
                   auto-update-conda: true
-                  auto-activate-base: false
+                  auto-activate: false
                   mamba-version: "*"
                   architecture: ${{ matrix.architecture }}
                   activate-environment: test_env

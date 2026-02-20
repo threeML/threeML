@@ -10,6 +10,9 @@ from threeML.minimizer.minimization import (
     FitFailed,
     LocalMinimizer,
 )
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 # These are the status returned by Minuit
 #     status = 1    : Covariance was made pos defined
@@ -63,7 +66,7 @@ class FuncWrapper(ROOT.Math.IMultiGenFunction):
 
 
 class ROOTMinimizer(LocalMinimizer):
-    valid_setup_keys = ("ftol", "max_function_calls", "strategy")
+    valid_setup_keys = ("ftol", "max_function_calls", "strategy", "algo_type")
 
     def __init__(self, function, parameters, verbosity=0, setup_dict=None):
         super(ROOTMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
@@ -71,7 +74,12 @@ class ROOTMinimizer(LocalMinimizer):
     def _setup(self, user_setup_dict):
         # Defaults
 
-        setup_dict = {"ftol": 1.0, "max_function_calls": 100000, "strategy": 1}
+        setup_dict = {
+            "ftol": 1.0,
+            "max_function_calls": 100000,
+            "strategy": 1,
+            "algo_type": "migrad",
+        }
 
         # Update defaults if needed
         if user_setup_dict is not None:
@@ -82,7 +90,12 @@ class ROOTMinimizer(LocalMinimizer):
 
         self.functor = FuncWrapper()
         self.functor.setup(self.function, self.Npar)
-        self.minimizer = ROOT.Minuit2.Minuit2Minimizer("Minimize")
+        if setup_dict["algo_type"].lower() == "migrad":
+            self.minimizer = ROOT.Minuit2.Minuit2Minimizer()
+        else:
+            self.minimizer = ROOT.Minuit2.Minuit2Minimizer(setup_dict["algo_type"])
+
+        log.info("Using algorithm " + setup_dict["algo_type"])
         self.minimizer.Clear()
         self.minimizer.SetMaxFunctionCalls(setup_dict["max_function_calls"])
         self.minimizer.SetPrintLevel(self.verbosity)

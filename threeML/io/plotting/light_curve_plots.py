@@ -38,7 +38,7 @@ def binned_light_curve_plot(
     all_masks = []
 
     # round
-    np.round(time_bins, decimals=4, out=time_bins)
+    time_bins = np.round(time_bins, decimals=4, out=time_bins)
 
     light_curve_color = threeML_config.time_series.light_curve_color
     selection_color = threeML_config.time_series.selection_color
@@ -58,7 +58,7 @@ def binned_light_curve_plot(
     if selection is not None:
         # now plot the temporal selections
 
-        np.round(selection, decimals=4, out=selection)
+        selection = np.round(selection, decimals=4, out=selection)
 
         for tmin, tmax in selection:
             tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
@@ -89,7 +89,7 @@ def binned_light_curve_plot(
     # now plot the background selections
 
     if bkg_selections is not None:
-        np.round(bkg_selections, decimals=4, out=bkg_selections)
+        bkg_selections = np.round(bkg_selections, decimals=4, out=bkg_selections)
 
         all_masks = []
         for tmin, tmax in bkg_selections:

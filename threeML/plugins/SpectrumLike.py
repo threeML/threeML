@@ -3,6 +3,7 @@ import copy
 import types
 from contextlib import contextmanager
 from typing import Any, Dict, Optional, Tuple, Union
+from packaging.version import Version
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -51,6 +52,13 @@ __instrument_name = "General binned spectral data"
 
 # This defines the known noise models for source and/or background spectra
 _known_noise_models = ["poisson", "gaussian", "ideal", "modeled"]
+
+
+np_version = Version(np.__version__)
+if np_version < Version("2.0.0"):
+    trapezoid = np.trapz
+else:
+    trapezoid = np.trapezoid
 
 
 class SpectrumLike(PluginPrototype):
@@ -3729,7 +3737,7 @@ class SpectrumLike(PluginPrototype):
 
 @nb.njit(fastmath=True, cache=True)
 def _trapz(x, y):
-    return np.trapz(x, y)
+    return trapezoid(x, y)
 
 
 @nb.njit(fastmath=True, cache=True)
