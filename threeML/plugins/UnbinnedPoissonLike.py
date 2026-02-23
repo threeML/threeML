@@ -257,7 +257,7 @@ class UnbinnedPoissonLike(PluginPrototype):
 
 
 @nb.njit(fastmath=True)
-def _evaluate_logM_sum(M, size):
+def _evaluate_logM_sum(M, size):  # pragma: no cover
     # Evaluate the logarithm with protection for negative or small
     # numbers, using a smooth linear extrapolation (better than just a sharp
     # cutoff)

@@ -258,7 +258,9 @@ class FilterSet(object):
 
 
 @nb.njit(fastmath=True)
-def _conolve_and_convert(diff_flux, factor, response, wavelength, zero_point, N):
+def _conolve_and_convert(
+    diff_flux, factor, response, wavelength, zero_point, N
+):  # pragma: no cover
     for n in range(N):
         diff_flux[n] *= factor[n] * response[n] * wavelength[n] / _hc_constant
 

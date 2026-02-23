@@ -171,5 +171,5 @@ def _isinstance(obj):
 
 
 @nb.njit(fastmath=True)
-def nb_sum(x):
+def nb_sum(x):  # pragma: no cover
     return np.sum(x)

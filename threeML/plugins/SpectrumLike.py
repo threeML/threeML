@@ -3736,12 +3736,12 @@ class SpectrumLike(PluginPrototype):
 
 
 @nb.njit(fastmath=True, cache=True)
-def _trapz(x, y):
+def _trapz(x, y):  # pragma: no cover
     return trapezoid(x, y)
 
 
 @nb.njit(fastmath=True, cache=True)
-def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
+def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):  # pragma: no cover
     return (
         (e2 - e1)
         / 6.0
@@ -3750,6 +3750,6 @@ def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
 
 
 @nb.njit(fastmath=True, cache=True)
-def _rsum(model_mid_points, de):
+def _rsum(model_mid_points, de):  # pragma: no cover
 
     return np.multiply(model_mid_points, de)

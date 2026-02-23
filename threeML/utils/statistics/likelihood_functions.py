@@ -19,7 +19,7 @@ def regularized_log(vector):
 
 
 @njit(fastmath=True, parallel=False)
-def xlogy(x, y):
+def xlogy(x, y):  # pragma: no cover
     """A function which is 0 if x is 0, and x * log(y) otherwise. This is to
     fix the fact that for a machine 0 * log(inf) is nan, instead of 0.
 
@@ -39,7 +39,7 @@ def xlogy(x, y):
 
 
 @njit(fastmath=True, parallel=False)
-def xlogy_one(x, y):
+def xlogy_one(x, y):  # pragma: no cover
     """A function which is 0 if x is 0, and x * log(y) otherwise. This is to
     fix the fact that for a machine 0 * log(inf) is nan, instead of 0.
 
@@ -56,7 +56,7 @@ def xlogy_one(x, y):
 @njit(fastmath=True)
 def poisson_log_likelihood_ideal_bkg(
     observed_counts, expected_bkg_counts, expected_model_counts
-):
+):  # pragma: no cover
     r"""
     Poisson log-likelihood for the case where the background has no uncertainties:
 
@@ -153,7 +153,7 @@ def poisson_observed_poisson_background_xs(
 @njit(fastmath=True)
 def poisson_observed_poisson_background(
     observed_counts, background_counts, exposure_ratio, expected_model_counts
-):
+):  # pragma: no cover
     # TODO: check this with simulations
 
     # Just a name change to make writing formulas a little easier
@@ -204,7 +204,7 @@ def poisson_observed_poisson_background(
 @njit(fastmath=True)
 def poisson_observed_gaussian_background(
     observed_counts, background_counts, background_error, expected_model_counts
-):
+):  # pragma: no cover
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on
     # the observed counts. It is a profile likelihood.
     n = background_counts.shape[0]
@@ -275,7 +275,7 @@ def poisson_observed_gaussian_background(
 
 
 @njit(fastmath=True)
-def half_chi2(y, yerr, expectation):
+def half_chi2(y, yerr, expectation):  # pragma: no cover
     # This is half of a chi2. The reason for the factor of two is that we need this to
     # be the Gaussian likelihood, so that the delta log-like for an error of say 1 sigma
     # is 0.5 and not 1 like it would be for the other likelihood functions. This way we

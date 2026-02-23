@@ -151,7 +151,7 @@ class ScipyMinimizer(LocalMinimizer):
 
 
 @nb.njit(fastmath=True)
-def _check_bounds(x, minima, maxima):
+def _check_bounds(x, minima, maxima):  # pragma: no cover
     for val, min_val, max_val in zip(x, minima, maxima):
         if min_val is not None:
             if val < min_val:
