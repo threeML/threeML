@@ -1,7 +1,9 @@
 import os
 import socket
-
 import requests
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 
 def internet_connection_is_active():
@@ -27,7 +29,7 @@ def internet_connection_is_active():
             socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
 
         except Exception as ex:
-            print(ex.message)
+            log.error(ex)
             return False
 
         else:
