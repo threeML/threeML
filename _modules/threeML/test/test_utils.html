@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>threeML.io.network &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  <title>threeML.test.test_utils &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -104,7 +104,7 @@
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../threeML.html">threeML</a></li>
-      <li class="breadcrumb-item active">threeML.io.network</li>
+      <li class="breadcrumb-item active">threeML.test.test_utils</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -113,61 +113,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for threeML.io.network</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threeML.io.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logger</span>
-
-<span class="n">log</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+  <h1>Source code for threeML.test.test_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threeML.utils.fermi_relative_mission_time</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_fermi_relative_mission_times</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<div class="viewcode-block" id="internet_connection_is_active">
-<a class="viewcode-back" href="../../../api/threeML.io.html#threeML.io.network.internet_connection_is_active">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">internet_connection_is_active</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check that a internet connection is working by trying contacting the following host:</span>
+<div class="viewcode-block" id="test_fermi_relative_mission_times">
+<a class="viewcode-back" href="../../../api/threeML.test.html#threeML.test.test_utils.test_fermi_relative_mission_times">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_fermi_relative_mission_times</span><span class="p">():</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">compute_fermi_relative_mission_times</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">timeout</span> <span class="o">=</span> <span class="mi">3</span>
-
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http_proxy&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># No proxy</span>
-
-        <span class="c1"># Host: 8.8.8.8 (google-public-dns-a.google.com)</span>
-        <span class="c1"># OpenPort: 53/tcp</span>
-        <span class="c1"># Service: domain (DNS/TCP)</span>
-
-        <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;8.8.8.8&quot;</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="mi">53</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">socket</span><span class="o">.</span><span class="n">setdefaulttimeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-            <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># We have a proxy. We cannot connect straight to the DNS of Google, we need to</span>
-        <span class="c1"># tunnel through the proxy</span>
-        <span class="c1"># Since using raw sockets gets complicated and error prone, especially if the</span>
-        <span class="c1"># proxy has authentication tokens,</span>
-        <span class="c1"># we just try to reach google with a sensible timeout</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">compute_fermi_relative_mission_times</span><span class="p">(</span><span class="s2">&quot;524666471&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;Fermi seconds since 2001.0 UTC (decimal)&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">524666471</span>
+    <span class="k">assert</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;LIGO/GPS seconds since 1980-01-06 UTC (decimal)&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1187008884.000&quot;</span></div>
 
 </pre></div>
 

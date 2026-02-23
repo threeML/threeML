@@ -140,7 +140,7 @@
 <div class="viewcode-block" id="xlogy">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">xlogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xlogy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A function which is 0 if x is 0, and x * log(y) otherwise. This is to</span>
 <span class="sd">    fix the fact that for a machine 0 * log(inf) is nan, instead of 0.</span>
 
@@ -163,7 +163,7 @@
 <div class="viewcode-block" id="xlogy_one">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.xlogy_one">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">xlogy_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xlogy_one</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A function which is 0 if x is 0, and x * log(y) otherwise. This is to</span>
 <span class="sd">    fix the fact that for a machine 0 * log(inf) is nan, instead of 0.</span>
 
@@ -183,7 +183,7 @@
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">poisson_log_likelihood_ideal_bkg</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">expected_bkg_counts</span><span class="p">,</span> <span class="n">expected_model_counts</span>
-<span class="p">):</span>
+<span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Poisson log-likelihood for the case where the background has no uncertainties:</span>
 
@@ -286,7 +286,7 @@
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">poisson_observed_poisson_background</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">exposure_ratio</span><span class="p">,</span> <span class="n">expected_model_counts</span>
-<span class="p">):</span>
+<span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="c1"># TODO: check this with simulations</span>
 
     <span class="c1"># Just a name change to make writing formulas a little easier</span>
@@ -340,7 +340,7 @@
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">poisson_observed_gaussian_background</span><span class="p">(</span>
     <span class="n">observed_counts</span><span class="p">,</span> <span class="n">background_counts</span><span class="p">,</span> <span class="n">background_error</span><span class="p">,</span> <span class="n">expected_model_counts</span>
-<span class="p">):</span>
+<span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="c1"># This loglike assume Gaussian errors on the background and Poisson uncertainties on</span>
     <span class="c1"># the observed counts. It is a profile likelihood.</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">background_counts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -414,7 +414,7 @@
 <div class="viewcode-block" id="half_chi2">
 <a class="viewcode-back" href="../../../../api/threeML.utils.statistics.html#threeML.utils.statistics.likelihood_functions.half_chi2">[docs]</a>
 <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">half_chi2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">half_chi2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="c1"># This is half of a chi2. The reason for the factor of two is that we need this to</span>
     <span class="c1"># be the Gaussian likelihood, so that the delta log-like for an error of say 1 sigma</span>
     <span class="c1"># is 0.5 and not 1 like it would be for the other likelihood functions. This way we</span>

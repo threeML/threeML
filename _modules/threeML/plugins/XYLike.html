@@ -784,12 +784,12 @@
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_poisson_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_poisson_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">poisson_log_likelihood_ideal_bkg</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">expectation</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_chi2_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_chi2_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="n">chi2_</span> <span class="o">=</span> <span class="n">half_chi2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="p">,</span> <span class="n">expectation</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">chi2_</span><span class="p">))</span>

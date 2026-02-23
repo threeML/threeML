@@ -389,7 +389,9 @@
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_conolve_and_convert</span><span class="p">(</span><span class="n">diff_flux</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">zero_point</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_conolve_and_convert</span><span class="p">(</span>
+    <span class="n">diff_flux</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">zero_point</span><span class="p">,</span> <span class="n">N</span>
+<span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
         <span class="n">diff_flux</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*=</span> <span class="n">factor</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">response</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">wavelength</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">/</span> <span class="n">_hc_constant</span>
 

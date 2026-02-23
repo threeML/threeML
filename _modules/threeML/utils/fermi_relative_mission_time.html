@@ -132,25 +132,43 @@
 <span class="sd">    :param trigger_time: a fermi MET</span>
 <span class="sd">    :return: mission time in a python dictionary</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trigger_time</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">trigger_time</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">trigger_time</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;trigger_time must be convertible to string.&quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; You passed a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">trigger_time</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
     <span class="n">mission_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">trigger_time</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">trigger_time</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="c1"># Complements to Volodymyr Savchenko</span>
 
     <span class="n">xtime_url</span> <span class="o">=</span> <span class="s2">&quot;https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl&quot;</span>
 
-    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;tr&gt;.*?</span>
-<span class="s2">        &lt;th\s+scope=row&gt;</span>
-<span class="s2">        &lt;label\s+for=&quot;(.*?)&quot;&gt;(.*?)&lt;/label&gt;</span>
-<span class="s2">        &lt;/th&gt;.*?</span>
-<span class="s2">        &lt;td\s+align=center&gt;.*?&lt;/td&gt;.*?</span>
-<span class="s2">        &lt;td&gt;(.*?)&lt;/td&gt;.*?</span>
-<span class="s2">        &lt;/tr&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span>
-
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;tr&gt;\s*</span>
+<span class="sd">          &lt;th[^&gt;]*\bscope=[&quot;&#39;]?row[&quot;&#39;]?[^&gt;]*&gt;\s*</span>
+<span class="sd">            &lt;label[^&gt;]*\bfor=[&quot;&#39;]([^&quot;&#39;]+)[&quot;&#39;][^&gt;]*&gt;</span>
+<span class="sd">              (.*?)                # label text</span>
+<span class="sd">            &lt;/label&gt;</span>
+<span class="sd">            .*?</span>
+<span class="sd">          &lt;/th&gt;\s*</span>
+<span class="sd">          &lt;td[^&gt;]*\balign=[&quot;&#39;]?center[&quot;&#39;]?[^&gt;]*&gt;.*?&lt;/td&gt;\s*</span>
+<span class="sd">          &lt;td[^&gt;]*&gt;(.*?)&lt;/td&gt;\s*</span>
+<span class="sd">          (?:</span>
+<span class="sd">              &lt;!--.*?--&gt;           # allow full HTML comments</span>
+<span class="sd">            | (?!&lt;/tr&gt;).           # or any char not starting &lt;/tr&gt;</span>
+<span class="sd">          )*?</span>
+<span class="sd">        &lt;/tr&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">re</span><span class="o">.</span><span class="n">S</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">time_in_sf</span><span class="o">=</span><span class="n">trigger_time</span><span class="p">,</span>
         <span class="n">timesys_in</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
@@ -159,21 +177,17 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">internet_connection_is_active</span><span class="p">():</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xtime_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
-
-        <span class="n">mission_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xtime_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
+        <span class="n">mission_info</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
 
         <span class="n">mission_dict</span><span class="p">[</span><span class="s2">&quot;UTC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># LIGO</span>
-        <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">8</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># NUSTAR</span>
-        <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">12</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># RXTE</span>
-        <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># SUZAKU</span>
-        <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">20</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">20</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># SWIFT</span>
-        <span class="n">mission_dict</span><span class="p">[</span><span class="n">mission_info</span><span class="p">[</span><span class="mi">24</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="mi">24</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># CHANDRA</span>
-
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mission_info</span><span class="p">),</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;&lt;[^&gt;]+&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mission_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">mission_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">mission_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="k">return</span> <span class="n">mission_dict</span>
 
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 </pre></div>

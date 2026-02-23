@@ -3924,12 +3924,12 @@
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_trapz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_trapz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="k">return</span> <span class="n">trapezoid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_simps</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">diff_fluxes_edges</span><span class="p">,</span> <span class="n">diff_fluxes_mid</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_simps</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">diff_fluxes_edges</span><span class="p">,</span> <span class="n">diff_fluxes_mid</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="p">(</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span><span class="p">)</span>
         <span class="o">/</span> <span class="mf">6.0</span>
@@ -3938,7 +3938,7 @@
 
 
 <span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_rsum</span><span class="p">(</span><span class="n">model_mid_points</span><span class="p">,</span> <span class="n">de</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_rsum</span><span class="p">(</span><span class="n">model_mid_points</span><span class="p">,</span> <span class="n">de</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">model_mid_points</span><span class="p">,</span> <span class="n">de</span><span class="p">)</span>
 </pre></div>
