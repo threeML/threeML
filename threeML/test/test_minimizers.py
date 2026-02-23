@@ -3,6 +3,7 @@ import pytest
 from astromodels import clone_model
 
 from threeML import GlobalMinimization, LocalMinimization
+from threeML.exceptions.custom_exceptions import NoFitYet
 
 try:
     import ROOT
@@ -170,3 +171,29 @@ def test_scipy(jl_bn090217206_nai):
     jl_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K = 1.25
 
     do_analysis(jl_bn090217206_nai, minim)
+
+
+def test_fixed_parameters(jl_bn090217206_nai):
+    jl = jl_bn090217206_nai
+
+    minimizer = LocalMinimization("minuit")
+    model = jl.likelihood_model
+    for k, v in model.parameters.items():
+        v.free = False
+    jl.set_minimizer(minimizer)
+
+    with pytest.raises(RuntimeError):
+        print(jl.covariance_matrix)
+    with pytest.raises(RuntimeError):
+        print(jl.correlation_matrix)
+    with pytest.raises(NoFitYet):
+        jl.get_errors()
+    jl.fit(quiet=True)
+    cm = jl.current_minimum
+
+    model["bn090217206.spectrum.main.Powerlaw.K"].free = True
+    jl.fit(quiet=True)
+    assert jl.current_minimum != cm
+
+    jl.covariance_matrix
+    jl.correlation_matrix
