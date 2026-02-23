@@ -29,6 +29,7 @@ DOCS = Path(__file__).parent
 
 # -- Generate API documentation ------------------------------------------------
 
+
 def run_apidoc(app):
     """Download API stubs from GitHub Actions artifact or generate them locally."""
     import subprocess
@@ -36,19 +37,19 @@ def run_apidoc(app):
     import zipfile
     import io
     import json
-    
+
     api_dir = DOCS / "api"
     api_dir.mkdir(exist_ok=True)
 
     # 1. Debug: Print environment info to the RTD build log
     print("--- Starting API Doc Retrieval ---")
     github_token = os.environ.get("GITHUB_TOKEN")
-    
+
     # RTD Variables
     rtd_version = os.environ.get("READTHEDOCS_VERSION", "")
     rtd_commit = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH", "")
     rtd_version_type = os.environ.get("READTHEDOCS_VERSION_TYPE", "")
-    
+
     print(f"RTD Version: {rtd_version}")
     print(f"RTD Commit: {rtd_commit}")
     print(f"RTD Type: {rtd_version_type}")
@@ -63,20 +64,22 @@ def run_apidoc(app):
             # rtd_version is usually "external-{pr_number}"
             pr_number = rtd_version.replace("external-", "")
             print(f"Detected PR #{pr_number}. Fetching HEAD SHA from GitHub API...")
-            
+
             headers = {
                 "Authorization": f"token {github_token}",
-                "Accept": "application/vnd.github.v3+json"
+                "Accept": "application/vnd.github.v3+json",
             }
             # Get PR details to find the Head SHA
             pr_url = f"https://api.github.com/repos/threeML/threeML/pulls/{pr_number}"
             pr_res = requests.get(pr_url, headers=headers, timeout=10)
-            
+
             if pr_res.status_code == 200:
                 target_sha = pr_res.json()["head"]["sha"]
                 print(f"Resolved PR Head SHA: {target_sha}")
             else:
-                print(f"Failed to resolve PR Head SHA: {pr_res.status_code} {pr_res.text}")
+                print(
+                    f"Failed to resolve PR Head SHA: {pr_res.status_code} {pr_res.text}"
+                )
         except Exception as e:
             print(f"Error resolving PR SHA: {e}")
 
@@ -88,50 +91,58 @@ def run_apidoc(app):
         repo = "threeML/threeML"
         headers = {
             "Authorization": f"token {github_token}",
-            "Accept": "application/vnd.github.v3+json"
+            "Accept": "application/vnd.github.v3+json",
         }
-        
+
         try:
             # List runs for this SHA
             url = f"https://api.github.com/repos/{repo}/actions/runs"
-            params = {"head_sha": target_sha, "per_page": 5} # Check top 5 just in case
-            
+            params = {"head_sha": target_sha, "per_page": 5}  # Check top 5 just in case
+
             print(f"Querying workflow runs for SHA {target_sha}...")
             response = requests.get(url, headers=headers, params=params, timeout=10)
-            
+
             if response.status_code == 200:
                 runs = response.json().get("workflow_runs", [])
                 print(f"Found {len(runs)} workflow runs.")
-                
+
                 for run in runs:
                     run_id = run["id"]
                     print(f"Checking Run ID {run_id}...")
-                    
+
                     artifacts_url = f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts"
                     art_resp = requests.get(artifacts_url, headers=headers, timeout=10)
-                    
+
                     if art_resp.status_code == 200:
                         artifacts = art_resp.json().get("artifacts", [])
                         # Look for our specific artifact
-                        api_artifact = next((a for a in artifacts if a["name"] == artifact_name), None)
-                        
+                        api_artifact = next(
+                            (a for a in artifacts if a["name"] == artifact_name), None
+                        )
+
                         if api_artifact:
-                            print(f"Artifact found! Downloading from: {api_artifact['archive_download_url']}")
+                            print(
+                                f"Artifact found! Downloading from: {api_artifact['archive_download_url']}"
+                            )
                             download_url = api_artifact["archive_download_url"]
-                            dl_resp = requests.get(download_url, headers=headers, timeout=30, stream=True)
-                            
+                            dl_resp = requests.get(
+                                download_url, headers=headers, timeout=30, stream=True
+                            )
+
                             if dl_resp.status_code == 200:
                                 zip_data = io.BytesIO(dl_resp.content)
                                 with zipfile.ZipFile(zip_data) as zip_file:
                                     zip_file.extractall(api_dir)
-                                print("Successfully downloaded and extracted API stubs.")
-                                return # SUCCESS!
+                                print(
+                                    "Successfully downloaded and extracted API stubs."
+                                )
+                                return  # SUCCESS!
                             else:
                                 print(f"Download failed: {dl_resp.status_code}")
                     else:
                         print(f"Failed to list artifacts: {art_resp.status_code}")
             else:
-                 print(f"Failed to list runs: {response.status_code} {response.text}")
+                print(f"Failed to list runs: {response.status_code} {response.text}")
 
         except Exception as e:
             print(f"EXCEPTION during download: {e}")
@@ -142,11 +153,11 @@ def run_apidoc(app):
 
     # 4. Fallback (Only reachable if download failed or not a PR)
     print("Fallback: Generating API stubs locally...")
-    
+
     # (Existing fallback code...)
     package_path = DOCS.parent / "threeML"
     output_path = api_dir
-    
+
     try:
         subprocess.run(
             ["sphinx-apidoc", "--force", "-o", str(output_path), str(package_path)],
@@ -155,7 +166,9 @@ def run_apidoc(app):
         )
     except Exception as e:
         print(f"Local generation failed: {e}")
-        raise RuntimeError("Failed to generate API stubs locally using sphinx-apidoc. Aborting build.")
+        raise RuntimeError(
+            "Failed to generate API stubs locally using sphinx-apidoc. Aborting build."
+        )
 
 
 MOCK_MODULES = ["fermipy"]
@@ -214,7 +227,7 @@ if "GITHUB_TOKEN" in os.environ:
     # rtds_action_error_if_missing = not is_pr_build
     rtds_action_error_if_missing = True
 
-    # Readthedocs provides the current version/branch name in an environment 
+    # Readthedocs provides the current version/branch name in an environment
     # variable. For PR builds, we use the PR
     rtds_action_commit_ref = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH")
 

@@ -14,7 +14,6 @@ from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 from threeML.io.rich_display import display
 
-
 log = setup_logger(__name__)
 
 _gcn_match = re.compile(r"^\d{4}GCN\D?\.*(\d*)\.*\d\D$")

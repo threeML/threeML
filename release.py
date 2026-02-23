@@ -98,7 +98,7 @@ if __name__ == "__main__":
         dest="dryrun",
         help="Dry run (i.e. do not actually do anything).",
     )
-    (opts, args) = parser.parse_args()
+    opts, args = parser.parse_args()
     if not opts.tagmode and not (opts.src):
         parser.print_help()
         parser.error("Please specify at least one valid option.")

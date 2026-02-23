@@ -26,10 +26,10 @@ class MemoryHeavyPlugin(PluginPrototype):
         self._model = model
 
     def get_log_like(self):
-        f_value = (
-            list(self._model.extended_sources.values())[0].spectrum.main.shape.F.value
-        )
-        return -(f_value - 10.0) ** 2
+        f_value = list(self._model.extended_sources.values())[
+            0
+        ].spectrum.main.shape.F.value
+        return -((f_value - 10.0) ** 2)
 
     def inner_fit(self):
         return self.get_log_like()
