@@ -197,7 +197,7 @@ def is_plugin_available(plugin):
             try:
                 _ = FermipyLike.__new__(FermipyLike, test=True)
 
-            except:
+            except Exception:
                 # Do not register it
 
                 _not_working_plugins[plugin] = traceback.format_exc()
