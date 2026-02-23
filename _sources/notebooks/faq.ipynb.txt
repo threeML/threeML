@@ -2,24 +2,25 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "e7b7e407",
+   "id": "faa977f1",
    "metadata": {},
    "source": [
     "## What happens to the model/function during a fit?\n",
     "\n",
-    "The spectral/spatial shapes that are input into the models and subsequently used during the fit are objects. There parameters are members of those objects and when they are changed by the user or the fitting engine, the parameter values in those objects are modified."
+    "The spectral/spatial shapes that are input into the models and subsequently used during the fit are objects.\n",
+    "There parameters are members of those objects and when they are changed by the user or the fitting engine, the parameter values in those objects are modified."
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "4a8ad832",
+   "id": "95215fa3",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-20T18:29:22.543546Z",
-     "iopub.status.busy": "2026-02-20T18:29:22.543394Z",
-     "iopub.status.idle": "2026-02-20T18:29:25.837109Z",
-     "shell.execute_reply": "2026-02-20T18:29:25.836289Z"
+     "iopub.execute_input": "2026-02-23T09:11:46.616164Z",
+     "iopub.status.busy": "2026-02-23T09:11:46.616027Z",
+     "iopub.status.idle": "2026-02-23T09:11:50.072721Z",
+     "shell.execute_reply": "2026-02-23T09:11:50.072020Z"
     },
     "lines_to_next_cell": 2
    },
@@ -49,24 +50,24 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "2065044a",
+   "id": "af31e9de",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2026-02-20T18:29:25.838795Z",
-     "iopub.status.busy": "2026-02-20T18:29:25.838477Z",
-     "iopub.status.idle": "2026-02-20T18:29:27.147586Z",
-     "shell.execute_reply": "2026-02-20T18:29:27.146859Z"
+     "iopub.execute_input": "2026-02-23T09:11:50.074596Z",
+     "iopub.status.busy": "2026-02-23T09:11:50.074246Z",
+     "iopub.status.idle": "2026-02-23T09:11:51.463624Z",
+     "shell.execute_reply": "2026-02-23T09:11:51.462891Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">18:29:26 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Using Gaussian statistic (equivalent to chi^</span><span style=\"color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold\">2</span><span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">) with the provided errors.            </span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">XYLike.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">90</span></a>\n",
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"><span style=\"color: #00ff00; text-decoration-color: #00ff00\">09:11:50 </span><span style=\"color: #00ffaf; text-decoration-color: #00ffaf\">INFO    </span> <span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\"> Using Gaussian statistic (equivalent to chi^</span><span style=\"color: #c0c0c0; text-decoration-color: #c0c0c0; font-weight: bold\">2</span><span style=\"color: #c6c6c6; text-decoration-color: #c6c6c6; font-weight: bold\">) with the provided errors.            </span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">XYLike.py</span></a><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">:</span><a href=\"file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\" target=\"_blank\"><span style=\"color: #7f7f7f; text-decoration-color: #7f7f7f\">90</span></a>\n",
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m18:29:26\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=998405;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=625944;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\u001b\\\u001b[2m90\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m09:11:50\u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=638980;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=145702;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\u001b\\\u001b[2m90\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -79,7 +80,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=635114;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=546011;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\u001b\\\u001b[2m90\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=981403;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=897572;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\u001b\\\u001b[2m90\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -101,7 +102,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=873154;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=418236;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\u001b\\\u001b[2m90\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m Using Gaussian statistic \u001b[0m\u001b[1;38;5;251m(\u001b[0m\u001b[1;38;5;251mequivalent to chi^\u001b[0m\u001b[1;37m2\u001b[0m\u001b[1;38;5;251m)\u001b[0m\u001b[1;38;5;251m with the provided errors.           \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=166305;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py\u001b\\\u001b[2mXYLike.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=755571;file:///home/runner/work/threeML/threeML/threeML/plugins/XYLike.py#90\u001b\\\u001b[2m90\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -114,7 +115,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=122970;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=903519;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1017\u001b\\\u001b[2m1017\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to minuit                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=561488;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=786249;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1017\u001b\\\u001b[2m1017\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -127,7 +128,7 @@
        "</pre>\n"
       ],
       "text/plain": [
-       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to MINUIT                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=71307;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=426104;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1034\u001b\\\u001b[2m1034\u001b[0m\u001b]8;;\u001b\\\n"
+       "\u001b[38;5;46m        \u001b[0m\u001b[38;5;46m \u001b[0m\u001b[38;5;49mINFO    \u001b[0m \u001b[1;38;5;251m set the minimizer to MINUIT                                            \u001b[0m\u001b[1;38;5;251m \u001b[0m\u001b]8;id=543294;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py\u001b\\\u001b[2mjoint_likelihood.py\u001b[0m\u001b]8;;\u001b\\\u001b[2m:\u001b[0m\u001b]8;id=756476;file:///home/runner/work/threeML/threeML/threeML/classicMLE/joint_likelihood.py#1034\u001b\\\u001b[2m1034\u001b[0m\u001b]8;;\u001b\\\n"
       ]
      },
      "metadata": {},
@@ -181,12 +182,12 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>source.spectrum.main.Powerlaw.K</th>\n",
-       "      <td>1.019 +/- 0.028</td>\n",
+       "      <td>1.032 -0.027 +0.028</td>\n",
        "      <td>1 / (keV s cm2)</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>source.spectrum.main.Powerlaw.index</th>\n",
-       "      <td>-1.502 +/- 0.010</td>\n",
+       "      <td>-1.505 +/- 0.010</td>\n",
        "      <td></td>\n",
        "    </tr>\n",
        "  </tbody>\n",
@@ -194,10 +195,10 @@
        "</div>"
       ],
       "text/plain": [
-       "                                               result             unit\n",
-       "parameter                                                             \n",
-       "source.spectrum.main.Powerlaw.K       1.019 +/- 0.028  1 / (keV s cm2)\n",
-       "source.spectrum.main.Powerlaw.index  -1.502 +/- 0.010                 "
+       "                                                  result             unit\n",
+       "parameter                                                                \n",
+       "source.spectrum.main.Powerlaw.K      1.032 -0.027 +0.028  1 / (keV s cm2)\n",
+       "source.spectrum.main.Powerlaw.index     -1.505 +/- 0.010                 "
       ]
      },
      "metadata": {},
@@ -223,7 +224,7 @@
     {
      "data": {
       "text/html": [
-       "<div><table id=\"table139926855496080\">\n",
+       "<div><table id=\"table139823057599760\">\n",
        "<tr><td>1.00</td><td>-0.86</td></tr>\n",
        "<tr><td>-0.86</td><td>1.00</td></tr>\n",
        "</table></div>"
@@ -280,11 +281,11 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>data</th>\n",
-       "      <td>20.079918</td>\n",
+       "      <td>26.684326</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>total</th>\n",
-       "      <td>20.079918</td>\n",
+       "      <td>26.684326</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
        "</table>\n",
@@ -292,8 +293,8 @@
       ],
       "text/plain": [
        "       -log(likelihood)\n",
-       "data          20.079918\n",
-       "total         20.079918"
+       "data          26.684326\n",
+       "total         26.684326"
       ]
      },
      "metadata": {},
@@ -343,11 +344,11 @@
        "  <tbody>\n",
        "    <tr>\n",
        "      <th>AIC</th>\n",
-       "      <td>44.415156</td>\n",
+       "      <td>57.623970</td>\n",
        "    </tr>\n",
        "    <tr>\n",
        "      <th>BIC</th>\n",
-       "      <td>47.983883</td>\n",
+       "      <td>61.192697</td>\n",
        "    </tr>\n",
        "  </tbody>\n",
        "</table>\n",
@@ -355,8 +356,8 @@
       ],
       "text/plain": [
        "     statistical measures\n",
-       "AIC             44.415156\n",
-       "BIC             47.983883"
+       "AIC             57.623970\n",
+       "BIC             61.192697"
       ]
      },
      "metadata": {},
@@ -367,7 +368,7 @@
      "output_type": "stream",
      "text": [
       "power law index after fit:\n",
-      "Parameter index = -1.501897478549802 []\n",
+      "Parameter index = -1.5048386081768637 []\n",
       "(min_value = -10.0, max_value = 10.0, delta = 0.20099999999999998, free = True)\n"
      ]
     }
@@ -400,7 +401,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "2ae267fc",
+   "id": "b5749ea1",
    "metadata": {},
    "source": [
     "After a fit, the fitted result are stored in an AnalysisResults object so that if the fit function's values are further modified, the best fit parameters can still be recovered."
@@ -408,7 +409,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "910c790b",
+   "id": "c765105f",
    "metadata": {},
    "source": [
     "## Why does my plugin not return a get_log_like()?\n",
@@ -418,12 +419,12 @@
   },
   {
    "cell_type": "markdown",
-   "id": "802b7559",
+   "id": "c4d12c61",
    "metadata": {},
    "source": [
     "## Why did my plugin lose its model?\n",
     "\n",
-    "If you use the same plugin with different models bvy passing it to successive JointLikelihood or BayesianAnalysis constructors, the plugin will have the last model with which it was used set as its model."
+    "If you use the same plugin with different models by passing it to successive JointLikelihood or BayesianAnalysis constructors, the plugin will have the last model with which it was used set as its model."
    ]
   }
  ],

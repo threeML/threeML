@@ -196,6 +196,19 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_user_data_path</span><span class="p">():</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;.threeml&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create it if doesn&#39;t exist</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">user_data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">user_data</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">user_data</span>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_path_of_data_file&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_path_of_data_dir&quot;</span><span class="p">,</span>
