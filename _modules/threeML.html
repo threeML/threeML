@@ -65,7 +65,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/API.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/API.html#threeml">threeML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
@@ -201,16 +200,6 @@
 <span class="c1"># using similar names (for example, the io package)</span>
 
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyUnresolvedReferences</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">cthreeML.pyModelInterfaceCache</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyToCppModelInterfaceCache</span>
-
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">threeML_config</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">startup_warnings</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;The cthreeML package is not installed. You will not be able to use plugins which require &quot;</span>
-            <span class="s2">&quot;the C/C++ interface (currently HAWC)&quot;</span>  <span class="c1">#    custom_exceptions.CppInterfaceNotAvailable,</span>
-        <span class="p">)</span>
 <span class="c1"># Now look for plugins</span>
 
 <span class="c1"># This verifies if a module is importable</span>
