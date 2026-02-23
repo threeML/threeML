@@ -160,7 +160,14 @@ def run_apidoc(app):
 
     try:
         subprocess.run(
-            ["sphinx-apidoc", "--force", "-o", str(output_path), str(package_path)],
+            [
+                "sphinx-apidoc",
+                "--force",
+                "-o",
+                str(output_path),
+                str(package_path),
+                "-T",
+            ],
             check=True,
             cwd=DOCS.parent,
         )
@@ -267,7 +274,12 @@ language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "**.ipynb_checkpoints"]
+exclude_patterns = [
+    "_build",
+    "**.ipynb_checkpoints",
+    "**/test/*",
+    "**/test_*.py",
+]
 
 html_theme = "sphinx_rtd_dark_mode"
 
