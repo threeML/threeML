@@ -33,14 +33,14 @@ again to trigger the new file generation.
 Why use 3ML over XSPEC if I am just fitting X-ray data?
 -------------------------------------------------------
 
-XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your favorite tool and you are only fitting x-ray data, then there are some marginal benefits:
+XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your favorite tool and you are only fitting X-ray data, then there are some marginal benefits:
 
 - 3ML is a lighter install and natively in Python rather than a Python wrapper around XSPEC
 - 3ML does many operations in parallel on HPC environments with little effort
 - 3ML has many many more optimizers and Bayesian samplers
    * `minuit <https://iminuit.readthedocs.io/en/stable/>`__
-   * `PAGMO <https://esa.github.io/pagmo2/) (dozens and dozens of methods>`__
-   * `scipy <https://docs.scipy.org/doc/scipy/reference/optimize.html) optimizer>`__
+   * `PAGMO <https://esa.github.io/pagmo2/> (dozens and dozens of methods)`__
+   * `scipy <https://docs.scipy.org/doc/scipy/reference/optimize.html>`__
    *  global and local optimizer combinations
    * `emcee <https://emcee.readthedocs.io/en/stable/>`__
    * `multinest <https://github.com/farhanferoz/MultiNest>`__
