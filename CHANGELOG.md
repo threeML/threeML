@@ -27,6 +27,7 @@
 - PackagesNotFoundError when trying to install threeML with Conda on MacOS with new Silicon chip [\#618](https://github.com/threeML/threeML/issues/618)
 - deprecated function error with numpy 1.24 [\#616](https://github.com/threeML/threeML/issues/616)
 - astromodels.xspec [\#614](https://github.com/threeML/threeML/issues/614)
+- Discrepancy between 3ML and Xspec residuals of spectral fitting [\#572](https://github.com/threeML/threeML/issues/572)
 
 **Merged pull requests:**
 
@@ -280,7 +281,6 @@
 - Simulated data from LAT plugins. [\#422](https://github.com/threeML/threeML/issues/422)
 - test\_parallel\_pagmo fails [\#419](https://github.com/threeML/threeML/issues/419)
 - Conda really slow in solving the environment with fermi on linux [\#418](https://github.com/threeML/threeML/issues/418)
-- Proper import \_\_all\_\_ statements [\#400](https://github.com/threeML/threeML/issues/400)
 
 **Merged pull requests:**
 
