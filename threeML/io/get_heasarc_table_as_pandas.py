@@ -121,7 +121,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
                 with session.get(heasarc_url, stream=True, timeout=30) as response:
                     response.raise_for_status()
 
-                    with open(file_name_sanatized, "wb") as f:
+                    with file_name_sanatized.open("wb") as f:
                         for chunk in response.iter_content(chunk_size=8 * 1024):
                             if chunk:
                                 f.write(chunk)
@@ -167,7 +167,10 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
     # use astropy routines to read the votable
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        vo_table = votable.parse(str(file_name_sanatized))
+        assert file_existing_and_readable(
+            file_name_sanatized
+        ), f"{file_name_sanatized} does not exists. Likely the download failed"
+        vo_table = votable.parse(file_name_sanatized)
 
     table = vo_table.get_first_table().to_table(use_names_over_ids=True)
 
