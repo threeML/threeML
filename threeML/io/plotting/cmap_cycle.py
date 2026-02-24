@@ -2,10 +2,8 @@ from builtins import range
 
 __author__ = "grburgess"
 
-import matplotlib.pyplot as plt
-from matplotlib import colormaps
 import numpy as np
-
+from matplotlib import colormaps
 
 # reverse these colormaps so that it goes from light to dark
 
@@ -31,19 +29,19 @@ CMAP_RANGE = dict(
 
 
 def cmap_intervals(length=50, cmap="YlOrBr", start=None, stop=None):
-    """
-    Return evenly spaced intervals of a given colormap `cmap`.
+    """Return evenly spaced intervals of a given colormap `cmap`.
 
     Colormaps listed in REVERSE_CMAP will be cycled in reverse order.
-    Certain colormaps have pre-specified color ranges in CMAP_RANGE. These module
-    variables ensure that colors cycle from light to dark and light colors are
-    not too close to white.
+    Certain colormaps have pre-specified color ranges in CMAP_RANGE.
+    These module variables ensure that colors cycle from light to dark
+    and light colors are not too close to white.
 
-
-    :param length: int the number of colors used before cycling back to first color. When
-    length is large (> ~10), it is difficult to distinguish between
-    successive lines because successive colors are very similar.
-    :param cmap: str name of a matplotlib colormap (see matplotlib.pyplot.cm)
+    :param length: int the number of colors used before cycling back to
+        first color. When length is large (> ~10), it is difficult to
+        distinguish between successive lines because successive colors
+        are very similar.
+    :param cmap: str name of a matplotlib colormap (see
+        matplotlib.pyplot.cm)
     """
     cm = colormaps[cmap]
 
@@ -62,14 +60,12 @@ def cmap_intervals(length=50, cmap="YlOrBr", start=None, stop=None):
         "Vega20b",
         "Vega20c",
     ]:
-
         base_n_colors = cm.N
 
         cmap_list = cm(list(range(base_n_colors)))
 
         if base_n_colors < length:
-
-            factor = int(np.floor_divide(length, base_n_colors))+1
+            factor = int(np.floor_divide(length, base_n_colors)) + 1
 
             cmap_list = np.tile(cmap_list, (factor, 1))
 

@@ -1,35 +1,29 @@
 import re
-import urllib.error
-import urllib.parse
-import urllib.request
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 from builtins import map, range, str
 
 import astropy.table as astro_table
 import numpy as np
 import pandas as pd
-from future import standard_library
 
-from threeML.catalogs.VirtualObservatoryCatalog import \
-    VirtualObservatoryCatalog
+from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 from threeML.io.rich_display import display
 
-standard_library.install_aliases()
-
-
 log = setup_logger(__name__)
 
-_gcn_match = re.compile("^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
-_trigger_name_match = re.compile("^GRB \d{6}[A-Z]$")
+_gcn_match = re.compile(r"^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
+_trigger_name_match = re.compile(r"^GRB \d{6}[A-Z]$")
 
 
 class SwiftGRBCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
-        """
-        The Swift GRB catalog. Search for GRBs  by trigger
-        number, location,  T90, and date range.
+        """The Swift GRB catalog. Search for GRBs  by trigger number, location,
+        T90, and date range.
 
         :param update: force update the XML VO table
         """
@@ -67,13 +61,11 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         return new_table.group_by("trigger_time")
 
     def _get_vo_table_from_source(self):
-
         self._vo_dataframe = get_heasarc_table_as_pandas(
             "swiftgrb", update=self._update, cache_time_days=1.0
         )
 
     def _source_is_valid(self, source):
-
         warn_string = (
             "The trigger %s is not valid. Must be in the form GRB080916009" % source
         )
@@ -81,20 +73,17 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         match = _trigger_name_match.match(source)
 
         if match is None:
-
             log.warning(warn_string)
 
             answer = False
 
         else:
-
             answer = True
 
         return answer
 
     def _build_other_obs_instruments(self):
-        """
-        builds a list of all the other instruments that observed Swift GRBs
+        """Builds a list of all the other instruments that observed Swift GRBs.
 
         :return:
         """
@@ -117,14 +106,12 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
     @property
     def other_observing_instruments(self):
-
         return self._other_observings_instruments
 
     def query_other_observing_instruments(self, *instruments):
-        """
-        search for observations that were also seen by the requested instrument.
-        to see what instruments are available, use the .other_observing_instruments call
-
+        """Search for observations that were also seen by the requested
+        instrument. to see what instruments are available, use the
+        .other_observing_instruments call.
 
         :param instruments: other instruments
         :return:
@@ -133,15 +120,15 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         all_queries = []
 
         for instrument in instruments:
-
-            assert instrument in self._other_observings_instruments, (
-                "Other instrument choices include %s"
-                % (" ,".join(self._other_observings_instruments))
+            assert (
+                instrument in self._other_observings_instruments
+            ), "Other instrument choices include %s" % (
+                " ,".join(self._other_observings_instruments)
             )
 
             query_string = (
-                ' other_obs == "%s" | other_obs2 == "%s" |other_obs3 == "%s" |other_obs4 == "%s"'
-                % tuple([instrument] * 4)
+                ' other_obs == "%s" | other_obs2 == "%s" |other_obs3 == "%s" '
+                '|other_obs4 == "%s"' % tuple([instrument] * 4)
             )
 
             result = self._vo_dataframe.query(query_string)
@@ -152,8 +139,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
             table = astro_table.Table.from_pandas(query_results)
 
-            name_column = astro_table.Column(
-                name="name", data=query_results.index)
+            name_column = astro_table.Column(name="name", data=query_results.index)
             table.add_column(name_column, index=0)
 
             out = self.apply_format(table)
@@ -164,99 +150,83 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
     @staticmethod
     def _get_fermiGBM_trigger_number_from_gcn(gcn_url):
-        """
-        this is a custom function that parses GBM GCNs to find the burst number
-        that can later be used to download GBM data. It contains a lot of regex statements
-        to handle the variability in the GCNs
-
+        """This is a custom function that parses GBM GCNs to find the burst
+        number that can later be used to download GBM data. It contains a lot
+        of regex statements to handle the variability in the GCNs.
 
         :param gcn_url: url to gbm gcn
         :return:
         """
 
-        data = urllib.request.urlopen(gcn_url)
+        try:
+            with requests.Session() as session:
+                retries = Retry(total=3, backoff_factor=0.1)
+                session.mount("https://", HTTPAdapter(max_retries=retries))
+                session.mount("http://", HTTPAdapter(max_retries=retries))
+                response = session.get(gcn_url, timeout=30)
+                response.raise_for_status()
+                data_decode = response.text.splitlines()
 
-        data_decode = []
-
-        for x in data.readlines():
-
-            try:
-
-                tmp = str(x, "utf-8")
-
-                data_decode.append(tmp)
-
-            except (UnicodeDecodeError):
-
-                pass
-
+        except requests.exceptions.RequestException as e:
+            log.exception("Failed to download data.")
+            raise RuntimeError() from e
         string = "".join(data_decode).replace("\n", "")
         try:
-
             trigger_number = (
-                re.search("trigger *\d* */ *(\d{9}|\d{6}\.\d{3})", string)
+                re.search(r"trigger *\d* */ *(\d{9}|\d{6}\.\d{3})", string)
                 .group(1)
                 .replace(".", "")
             )
 
-        except (AttributeError):
-
+        except AttributeError:
             try:
-
                 trigger_number = (
-                    re.search(
-                        "GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string)
+                    re.search(r"GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string)
                     .group(1)
                     .replace(".", "")
                 )
 
-            except (AttributeError):
-
+            except AttributeError:
                 try:
-
                     trigger_number = (
                         re.search(
-                            "trigger *\d* *, *trigcat *(\d{9}|\d{6}\.\d{3})", string
+                            r"trigger *\d* *, *trigcat *(\d{9}|\d{6}\.\d{3})", string
                         )
                         .group(1)
                         .replace(".", "")
                     )
 
-                except (AttributeError):
-
+                except AttributeError:
                     try:
-
                         trigger_number = (
                             re.search(
-                                "trigger *.* */ *\D{0,3}(\d{9}|\d{6}\.\d{3})", string
+                                r"trigger *.* */ *\D{0,3}(\d{9}|\d{6}\.\d{3})", string
                             )
                             .group(1)
                             .replace(".", "")
                         )
 
-                    except (AttributeError):
-
+                    except AttributeError:
                         try:
-
                             trigger_number = (
                                 re.search(
-                                    "Trigger number*.* */ *GRB *(\d{9}|\d{6}\.\d{3})",
+                                    r"Trigger number*.* */ *GRB *(\d{9}|\d{6}\.\d{3})",
                                     string,
                                 )
                                 .group(1)
                                 .replace(".", "")
                             )
 
-                        except (AttributeError):
-
+                        except AttributeError:
                             trigger_number = None
 
         return trigger_number
 
     def get_other_observation_information(self):
-        """
-        returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,
-        their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-LAT-GBM.
+        """Returns a structured pandas table containing the other observing
+        instruments, their GCNs and if obtainable, their trigger numbers/ data
+        identifiers. Currently, the trigger number is only obtained for Fermi-
+        LAT-GBM.
 
         :return:
         """
@@ -269,35 +239,28 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         sources = {}
 
         for name, row in self._last_query_results.T.items():
-
             # First we want to get the the detectors used in the SCAT file
 
             obs_instrument = {}
 
             for obs in ["xrt", "uvot", "bat", "opt", "radio"]:
-
                 obs_detection = "%s_detection" % obs
 
                 if obs in ["xrt", "uvot", "bat"]:
-
                     obs_ref = "%s_pos_ref" % obs
 
                 else:
-
                     obs_ref = "%s_ref" % obs
 
                 detect = row[obs_detection]
 
                 if detect == "Y":  # or detect== 'U':
-
                     observed = True
 
                 else:
-
                     observed = False
 
                 if observed:
-
                     reference = self._parse_redshift_reference(row[obs_ref])
 
                     # gcn = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
@@ -305,7 +268,6 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                     info = {"reference": reference, "observed": detect}
 
                 else:
-
                     info = {"GCN": None, "observed": detect}
 
                 obs_instrument[obs] = info
@@ -319,9 +281,9 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         return sources
 
     def get_other_instrument_information(self):
-        """
-        Return the detectors used for spectral analysis as well as their background
-        intervals. Peak flux and fluence intervals are also returned as well as best fit models
+        """Return the detectors used for spectral analysis as well as their
+        background intervals. Peak flux and fluence intervals are also returned
+        as well as best fit models.
 
         :return: observing information dataframe indexed by source
         """
@@ -333,18 +295,14 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         sources = {}
 
         for name, row in self._last_query_results.T.items():
-
             obs_instrument = {}
 
             # loop over the observation indices
             for obs in range(1, 5):
-
                 if obs == 1:
-
                     obs_base = "other_obs"
 
                 else:
-
                     obs_base = "other_obs%d" % obs
 
                 obs_ref = "%s_ref" % obs_base
@@ -353,15 +311,12 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
                 # this means that nothing in this column saw the grb
                 if obs == "":
-
                     observed = False
 
                 else:
-
                     observed = True
 
                 if observed:
-
                     # if we saw it then lets get the GCN
                     gcn_number = _gcn_match.search(row[obs_ref]).group(1)
                     # gcn_number = filter(lambda x: x != '', row[obs_ref].split('.'))[1]
@@ -372,17 +327,14 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                     # just for Fermi GBM, lets get the trigger number
 
                     # TODO: add more instruments
+                    tn = self._get_fermiGBM_trigger_number_from_gcn(str(gcn))
                     if obs == "Fermi-GBM":
-
                         info = {
                             "GCN": gcn,
-                            "trigger number": self._get_fermiGBM_trigger_number_from_gcn(
-                                str(gcn)
-                            ),
+                            "trigger number": tn,
                         }
 
                     else:
-
                         info = {"GCN": gcn, "trigger number": None}
 
                     obs_instrument[obs] = info
@@ -399,9 +351,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         return sources
 
     def get_redshift(self):
-        """
-        Get the redshift and redshift type from the searched sources
-
+        """Get the redshift and redshift type from the searched sources.
 
         :return:
         """
@@ -433,9 +383,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
     @staticmethod
     def _parse_redshift_reference(reference):
-
         if reference == "":
-
             url = None
 
         elif "GCN" in reference:
@@ -444,7 +392,6 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             url = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
 
         else:
-
             url = "http://adsabs.harvard.edu/abs/%s" % reference
 
         return url

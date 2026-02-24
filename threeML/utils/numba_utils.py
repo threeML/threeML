@@ -67,7 +67,8 @@ def Vector(numba_type):
             return self
 
         def append(self, val):
-            """Add a value to the end of the Vector, expanding it if necessary."""
+            """Add a value to the end of the Vector, expanding it if
+            necessary."""
             if self.n == self.m:
                 self._expand()
             self.full_arr[self.n] = val
@@ -99,7 +100,7 @@ def Vector(numba_type):
                 self.m = self.n
             return self
 
-        #def __array__(self):
+        # def __array__(self):
         #    """Array inteface for Numpy compatibility."""
         #    return self.full_arr[: self.n]
 
@@ -117,7 +118,7 @@ def Vector(numba_type):
             ---------
             arr : 1d array
                 Array to set this vector to. After this operation, self.arr
-                will be equal to arr. The dtype of this array must be the 
+                will be equal to arr. The dtype of this array must be the
                 same dtype as used to create the vector. Cannot be a readonly
                 vector.
             """
@@ -131,7 +132,7 @@ def Vector(numba_type):
             ---------
             arr : 1d array
                 Array to set this vector to. After this operation, self.arr
-                will be equal to arr. The dtype of this array must be the 
+                will be equal to arr. The dtype of this array must be the
                 same dtype as used to create the vector.
             """
             self.full_arr = arr.copy()
@@ -170,5 +171,5 @@ def _isinstance(obj):
 
 
 @nb.njit(fastmath=True)
-def nb_sum(x):
+def nb_sum(x):  # pragma: no cover
     return np.sum(x)

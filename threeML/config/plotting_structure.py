@@ -60,7 +60,8 @@ class DataHistPlot:
 @dataclass
 class PlotStyle:
     linestyle: Optional[str] = "-"
-    linewidth: Optional[float]= 1.7
+    linewidth: Optional[float] = 1.7
+
 
 @dataclass
 class ContourStyle:
@@ -131,5 +132,6 @@ class GenericPlotting:
 
 @dataclass
 class ModelPlotting:
-
-    point_source_plot: PointSourcePlot = field(default_factory=lambda: PointSourcePlot())
+    point_source_plot: PointSourcePlot = field(
+        default_factory=lambda: PointSourcePlot()
+    )

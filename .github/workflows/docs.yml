@@ -1,5 +1,20 @@
 name: Docs
-on: [push, release]
+on:
+  push:
+    branches:
+      - master
+      - dev
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - master
+      - dev
+  release:
+
+permissions:
+  contents: write       # 'write' access to repository contents
+  pull-requests: write  # 'write' access to pull requests
 
 jobs:
   fast_notebooks:
@@ -8,46 +23,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: 3.9
+             auto-update-conda: true
+             auto-activate: false
+             mamba-version: "*"
+             architecture: x64 
+             activate-environment: test_env
+             python-version: 3.11
+             channels: threeml, conda-forge, fermi
+             environment-file: ci/environment.yml 
+             use-only-tar-bz2: false
+
+      # is that really needed?
       - name: install latex
-        uses: xu-cheng/texlive-action/small@v1
-          
-      - name: Init Environment
+        uses: xu-cheng/texlive-action@v3
+        with: 
+          scheme: small
+
+      - name: Install notebook dependencies 
         shell: bash -l {0}
         run: |
           set -e
-          # brew update
-          # brew install --cask basictex
- 
-          pip install -U cython
-          pip install -U numpy scipy matplotlib
-          pip install -U jupytext jupyterthemes jupyter_latex_envs
-          pip install -U astropy
-          pip install emcee ultranest
-          
-          
-          pip install zeus-mcmc
-          #pip install git+https://github.com/desihub/speclite.git
-          pip install --upgrade speclite
-          pip install "black<24"
-          pip install astromodels
-          
-          
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
+
+
       - name: Install the package
         shell: bash -l {0}
         run: |
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
+            mamba remove --force astromodels # rm astromodels without rm dependencies
+            pip install --pre -U astromodels 
           fi
           pip install -e .
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
+      - name: Conda list
+        shell: bash -l {0}
+        run: |
+            mamba list
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -70,7 +85,7 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
@@ -78,7 +93,7 @@ jobs:
  
   hal_notebooks:
     name: "Build the HAL notebooks"
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,51 +104,36 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.9-${{ hashFiles('ci/environment_hal.yml') }}
+          key: conda-hal_notebooks-python-3.11-${{ hashFiles('ci/environment_hal.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          auto-activate-base: false
-          #mamba-version: "*"
+          auto-activate: false
+          miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
-          channels: conda-forge, threeml, defaults
+          python-version: 3.11
+          channels: threeml, conda-forge, defaults
           environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
+          architecture: "x64"
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
           set -e
-
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-          brew update
-          brew install --cask basictex
-
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
-
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install "black<24"
           pip install --upgrade speclite
           pip install git+https://github.com/threeml/hawc_hal.git
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
+            mamba remove --force astromodels # uninstall it otherwise will used cached one
+            pip install --pre -U astromodels
           fi
           pip install -e .
         env:
@@ -156,14 +156,14 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
   fermi_notebooks:
     name: "Build the Fermi notebooks"
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -174,50 +174,36 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-fermi_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+          key: conda-fermi_notebooks-python-3.11-${{ hashFiles('ci/environment_fermi.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          auto-activate-base: false
-          #mamba-version: "*"
+          auto-activate: false
+          miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
-          channels: conda-forge, fermi, threeml, defaults
+          python-version: 3.11
+          channels: fermi, threeml, conda-forge, defaults
           environment-file: ci/environment_fermi.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
+          architecture: "x64"
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
           set -e
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
 
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-          brew update
-          brew install --cask basictex
-
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
-
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-          
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install "black<24" fermipy
           pip install --upgrade speclite
-          
+                    
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
             #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
           fi
           pip install -e .
         env:
@@ -232,11 +218,12 @@ jobs:
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
 
-
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
 
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/grb_130427A_GBM+LAT.md
+          
           #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/optimizer_docs.md
 
           mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
@@ -248,14 +235,14 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
     
   xspec_notebooks:
     name: "Build the XSPEC notebooks"
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -266,50 +253,34 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-xspec_notebooks-python-3.9-${{ hashFiles('ci/environment_xspec.yml') }}
+          key: conda-xspec_notebooks-python-3.11-${{ hashFiles('ci/environment_xspec.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          auto-activate-base: false
-          miniforge-variant: Miniforge3
+          auto-activate: false
+          miniforge-version: latest
           activate-environment: test_env
-          python-version: 3.9
-          channels: threeml, conda-forge, xspecmodels, defaults
+          python-version: 3.11
+          channels: threeml, conda-forge, defaults
           environment-file: ci/environment_xspec.yml
-          use-only-tar-bz2: true
+          use-only-tar-bz2: false
+          architecture: x64
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
-          # Make sure we fail in case of error
           set -e
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-          brew update
-          brew install --cask basictex
-
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
-
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install jupytext jupyterthemes ipython_genutils jupyter notebook black 
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install zeus_mcmc dynesty "black<24" 
           pip install --upgrade speclite
-          #pip install git+https://github.com/desihub/speclite.git
           if [[ "${ISDEV}" == "true" ]]; then
-            pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
+            mamba remove --force astromodels
+            pip install --pre -U astromodels
           fi
           pip install -e .
         env:
@@ -336,14 +307,14 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
   
   multinest_notebooks:
     name: "Build the multinest notebooks"
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -354,52 +325,51 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_hal.yml') }}
+          key: conda-multinest_notebooks-python-3.11-${{ hashFiles('ci/environment.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          auto-activate-base: false
-          #mamba-version: "*"
+          auto-activate: false
+          miniforge-version: latest
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge, threeml, defaults
-          environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: true
+          python-version: 3.11
+          channels: threeml, conda-forge, defaults
+          environment-file: ci/environment.yml
+          use-only-tar-bz2: false
+          architecture: "x64"
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
           set -e
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+          # miniconda_os=MacOSX
+          # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
-          brew update
-          brew install --cask basictex
+          # brew update
+          # brew install --cask basictex
 
-          eval "$(/usr/libexec/path_helper)"
-          #sudo apt-get install texlive
+          # eval "$(/usr/libexec/path_helper)"
+          # sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs texlive-core ipython_genutils jupyter notebook jupyterthemes jupyter_latex_envs
 
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pip install zeus_mcmc dynesty "black<24"
+          pip install black 
           pip install --upgrade speclite
           #pip install git+https://github.com/desihub/speclite.git
           #pip install --no-binary :all: root_numpy
           
           if [[ "${ISDEV}" == "true" ]]; then
+            mamba remove --force astromodels
             pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
-          else
-            pip install --upgrade astromodels
           fi
           pip install -e .
         env:
@@ -434,44 +404,41 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
-
-          
           
   upload_notebooks:
-    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
+    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks,api_doc]
     name: "Upload notebooks and trigger RTD"
-    runs-on: macos-13
+    runs-on: macos-latest
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v7
         with:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
@@ -481,28 +448,61 @@ jobs:
         run: |
 
           ls docs/notebooks
+      
+      - name: Set commit sha for RTD
+        id: set_commit_sha
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "commit_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
           
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
-          name: notebooks-for-${{ github.sha }}
+          name: notebooks-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/notebooks
           
       - name: Sleep for 10 min
-        uses: juliangruber/sleep-action@v1
+        uses: juliangruber/sleep-action@v2
         with:
           time: 10m
           
-      - name: Trigger RTDs build
+      - name: Trigger RTDs build (Branches)
+        if: github.event_name != 'pull_request'
         uses: dfm/rtds-action@main
         with:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ github.ref }}
+      
+      - name: Trigger RTDs Build (Pull Requests)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          RTD_TOKEN: ${{ secrets.RTD_AUTH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RTD_PROJECT: "threeml" 
+        run: |
+          VERSION_SLUG="${PR_NUMBER}"
+          echo "Triggering build for PR version: $VERSION_SLUG"
+          
+          # We use curl to hit the API v3 directly
+          curl -X POST \
+            -H "Authorization: Token $RTD_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://readthedocs.org/api/v3/projects/$RTD_PROJECT/versions/$VERSION_SLUG/builds/"
+
+      - name: Documentation link for pull request
+        if: github.event_name == 'pull_request'
+        uses: readthedocs/actions/preview@v1
+        with:
+          project-slug: "threeml"
 
 
   api_doc:
     name: "Create the API stubs"
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -512,7 +512,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Build the API doc
         run: |
@@ -520,8 +520,8 @@ jobs:
           brew install c-blosc
           brew install hdf5
 
-          pip3 install cython tempita
-          pip3 install cython blosc2 h5py
+          pip3 install tempita
+          pip3 install blosc2 h5py
           pip3 install numpy scipy numba astropy pandas
           pip3 install wheel pkgconfig numexpr
 
@@ -530,17 +530,25 @@ jobs:
 
           brew install sphinx-doc pandoc
 
-          pip3 install mock recommonmark
+          pip3 install mock 
           pip3 install sphinx-rtd-dark-mode
           pip3 install -U sphinx
 
 
-          sphinx-apidoc -f -o docs/api/ threeML
+          sphinx-apidoc -f -o docs/api/ threeML -T
 
-
-      - uses: actions/upload-artifact@v4
+      - name: Set commit sha for RTD
+        id: set_commit_sha
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "commit_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - uses: actions/upload-artifact@v6
         with:
-          name: api-stubs-for-${{ github.sha }}
+          name: api-stubs-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/api
 
 
@@ -548,7 +556,7 @@ jobs:
 
   build_docs:
     name: "Build the Documentation"
-    runs-on: macos-13
+    runs-on: macos-latest
     needs: [upload_notebooks, api_doc]
     steps:
 
@@ -561,7 +569,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install package
         run: |
@@ -570,51 +578,57 @@ jobs:
           brew install hdf5
 
           pip3 install wheel pkgconfig
-          pip3 install tempita
-          pip3 install cython blosc2 h5py
-          pip3 install numpy scipy numba astropy
+          pip3 install blosc2 h5py
 
           brew install sphinx-doc pandoc
 
-          pip3 install mock recommonmark
-          pip3 install sphinx-rtd-dark-mode sphinx-math-dollar
           pip3 install -U sphinx
+          pip3 install mock 
+          pip3 install sphinx-rtd-dark-mode 
           pip3 install -r docs/requirements.txt
 
           if [[ "${ISDEV}" == "true" ]]; then
             pip install --upgrade --pre astromodels
-            #pip install git+https://github.com/threeML/astromodels.git@dev
           else
             pip install --upgrade astromodels
           fi
           pip install -e .
 
           rm -rf docs/md_docs/*
+
         env:
           ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
 
-      - uses: actions/download-artifact@master
+      - name: Set commit sha for RTD
+        id: set_commit_sha
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "commit_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "commit_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/download-artifact@v7
         with:
-          name: notebooks-for-${{ github.sha }}
+          name: notebooks-for-${{ steps.set_commit_sha.outputs.commit_sha }}
           path: docs/notebooks
 
 
-      - uses: actions/download-artifact@master
+      - uses: actions/download-artifact@v7
         with:
-          name: api-stubs-for-${{ github.sha }}
-          path: docs/notebooks/api
+          name: api-stubs-for-${{ steps.set_commit_sha.outputs.commit_sha }}
+          path: docs/api
 
 
       - name: Build and Commit
         uses: sphinx-notes/pages@v2
         with:
           documentation_path: docs
-          sphinx_version: 5.1.1
+          sphinx_version: 9.0.4
           requirements_path: docs/requirements.txt
 
-
       - name: Push changes
-        if: github.event_name == 'push' #&& startsWith(github.event.ref, 'refs/tags')
+        if: github.event_name == 'push'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,24 +1,22 @@
-from __future__ import division
-from __future__ import print_function
-from builtins import zip
-from past.utils import old_div
-import pytest
 import os
-import numpy as np
-import astropy.units as u
+from builtins import zip
 
-from threeML.plugins.XYLike import XYLike
-from threeML import Model, DataList, JointLikelihood, PointSource
-from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
+import astropy.units as u
+import numpy as np
+from astromodels import Powerlaw
+
+from threeML import (
+    Model,
+    PointSource,
+)
 from threeML.analysis_results import (
+    AnalysisResultsSet,
     MLEResults,
+    convert_fits_analysis_result_to_hdf,
     load_analysis_results,
     load_analysis_results_hdf,
-    convert_fits_analysis_result_to_hdf,
-    AnalysisResultsSet,
 )
-from astromodels import Line, Gaussian, Powerlaw
-
+from pathlib import Path
 
 _cache = {}
 
@@ -81,17 +79,14 @@ poiss_sig = [
 
 
 def _results_are_same(res1, res2, bayes=False):
-
     # Check that they are the same
 
     if not bayes:
-
         # Check covariance
 
         assert np.allclose(res1.covariance_matrix, res2.covariance_matrix)
 
     else:
-
         # Check samples
         np.allclose(res1.samples, res2.samples)
 
@@ -114,7 +109,6 @@ def _results_are_same(res1, res2, bayes=False):
 
 
 def test_analysis_results_input_output(xy_fitted_joint_likelihood):
-
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
 
     jl.restore_best_fit()
@@ -131,8 +125,8 @@ def test_analysis_results_input_output(xy_fitted_joint_likelihood):
 
     _results_are_same(ar, ar_reloaded)
 
-def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
 
+def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
 
     jl.restore_best_fit()
@@ -149,10 +143,8 @@ def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
 
     _results_are_same(ar, ar_reloaded)
 
-    
 
 def test_analysis_set_input_output(xy_fitted_joint_likelihood):
-
     # Collect twice the same analysis results just to see if we can
     # save them in a file as set of results
 
@@ -168,24 +160,21 @@ def test_analysis_set_input_output(xy_fitted_joint_likelihood):
 
     analysis_set.set_bins("testing", [-1, 1], [3, 5], unit="s")
 
-    temp_file = "_analysis_set_test"
+    temp_file = Path.cwd() / "_analysis_set_test"
 
     analysis_set.write_to(temp_file, overwrite=True)
 
     analysis_set_reloaded = load_analysis_results(temp_file)
 
-    os.remove(temp_file)
-
+    temp_file.unlink()
     # Test they are the same
     assert len(analysis_set_reloaded) == len(analysis_set)
 
     for res1, res2 in zip(analysis_set, analysis_set_reloaded):
-
         _results_are_same(res1, res2)
 
 
 def test_conversion_fits2hdf(xy_fitted_joint_likelihood):
-
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
 
     jl.restore_best_fit()
@@ -198,25 +187,25 @@ def test_conversion_fits2hdf(xy_fitted_joint_likelihood):
 
     analysis_set.set_bins("testing", [-1, 1], [3, 5], unit="s")
 
-    temp_file = "_analysis_set_test.fits"
+    temp_file = Path.cwd() / "_analysis_set_test.fits"
+    temp_file_hdf5 = Path.cwd() / "_analysis_set_test.h5"
 
     analysis_set.write_to(temp_file, overwrite=True)
 
     convert_fits_analysis_result_to_hdf(temp_file)
 
-    analysis_set_reloaded = load_analysis_results_hdf("_analysis_set_test.h5")
+    analysis_set_reloaded = load_analysis_results_hdf(temp_file_hdf5)
 
-        # Test they are the same
+    # Test they are the same
     assert len(analysis_set_reloaded) == len(analysis_set)
 
     for res1, res2 in zip(analysis_set, analysis_set_reloaded):
-
         _results_are_same(res1, res2)
+    temp_file.unlink()
+    temp_file_hdf5.unlink()
 
-    
-        
+
 def test_analysis_set_input_output_hdf(xy_fitted_joint_likelihood):
-
     # Collect twice the same analysis results just to see if we can
     # save them in a file as set of results
 
@@ -232,31 +221,29 @@ def test_analysis_set_input_output_hdf(xy_fitted_joint_likelihood):
 
     analysis_set.set_bins("testing", [-1, 1], [3, 5], unit="s")
 
-    temp_file = "_analysis_set_test_hdf"
+    temp_file = Path.cwd() / "_analysis_set_test_hdf"
 
     analysis_set.write_to(temp_file, overwrite=True, as_hdf=True)
 
     analysis_set_reloaded = load_analysis_results_hdf(temp_file)
 
-    os.remove(temp_file)
-
     # Test they are the same
     assert len(analysis_set_reloaded) == len(analysis_set)
 
     for res1, res2 in zip(analysis_set, analysis_set_reloaded):
-
         _results_are_same(res1, res2)
+    temp_file.unlink()
 
 
 def test_error_propagation(xy_fitted_joint_likelihood):
-
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
 
     jl.restore_best_fit()
 
     ar = jl.results  # type: MLEResults
 
-    # You can use the results for propagating errors non-linearly for analytical functions
+    # You can use the results for propagating errors non-linearly for analytical
+    # functions
     p1 = ar.get_variates("fake.spectrum.main.composite.b_1")
     p2 = ar.get_variates("fake.spectrum.main.composite.a_1")
 
@@ -266,10 +253,10 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
     res = p1 + p2
 
-    assert old_div(abs(res.value - (p1.value + p2.value)), (p1.value + p2.value)) < 0.01
+    assert abs(res.value - (p1.value + p2.value)) / (p1.value + p2.value) < 0.01
 
     # Make ratio with error 0
-    res = old_div(p1, p1)
+    res = p1 / p1
 
     low_b, hi_b = res.equal_tail_interval()
 
@@ -282,17 +269,15 @@ def test_error_propagation(xy_fitted_joint_likelihood):
     arguments = {}
 
     for par in list(fitfun.parameters.values()):
-
         if par.free:
-
             this_name = par.name
 
             this_variate = ar.get_variates(par.path)
 
-            # Do not use more than 1000 values (would make computation too slow for nothing)
+            # Do not use more than 1000 values (would make computation too slow for
+            # nothing)
 
             if len(this_variate) > 1000:
-
                 this_variate = np.random.choice(this_variate, size=1000)
 
             arguments[this_name] = this_variate
@@ -314,7 +299,6 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
 
 def test_bayesian_input_output(xy_completed_bayesian_analysis):
-
     bs, _ = xy_completed_bayesian_analysis
 
     rb1 = bs.results
@@ -331,19 +315,17 @@ def test_bayesian_input_output(xy_completed_bayesian_analysis):
 
 
 def test_corner_plotting(xy_completed_bayesian_analysis):
-
     bs, _ = xy_completed_bayesian_analysis
 
     ar = bs.results
 
     ar.corner_plot()
 
-    ar.corner_plot(components = [*ar._free_parameters.keys()][0:2])
+    ar.corner_plot(components=[*ar._free_parameters.keys()][0:2])
 
 
 def test_one_free_parameter_input_output():
-
-    fluxUnit = 1.0 / (u.TeV * u.cm ** 2 * u.s)
+    fluxUnit = 1.0 / (u.TeV * u.cm**2 * u.s)
 
     temp_file = "__test_mle.fits"
 

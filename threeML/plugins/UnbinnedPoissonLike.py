@@ -14,7 +14,7 @@ __instrument_name = "n.a."
 
 log = setup_logger(__name__)
 
-_tiny = np.float64(np.finfo(1.).tiny)
+_tiny = np.float64(np.finfo(1.0).tiny)
 
 
 class EventObservation(object):
@@ -24,21 +24,18 @@ class EventObservation(object):
         exposure: float,
         start: Union[float, np.ndarray],
         stop: Union[float, np.ndarray],
-        for_timeseries: bool = False
+        for_timeseries: bool = False,
     ):
-
         self._events = np.array(events)
         self._exposure: float = exposure
 
         if isinstance(start, Iterable) or isinstance(stop, Iterable):
-
             assert isinstance(start, Iterable)
             assert isinstance(stop, Iterable)
 
             assert len(start) == len(stop)
 
             for i, v in enumerate(start):
-
                 assert v < stop[i]
 
             self._start: np.ndarray = start
@@ -48,7 +45,6 @@ class EventObservation(object):
             self._is_multi_interval: bool = True
 
         else:
-
             assert start < stop
 
             self._start: float = float(start)
@@ -59,8 +55,7 @@ class EventObservation(object):
 
         self._n_events: int = len(self._events)
 
-        log.debug(f"created event observation with")
-        log.debug(f"{self._start} {self._stop}")
+        log.debug(f"Created event observation with {self._start} {self._stop}")
 
         self._for_timeseries = for_timeseries
         if for_timeseries:
@@ -102,14 +97,12 @@ class UnbinnedPoissonLike(PluginPrototype):
         observation: EventObservation,
         source_name: Optional[str] = None,
     ) -> None:
-        """
-        This is a generic likelihood for unbinned Poisson data.
-        It is very slow for many events. 
+        """This is a generic likelihood for unbinned Poisson data. It is very
+        slow for many events.
 
         :param name: the plugin name
         :param observation: and EventObservation container
         :param source_name: option source name to apply to the source
-
         """
 
         assert isinstance(observation, EventObservation)
@@ -121,42 +114,39 @@ class UnbinnedPoissonLike(PluginPrototype):
         self._n_events: int = self._observation.n_events
 
         if self._observation.for_timeseries:
-
             total_dt = 0
 
             if self._observation.is_multi_interval:
-                for start, stop in zip(self._observation.start,
-                                       self._observation.stop):
-                    total_dt += stop-start
+                for start, stop in zip(self._observation.start, self._observation.stop):
+                    total_dt += stop - start
             else:
-                total_dt = self._observation.stop-self._observation.start
+                total_dt = self._observation.stop - self._observation.start
 
-            self._dead_corr = self._observation.exposure/total_dt
+            self._dead_corr = self._observation.exposure / total_dt
         else:
-            self._dead_corr = 1.
+            self._dead_corr = 1.0
 
-        super(UnbinnedPoissonLike, self).__init__(
-            name=name, nuisance_parameters={})
+        super(UnbinnedPoissonLike, self).__init__(name=name, nuisance_parameters={})
 
     def set_model(self, model: astromodels.Model) -> None:
-        """
-        Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
+        """Set the model to be used in the joint minimization.
+
+        Must be a LikelihoodModel instance.
         """
 
         self._like_model: astromodels.Model = model
 
         # We assume there are no extended sources, since we cannot handle them here
 
-        assert self._like_model.get_number_of_extended_sources() == 0, (
-            "SpectrumLike plugins do not support " "extended sources"
-        )
+        assert (
+            self._like_model.get_number_of_extended_sources() == 0
+        ), "SpectrumLike plugins do not support extended sources"
 
         # check if we set a source name that the source is in the model
 
         if self._source_name is not None:
             assert self._source_name in self._like_model.sources, (
-                "Source %s is not contained in "
-                "the likelihood model" % self._source_name
+                "Source %s is not contained in the likelihood model" % self._source_name
             )
 
         differential, integral = self._get_diff_and_integral(self._like_model)
@@ -168,12 +158,11 @@ class UnbinnedPoissonLike(PluginPrototype):
     def _get_diff_and_integral(
         self, likelihood_model: astromodels.Model
     ) -> Tuple[types.FunctionType, types.FunctionType]:
-
         if self._source_name is None:
-
             n_point_sources = likelihood_model.get_number_of_point_sources()
 
-            # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+            # Make a function which will stack all point sources (OGIP do not support
+            # spatial dimension)
 
             def differential(energies):
                 fluxes = likelihood_model.get_point_source_fluxes(
@@ -189,21 +178,19 @@ class UnbinnedPoissonLike(PluginPrototype):
                 return fluxes
 
         else:
-
             # This SpectrumLike dataset refers to a specific source
 
-            # Note that we checked that self._source_name is in the model when the model was set
+            # Note that we checked that self._source_name is in the model when the model
+            # was set
 
             try:
 
                 def differential_flux(energies):
-
                     return likelihood_model.sources[self._source_name](
                         energies, tag=self._tag
                     )
 
             except KeyError:
-
                 raise KeyError(
                     "This plugin has been assigned to source %s, "
                     "which does not exist in the current model" % self._source_name
@@ -227,21 +214,16 @@ class UnbinnedPoissonLike(PluginPrototype):
         return differential, integral
 
     def get_log_like(self) -> float:
-        """
-        Return the value of the log-likelihood with the current values for the
-        parameters
-        """
+        """Return the value of the log-likelihood with the current values for
+        the parameters."""
 
-        n_expected_counts: float = 0.
+        n_expected_counts: float = 0.0
 
         if self._observation.is_multi_interval:
-
             for start, stop in zip(self._observation.start, self._observation.stop):
-
                 n_expected_counts += self._integral_model(start, stop)
 
         else:
-
             n_expected_counts += self._integral_model(
                 self._observation.start, self._observation.stop
             )
@@ -254,17 +236,18 @@ class UnbinnedPoissonLike(PluginPrototype):
         # use numba to sum the events
         sum_logM = _evaluate_logM_sum(M, self._n_events)
 
-        minus_log_like = -n_expected_counts*self._dead_corr + sum_logM
+        minus_log_like = -n_expected_counts * self._dead_corr + sum_logM
 
         return minus_log_like
 
     def inner_fit(self) -> float:
-        """
-        This is used for the profile likelihood. Keeping fixed all parameters in the
-        LikelihoodModel, this method minimize the logLike over the remaining nuisance
-        parameters, i.e., the parameters belonging only to the model for this
-        particular detector. If there are no nuisance parameters, simply return the
-        logLike value.
+        """This is used for the profile likelihood.
+
+        Keeping fixed all parameters in the LikelihoodModel, this method
+        minimize the logLike over the remaining nuisance parameters,
+        i.e., the parameters belonging only to the model for this
+        particular detector. If there are no nuisance parameters, simply
+        return the logLike value.
         """
 
         return self.get_log_like()
@@ -274,7 +257,7 @@ class UnbinnedPoissonLike(PluginPrototype):
 
 
 @nb.njit(fastmath=True)
-def _evaluate_logM_sum(M, size):
+def _evaluate_logM_sum(M, size):  # pragma: no cover
     # Evaluate the logarithm with protection for negative or small
     # numbers, using a smooth linear extrapolation (better than just a sharp
     # cutoff)
@@ -285,11 +268,10 @@ def _evaluate_logM_sum(M, size):
 
     if tink_mask.sum() > 0:
         logM = np.zeros(size)
-        logM[tink_mask] = (np.abs(M[tink_mask])/_tiny) + np.log(_tiny) - 1
+        logM[tink_mask] = (np.abs(M[tink_mask]) / _tiny) + np.log(_tiny) - 1
         logM[non_tiny_mask] = np.log(M[non_tiny_mask])
 
     else:
-
         logM = np.log(M)
 
     return logM.sum()

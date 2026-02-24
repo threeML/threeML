@@ -31,23 +31,151 @@ DOCS = Path(__file__).parent
 
 
 def run_apidoc(app):
-    """Generage API documentation"""
-    import better_apidoc
+    """Download API stubs from GitHub Actions artifact or generate them locally."""
+    import subprocess
+    import requests
+    import zipfile
+    import io
+    import json
 
-    better_apidoc.APP = app
-    better_apidoc.main(
-        [
-            "better-apidoc",
-            # "-t",
-            # str(docs / "_templates"),
-            "--force",
-            "--no-toc",
-            "--separate",
-            "-o",
-            str(DOCS / "api"),
-            str(DOCS / ".." / "threeML"),
-        ]
-    )
+    api_dir = DOCS / "api"
+    api_dir.mkdir(exist_ok=True)
+
+    # 1. Debug: Print environment info to the RTD build log
+    print("--- Starting API Doc Retrieval ---")
+    github_token = os.environ.get("GITHUB_TOKEN")
+
+    # RTD Variables
+    rtd_version = os.environ.get("READTHEDOCS_VERSION", "")
+    rtd_commit = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH", "")
+    rtd_version_type = os.environ.get("READTHEDOCS_VERSION_TYPE", "")
+
+    print(f"RTD Version: {rtd_version}")
+    print(f"RTD Commit: {rtd_commit}")
+    print(f"RTD Type: {rtd_version_type}")
+
+    target_sha = rtd_commit
+
+    # 2. Fix SHA Mismatch for PRs
+    # If this is a PR (external), rtd_commit is likely the Merge Commit.
+    # We need the PR Head SHA because that's what the artifact is named after.
+    if rtd_version_type == "external" and github_token:
+        try:
+            # rtd_version is usually "external-{pr_number}"
+            pr_number = rtd_version.replace("external-", "")
+            print(f"Detected PR #{pr_number}. Fetching HEAD SHA from GitHub API...")
+
+            headers = {
+                "Authorization": f"token {github_token}",
+                "Accept": "application/vnd.github.v3+json",
+            }
+            # Get PR details to find the Head SHA
+            pr_url = f"https://api.github.com/repos/threeML/threeML/pulls/{pr_number}"
+            pr_res = requests.get(pr_url, headers=headers, timeout=10)
+
+            if pr_res.status_code == 200:
+                target_sha = pr_res.json()["head"]["sha"]
+                print(f"Resolved PR Head SHA: {target_sha}")
+            else:
+                print(
+                    f"Failed to resolve PR Head SHA: {pr_res.status_code} {pr_res.text}"
+                )
+        except Exception as e:
+            print(f"Error resolving PR SHA: {e}")
+
+    # 3. Attempt Download
+    if github_token and target_sha:
+        artifact_name = f"api-stubs-for-{target_sha}"
+        print(f"Looking for artifact: {artifact_name}")
+
+        repo = "threeML/threeML"
+        headers = {
+            "Authorization": f"token {github_token}",
+            "Accept": "application/vnd.github.v3+json",
+        }
+
+        try:
+            # List runs for this SHA
+            url = f"https://api.github.com/repos/{repo}/actions/runs"
+            params = {"head_sha": target_sha, "per_page": 5}  # Check top 5 just in case
+
+            print(f"Querying workflow runs for SHA {target_sha}...")
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+
+            if response.status_code == 200:
+                runs = response.json().get("workflow_runs", [])
+                print(f"Found {len(runs)} workflow runs.")
+
+                for run in runs:
+                    run_id = run["id"]
+                    print(f"Checking Run ID {run_id}...")
+
+                    artifacts_url = f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/artifacts"
+                    art_resp = requests.get(artifacts_url, headers=headers, timeout=10)
+
+                    if art_resp.status_code == 200:
+                        artifacts = art_resp.json().get("artifacts", [])
+                        # Look for our specific artifact
+                        api_artifact = next(
+                            (a for a in artifacts if a["name"] == artifact_name), None
+                        )
+
+                        if api_artifact:
+                            print(
+                                f"Artifact found! Downloading from: {api_artifact['archive_download_url']}"
+                            )
+                            download_url = api_artifact["archive_download_url"]
+                            dl_resp = requests.get(
+                                download_url, headers=headers, timeout=30, stream=True
+                            )
+
+                            if dl_resp.status_code == 200:
+                                zip_data = io.BytesIO(dl_resp.content)
+                                with zipfile.ZipFile(zip_data) as zip_file:
+                                    zip_file.extractall(api_dir)
+                                print(
+                                    "Successfully downloaded and extracted API stubs."
+                                )
+                                return  # SUCCESS!
+                            else:
+                                print(f"Download failed: {dl_resp.status_code}")
+                    else:
+                        print(f"Failed to list artifacts: {art_resp.status_code}")
+            else:
+                print(f"Failed to list runs: {response.status_code} {response.text}")
+
+        except Exception as e:
+            print(f"EXCEPTION during download: {e}")
+            # Ensure we fail the build if it's a PR so we can retry later
+            # if rtd_version_type == "external":
+            #     print("Critical failure downloading artifacts for PR. Aborting build.")
+            #     sys.exit(1)
+
+    # 4. Fallback (Only reachable if download failed or not a PR)
+    print("Fallback: Generating API stubs locally...")
+
+    # (Existing fallback code...)
+    package_path = DOCS.parent / "threeML"
+    output_path = api_dir
+
+    try:
+        subprocess.run(
+            [
+                "sphinx-apidoc",
+                "--force",
+                "-o",
+                str(output_path),
+                str(package_path),
+                "-T",
+            ],
+            check=True,
+            cwd=DOCS.parent,
+        )
+    except Exception as e:
+        print(f"Local generation failed: {e}")
+        raise RuntimeError(
+            "Failed to generate API stubs locally using sphinx-apidoc. Aborting build."
+        )
 
 
 MOCK_MODULES = ["fermipy"]
@@ -65,7 +193,7 @@ for mod_name in MOCK_MODULES:
 # ones.
 extensions = [
     "nbsphinx",
-    "recommonmark",
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
@@ -73,6 +201,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_gallery.load_style",
     "sphinx_rtd_dark_mode",
+    "sphinxcontrib.email",
+    "sphinx_copybutton",
 ]
 
 napoleon_google_docstring = True
@@ -80,10 +210,9 @@ napoleon_use_param = False
 
 
 default_dark_mode = True
-
+email_automode = True
 
 if "GITHUB_TOKEN" in os.environ:
-
     extensions.append("rtds_action")
 
     # The path where the artifact should be extracted
@@ -97,8 +226,17 @@ if "GITHUB_TOKEN" in os.environ:
     # # A GitHub personal access token is required, more info below
     rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
+    # For PR builds, don't fail if artifacts aren't ready yet
+    # The first automatic build might run before artifacts are ready
+    # The webhook-triggered build (after artifacts are ready) will succeed
+    # Check if this is a PR build (external version type)
+    # is_pr_build = os.environ.get("READTHEDOCS_VERSION_TYPE") == "external"
+    # rtds_action_error_if_missing = not is_pr_build
     rtds_action_error_if_missing = True
 
+    # Readthedocs provides the current version/branch name in an environment
+    # variable. For PR builds, we use the PR
+    rtds_action_commit_ref = os.environ.get("READTHEDOCS_GIT_COMMIT_HASH")
 
 
 sphinx_gallery_conf = {
@@ -108,7 +246,6 @@ sphinx_gallery_conf = {
     #     'nested_sections': False,
     #     'show_api_usage': True,
 }
-
 
 
 # The suffix(es) of source filenames.
@@ -127,24 +264,28 @@ master_doc = "index"
 
 # General information about the project.
 project = "The Multi-Mission Maximum Likelihood framework"
-copyright = "2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack"
+copyright = "(2026), the ThreeML developers"
 author = "G.Vianello"
 
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "**.ipynb_checkpoints"]
+exclude_patterns = [
+    "_build",
+    "**.ipynb_checkpoints",
+    "**/test/*",
+    "**/test_*.py",
+]
 
 html_theme = "sphinx_rtd_dark_mode"
 
 
 html_theme_options = {
     "logo_only": False,
-    "display_version": False,
     "collapse_navigation": True,
     "navigation_depth": 4,
     "prev_next_buttons_location": "bottom",  # top and bottom
@@ -171,6 +312,7 @@ todo_include_todos = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "TheMulti-MissionMaximumLikelihoodframeworkdoc"
+html_baseurl = ""
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -244,7 +386,6 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-
         master_doc,
         "TheMulti-MissionMaximumLikelihoodframework",
         "The Multi-Mission Maximum Likelihood framework Documentation",
@@ -254,7 +395,6 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
-
 
 
 def setup(app):

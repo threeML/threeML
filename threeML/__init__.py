@@ -1,30 +1,35 @@
 # We import matplotlib first, because we need control on the backend
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
+import os
+import traceback
+import warnings
+
 import pandas as pd
 
 pd.set_option("display.max_columns", None)
 
-import os
-import traceback
-import warnings
 
 # Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue
 # LEAVE THESE HERE BEFORE ANY THREEML IMPORT
 try:
     import ROOT
+
+    ROOT.__doc__
 except ImportError:
     pass
 try:
     import pyLikelihood
+
+    pyLikelihood.__doc__
 except ImportError:
     pass
 
 from pathlib import Path
 
-from threeML.io.logging import setup_logger
-
 # Import everything from astromodels
 from astromodels import *
+
+from .io.logging import setup_logger
 
 from .config import (
     threeML_config,
@@ -38,9 +43,7 @@ log.propagate = False
 if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
     log.warning("WARNINGs here are [red]NOT[/red] errors")
-    log.warning(
-        "but are inform you about optional packages that can be installed"
-    )
+    log.warning("but are inform you about optional packages that can be installed")
     log.warning(
         "[red] to disable these messages, turn off start_warning in your config file[/red]"
     )
@@ -57,14 +60,12 @@ if os.environ.get("DISPLAY") is None:
 
 # Import version (this has to be placed before the import of serialization
 # since __version__ needs to be defined at that stage)
-from ._version import get_versions
+from . import _version
 
-__version__ = get_versions()["version"]
-del get_versions
-
+__version__ = _version.get_versions()["version"]
 
 import traceback
-from importlib.machinery import SourceFileLoader
+import importlib.util
 
 # Finally import the serialization machinery
 from .io.serialization import *
@@ -85,48 +86,30 @@ from .plugin_prototype import PluginPrototype
 # using similar names (for example, the io package)
 
 
-try:
-    # noinspection PyUnresolvedReferences
-    from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
-
-except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning(
-            "The cthreeML package is not installed. You will not be able to use plugins which require "
-            "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
-        )
 # Now look for plugins
 
 # This verifies if a module is importable
 
 
 def is_module_importable(module_full_path):
-
     try:
-
-        _ = SourceFileLoader("__", str(module_full_path)).load_module()
-
-    except:
-
+        spec = importlib.util.spec_from_file_location(
+            module_full_path.stem, module_full_path
+        )
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Cannot load {module_full_path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return True, module
+    except Exception:
         return False, traceback.format_exc()
-
-    else:
-
-        return True, "%s imported ok" % module_full_path
 
 
 plugins_dir = Path(__file__).parent / "plugins"
 
 found_plugins = plugins_dir.glob("*.py")
 
-# Filter out __init__
-
-# found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
-
-# Filter out __init__
-
-found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
-
+found_plugins = [f for f in plugins_dir.glob("*.py") if f.name != "__init__.py"]
 
 _working_plugins = {}
 _not_working_plugins = {}
@@ -134,10 +117,9 @@ _not_working_plugins = {}
 # Loop over each candidates plugins and check if it is importable
 
 for i, module_full_path in enumerate(found_plugins):
-
     plugin_name = module_full_path.stem
 
-    is_importable, failure_traceback = is_module_importable(module_full_path)
+    is_importable, result = is_module_importable(module_full_path)
 
     if not is_importable:
         if threeML_config.logging.startup_warnings:
@@ -147,89 +129,65 @@ for i, module_full_path in enumerate(found_plugins):
                 # custom_exceptions.CannotImportPlugin,
             )
 
-        _not_working_plugins[plugin_name] = failure_traceback
+        _not_working_plugins[plugin_name] = result
 
         continue
 
-    else:
+    # First get the instrument name
+    module = result
+    instrument_name = getattr(module, "__instrument_name", None)
+    if not instrument_name:
+        continue
 
-        # First get the instrument name
-        try:
-
-            exec(f"from threeML.plugins.{plugin_name} import __instrument_name")
-
-        except ImportError:
-
-            # This module does not contain a plugin, continue
-            continue
-
-        # Now import the plugin itself
-
-        import_command = (
-            f"from threeML.plugins.{plugin_name} import {plugin_name}"
+    try:
+        imported_plugin = importlib.import_module(f"threeML.plugins.{plugin_name}")
+        plugin_class = getattr(imported_plugin, plugin_name)
+        globals()[plugin_name] = plugin_class
+    except ImportError:
+        log.warning(
+            f"Could not import plugin {plugin_name}."
+            "Do you have the relative instrument software installed?"
         )
-
-        try:
-
-            exec(import_command)
-
-        except ImportError:
-
-            pass
-
-        else:
-
-            _working_plugins[__instrument_name] = plugin_name
-
+        continue
+    _working_plugins[instrument_name] = plugin_name
 
 # Now some convenience functions
 
 
 def get_available_plugins():
-    """
-    Print a list of available plugins
+    """Print a list of available plugins.
 
     :return:
     """
     print("Available plugins:\n")
 
     for instrument, class_name in _working_plugins.items():
-
         print(f"{class_name} for {instrument}")
 
 
 def _display_plugin_traceback(plugin):
     if threeML_config.logging.startup_warnings:
-        log.warning(
-            "#############################################################"
-        )
+        log.warning("#############################################################")
         log.warning("\nCouldn't import plugin %s" % plugin)
         log.warning("\nTraceback:\n")
         log.warning(_not_working_plugins[plugin])
-        log.warning(
-            "#############################################################"
-        )
+        log.warning("#############################################################")
 
 
 def is_plugin_available(plugin):
-    """
-    Test whether the plugin for the provided instrument is available
+    """Test whether the plugin for the provided instrument is available.
 
     :param plugin: the name of the plugin class
     :return: True or False
     """
 
     if plugin in _working_plugins.values():
-
         # FIXME
         if plugin == "FermipyLike":
-
             try:
-
                 _ = FermipyLike.__new__(FermipyLike, test=True)
 
-            except:
-
+            except Exception:
                 # Do not register it
 
                 _not_working_plugins[plugin] = traceback.format_exc()
@@ -241,15 +199,12 @@ def is_plugin_available(plugin):
         return True
 
     else:
-
         if plugin in _not_working_plugins:
-
             _display_plugin_traceback(plugin)
 
             return False
 
         else:
-
             log.error(f"Plugin {plugin} is not known")
             raise RuntimeError()
 
@@ -272,23 +227,22 @@ from threeML.catalogs import (
     FermiGBMBurstCatalog,
     FermiGBMTriggerCatalog,
     FermiLATSourceCatalog,
-    FermiPySourceCatalog,
     FermiLLEBurstCatalog,
+    FermiPySourceCatalog,
     SwiftGRBCatalog,
 )
-
 from threeML.io import (
+    activate_logs,
+    activate_progress_bars,
     activate_warnings,
-    silence_warnings,
-    update_logging_level,
+    debug_mode,
+    loud_mode,
+    quiet_mode,
     silence_logs,
     silence_progress_bars,
-    activate_progress_bars,
+    silence_warnings,
     toggle_progress_bars,
-    quiet_mode,
-    loud_mode,
-    debug_mode,
-    activate_logs,
+    update_logging_level,
 )
 from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
 from threeML.io.plotting.model_plot import (
@@ -306,8 +260,8 @@ from threeML.io.uncertainty_formatter import interval_to_errors
 # import time series builder, soon to replace the Fermi plugins
 from threeML.utils.data_builders import *
 from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
-    download_GBM_trigger_data,
     download_GBM_daily_data,
+    download_GBM_trigger_data,
 )
 
 # Import the LAT data downloader
@@ -331,20 +285,18 @@ from .classicMLE.joint_likelihood_set import (
     JointLikelihoodSetAnalyzer,
 )
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
-
-# Now read the configuration and make it available as threeML_config
-
 from .data_list import DataList
+from .io import get_threeML_style, set_threeML_style
 from .io.calculate_flux import calculate_point_source_flux
-
-# Import the plot_style context manager and the function to create new styles
-
 from .parallel.parallel_client import parallel_computation
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
-from .io import get_threeML_style, set_threeML_style
+# Now read the configuration and make it available as threeML_config
+
+
+# Import the plot_style context manager and the function to create new styles
 
 
 # Import optical filters
@@ -364,13 +316,10 @@ var_to_check = ["OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"]
 
 
 for var in var_to_check:
-
     num_threads = os.environ.get(var)
 
     if num_threads is not None:
-
         try:
-
             num_threads = int(num_threads)
 
         except ValueError:
@@ -382,7 +331,6 @@ for var in var_to_check:
                 )
 
     else:
-
         if threeML_config.logging.startup_warnings:
             log.warning(
                 "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
@@ -394,4 +342,3 @@ for var in var_to_check:
 del os
 del Path
 del warnings
-del SourceFileLoader

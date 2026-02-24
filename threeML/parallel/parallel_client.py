@@ -1,19 +1,18 @@
 # Custom warning
 import math
+import shutil
 import signal
 import subprocess
+import sys
 import time
-from typing import Optional
 import warnings
 from contextlib import contextmanager
-import shutil
 from pathlib import Path
+from typing import Optional
 
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.utils.progress_bar import tqdm
-
-import sys
 
 log = setup_logger(__name__)
 
@@ -29,15 +28,12 @@ except ImportError:
 has_parallel = False
 
 try:
-
     from ipyparallel import Client
 
 except ImportError:
-
     has_parallel = False
 
 else:
-
     has_parallel = True
 
 
@@ -58,7 +54,8 @@ class NoParallelEnvironment(UserWarning):
     pass
 
 
-# Set up the warnings module to always display our custom warning (otherwise it would only be displayed once)
+# Set up the warnings module to always display our custom warning (otherwise it would
+# only be displayed once)
 warnings.simplefilter("always", NoParallelEnvironment)
 
 
@@ -68,12 +65,11 @@ def parallel_computation(
     start_cluster: bool = True,
     n_jobs: Optional[int] = None,
 ) -> None:
-    """
-    A context manager which turns on parallel execution temporarily
+    """A context manager which turns on parallel execution temporarily.
 
     :param profile: the profile to use, if different from the default
-    :param start_cluster: True or False. Whether to start a new cluster. If False, try to use an existing one for the
-    same profile
+    :param start_cluster: True or False. Whether to start a new cluster.
+        If False, try to use an existing one for the same profile
     :return:
     """
 
@@ -86,16 +82,16 @@ def parallel_computation(
     # Set the use_parallel feature on, if available
 
     if has_parallel:
-
         threeML_config.parallel.use_parallel = True
 
     else:
-
-        # No parallel environment available. Issue a warning and continue with serial computation
+        # No parallel environment available. Issue a warning and continue with serial
+        # computation
 
         log.warning(
-            "You requested parallel computation, but no parallel environment is available. You need "
-            "to install the ipyparallel package. Continuing with serial computation...",
+            "You requested parallel computation, but no parallel environment is "
+            "available. You need to install the ipyparallel package. Continuing with "
+            "serial computation...",
         )
 
         threeML_config.parallel.use_parallel = False
@@ -103,7 +99,6 @@ def parallel_computation(
     # Now use the specified profile (if any), otherwise the default one
 
     if profile is not None:
-
         threeML_config.parallel.profile_name = str(profile)
 
     # Here is where the content of the with parallel_computation statement gets
@@ -112,7 +107,6 @@ def parallel_computation(
     # See if we need to start the ipyparallel cluster first
 
     if start_cluster:
-
         # Get the command line together
 
         # First find out path of ipcluster
@@ -120,11 +114,9 @@ def parallel_computation(
         # first let's see if we are in a virtaul env
 
         if in_virtualenv():
-
             ipcluster_path = Path(sys.prefix) / "bin" / "ipcluster"
 
             if not ipcluster_path.exists():
-
                 log.warning(f"you are using the virtualenv {sys.prefix}")
                 log.warning("but no ipcluster executable was found!")
 
@@ -133,17 +125,14 @@ def parallel_computation(
                 log.warning(f"using {ipcluster_path} instead")
 
         else:
-
             ipcluster_path = shutil.which("ipcluster")
 
         cmd_line = [str(ipcluster_path), "start"]
 
         if profile is not None:
-
             cmd_line.append(f"--profile={profile}")
 
         if n_jobs is not None:
-
             cmd_line.append(f"-n {n_jobs}")
 
         # Start process asynchronously with Popen, suppressing all output
@@ -158,41 +147,43 @@ def parallel_computation(
         # Wait for the engines to become available
 
         while True:
-
             try:
-
                 view = rc[:]
 
-            except Exception as e:
-
+            except Exception:
                 log.info("waiting on cluster to start")
                 time.sleep(0.5)
 
                 continue
 
             else:
-
                 log.info(f"{len(view)} engines are active")
 
                 break
 
         # Do whatever we need to do
         try:
-
             yield
 
         finally:
-
             # This gets executed in any case, even if there is an exception
-
+            # Shut down via Client API first so engines exit cleanly (avoid SIGTERM
+            # which causes "Event loop stopped before Future completed" in engine logs)
             log.info("\nShutting down ipcluster...")
-
-            ipycluster_process.send_signal(signal.SIGINT)
-
-            ipycluster_process.wait()
+            try:
+                rc.shutdown(hub=True, block=True)
+            except Exception as e:
+                log.debug("Client shutdown failed (cluster may already be down): %s", e)
+            # If the process is still running (e.g. ipcluster parent), stop it
+            if ipycluster_process.poll() is None:
+                ipycluster_process.send_signal(signal.SIGINT)
+                try:
+                    ipycluster_process.wait(timeout=15)
+                except subprocess.TimeoutExpired:
+                    ipycluster_process.kill()
+                    ipycluster_process.wait()
 
     else:
-
         # Using an already started cluster
 
         yield
@@ -204,7 +195,6 @@ def parallel_computation(
 
 
 def is_parallel_computation_active() -> bool:
-
     return bool(threeML_config.parallel.use_parallel)
 
 
@@ -212,8 +202,8 @@ if has_parallel:
 
     class ParallelClient(Client):
         def __init__(self, *args, **kwargs) -> None:
-            """
-            Wrapper around the IPython Client class, which forces the use of dill for object serialization
+            """Wrapper around the IPython Client class, which forces the use of
+            dill for object serialization.
 
             :param args: same as IPython Client
             :param kwargs: same as IPython Client
@@ -226,7 +216,6 @@ if has_parallel:
             # methods)
 
             if "profile" not in kwargs.keys():
-
                 kwargs["profile"] = threeML_config.parallel.profile_name
 
             super(ParallelClient, self).__init__(*args, **kwargs)
@@ -236,21 +225,23 @@ if has_parallel:
             _ = self.direct_view().use_dill()
 
         def get_number_of_engines(self):
-
             return len(self.direct_view())
 
         def _interactive_map(
             self, worker, items_to_process, ordered=True, chunk_size=None
         ):
-            """
-            Subdivide the work among the active engines, taking care of dividing it among them
+            """Subdivide the work among the active engines, taking care of
+            dividing it among them.
 
             :param worker: the function to be applied
             :param items_to_process: the items to apply the function to
-            :param ordered: whether to keep the order of output (default: True). Using False can be much faster, but
-            you need to have a way to re-estabilish the order if you care about it, after the fact.
-            :param chunk_size: determine how many items should an engine process before reporting back. Use None for
-            an automatic choice.
+            :param ordered: whether to keep the order of output
+                  (default: True). Using False can be much faster, but
+                  you need to have a way to re-estabilish the order if
+                  you care about it, after the fact.
+            :param chunk_size: determine how many items should an engine
+                  process before reporting back. Use None for an
+                  automatic choice.
             :return: a AsyncResult object
             """
 
@@ -262,7 +253,6 @@ if has_parallel:
             # Get a load-balanced view with the appropriate number of engines
 
             if n_items < n_total_engines:
-
                 log.warning("More engines than items to process")
 
                 # Limit the view to the needed engines
@@ -274,7 +264,6 @@ if has_parallel:
                 chunk_size = 1
 
             else:
-
                 # Use all engines
 
                 lview = self.load_balanced_view()
@@ -282,10 +271,7 @@ if has_parallel:
                 n_active_engines = n_total_engines
 
                 if chunk_size is None:
-
-                    chunk_size = int(
-                        math.ceil(n_items / float(n_active_engines) / 20)
-                    )
+                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
@@ -300,11 +286,9 @@ if has_parallel:
         def execute_with_progress_bar(
             self, worker, items, chunk_size=None, name="progress"
         ):
-
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
-
-                (id, item) = x
+                id, item = x
 
                 return (id, worker(item))
 
@@ -317,22 +301,20 @@ if has_parallel:
             results = []
 
             for i, res in enumerate(tqdm(amr, desc=name)):
-
                 results.append(res)
 
             # Reorder the list according to the id
-            return list(
-                map(lambda x: x[1], sorted(results, key=lambda x: x[0]))
-            )
+            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 
 else:
+    # NO parallel environment available. Make a dumb object to avoid import problems,
+    # but this object will never be really used because the context manager will not
+    # activate the parallel mode (see above)
 
-    # NO parallel environment available. Make a dumb object to avoid import problems, but this object will never
-    # be really used because the context manager will not activate the parallel mode (see above)
     class ParallelClient(object):
         def __init__(self, *args, **kwargs):
-
             raise RuntimeError(
-                "No parallel environment and attempted to use the ParallelClient class, which should "
-                "never happen. Please open an issue at https://github.com/giacomov/3ML/issues"
+                "No parallel environment and attempted to use the ParallelClient class,"
+                " which should never happen. Please open an issue at "
+                "https://github.com/threeML/threeML/issues"
             )

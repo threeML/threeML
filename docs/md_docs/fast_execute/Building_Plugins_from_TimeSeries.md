@@ -131,6 +131,7 @@ $$ B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t $$
 
 
 ```python tags=["nbsphinx-thumbnail"]
+
 gbm_tte.set_background_interval('-24--5','100-200')
 fig = gbm_tte.view_lightcurve(start=-20,stop=200)
 ```
@@ -163,7 +164,7 @@ gbm_tte_reloaded = TimeSeriesBuilder.from_gbm_tte('nai3_tte',
                                           restore_background='background_store.h5')
 ```
 
-```python tags=["nbsphinx-thumbnail"]
+```python
 fig = gbm_tte_reloaded.view_lightcurve(-10,200)
 ```
 

@@ -4,11 +4,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from future import standard_library
-
 from threeML.utils.progress_bar import tqdm
-
-standard_library.install_aliases()
 
 
 def download_file_from_ftp(ftp_url, destination_directory):
@@ -33,27 +29,24 @@ def download_files_from_directory_ftp(
     serverAddress = tokens.netloc
     directory = tokens.path
 
-    # if no filename has been specified, connect first to retrieve the list of files to download
+    # if no filename has been specified, connect first to retrieve the list of files to
+    # download
 
-    if filenames == None:
-
+    if filenames is None:
         # Connect to server and log in
 
         ftp = ftplib.FTP(serverAddress, "anonymous", "", "", timeout=60)
 
         try:
-
             ftp.login()
 
-        except:
+        except Exception:
             # Maybe we are already logged in
 
             try:
-
                 ftp.cwd("/")
 
-            except:
-
+            except Exception:
                 # nope! don't know what is happening
                 raise
 
@@ -75,14 +68,11 @@ def download_files_from_directory_ftp(
     downloaded_files = []
 
     for i, filename in enumerate(tqdm(filenames)):
-
-        if namefilter != None and filename.find(namefilter) < 0:
-
+        if namefilter is not None and filename.find(namefilter) < 0:
             # Filename does not match, do not download it
             continue
 
         else:
-
             local_filename = os.path.join(destination_directory, filename)
 
             urllib.request.urlretrieve(

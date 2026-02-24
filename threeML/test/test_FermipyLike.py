@@ -1,11 +1,16 @@
-import pytest
 import numpy as np
+import pytest
 
-from threeML.io.logging import setup_logger
-log = setup_logger(__name__)
-
-from threeML import *
+from threeML import is_plugin_available
+from threeML.catalogs.FermiLAT import FermiLATSourceCatalog, FermiPySourceCatalog
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.data_list import DataList
+from threeML.io.logging import setup_logger, update_logging_level
 from threeML.io.network import internet_connection_is_active
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
+
+log = setup_logger(__name__)
+update_logging_level("INFO")
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -15,13 +20,10 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(
     not is_plugin_available("FermipyLike"), reason="No LAT environment installed"
 )
 
-update_logging_level("INFO")
-
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
 def test_FermipyLike_fromVO():
-
     from threeML.plugins.FermipyLike import FermipyLike
 
     # Crab coordinates
@@ -59,7 +61,7 @@ def test_FermipyLike_fromVO():
 
     assert len(model.free_parameters) == 4
 
-    #fix another weak source
+    # fix another weak source
     model.x4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
 
     assert len(model.free_parameters) == 3
@@ -67,13 +69,12 @@ def test_FermipyLike_fromVO():
     # Download data from Jan 01 2010 to Jan 2 2010
 
     tstart = "2010-01-01 00:00:00"
-    tstop  = "2010-01-08 00:00:00"
+    tstop = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
 
     try:
-
         evfile, scfile = download_LAT_data(
             ra,
             dec,
@@ -85,9 +86,8 @@ def test_FermipyLike_fromVO():
         )
 
     except RuntimeError:
-    
         log.warning("Problems with LAT data download, will not proceed with tests.")
-        
+
         return
 
     # Configuration for Fermipy
@@ -101,7 +101,8 @@ def test_FermipyLike_fromVO():
     LAT = FermipyLike("LAT", config)
 
     # The plugin modifies the configuration as needed to get the output files
-    # in a unique place, which will stay the same as long as your selection does not change
+    # in a unique place, which will stay the same as long as your selection does not
+    # change
     config.display()
 
     data = DataList(LAT)
@@ -111,17 +112,17 @@ def test_FermipyLike_fromVO():
 
     jl.set_minimizer("minuit")
 
-    #check that nuisance parameters have been added and fix normalization of isodiff BG (not sensitive)
+    # check that nuisance parameters have been added and fix normalization of isodiff BG
+    # (not sensitive)
     assert len(model.free_parameters) == 5
     model.LAT_isodiff_Normalization.fix = True
     assert len(model.free_parameters) == 4
 
-    res = jl.fit()
+    _ = jl.fit()
 
-    #make sure galactic diffuse fit worked
+    # make sure galactic diffuse fit worked
     assert np.isclose(model.LAT_galdiff_Prefactor.value, 1.0, rtol=0.2, atol=0.2)
-    
-    
+
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
@@ -147,14 +148,14 @@ def test_FermipyLike_fromDisk():
 
     assert model.get_number_of_extended_sources() == 3
 
-    assert set(model.extended_sources.keys() ) == set( ['Crab_IC', 'Sim_147', 'IC_443'] )
+    assert set(model.extended_sources.keys()) == set(["Crab_IC", "Sim_147", "IC_443"])
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)
     model.free_extended_sources_within_radius(3.0, normalization_only=True)
-    
+
     assert len(model.free_parameters) == 5
-    
+
     # but then let's fix the sync and the IC components of the Crab
     # (cannot fit them with just one day of data)
     # (these two methods are equivalent)
@@ -166,10 +167,9 @@ def test_FermipyLike_fromDisk():
     # However, let's free the index of the Crab
     model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.free = True
 
-
     assert len(model.free_parameters) == 4
 
-    #fix another weak source
+    # fix another weak source
     model.x4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.fix = True
 
     assert len(model.free_parameters) == 3
@@ -177,13 +177,12 @@ def test_FermipyLike_fromDisk():
     # Download data from Jan 01 2010 to Jan 2 2010
 
     tstart = "2010-01-01 00:00:00"
-    tstop  = "2010-01-08 00:00:00"
+    tstop = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
 
     try:
-
         evfile, scfile = download_LAT_data(
             ra,
             dec,
@@ -195,9 +194,8 @@ def test_FermipyLike_fromDisk():
         )
 
     except RuntimeError:
-    
         log.warning("Problems with LAT data download, will not proceed with tests.")
-        
+
         return
 
     # Configuration for Fermipy
@@ -211,25 +209,25 @@ def test_FermipyLike_fromDisk():
     LAT = FermipyLike("LAT", config)
 
     # The plugin modifies the configuration as needed to get the output files
-    # in a unique place, which will stay the same as long as your selection does not change
+    # in a unique place, which will stay the same as long as your selection does not
+    # change
     config.display()
 
     data = DataList(LAT)
 
     # Here is where the fermipy processing happens (the .setup method)
 
-
     jl = JointLikelihood(model, data)
 
     jl.set_minimizer("minuit")
 
-    #check that nuisance parameters have been added and fix normalization of isodiff BG (not sensitive)
+    # check that nuisance parameters have been added and fix normalization of isodiff BG
+    # (not sensitive)
     assert len(model.free_parameters) == 5
     model.LAT_isodiff_Normalization.fix = True
     assert len(model.free_parameters) == 4
 
-    res = jl.fit()
+    _ = jl.fit()
 
-    #make sure galactic diffuse fit worked
+    # make sure galactic diffuse fit worked
     assert np.isclose(model.LAT_galdiff_Prefactor.value, 1.0, rtol=0.2, atol=0.2)
-

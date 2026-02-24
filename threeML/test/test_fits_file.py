@@ -1,13 +1,13 @@
-from threeML.io.fits_file import FITSExtension, FITSFile
-import numpy as np
 import astropy.io.fits as fits
-
+import numpy as np
 import pytest
+from pathlib import Path
+
+from threeML.io.fits_file import FITSExtension, FITSFile
 
 
 class DUMMYEXT(FITSExtension):
     def __init__(self, test_value):
-
         data_list = [("TEST_VALUE", test_value)]
 
         super(DUMMYEXT, self).__init__(
@@ -17,14 +17,12 @@ class DUMMYEXT(FITSExtension):
 
 class DUMMYFITS(FITSFile):
     def __init__(self, test_value):
-
         dummy_extension = DUMMYEXT(test_value)
 
         super(DUMMYFITS, self).__init__(fits_extensions=[dummy_extension])
 
 
 def test_fits_file():
-
     dtypes = [
         np.int16,
         np.int32,
@@ -37,7 +35,6 @@ def test_fits_file():
     dtype_keys = ["I", "J", "K", "I", "J", "E", "D"]
 
     for i, dt in enumerate(dtypes):
-
         test_values = np.ones(10, dtype=dt)
 
         dummy_fits = DUMMYFITS(test_value=test_values)
@@ -50,12 +47,11 @@ def test_fits_file():
 
         assert np.all(dummy_fits["TEST"].data["TEST_VALUE"] == test_values)
 
-        file_name = "test_fits%d.fits" % i
+        file_name = Path.cwd() / f"test_fits{i}.fits"
 
         dummy_fits.writeto(file_name, overwrite=True)
 
         with pytest.raises(IOError):
-
             dummy_fits.writeto(file_name, overwrite=False)
 
         read_dummy_fits = fits.open(file_name)
@@ -67,3 +63,5 @@ def test_fits_file():
         assert read_dummy_fits["TEST"].header["TFORM1"] == dtype_keys[i]
 
         assert np.all(read_dummy_fits["TEST"].data["TEST_VALUE"] == test_values)
+
+        file_name.unlink()

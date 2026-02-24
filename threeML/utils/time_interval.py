@@ -1,14 +1,15 @@
 import collections
 
 import pandas as pd
+
 from threeML.io.rich_display import display
 from threeML.utils.interval import Interval, IntervalSet
 
 
 class TimeInterval(Interval):
     def __add__(self, number):
-        """
-        Return a new time interval equal to the original time interval shifted to the right by number
+        """Return a new time interval equal to the original time interval
+        shifted to the right by number.
 
         :param number: a float
         :return: a new TimeInterval instance
@@ -17,8 +18,8 @@ class TimeInterval(Interval):
         return self.new(self._start + number, self._stop + number)
 
     def __sub__(self, number):
-        """
-        Return a new time interval equal to the original time interval shifted to the left by number
+        """Return a new time interval equal to the original time interval
+        shifted to the left by number.
 
         :param number: a float
         :return: a new TimeInterval instance
@@ -28,26 +29,21 @@ class TimeInterval(Interval):
 
     @property
     def duration(self):
-
         return super(TimeInterval, self)._get_width()
 
     @property
     def start_time(self):
-
         return self._start
 
     @property
     def stop_time(self):
-
         return self._stop
 
     @property
     def half_time(self):
-
         return self.mid_point
 
     def __repr__(self):
-
         return "time interval %s - %s (duration: %s)" % (
             self.start_time,
             self.stop_time,
@@ -56,17 +52,13 @@ class TimeInterval(Interval):
 
 
 class TimeIntervalSet(IntervalSet):
-    """
-    A set of time intervals
-
-    """
+    """A set of time intervals."""
 
     INTERVAL_TYPE = TimeInterval
 
     @property
     def start_times(self):
-        """
-        Return the starts fo the set
+        """Return the starts fo the set.
 
         :return: list of start times
         """
@@ -75,8 +67,7 @@ class TimeIntervalSet(IntervalSet):
 
     @property
     def stop_times(self):
-        """
-        Return the stops of the set
+        """Return the stops of the set.
 
         :return:
         """
@@ -85,34 +76,24 @@ class TimeIntervalSet(IntervalSet):
 
     @property
     def absolute_start_time(self):
-        """
-        the minimum of the start times
-        :return:
-        """
+        """The minimum of the start times :return:"""
 
         return self.absolute_start
 
     @property
     def absolute_stop_time(self):
-        """
-        the maximum of the stop times
-        :return:
-        """
+        """The maximum of the stop times :return:"""
 
         return self.absolute_stop
 
     @property
     def time_edges(self):
-        """
-        return an array of time edges if contiguous
-        :return:
-        """
+        """Return an array of time edges if contiguous :return:"""
 
         return self.edges
 
     def __add__(self, number):
-        """
-        Shift all time intervals to the right by number
+        """Shift all time intervals to the right by number.
 
         :param number: a float
         :return: new TimeIntervalSet instance
@@ -124,8 +105,7 @@ class TimeIntervalSet(IntervalSet):
         return new_set
 
     def __sub__(self, number):
-        """
-        Shift all time intervals to the left by number (in place)
+        """Shift all time intervals to the left by number (in place)
 
         :param number: a float
         :return: new TimeIntervalSet instance
@@ -138,7 +118,6 @@ class TimeIntervalSet(IntervalSet):
         return new_set
 
     def _create_pandas(self):
-
         time_interval_dict = collections.OrderedDict()
 
         time_interval_dict["Start"] = []
@@ -147,7 +126,6 @@ class TimeIntervalSet(IntervalSet):
         time_interval_dict["Midpoint"] = []
 
         for i, interval in enumerate(self._intervals):
-
             time_interval_dict["Start"].append(interval.start)
             time_interval_dict["Stop"].append(interval.stop)
             time_interval_dict["Duration"].append(interval.duration)
@@ -158,8 +136,7 @@ class TimeIntervalSet(IntervalSet):
         return df
 
     def display(self):
-        """
-        Display the time intervals
+        """Display the time intervals.
 
         :return: None
         """
@@ -167,5 +144,4 @@ class TimeIntervalSet(IntervalSet):
         display(self._create_pandas())
 
     def __repr__(self):
-
         return self._create_pandas().to_string()

@@ -1,10 +1,7 @@
-from __future__ import division
-
-from past.utils import old_div
-
 __author__ = "grburgess"
 
 import collections
+from packaging.version import Version
 
 import numba as nb
 import numpy as np
@@ -14,15 +11,22 @@ from astropy import units as u
 from threeML.config import threeML_config
 from threeML.config.point_source_structure import IntegrateMethod
 from threeML.io.logging import setup_logger
-from threeML.utils.fitted_objects.fitted_source_handler import \
-    GenericFittedSourceHandler
+from threeML.utils.fitted_objects.fitted_source_handler import (
+    GenericFittedSourceHandler,
+)
 
 log = setup_logger(__name__)
 
+np_version = Version(np.__version__)
+if np_version < Version("2.0.0"):
+    trapezoid = np.trapz
+else:
+    trapezoid = np.trapezoid
+
 
 @nb.njit(fastmath=True, cache=True)
-def _trapz(x, y):
-    return np.trapz(x, y)
+def _trapz(x, y):  # pragma: no cover
+    return trapezoid(x, y)
 
 
 class NotCompositeModelError(RuntimeError):
@@ -35,13 +39,10 @@ class InvalidUnitError(RuntimeError):
 
 class FluxConversion(object):
     def __init__(self, flux_unit, energy_unit, flux_model):
-        """
-        a generic flux conversion class to handle transforming spectra
-        between different flux units
-        :param flux_unit: the desired flux unit
-        :param energy_unit: the energy unit
-        :param flux_model: the model to be transformed
-        """
+        """A generic flux conversion class to handle transforming spectra
+        between different flux units :param flux_unit: the desired flux unit
+        :param energy_unit: the energy unit :param flux_model: the model to be
+        transformed."""
 
         self._flux_unit = flux_unit
 
@@ -58,29 +59,23 @@ class FluxConversion(object):
         self._calculate_conversion()
 
     def _determine_quantity(self):
-
         # scroll thru conversions until one works
 
         for k, v in self._flux_lookup.items():
-
             try:
-
                 self._flux_unit.to(v)
 
                 self._flux_type = k
 
-            except (u.UnitConversionError):
-
+            except u.UnitConversionError:
                 continue
 
         if self._flux_type is None:
-
             raise InvalidUnitError(
                 "The flux_unit provided is not a valid flux quantity"
             )
 
     def _calculate_conversion(self):
-
         # convert the model to the right units so that we can
         # convert back later for speed
 
@@ -91,26 +86,21 @@ class FluxConversion(object):
             or tmp.unit == self._test_value.unit
             or tmp.unit == (self._test_value.unit) ** 2
         ):
-
             # this is a multiplicative model
             self._conversion = 1.0
             self._is_dimensionless = True
 
         else:
-
-            self._conversion = tmp.unit.to(
-                self._flux_unit, equivalencies=u.spectral())
+            self._conversion = tmp.unit.to(self._flux_unit, equivalencies=u.spectral())
             self._is_dimensionless = False
 
     @property
     def is_dimensionless(self):
-
         return self._is_dimensionless
 
     @property
     def model(self):
-        """
-        the model converted
+        """The model converted.
 
         :return: a model in the proper units
         """
@@ -119,9 +109,8 @@ class FluxConversion(object):
 
     @property
     def conversion_factor(self):
-        """
-        the conversion factor needed to finalize the model into the
-        proper units after computations
+        """The conversion factor needed to finalize the model into the proper
+        units after computations.
 
         :return:
         """
@@ -131,10 +120,8 @@ class FluxConversion(object):
 
 class DifferentialFluxConversion(FluxConversion):
     def __init__(self, flux_unit, energy_unit, flux_model, test_model):
-        """
-        Handles differential flux conversion and model building
-        for point sources
-
+        """Handles differential flux conversion and model building for point
+        sources.
 
         :param test_model: model to test the flux on
         :param flux_unit: an astropy unit string for differential flux
@@ -143,9 +130,9 @@ class DifferentialFluxConversion(FluxConversion):
         """
 
         self._flux_lookup = {
-            "photon_flux": 1.0 / (u.keV * u.cm ** 2 * u.s),
-            "energy_flux": old_div(u.erg, (u.keV * u.cm ** 2 * u.s)),
-            "nufnu_flux": old_div(u.erg ** 2, (u.keV * u.cm ** 2 * u.s)),
+            "photon_flux": 1.0 / (u.keV * u.cm**2 * u.s),
+            "energy_flux": u.erg / (u.keV * u.cm**2 * u.s),
+            "nufnu_flux": u.erg**2 / (u.keV * u.cm**2 * u.s),
         }
 
         self._model_converter = {
@@ -169,9 +156,7 @@ class DifferentialFluxConversion(FluxConversion):
 
 
 def trap_integral(func, e1, e2, **args):
-
-    if e2/e1 > 100:
-
+    if e2 / e1 > 100:
         e_grid = np.logspace(np.log10(e1), np.log10(e2), 50)
 
     else:
@@ -181,29 +166,27 @@ def trap_integral(func, e1, e2, **args):
 
     return _trapz(y, e_grid)
 
-    
+
 class IntegralFluxConversion(FluxConversion):
     def __init__(self, flux_unit, energy_unit, flux_model, test_model):
+        """Handles integral flux conversion and model building for point
+        sources.
+
+        :param flux_unit: an astropy unit string for integral flux
+        :param energy_unit: an astropy unit string for energy
+        :param flux_model: the base flux model to use
         """
-         Handles integral flux conversion and model building
-         for point sources
-
-
-         :param flux_unit: an astropy unit string for integral flux
-         :param energy_unit: an astropy unit string for energy
-         :param flux_model: the base flux model to use
-         """
 
         self._flux_lookup = {
-            "photon_flux": 1.0 / (u.cm ** 2 * u.s),
-            "energy_flux": old_div(u.erg, (u.cm ** 2 * u.s)),
-            "nufnu_flux": old_div(u.erg ** 2, (u.cm ** 2 * u.s)),
+            "photon_flux": 1.0 / (u.cm**2 * u.s),
+            "energy_flux": u.erg / (u.cm**2 * u.s),
+            "nufnu_flux": u.erg**2 / (u.cm**2 * u.s),
         }
 
         self._model_converter = {
             "photon_flux": lambda x: x * test_model(x),
             "energy_flux": lambda x: x * x * test_model(x),
-            "nufnu_flux": lambda x: x ** 3 * test_model(x),
+            "nufnu_flux": lambda x: x**3 * test_model(x),
         }
 
         def photon_integrand(x, param_specification):
@@ -216,7 +199,6 @@ class IntegralFluxConversion(FluxConversion):
             return x * x * flux_model(x, **param_specification)
 
         if threeML_config.point_source.integrate_flux_method == IntegrateMethod.trapz:
-        
             self._model_builder = {
                 "photon_flux": lambda e1, e2, **param_specification: trap_integral(
                     photon_integrand, e1, e2, **param_specification
@@ -229,7 +211,6 @@ class IntegralFluxConversion(FluxConversion):
                 ),
             }
         elif threeML_config.point_source.integrate_flux_method == IntegrateMethod.quad:
-            
             self._model_builder = {
                 "photon_flux": lambda e1, e2, **param_specification: integrate.quad(
                     photon_integrand, e1, e2, args=(param_specification)
@@ -243,13 +224,11 @@ class IntegralFluxConversion(FluxConversion):
             }
 
         else:
-
             log.error("This is not a valid integratio method")
 
             raise RuntimeError
-            
-        super(IntegralFluxConversion, self).__init__(
-            flux_unit, energy_unit, flux_model)
+
+        super(IntegralFluxConversion, self).__init__(flux_unit, energy_unit, flux_model)
 
 
 class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
@@ -265,17 +244,15 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         component=None,
         is_differential_flux=True,
     ):
-        """
-
-        A 3ML fitted point source.
-
+        """A 3ML fitted point source.
 
         :param confidence_level:
         :param equal_tailed:
         :param is_differential_flux:
         :param analysis_result: a 3ML analysis
         :param source: the source to solve for
-        :param energy_range: an array of energies to calculate the source over
+        :param energy_range: an array of energies to calculate the
+            source over
         :param energy_unit: string astropy unit
         :param flux_unit: string astropy flux unit
         :param component: the component name to calculate
@@ -292,20 +269,16 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
             self._components = self._solve_for_component_flux(composite_model)
 
-        except:
-
+        except Exception:
             try:
                 self._components = self._point_source.components
 
-            except:
-
+            except Exception:
                 self._components = None
 
         if component is not None:
-
             if self._components is not None:
-
-                if isinstance(self._components[component],dict):
+                if isinstance(self._components[component], dict):
                     model = self._components[component]["function"].evaluate_at
                     parameters = self._components[component]["function"].parameters
                     test_model = self._components[component]["function"]
@@ -317,15 +290,13 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
                     parameter_names = [
                         par.name
                         for par in list(
-                                self._components[component].shape.parameters.values()
-                            )
+                            self._components[component].shape.parameters.values()
+                        )
                     ]
             else:
-
                 raise NotCompositeModelError("This is not a composite model!")
 
         else:
-
             model = self._point_source.spectrum.main.shape.evaluate_at
             parameters = self._point_source.spectrum.main.shape.parameters
             test_model = self._point_source.spectrum.main.shape
@@ -344,11 +315,9 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # energy units
 
         if isinstance(energy_range, u.Quantity):
-
             energy_range = (energy_range).to("keV", equivalencies=u.spectral())
 
         else:
-
             energy_range = (energy_range * energy_unit).to(
                 "keV", equivalencies=u.spectral()
             )
@@ -366,7 +335,6 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # if we are doing differential flux plotting:
 
         if is_differential_flux:
-
             converter = DifferentialFluxConversion(
                 flux_unit, energy_unit, model, test_model
             )
@@ -386,7 +354,6 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             )
 
         else:
-
             converter = IntegralFluxConversion(
                 flux_unit, energy_unit, model, test_model
             )
@@ -419,7 +386,6 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
     @property
     def is_dimensionless(self):
-
         return self._is_dimensionless
 
     @property
@@ -432,9 +398,9 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         return self._components
 
     def _transform(self, value):
-        """
-        transform the values into the proper flux unit and apply the units
+        """Transform the values into the proper flux unit and apply the units
         :param value:
+
         :return:
         """
 
@@ -442,10 +408,8 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
     @staticmethod
     def _solve_for_component_flux(composite_model):
-        """
-
-        now that we are using RandomVariates, we only need to compute the
-        function directly to see the error in a component
+        """Now that we are using RandomVariates, we only need to compute the
+        function directly to see the error in a component.
 
         :param composite_model: an astromodels composite model
         :return: dict of component properties
@@ -467,7 +431,6 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
                     )  # replace each appearance of s
 
         for i, function in enumerate(composite_model.functions):
-
             tmp_dict = {}
 
             # extract the parameter names using the static_name property

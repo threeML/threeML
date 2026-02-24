@@ -1,45 +1,34 @@
 #!/usr/bin/env python
 
 import os
-import sys
-
-import glob
 
 from setuptools import setup
 
 import versioneer
-
 
 # This dynamically loads a module and return it in a variable.
 # Will use it for check optional dependencies
 
 
 def is_module_available(module_name):
-
     # Fast path: see if the module has already been imported.
 
     try:
-
         exec("import %s" % module_name)
 
     except ImportError:
-
         return False
 
     else:
-
         return True
 
 
 # Create list of data files
 def find_data_files(directory):
-
     paths = []
 
-    for (path, directories, filenames) in os.walk(directory):
-
+    for path, directories, filenames in os.walk(directory):
         for filename in filenames:
-
             paths.append(os.path.join("..", path, filename))
 
     return paths
@@ -96,14 +85,21 @@ setup(
         "bayesian",
         "multi-wavelength",
     ],
-    # NOTE: we use '' as package name because the extra_files already contain the full path from here
-    package_data={"": extra_files,},
+    # NOTE: we use '' as package name because the extra_files already contain the full
+    # path from here
+    package_data={
+        "threeML/": [
+            "data/*",
+        ],
+    },
+    #     package_data={
+    #         "": extra_files,
+    #     },
 )  # End of setup()
 
 # Check for optional dependencies
 
 optional_dependencies = {
-    "cthreeML": [False, "needed by HAWC plugin"],
     "pymultinest": [False, "provides the Multinest sampler for Bayesian analysis"],
     "ultranest": [False, "provides the UltraNest sampler for Bayesian Analysis"],
     "zeus": [False, "provides the zeus sampler for Bayesian Analysis"],
@@ -114,7 +110,6 @@ optional_dependencies = {
 }
 
 for dep_name in optional_dependencies:
-
     optional_dependencies[dep_name][0] = is_module_available(dep_name)
 
 # Now print the final messages
@@ -124,13 +119,10 @@ print("OPTIONAL FEATURES:")
 print("##################\n\n")
 
 for dep_name in optional_dependencies:
-
     if optional_dependencies[dep_name][0]:
-
         status = "available"
 
     else:
-
         status = "*NOT* available"
 
     print(" * %s is %s (%s)\n" % (dep_name, status, optional_dependencies[dep_name][1]))

@@ -20,7 +20,7 @@ jupyter:
 The structure is nearly the same between MLE and Bayesian analyses in order to make a seamless functionality between all analyses.
 
 
-```python 
+```python
 %%capture
 import numpy as np
 np.seterr(all="ignore")
@@ -29,7 +29,8 @@ from threeML.analysis_results import *
 import astropy.units as u
 ```
 
-```python 
+```python
+from threeML.io.logging import silence_logs
 silence_logs()
 from tqdm.auto import tqdm
 from jupyterthemes import jtplot

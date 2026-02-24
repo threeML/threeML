@@ -1,9 +1,8 @@
-from __future__ import division
-from past.utils import old_div
-import numpy as np
 import os
+
+import numpy as np
 import pytest
-from astromodels import Powerlaw, PointSource, Model
+from astromodels import Model, PointSource, Powerlaw
 
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -13,12 +12,12 @@ from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrumWithDispersion,
     ChannelSet,
 )
+
 from .conftest import get_test_datasets_directory
 
 
 @pytest.fixture(scope="module")
 def loaded_response():
-
     rsp = OGIPResponse(
         os.path.join(
             get_test_datasets_directory(),
@@ -31,7 +30,6 @@ def loaded_response():
 
 
 def test_spectrum_constructor():
-
     ebounds = ChannelSet.from_list_of_edges(np.array([1, 2, 3, 4, 5, 6]))
 
     pl = Powerlaw()
@@ -74,7 +72,6 @@ def test_spectrum_constructor():
     )
 
     with pytest.raises(NotImplementedError):
-
         specLike = SpectrumLike(
             "fake", observation=obs_spectrum, background=bkg_spectrum
         )
@@ -99,7 +96,6 @@ def test_spectrum_constructor():
 
 
 def test_spectrum_constructor_no_background():
-
     ebounds = ChannelSet.from_list_of_edges(np.array([0, 1, 2, 3, 4, 5]))
 
     obs_spectrum = BinnedSpectrum(
@@ -118,13 +114,11 @@ def addition_proof_simple(x, y, z):
 
 
 def addition_proof_weighted(x, y, z):
-    assert old_div(
-        (
-            old_div(x.rates[3], x.rate_errors[3] ** 2)
-            + old_div(y.rates[3], y.rate_errors[3] ** 2)
-        ),
-        (old_div(1, x.rate_errors[3] ** 2) + old_div(1, y.rate_errors[3] ** 2)),
-    ) == old_div(z.rates[3], z.exposure)
+    assert (
+        (x.rates[3] / x.rate_errors[3] ** 2) + (y.rates[3] / y.rate_errors[3] ** 2)
+    ) / ((1 / x.rate_errors[3] ** 2) + (1 / y.rate_errors[3] ** 2)) == (
+        z.rates[3] / z.exposure
+    )
 
 
 def spectrum_addition(
@@ -214,7 +208,8 @@ def test_spectrum_addition_poisson():
         lambda x, y: x + y,
         addition_proof_simple,
     )
-    # spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y))
+    # spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda
+    # x,y:x.add_inverse_variance_weighted(y))
 
 
 def test_spectrum_clone():
@@ -235,7 +230,6 @@ def test_spectrum_clone():
 
 
 def test_dispersion_spectrum_constructor(loaded_response):
-
     rsp = loaded_response
 
     pl = Powerlaw()
@@ -267,7 +261,6 @@ def test_dispersion_spectrum_constructor(loaded_response):
 
 
 def test_dispersion_spectrum_addition_poisson(loaded_response):
-
     rsp = loaded_response
     ebounds = ChannelSet.from_instrument_response(rsp)
 
@@ -286,11 +279,11 @@ def test_dispersion_spectrum_addition_poisson(loaded_response):
         lambda x, y: x + y,
         addition_proof_simple,
     )
-    # spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
+    # spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda
+    # x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
 
 
 def test_dispersion_spectrum_addition(loaded_response):
-
     rsp = loaded_response
     ebounds = ChannelSet.from_instrument_response(rsp)
 
@@ -327,7 +320,6 @@ def test_dispersion_spectrum_addition(loaded_response):
 
 
 def test_dispersion_spectrum_clone(loaded_response):
-
     rsp = loaded_response
 
     obs_spectrum = BinnedSpectrumWithDispersion(

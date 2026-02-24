@@ -1,14 +1,11 @@
-import pytest
-
 import numpy as np
 import scipy.stats
-
 from astromodels import Powerlaw
+
 from threeML.plugins.XYLike import XYLike
 
 
 def test_goodness_of_fit():
-
     # Let's generate some data with y = Powerlaw(x)
 
     gen_function = Powerlaw()
@@ -31,7 +28,7 @@ def test_goodness_of_fit():
 
     result = xyl.fit(fit_function)
     like_values = result.get_statistic_frame()
-    #parameters, like_values = xyl.fit(fit_function)
+    # parameters, like_values = xyl.fit(fit_function)
 
     gof, all_results, all_like_values = xyl.goodness_of_fit()
 

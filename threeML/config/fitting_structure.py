@@ -171,11 +171,10 @@ class BayesianDefault:
             "update_func": None,
         }
     )
-   
-    corner_style: CornerStyle = field(default_factory=lambda: CornerStyle())
-    
 
-    
+    corner_style: CornerStyle = field(default_factory=lambda: CornerStyle())
+
+
 @dataclass
 class MLEDefault:
     default_minimizer: Optimizer = Optimizer.minuit
