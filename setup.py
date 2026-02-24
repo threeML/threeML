@@ -100,7 +100,6 @@ setup(
 # Check for optional dependencies
 
 optional_dependencies = {
-    "cthreeML": [False, "needed by HAWC plugin"],
     "pymultinest": [False, "provides the Multinest sampler for Bayesian analysis"],
     "ultranest": [False, "provides the UltraNest sampler for Bayesian Analysis"],
     "zeus": [False, "provides the zeus sampler for Bayesian Analysis"],

@@ -86,16 +86,6 @@ from .plugin_prototype import PluginPrototype
 # using similar names (for example, the io package)
 
 
-try:
-    # noinspection PyUnresolvedReferences
-    from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
-
-except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning(
-            "The cthreeML package is not installed. You will not be able to use plugins which require "
-            "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
-        )
 # Now look for plugins
 
 # This verifies if a module is importable
