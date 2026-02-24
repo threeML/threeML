@@ -1,8 +1,8 @@
 import codecs
 import datetime
-import urllib.error
-import urllib.parse
-import urllib.request
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 import warnings
 from builtins import map
 from pathlib import Path
@@ -113,15 +113,24 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
                 f"Trying to urlretrieve {heasarc_url} and safe it to "
                 f"{file_name_sanatized}"
             )
-            urllib.request.urlretrieve(heasarc_url, filename=file_name_sanatized)
-            log.debug("Succcess")
+            with requests.Session() as session:
+                retries = Retry(total=3, backoff_factor=0.1)
+                session.mount("https://", HTTPAdapter(max_retries=retries))
+                session.mount("http://", HTTPAdapter(max_retries=retries))
 
-        except IOError:
+                with session.get(heasarc_url, stream=True, timeout=30) as response:
+                    response.raise_for_status()
+
+                    with open(file_name_sanatized, "wb") as f:
+                        for chunk in response.iter_content(chunk_size=8 * 1024):
+                            if chunk:
+                                f.write(chunk)
+
+        except requests.exceptions.RequestException:
             log.warning(
-                "The cache is outdated but the internet cannot be reached. Please check"
-                " your connection"
+                "The cache is outdated but the internet cannot be reached. "
+                "Please check your connection"
             )
-
         else:
             # Make sure the lines are interpreted as Unicode (otherwise some characters
             # will fail)
