@@ -280,87 +280,90 @@
         <span class="c1"># * so that the file is not downloaded all in memory before being written to the</span>
         <span class="c1"># disk</span>
         <span class="c1"># * so that we can report progress is requested</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
-        <span class="n">retries</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-        <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
 
-        <span class="n">this_request</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>  <span class="c1"># use a Session context manager to allow retries</span>
+            <span class="c1"># using requests</span>
+            <span class="n">retries</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retries</span><span class="p">))</span>
 
-        <span class="c1"># Figure out the size of the file</span>
+            <span class="n">this_request</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
 
-        <span class="n">file_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">])</span>
+            <span class="c1"># Figure out the size of the file</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;downloading </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> of size </span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">])</span>
 
-        <span class="c1"># Now check if we really need to download this file</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;downloading </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> of size </span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
-            <span class="c1"># Add a .gz at the end of the file path</span>
+            <span class="c1"># Now check if we really need to download this file</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> will be downloaded and compressed&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
+                <span class="c1"># Add a .gz at the end of the file path</span>
 
-            <span class="n">local_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_path</span><span class="si">}</span><span class="s2">.gz&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> will be downloaded and compressed&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
-            <span class="n">local_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+                <span class="n">local_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_path</span><span class="si">}</span><span class="s2">.gz&quot;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">local_size</span> <span class="o">==</span> <span class="n">file_size</span> <span class="ow">or</span> <span class="n">compress</span><span class="p">:</span>
-                <span class="c1"># if the compressed file already exists</span>
-                <span class="c1"># it will have a smaller size</span>
+            <span class="k">if</span> <span class="n">file_existing_and_readable</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
+                <span class="n">local_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
 
-                <span class="c1"># No need to download it again</span>
+                <span class="k">if</span> <span class="n">local_size</span> <span class="o">==</span> <span class="n">file_size</span> <span class="ow">or</span> <span class="n">compress</span><span class="p">:</span>
+                    <span class="c1"># if the compressed file already exists</span>
+                    <span class="c1"># it will have a smaller size</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> is already downloaded!&quot;</span><span class="p">)</span>
+                    <span class="c1"># No need to download it again</span>
 
-                <span class="k">return</span> <span class="n">local_path</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;file </span><span class="si">{</span><span class="n">remote_filename</span><span class="si">}</span><span class="s2"> is already downloaded!&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">local_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-            <span class="n">first_byte</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">local_path</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">first_byte</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">local_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">first_byte</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
 
-        <span class="c1"># Chunk size shouldn&#39;t bee too small otherwise we are causing a bottleneck in</span>
-        <span class="c1"># the download speed</span>
-        <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">first_byte</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="c1"># If the user wants to compress the file, use gzip, otherwise the normal opener</span>
-        <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+            <span class="c1"># Chunk size shouldn&#39;t bee too small otherwise we are causing a bottleneck</span>
+            <span class="c1"># in the download speed</span>
+            <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">10</span>
 
-            <span class="n">opener</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span>
+            <span class="c1"># If the user wants to compress the file, use gzip, otherwise the normal</span>
+            <span class="c1"># opener</span>
+            <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">opener</span> <span class="o">=</span> <span class="nb">open</span>
+                <span class="n">opener</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span>
 
-        <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">][</span><span class="s2">&quot;progress_bars&quot;</span><span class="p">]:</span>
-            <span class="c1"># Set a title for the progress bar</span>
-            <span class="n">bar_title</span> <span class="o">=</span> <span class="s2">&quot;Downloading </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_filename</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">opener</span> <span class="o">=</span> <span class="nb">open</span>
 
-            <span class="n">bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">initial</span><span class="o">=</span><span class="n">first_byte</span><span class="p">,</span>
-                <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">unit_divisor</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-                <span class="n">total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">]),</span>
-                <span class="n">desc</span><span class="o">=</span><span class="n">bar_title</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">][</span><span class="s2">&quot;progress_bars&quot;</span><span class="p">]:</span>
+                <span class="c1"># Set a title for the progress bar</span>
+                <span class="n">bar_title</span> <span class="o">=</span> <span class="s2">&quot;Downloading </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_filename</span>
 
-            <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">this_request</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># filter out keep-alive new chunks</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-                        <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+                <span class="n">bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="n">initial</span><span class="o">=</span><span class="n">first_byte</span><span class="p">,</span>
+                    <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">unit_divisor</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+                    <span class="n">total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">this_request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">]),</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="n">bar_title</span><span class="p">,</span>
+                <span class="p">)</span>
 
-            <span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">this_request</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># filter out keep-alive new chunks</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                            <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">this_request</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># filter out keep-alive new chunks</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="n">bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">opener</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">this_request</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># filter out keep-alive new chunks</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">local_path</span></div>
 
 
