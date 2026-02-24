@@ -4,6 +4,9 @@ from builtins import object
 from pathlib import Path
 
 import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from threeML.config.config import threeML_config
 from threeML.io.file_utils import (
@@ -119,6 +122,7 @@ class ApacheDirectory(object):
         new_filename=None,
         progress=True,
         compress=False,
+        timeout=10,
     ):
         assert (
             remote_filename in self.files
@@ -151,8 +155,11 @@ class ApacheDirectory(object):
         # * so that the file is not downloaded all in memory before being written to the
         # disk
         # * so that we can report progress is requested
+        session = Session()
+        retries = Retry(total=3, backoff_factor=0.1)
+        session.mount("https://", HTTPAdapter(max_retries=retries))
 
-        this_request = requests.get(remote_path, stream=True)
+        this_request = session.get(remote_path, stream=True, timeout=timeout)
 
         # Figure out the size of the file
 
@@ -220,7 +227,6 @@ class ApacheDirectory(object):
                         f.write(chunk)
                         bar.update(len(chunk))
 
-            this_request.close()
             bar.close()
 
         else:
@@ -229,8 +235,7 @@ class ApacheDirectory(object):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
 
-            this_request.close()
-
+        session.close()
         return local_path
 
     def download_all_files(self, destination_path, progress=True, pattern=None):
