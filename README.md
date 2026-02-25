@@ -1,20 +1,21 @@
-![CI](https://github.com/threeML/threeML/workflows/CI/badge.svg?branch=master&event=push)
-[![Conda Build and Publish](https://github.com/threeML/threeML/actions/workflows/conda_build.yml/badge.svg)](https://github.com/threeML/threeML/actions/workflows/conda_build.yml)
-![Test Against XSPEC](https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg)
-[![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
+[![CI](https://github.com/threeML/threeML/actions/workflows/build_and_test.yml/badge.svg?branch=master)](https://github.com/threeML/threeML/actions/workflows/build_and_test.yml)
+[![Conda Build and Publish](https://github.com/threeML/threeML/actions/workflows/conda_build.yml/badge.svg?branch=master)](https://github.com/threeML/threeML/actions/workflows/conda_build.yml)
+[![Test Against XSPEC](https://github.com/threeML/threeML/actions/workflows/test_against_xspec.yml/badge.svg?branch=master)](https://github.com/threeML/threeML/actions/workflows/test_against_xspec.yml)
+[![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg?token=hTn2JE5Apf)](https://codecov.io/gh/threeML/threeML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5646954.svg)](https://doi.org/10.5281/zenodo.5646954)
+[![arXiv](https://img.shields.io/badge/arXiv-1507.08343-00ff00.svg)](https://arxiv.org/abs/1507.08343)
 
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/threeML/threeML)
 ![GitHub issues](https://img.shields.io/github/issues/threeML/threeML)
 
 ## PyPi
 
-[![PyPI version fury.io](https://badge.fury.io/py/threeML.svg)](https://pypi.python.org/pypi/threeML/)
+[![PyPI version fury.io](https://img.shields.io/pypi/v/threeML.svg?text=version)](https://pypi.python.org/pypi/threeML/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dw/threeml)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/threeml)
-[![Install using pip](https://github.com/threeML/threeML/actions/workflows/pip_install.yml/badge.svg)](https://github.com/threeML/threeML/actions/workflows/pip_install.yml)
+
 ## Conda
 
 ![Conda](https://img.shields.io/conda/pn/threeml/threeml)
@@ -78,7 +79,8 @@ pip install astromodels threeml
 ```bash
 conda  install astromodels threeml -c threeml conda-forge 
 ```
-Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/stable/notebooks/installation.html) for more details and trouble-shooting.
+Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html)
+for more details and trouble-shooting.
 
 ## Press
 * [Software in development at Stanford advances the modeling of astronomical observations](https://news.stanford.edu/2017/12/07/software-advances-modeling-astronomical-observations/)
