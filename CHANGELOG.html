@@ -69,6 +69,10 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/API.html">API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v2-5">v2.5</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v2-5-0-2026-02-24">v2.5.0 (2026-02-24)</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#v2-4">v2.4</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#v2-4-3-2025-02-06">v2.4.3 (2025-02-06)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#v2-4-2-2024-05-31">v2.4.2 (2024-05-31)</a></li>
@@ -192,6 +196,53 @@
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a>
 </h1>
+<section id="v2-5">
+<h2>v2.5<a class="headerlink" href="#v2-5" title="Link to this heading"></a>
+</h2>
+<section id="v2-5-0-2026-02-24">
+<h3>
+<a class="reference external" href="https://github.com/threeML/threeML/tree/v2.5.0">v2.5.0</a> (2026-02-24)<a class="headerlink" href="#v2-5-0-2026-02-24" title="Link to this heading"></a>
+</h3>
+<p><a class="reference external" href="https://github.com/threeML/threeML/compare/v2.4.3...v2.5.0">Full Changelog</a></p>
+<p><strong>Fixed bugs:</strong></p>
+<ul class="simple">
+<li><p>Circular import in logging and config_utils module <a class="reference external" href="https://github.com/threeML/threeML/issues/657">#657</a></p></li>
+</ul>
+<p><strong>Closed issues:</strong></p>
+<ul class="simple">
+<li><p>PluginPrototype not being garbage-collected when used with JointLikelihood fitting <a class="reference external" href="https://github.com/threeML/threeML/issues/663">#663</a></p></li>
+<li><p>Generetaing photon and background files using 3ML  for RMFIT <a class="reference external" href="https://github.com/threeML/threeML/issues/661">#661</a></p></li>
+<li><p>GtBurst module error <a class="reference external" href="https://github.com/threeML/threeML/issues/660">#660</a></p></li>
+<li><p>Creating catalogs with FermiGBMBurstCatalog results in an error <a class="reference external" href="https://github.com/threeML/threeML/issues/659">#659</a></p></li>
+<li><p>Conda based testing of XSPEC <a class="reference external" href="https://github.com/threeML/threeML/issues/652">#652</a></p></li>
+<li><p>Regarding LATgrb analysis: LATdataset().extract_events() <a class="reference external" href="https://github.com/threeML/threeML/issues/650">#650</a></p></li>
+<li><p>the cache (vo_table) can not download through the url within “get_heasarc_table_as_pandas.py” <a class="reference external" href="https://github.com/threeML/threeML/issues/648">#648</a></p></li>
+<li><p>TypeError: integral() takes 0 positional arguments but 2 were given <a class="reference external" href="https://github.com/threeML/threeML/issues/641">#641</a></p></li>
+<li><p>getting error while importing threeml package <a class="reference external" href="https://github.com/threeML/threeML/issues/633">#633</a></p></li>
+<li><p>Error related to initialisation the threeML package  <a class="reference external" href="https://github.com/threeML/threeML/issues/632">#632</a></p></li>
+<li><p>Issue to load xspec models  <a class="reference external" href="https://github.com/threeML/threeML/issues/625">#625</a></p></li>
+<li><p>Rebinning in grb080916C tutorial fails: Method ‘__array__’ is not supported. <a class="reference external" href="https://github.com/threeML/threeML/issues/622">#622</a></p></li>
+<li><p>PackagesNotFoundError when trying to install threeML with Conda on MacOS with new Silicon chip <a class="reference external" href="https://github.com/threeML/threeML/issues/618">#618</a></p></li>
+<li><p>deprecated function error with numpy 1.24 <a class="reference external" href="https://github.com/threeML/threeML/issues/616">#616</a></p></li>
+<li><p>astromodels.xspec <a class="reference external" href="https://github.com/threeML/threeML/issues/614">#614</a></p></li>
+<li><p>Discrepancy between 3ML and Xspec residuals of spectral fitting <a class="reference external" href="https://github.com/threeML/threeML/issues/572">#572</a></p></li>
+</ul>
+<p><strong>Merged pull requests:</strong></p>
+<ul class="simple">
+<li><p>Dev <a class="reference external" href="https://github.com/threeML/threeML/pull/666">#666</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Add support for numpy&gt;=2.0 <a class="reference external" href="https://github.com/threeML/threeML/pull/665">#665</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Using weakref instead of strong callback links. <a class="reference external" href="https://github.com/threeML/threeML/pull/664">#664</a> (<a class="reference external" href="https://github.com/ndilalla">ndilalla</a>)</p></li>
+<li><p>Fix nautilus sampler <a class="reference external" href="https://github.com/threeML/threeML/pull/662">#662</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Updated docs for the 2.5.0 release + fix workflows <a class="reference external" href="https://github.com/threeML/threeML/pull/658">#658</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Fix Zeus-MCMC Deprecation <a class="reference external" href="https://github.com/threeML/threeML/pull/655">#655</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Support for Dynesty v3.0.0 <a class="reference external" href="https://github.com/threeML/threeML/pull/654">#654</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Remove Python2 compatibility Code <a class="reference external" href="https://github.com/threeML/threeML/pull/651">#651</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Codestyle update <a class="reference external" href="https://github.com/threeML/threeML/pull/649">#649</a> (<a class="reference external" href="https://github.com/PreisTo">PreisTo</a>)</p></li>
+<li><p>Send logs to stderr by default <a class="reference external" href="https://github.com/threeML/threeML/pull/646">#646</a> (<a class="reference external" href="https://github.com/israelmcmc">israelmcmc</a>)</p></li>
+<li><p>Organization chart <a class="reference external" href="https://github.com/threeML/threeML/pull/644">#644</a> (<a class="reference external" href="https://github.com/omodei">omodei</a>)</p></li>
+</ul>
+</section>
+</section>
 <section id="v2-4">
 <h2>v2.4<a class="headerlink" href="#v2-4" title="Link to this heading"></a>
 </h2>
@@ -454,7 +505,6 @@
 <li><p>Simulated data from LAT plugins. <a class="reference external" href="https://github.com/threeML/threeML/issues/422">#422</a></p></li>
 <li><p>test_parallel_pagmo fails <a class="reference external" href="https://github.com/threeML/threeML/issues/419">#419</a></p></li>
 <li><p>Conda really slow in solving the environment with fermi on linux <a class="reference external" href="https://github.com/threeML/threeML/issues/418">#418</a></p></li>
-<li><p>Proper import __all__ statements <a class="reference external" href="https://github.com/threeML/threeML/issues/400">#400</a></p></li>
 </ul>
 <p><strong>Merged pull requests:</strong></p>
 <ul class="simple">
