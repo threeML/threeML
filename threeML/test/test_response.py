@@ -4,6 +4,10 @@ import warnings
 import numpy as np
 import pytest
 
+import astropy.units as u
+
+from astromodels.core.units import get_units
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.OGIP.response import (
     InstrumentResponse,
@@ -19,7 +23,6 @@ else:
 
 
 def get_matrix_elements():
-    # In[5]: np.diagflat([1, 2, 3, 4])[:3, :]
 
     matrix = np.diagflat([1.0, 2.0, 3.0, 4.0])[:3, :]
 
@@ -32,18 +35,20 @@ def get_matrix_elements():
 
     ebounds = [1.0, 2.5, 4.5, 5.0]
 
-    return matrix, mc_energies, ebounds
+    return matrix, mc_energies, ebounds, u.keV
 
 
 def get_matrix_set_elements():
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp_a = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp_a = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
     # Make another matrix with the same matrix but divided by 2
     other_matrix = matrix / 2.0
 
-    rsp_b = InstrumentResponse(other_matrix, ebounds, mc_energies)
+    rsp_b = InstrumentResponse(
+        other_matrix, ebounds, mc_energies, energy_unit=energy_unit
+    )
 
     # Remember: the second matrix is like the first one divided by two, and it covers
     # twice as much time. They cover 0-10 s the first one, and 10-30 the second one.
@@ -81,20 +86,27 @@ def get_matrix_set_elements_with_coverage(reference_time=0.0):
 def test_instrument_response_constructor():
     # Make a fake test matrix
 
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
     assert np.all(rsp.matrix == matrix)
-    assert np.all(rsp.ebounds == ebounds)
-    assert np.all(rsp.monte_carlo_energies == mc_energies)
+    assert np.all(rsp.ebounds == (ebounds * energy_unit).to(get_units().energy).value)
+    assert np.all(
+        rsp.monte_carlo_energies
+        == (mc_energies * energy_unit).to(get_units().energy).value
+    )
 
     # Now with coverage interval
 
     with pytest.raises(RuntimeError):
-        _ = InstrumentResponse(matrix, ebounds, mc_energies, "10-20")
+        _ = InstrumentResponse(
+            matrix, ebounds, mc_energies, "10-20", energy_unit=energy_unit
+        )
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies, TimeInterval(10.0, 20.0))
+    rsp = InstrumentResponse(
+        matrix, ebounds, mc_energies, TimeInterval(10.0, 20.0), energy_unit=energy_unit
+    )
 
     assert rsp.rsp_filename is None
     assert rsp.arf_filename is None
@@ -108,9 +120,9 @@ def test_instrument_response_constructor():
 
 
 def test_instrument_response_replace_matrix():
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
     new_matrix = matrix / 2.0
 
@@ -125,9 +137,9 @@ def test_instrument_response_replace_matrix():
 def test_instrument_response_set_function_and_convolve():
     # A very basic test. More tests will be made against XSpec later
 
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
     # Integral of a constant, so we know easily what the output should be
 
@@ -143,21 +155,21 @@ def test_instrument_response_set_function_and_convolve():
     assert np.all(folded_counts == [1.0, 2.0, 3.0])
 
 
-def test__instrument_response_energy_to_channel():
-    matrix, mc_energies, ebounds = get_matrix_elements()
+def test_instrument_response_energy_to_channel():
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
-    assert rsp.energy_to_channel(1.5) == 0
-    assert rsp.energy_to_channel(2.6) == 1
-    assert rsp.energy_to_channel(4.75) == 2
-    assert rsp.energy_to_channel(100.0) == 3
+    assert rsp.energy_to_channel(1.5 * u.keV) == 0
+    assert rsp.energy_to_channel(2.6 * u.keV) == 1
+    assert rsp.energy_to_channel(4.75 * u.keV) == 2
+    assert rsp.energy_to_channel(100.0 * u.keV) == 3
 
 
 def test_instrument_response_plot_response():
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
     rsp.plot_matrix()
 
@@ -185,9 +197,9 @@ def test_OGIP_response_arf_rsp_accessors():
 
 
 def test_response_write_to_fits1():
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp = InstrumentResponse(matrix, ebounds, mc_energies)
+    rsp = InstrumentResponse(matrix, ebounds, mc_energies, energy_unit=energy_unit)
 
     temp_file = "__test.rsp"
 
@@ -288,10 +300,14 @@ def test_response_set_constructor():
 
     # Now test that we cannot initialize a response set with matrices which have
     # non-contiguous coverage intervals
-    matrix, mc_energies, ebounds = get_matrix_elements()
+    matrix, mc_energies, ebounds, energy_unit = get_matrix_elements()
 
-    rsp_c = InstrumentResponse(matrix, ebounds, mc_energies, TimeInterval(0.0, 10.0))
-    rsp_d = InstrumentResponse(matrix, ebounds, mc_energies, TimeInterval(20.0, 30.0))
+    rsp_c = InstrumentResponse(
+        matrix, ebounds, mc_energies, TimeInterval(0.0, 10.0), energy_unit
+    )
+    rsp_d = InstrumentResponse(
+        matrix, ebounds, mc_energies, TimeInterval(20.0, 30.0), energy_unit
+    )
 
     with pytest.raises(RuntimeError):
         _ = InstrumentResponseSet([rsp_c, rsp_d], exposure_getter, counts_getter)
@@ -380,14 +396,15 @@ def test_response_set_weighting_with_reference_time():
 def test_response_set_weighting_with_disjoint_intervals():
     ref_time = 123.456
 
-    (
+    ([rsp_a, rsp_b], exposure_getter, counts_getter) = (
+        get_matrix_set_elements_with_coverage(reference_time=ref_time)
+    )
+
+    rsp_set = InstrumentResponseSet(
         [rsp_a, rsp_b],
         exposure_getter,
         counts_getter,
-    ) = get_matrix_set_elements_with_coverage(reference_time=ref_time)
-
-    rsp_set = InstrumentResponseSet(
-        [rsp_a, rsp_b], exposure_getter, counts_getter, reference_time=ref_time
+        reference_time=ref_time,
     )
 
     assert rsp_set.reference_time == ref_time
