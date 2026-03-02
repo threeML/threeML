@@ -21,7 +21,6 @@ from astromodels import (
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.io.logging import debug_mode
 from threeML.io.package_data import get_path_of_data_dir
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.PhotometryLike import PhotometryLike
@@ -34,9 +33,6 @@ from threeML.utils.photometry import (
 )
 
 np.random.seed(12345)
-
-# useful for testing
-debug_mode()
 
 # Set up an ipyparallel cluster for the tests to use
 

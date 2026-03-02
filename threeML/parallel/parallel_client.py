@@ -288,7 +288,7 @@ if has_parallel:
         ):
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
-                (id, item) = x
+                id, item = x
 
                 return (id, worker(item))
 

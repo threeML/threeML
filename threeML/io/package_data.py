@@ -68,6 +68,19 @@ def get_path_of_user_config() -> Path:
     return config_path
 
 
+def get_user_data_path():
+    user_data = os.path.join(os.path.expanduser("~"), ".threeml", "data")
+
+    # Create it if doesn't exist
+    if os.path.exists(user_data):
+        return user_data
+
+    else:
+        os.makedirs(user_data)
+
+        return user_data
+
+
 __all__ = [
     "get_path_of_data_file",
     "get_path_of_data_dir",

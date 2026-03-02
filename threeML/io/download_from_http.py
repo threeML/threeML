@@ -4,6 +4,9 @@ from builtins import object
 from pathlib import Path
 
 import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from threeML.config.config import threeML_config
 from threeML.io.file_utils import (
@@ -119,6 +122,7 @@ class ApacheDirectory(object):
         new_filename=None,
         progress=True,
         compress=False,
+        timeout=10,
     ):
         assert (
             remote_filename in self.files
@@ -152,84 +156,88 @@ class ApacheDirectory(object):
         # disk
         # * so that we can report progress is requested
 
-        this_request = requests.get(remote_path, stream=True)
+        with Session() as session:  # use a Session context manager to allow retries
+            # using requests
+            retries = Retry(total=3, backoff_factor=0.1)
+            session.mount("https://", HTTPAdapter(max_retries=retries))
+            session.mount("http://", HTTPAdapter(max_retries=retries))
 
-        # Figure out the size of the file
+            this_request = session.get(remote_path, stream=True, timeout=timeout)
 
-        file_size = int(this_request.headers["Content-Length"])
+            # Figure out the size of the file
 
-        log.debug(f"downloading {remote_filename} of size {file_size}")
+            file_size = int(this_request.headers["Content-Length"])
 
-        # Now check if we really need to download this file
+            log.debug(f"downloading {remote_filename} of size {file_size}")
 
-        if compress:
-            # Add a .gz at the end of the file path
+            # Now check if we really need to download this file
 
-            log.debug(f"file {remote_filename} will be downloaded and compressed")
+            if compress:
+                # Add a .gz at the end of the file path
 
-            local_path: Path = Path(f"{local_path}.gz")
+                log.debug(f"file {remote_filename} will be downloaded and compressed")
 
-        if file_existing_and_readable(local_path):
-            local_size = os.path.getsize(local_path)
+                local_path: Path = Path(f"{local_path}.gz")
 
-            if local_size == file_size or compress:
-                # if the compressed file already exists
-                # it will have a smaller size
+            if file_existing_and_readable(local_path):
+                local_size = os.path.getsize(local_path)
 
-                # No need to download it again
+                if local_size == file_size or compress:
+                    # if the compressed file already exists
+                    # it will have a smaller size
 
-                log.info(f"file {remote_filename} is already downloaded!")
+                    # No need to download it again
 
-                return local_path
+                    log.info(f"file {remote_filename} is already downloaded!")
 
-        if local_path.is_file():
-            first_byte = os.path.getsize(local_path)
+                    return local_path
 
-        else:
-            first_byte = 0
+            if local_path.is_file():
+                first_byte = os.path.getsize(local_path)
 
-        # Chunk size shouldn't bee too small otherwise we are causing a bottleneck in
-        # the download speed
-        chunk_size = 1024 * 10
+            else:
+                first_byte = 0
 
-        # If the user wants to compress the file, use gzip, otherwise the normal opener
-        if compress:
-            import gzip
+            # Chunk size shouldn't bee too small otherwise we are causing a bottleneck
+            # in the download speed
+            chunk_size = 1024 * 10
 
-            opener = gzip.open
+            # If the user wants to compress the file, use gzip, otherwise the normal
+            # opener
+            if compress:
+                import gzip
 
-        else:
-            opener = open
+                opener = gzip.open
 
-        if threeML_config["interface"]["progress_bars"]:
-            # Set a title for the progress bar
-            bar_title = "Downloading %s" % new_filename
+            else:
+                opener = open
 
-            bar = tqdm(
-                initial=first_byte,
-                unit_scale=True,
-                unit_divisor=1024,
-                unit="B",
-                total=int(this_request.headers["Content-Length"]),
-                desc=bar_title,
-            )
+            if threeML_config["interface"]["progress_bars"]:
+                # Set a title for the progress bar
+                bar_title = "Downloading %s" % new_filename
 
-            with opener(local_path, "wb") as f:
-                for chunk in this_request.iter_content(chunk_size=chunk_size):
-                    if chunk:  # filter out keep-alive new chunks
-                        f.write(chunk)
-                        bar.update(len(chunk))
+                bar = tqdm(
+                    initial=first_byte,
+                    unit_scale=True,
+                    unit_divisor=1024,
+                    unit="B",
+                    total=int(this_request.headers["Content-Length"]),
+                    desc=bar_title,
+                )
 
-            this_request.close()
-            bar.close()
+                with opener(local_path, "wb") as f:
+                    for chunk in this_request.iter_content(chunk_size=chunk_size):
+                        if chunk:  # filter out keep-alive new chunks
+                            f.write(chunk)
+                            bar.update(len(chunk))
 
-        else:
-            with opener(local_path, "wb") as f:
-                for chunk in this_request.iter_content(chunk_size=chunk_size):
-                    if chunk:  # filter out keep-alive new chunks
-                        f.write(chunk)
+                bar.close()
 
-            this_request.close()
+            else:
+                with opener(local_path, "wb") as f:
+                    for chunk in this_request.iter_content(chunk_size=chunk_size):
+                        if chunk:  # filter out keep-alive new chunks
+                            f.write(chunk)
 
         return local_path
 

@@ -383,7 +383,7 @@ class JointLikelihood(object):
 
             total_number_of_data_points += dataset.get_number_of_data_points()
 
-        if total != self._current_minimum:
+        if total != self._current_minimum:  # pragma: no cover
             log.error(
                 f"Current minimum stored after fit ({self._current_minimum}) and "
                 f"current ({total}) do not correspond!"

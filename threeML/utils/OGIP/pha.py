@@ -10,7 +10,6 @@ from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
 from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 
-
 log = setup_logger(__name__)
 
 

@@ -5,7 +5,6 @@ import astropy.io.fits as fits
 import numpy as np
 import pytest
 
-from threeML import debug_mode
 from threeML.io.file_utils import within_directory
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
@@ -14,8 +13,6 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventList, EventListWithDeadTime
 
 from .conftest import get_test_datasets_directory
-
-debug_mode()
 
 datasets_directory = get_test_datasets_directory()
 

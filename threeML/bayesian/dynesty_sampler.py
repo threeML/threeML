@@ -17,7 +17,7 @@ try:
     DYNESTY_DOC_URL = (
         f"https://dynesty.readthedocs.io/en/v{dynesty.__version__}/api.html"
     )
-except Exception:
+except Exception:  # pragma: no cover
     has_dynesty = False
 
 else:
@@ -82,7 +82,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         log.debug("Setup dynesty sampler")
         if history_filename is not None:
-            if Version(dynesty.__version__) < Version("1.2.0"):
+            if Version(dynesty.__version__) < Version("1.2.0"):  # pragma: no cover
                 log.warning(
                     f"Your dynesty version is {dynesty.__version__} but "
                     + "saving to a file was introduced in version 1.2.0. We will "
@@ -241,7 +241,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         log.debug("Setup dynesty dynamic sampler")
         if history_filename is not None:
-            if Version(dynesty.__version__) < Version("1.2.0"):
+            if Version(dynesty.__version__) < Version("1.2.0"):  # pragma: no cover
                 log.warning(
                     f"Your dynesty version is {dynesty.__version__} but "
                     + "saving to a file was introduced in version 1.2.0"

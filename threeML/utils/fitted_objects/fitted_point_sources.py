@@ -25,7 +25,7 @@ else:
 
 
 @nb.njit(fastmath=True, cache=True)
-def _trapz(x, y):
+def _trapz(x, y):  # pragma: no cover
     return trapezoid(x, y)
 
 

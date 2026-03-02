@@ -255,7 +255,6 @@ Remove any previous installation you might have with:
 ```bash
 > pip uninstall threeML
 > pip uninstall astromodels
-> pip uninstall cthreeML
 ```
 
 then:
@@ -264,13 +263,6 @@ then:
 > pip install numpy scipy ipython astropy numba cython
 > pip install git+https://github.com/threeML/threeml.git  --upgrade
 > pip install git+https://github.com/threeML/astromodels.git --upgrade
-```
-
-In order to use the HAWC plugin, you will also need to install cthreeML (run
-this *after* setting up the HAWC environment):
-
-```bash
-> pip install git+https://github.com/threeML/cthreeML.git
 ```
 
 ```{note}

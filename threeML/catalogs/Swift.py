@@ -1,7 +1,7 @@
 import re
-import urllib.error
-import urllib.parse
-import urllib.request
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 from builtins import map, range, str
 
 import astropy.table as astro_table
@@ -13,7 +13,6 @@ from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.logging import setup_logger
 from threeML.io.rich_display import display
-
 
 log = setup_logger(__name__)
 
@@ -159,19 +158,18 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         :return:
         """
 
-        data = urllib.request.urlopen(gcn_url)
+        try:
+            with requests.Session() as session:
+                retries = Retry(total=3, backoff_factor=0.1)
+                session.mount("https://", HTTPAdapter(max_retries=retries))
+                session.mount("http://", HTTPAdapter(max_retries=retries))
+                response = session.get(gcn_url, timeout=30)
+                response.raise_for_status()
+                data_decode = response.text.splitlines()
 
-        data_decode = []
-
-        for x in data.readlines():
-            try:
-                tmp = str(x, "utf-8")
-
-                data_decode.append(tmp)
-
-            except UnicodeDecodeError:
-                pass
-
+        except requests.exceptions.RequestException as e:
+            log.exception("Failed to download data.")
+            raise RuntimeError() from e
         string = "".join(data_decode).replace("\n", "")
         try:
             trigger_number = (

@@ -3,13 +3,13 @@ import os
 import re
 import socket
 import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from builtins import str
 from pathlib import Path
 
 import astropy.io.fits as pyfits
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TimeTypeNotKnown
@@ -320,52 +320,46 @@ def download_LAT_data(
 
     # POST encoding
 
-    postData = urllib.parse.urlencode(query_parameters).encode("utf-8")
-    temporaryFileName = "__temp_query_result.html"
-
+    temporaryFileName = Path.cwd() / "__temp_query_result.html"
     # Remove temp file if present
+    if temporaryFileName.exists():
+        temporaryFileName.unlink()
 
     try:
-        os.remove(temporaryFileName)
+        with requests.Session() as session:
+            retries = Retry(total=3, backoff_factor=0.1)
+            session.mount("https://", HTTPAdapter(max_retries=retries))
+            session.mount("http://", HTTPAdapter(max_retries=retries))
 
-    except Exception:
-        pass
+            response = session.post(url, data=query_parameters, timeout=10)
+            response.raise_for_status()
 
-    # This is to avoid caching
+            # Save response to temp file (if you still want file behavior)
+            with open(temporaryFileName, "w", encoding="utf-8") as f:
+                f.write(response.text)
 
-    urllib.request.urlcleanup()
+            html = response.text.strip()
 
-    # Get the form compiled
-    try:
-        urllib.request.urlretrieve(url, temporaryFileName, lambda x, y, z: 0, postData)
-    except socket.timeout:
+    except requests.exceptions.Timeout:
+
         log.error(
-            "Time out when connecting to the server. Check your internet connection, or"
-            f" that the form at {url} is accessible, then retry"
+            "Time out when connecting to the server. Check your internet connection, "
+            f"or that the form at {url} is accessible, then retry"
         )
         raise RuntimeError()
-    except Exception as e:
+
+    except requests.exceptions.RequestException as e:
         log.error(e)
         log.exception(
             "Problems with the download. Check your internet connection, or that the "
             f"form at {url} is accessible, then retry"
         )
-
         raise RuntimeError()
 
-    # Now open the file, parse it and get the query ID
-
-    with open(temporaryFileName) as htmlFile:
-        lines = []
-
-        for line in htmlFile:
-            # lines.append(line.encode('utf-8'))
-            lines.append(line)
-
-        html = " ".join(lines).strip()
-
-    os.remove(temporaryFileName)
-
+    finally:
+        # Clean up temp file if it was created
+        if temporaryFileName.exists():
+            temporaryFileName.unlink()
     # Extract data from the response
 
     parser = DivParser("sec-wrapper")
@@ -412,7 +406,6 @@ def download_LAT_data(
     )
 
     # Now periodically check if the query is complete
-
     startTime = time.time()
     timeout = max(1.5 * max(5.0, float(estimated_time_for_the_query)), 120)  # Seconds
     refreshTime = min(float(estimated_time_for_the_query) / 2.0, 5.0)  # Seconds
@@ -422,66 +415,56 @@ def download_LAT_data(
 
     # Now download every tot seconds the status of the query, until we get status=2
     # (success)
-
     links = None
-    fakeName = "__temp__query__result.html"
 
-    while time.time() <= startTime + timeout:
-        # Try and fetch the html with the results
+    try:
+        while time.time() <= startTime + timeout:
+            with requests.Session() as session:
+                retries = Retry(total=3, backoff_factor=0.1)
+                session.mount("https://", HTTPAdapter(max_retries=retries))
+                session.mount("http://", HTTPAdapter(max_retries=retries))
 
-        try:
-            _ = urllib.request.urlretrieve(
-                http_address,
-                fakeName,
-            )
+                try:
+                    response = session.get(http_address, timeout=10)
+                    response.raise_for_status()
+                    html = response.text
 
-        except socket.timeout:
-            urllib.request.urlcleanup()
+                except requests.exceptions.Timeout:
+                    log.exception(
+                        "Time out when connecting to the server. Check your internet "
+                        "connection, or that "
+                        f"you can access {threeML_config.LAT.query_form}, then retry"
+                    )
+                    raise RuntimeError()
 
-            log.exception(
-                "Time out when connecting to the server. Check your internet "
-                "connection, or that "
-                f"you can access {threeML_config.LAT.query_form}, then retry"
-            )
+                except requests.exceptions.RequestException as e:
+                    log.error(e)
+                    log.exception(
+                        "Problems with the download. Check your connection or that you"
+                        f"can access {threeML_config.LAT.query_form}, then retry."
+                    )
+                    raise RuntimeError()
 
-            raise RuntimeError()
+                # Extract query status
+                match = re.findall(r"The state of your query is ([0-9]+)", html)
 
-        except Exception as e:
-            log.error(e)
+                if not match:
+                    log.error("Could not determine query status from server response.")
+                    raise RuntimeError()
 
-            urllib.request.urlcleanup()
+                status = match[0]
+                if status == "2":
+                    # Success! Get the download link
+                    links = regexpr.findall(html)
+                    break
+                else:
+                    log.info(f"We are gonna wait another {refreshTime}s and retry")
+                    time.sleep(refreshTime)
+        if status != "2":
+            raise RuntimeError
 
-            log.exception(
-                "Problems with the download. Check your connection or that you can "
-                f"access {threeML_config.LAT.query_form}, then retry."
-            )
-
-            raise RuntimeError()
-
-        with open(fakeName) as f:
-            html = " ".join(f.readlines())
-
-        status = re.findall("The state of your query is ([0-9]+)", html)[0]
-
-        if status == "2":
-            # Success! Get the download link
-            links = regexpr.findall(html)
-
-            # Remove temp file
-            os.remove(fakeName)
-
-            # we're done
-            break
-
-        else:
-            # Clean up and try again after a while
-
-            os.remove(fakeName)
-
-            urllib.request.urlcleanup()
-            time.sleep(refreshTime)
-
-            # Continue to next iteration
+    except Exception:
+        raise
 
     remotePath = "%s/queries/" % threeML_config.LAT.public_http_location
 
@@ -491,6 +474,7 @@ def download_LAT_data(
         log.info("Downloading FT1 and FT2 files...")
 
         downloader = ApacheDirectory(remotePath)
+        log.info(links)
 
         downloaded_files = [
             downloader.download(filename, destination_directory)

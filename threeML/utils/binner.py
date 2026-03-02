@@ -589,7 +589,7 @@ class TemporalBinner(TimeIntervalSet):
 
 #####
 @nb.njit(fastmath=True)
-def _rebin_vector_float(vector, start, stop, mask, N):
+def _rebin_vector_float(vector, start, stop, mask, N):  # pragma: no cover
     """Faster rebinner using numba."""
     rebinned_vector = VectorFloat64(0)
 
@@ -606,7 +606,7 @@ def _rebin_vector_float(vector, start, stop, mask, N):
 
 
 @nb.njit(fastmath=True)
-def _rebin_vector_int(vector, start, stop, mask, N):
+def _rebin_vector_int(vector, start, stop, mask, N):  # pragma: no cover
     """Faster rebinner using numba."""
     rebinned_vector = VectorInt64(0)
 

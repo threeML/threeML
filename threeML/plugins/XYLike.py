@@ -617,12 +617,12 @@ class XYLike(PluginPrototype):
 
 
 @nb.njit(fastmath=True)
-def _poisson_like(y, zeros, expectation):
+def _poisson_like(y, zeros, expectation):  # pragma: no cover
     return np.sum(poisson_log_likelihood_ideal_bkg(y, zeros, expectation)[0])
 
 
 @nb.njit(fastmath=True)
-def _chi2_like(y, yerr, expectation):
+def _chi2_like(y, yerr, expectation):  # pragma: no cover
     chi2_ = half_chi2(y, yerr, expectation)
 
     assert np.all(np.isfinite(chi2_))
