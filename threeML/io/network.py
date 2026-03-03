@@ -1,6 +1,8 @@
 import os
 import socket
+
 import requests
+
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)

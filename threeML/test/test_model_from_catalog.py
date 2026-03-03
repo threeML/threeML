@@ -13,11 +13,11 @@ from threeML import (
     FermiPySourceCatalog,
     is_plugin_available,
 )
-from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 from threeML.catalogs.catalog_utils import _sanitize_fgl_name
 from threeML.io.logging import setup_logger
 from threeML.io.network import internet_connection_is_active
 from threeML.plugins.FermipyLike import FermipyLike
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 log = setup_logger(__name__)
 

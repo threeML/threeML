@@ -1,7 +1,6 @@
 import os
-from pathlib import Path
-
 from importlib import resources
+from pathlib import Path
 
 
 def get_path_of_data_file(data_file) -> Path:
