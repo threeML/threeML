@@ -5,7 +5,7 @@ import numpy as np
 
 from threeML.io.plotting.step_plot import step_plot
 from threeML.utils.interval import Interval, IntervalSet
-from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
+from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares, sqrt_sum_of_squares_pairwise
 
 
 class Histogram(IntervalSet):
@@ -15,7 +15,7 @@ class Histogram(IntervalSet):
         self,
         list_of_intervals,
         contents=None,
-        errors=None,
+        stat_errors=None,
         sys_errors=None,
         is_poisson=False,
     ):
@@ -29,17 +29,17 @@ class Histogram(IntervalSet):
 
             self._contents = np.array(contents)
 
-        if errors is not None:
-            assert len(errors) == len(
+        if stat_errors is not None:
+            assert len(stat_errors) == len(
                 contents
-            ), "contents and errors are not the same dimension "
+            ), "contents and stat errors are not the same dimension "
 
             assert is_poisson is False, "cannot have errors and is_poisson True"
 
-            self._errors = np.array(errors)
+            self._stat_errors = np.array(stat_errors)
 
         else:
-            self._errors = None
+            self._stat_errors = None
 
         if sys_errors is not None:
             assert len(sys_errors) == len(
@@ -81,12 +81,14 @@ class Histogram(IntervalSet):
     def __add__(self, other):
         assert self == other, "The bins are not equal"
 
+        new_contents = self.contents + other.contents
+
         if self._is_poisson:
             assert (
                 other.is_poisson
             ), "Trying to add a Poisson and non-poisson histogram together"
 
-            new_errors = None
+            new_stat_errors = None
 
         else:
             assert (
@@ -95,37 +97,36 @@ class Histogram(IntervalSet):
 
             if self._errors is not None:
                 assert (
-                    other.errors is not None
+                    other._stat_errors is not None
                 ), "This histogram has errors, but the other does not"
 
-                new_errors = np.array(
+                new_stat_errors = np.array(
                     [
                         sqrt_sum_of_squares([e1, e2])
-                        for e1, e2 in zip(self._errors, other.errors)
+                        for e1, e2 in zip(self._stat_errors, other._stat_errors)
                     ]
                 )
 
             else:
-                new_errors = None
+                new_stat_errors = None
+        
+        if self._sys_errors is not None and other._sys_errors is not None:
 
-        if self._sys_errors is not None and other.sys_errors is not None:
             new_sys_errors = np.array(
                 [
                     sqrt_sum_of_squares([e1, e2])
-                    for e1, e2 in zip(self._sys_errors, other.sys_errors)
+                    for e1, e2 in zip(self._sys_errors * self._contents, other.sys_errors * other._contents)
                 ]
-            )
+            ) / new_contents
 
         elif self._sys_errors is not None:
-            new_sys_errors = self._sys_errors
+            new_sys_errors = self._sys_errors * self._contents / new_contents
 
         elif other.sys_errors is not None:
-            new_sys_errors = other.sys_errors
+            new_sys_errors = other.sys_errors * other._contents / new_contents
 
         else:
             new_sys_errors = None
-
-        new_contents = self.contents + other.contents
 
         # because Hist gets inherited very deeply, when we add we will not know exactly
         # what all the additional class members will be, so we will make a copy of the
@@ -135,19 +136,54 @@ class Histogram(IntervalSet):
         new_hist = copy.deepcopy(self)
 
         new_hist._contents = new_contents
-        new_hist._errors = new_errors
+        new_hist._stat_errors = new_stat_errors
         new_hist._sys_errors = new_sys_errors
 
         return new_hist
 
+    def has_systematic_errors(self):
+        """
+        check if the histogram has systematic errors
+        :return:
+        """
+
+        return self._sys_errors is not None
+    
+    def has_stat_errors(self):
+        """
+        check if the histogram has statistical errors
+        :return:
+        """
+
+        return self._stat_errors is not None or self._is_poisson
+
     @property
     def errors(self):
-        return self._errors
+        """ If the histogram has systematic errors, return the sum in 
+        quadrature of the statistical and systematic error, otherwise return 
+        the statistical error.
+        """
+
+        if self._sys_errors is None:
+            
+            return self._stat_errors
+        
+        return sqrt_sum_of_squares_pairwise(self._stat_errors, self._sys_errors * self._contents)
 
     @property
     def total_error(self):
-        return sqrt_sum_of_squares(self._errors)
+        return sqrt_sum_of_squares(self.errors)
 
+    @property
+    def total_stat_error(self):
+
+        return sqrt_sum_of_squares(self._stat_errors)
+
+    @property
+    def stat_errors(self):
+
+        return self._stat_errors
+    
     @property
     def sys_errors(self):
         return self._sys_errors
@@ -179,7 +215,7 @@ class Histogram(IntervalSet):
 
         :param hist: a np.histogram tuple
         :param errors: list of errors for each bin in the numpy histogram
-        :param sys_errors: list of systematic errors for each bin in the numpy histogram
+        :param sys_errors: list of systematic (relative) errors for each bin in the numpy histogram
         :param is_poisson: if the data is Poisson distributed or not
         :param kwargs: any kwargs to pass along
         :return: a Histogram object
