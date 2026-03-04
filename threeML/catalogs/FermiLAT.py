@@ -1,4 +1,5 @@
 import re
+import os
 from builtins import map, str
 
 import astropy.units as u
@@ -230,8 +231,18 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
     def __init__(self, catalog_name="4FGL-DR4", update=True):
         self._update = update
 
-        if catalog_name not in fermipy_catalogs:
-            raise ValueError(f"Catalog {catalog_name} not available in fermipy")
+        catalog_name = os.fspath(catalog_name).strip()
+        is_fits_file = catalog_name.lower().endswith(
+            (".fit", ".fits", ".fit.gz", ".fits.gz")
+        )
+        is_supported_catalog = catalog_name in fermipy_catalogs
+
+        if not (is_fits_file or is_supported_catalog):
+            available_catalogs = ", ".join(fermipy_catalogs)
+            raise ValueError(
+                f"Catalog '{catalog_name}' must be a FITS filename or one of: "
+                f"{available_catalogs}"
+            )
 
         self._catalog_name = catalog_name
 
