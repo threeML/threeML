@@ -5,6 +5,7 @@ from threeML.catalogs.FermiLAT import (
     FermiLATSourceCatalog,
     FermiPySourceCatalog,
     have_fermipy,
+    fermipy_catalogs,
 )
 from threeML.catalogs.FermiLLE import FermiLLEBurstCatalog
 from threeML.catalogs.Swift import SwiftGRBCatalog
@@ -81,18 +82,18 @@ def test_LLE_catalog():
     _ = lle_catalog.query('trigger_type == "GRB"')
 
 
-@skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_installed
 def test_fermipy_catalog():
-    fp_catalog = FermiPySourceCatalog()
+    for catalog_name in fermipy_catalogs:
+        fp_catalog = FermiPySourceCatalog(catalog_name)
 
-    _ = fp_catalog.cone_search(0.0, 0.0, 300.0)
+        _ = fp_catalog.cone_search(0.0, 0.0, 300.0)
 
-    assert fp_catalog.ra_center == 0.0
-    assert fp_catalog.dec_center == 0.0
+        assert fp_catalog.ra_center == 0.0
+        assert fp_catalog.dec_center == 0.0
 
-    ra, dec, tab = fp_catalog.search_around_source("Crab", 5.0)
-    assert isinstance(tab, Table)
+        ra, dec, tab = fp_catalog.search_around_source("Crab", 5.0)
+        assert isinstance(tab, Table)
 
 
 @skip_if_internet_is_not_available
