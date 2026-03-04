@@ -53,6 +53,14 @@ fgl_types = {
     "": "unknown",
 }
 
+fermipy_catalogs = [
+    '4FGL',
+    '4FGL-DR2',
+    '4FGL-DR3',
+    '4FGL-DR4',
+    'FL16Y'
+]
+
 _FGL_name_match = re.compile(r"^[34]FGL J\d{4}.\d(\+|-)\d{4}\D?$")
 
 
@@ -219,8 +227,11 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
 
 class FermiPySourceCatalog(FermiLATSourceCatalog):
-    def __init__(self, catalog_name="4FGL", update=True):
+    def __init__(self, catalog_name="4FGL-DR4", update=True):
         self._update = update
+
+        if catalog_name not in fermipy_catalogs:
+            raise ValueError(f"Catalog {catalog_name} not available in fermipy")
 
         self._catalog_name = catalog_name
 
