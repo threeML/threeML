@@ -86,8 +86,8 @@ def test_LLE_catalog():
 def test_fermipy_catalog():
     for catalog_name in fermipy_catalogs:
         if catalog_name == "FL16Y":
-            continue # this catalog has not been released yet by fermipy
-        
+            continue  # this catalog has not been released yet by fermipy
+
         fp_catalog = FermiPySourceCatalog(catalog_name)
 
         _ = fp_catalog.cone_search(0.0, 0.0, 300.0)
