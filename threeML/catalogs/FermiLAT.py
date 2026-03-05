@@ -258,7 +258,7 @@ class FermiPySourceCatalog(FermiLATSourceCatalog):
                 self._fermipy_catalog = Catalog.create(self._catalog_name)
 
             except Exception:
-                log.error(f"Catalog {self._catalog_name} not available in fermipy")
+                raise ValueError(f"Catalog {self._catalog_name} not available in fermipy")
 
             self._astropy_table = self._fermipy_catalog.table
 
