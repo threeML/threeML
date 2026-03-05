@@ -114,6 +114,7 @@
              
   <h1>Source code for threeML.catalogs.FermiLAT</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">builtins</span><span class="w"> </span><span class="kn">import</span> <span class="nb">map</span><span class="p">,</span> <span class="nb">str</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
@@ -167,6 +168,14 @@
     <span class="s2">&quot;unk&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
     <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
 <span class="p">}</span>
+
+<span class="n">fermipy_catalogs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;4FGL&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;4FGL-DR2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;4FGL-DR3&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;4FGL-DR4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;FL16Y&#39;</span>
+<span class="p">]</span>
 
 <span class="n">_FGL_name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[34]FGL J\d</span><span class="si">{4}</span><span class="s2">.\d(\+|-)\d</span><span class="si">{4}</span><span class="s2">\D?$&quot;</span><span class="p">)</span>
 
@@ -345,8 +354,21 @@
 <div class="viewcode-block" id="FermiPySourceCatalog">
 <a class="viewcode-back" href="../../../api/threeML.catalogs.html#threeML.catalogs.FermiLAT.FermiPySourceCatalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FermiPySourceCatalog</span><span class="p">(</span><span class="n">FermiLATSourceCatalog</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s2">&quot;4FGL&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="s2">&quot;4FGL-DR4&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span> <span class="o">=</span> <span class="n">update</span>
+
+        <span class="n">catalog_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">catalog_name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">is_fits_file</span> <span class="o">=</span> <span class="n">catalog_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;.fit&quot;</span><span class="p">,</span> <span class="s2">&quot;.fits&quot;</span><span class="p">,</span> <span class="s2">&quot;.fit.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.fits.gz&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">is_supported_catalog</span> <span class="o">=</span> <span class="n">catalog_name</span> <span class="ow">in</span> <span class="n">fermipy_catalogs</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">is_fits_file</span> <span class="ow">or</span> <span class="n">is_supported_catalog</span><span class="p">):</span>
+            <span class="n">available_catalogs</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fermipy_catalogs</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Catalog &#39;</span><span class="si">{</span><span class="n">catalog_name</span><span class="si">}</span><span class="s2">&#39; must be a FITS filename or one of: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">available_catalogs</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span> <span class="o">=</span> <span class="n">catalog_name</span>
 
@@ -362,7 +384,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_fermipy_catalog</span> <span class="o">=</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Catalog </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span><span class="si">}</span><span class="s2"> not available in fermipy&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Catalog </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_catalog_name</span><span class="si">}</span><span class="s2"> not available in fermipy&quot;</span>
+                <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_astropy_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fermipy_catalog</span><span class="o">.</span><span class="n">table</span>
 
