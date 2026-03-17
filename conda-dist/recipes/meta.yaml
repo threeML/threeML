@@ -5,8 +5,7 @@ package:
   version: {{ os.environ.get('PKG_VERSION') }}
 
 source:
-#    git_url: https://github.com/giacomov/3ML.git
-  path: ../../../
+  path: ../../
 
 build:
   script: python -m pip install --no-deps --ignore-installed .
@@ -14,91 +13,75 @@ build:
 
 
 requirements:
-  
-  build:
+  host:
     - python
-    - versioneer
+    - pip
     - setuptools
-    - numpy>=1.15 # [py==311]
-    - numpy>=1.15,<1.24 # [py==39]
-    - emcee>=3
-    - uncertainties
-    - pyyaml>=5.1
-    - dill
-    - iminuit>=2
-    - astromodels>=2
-    - astroquery
-    - corner>=1.0.2
-    - requests
-    - speclite
-    - multinest # [not arm64]
-    - pymultinest # [not arm64]
-    - ultranest # [not arm64]
-    - dynesty>=1
-    - pygmo>=2.4
-    - ipywidgets
-    - numba
-    - ipyparallel
-    - py
-    - numdifftools
-    - interpolation>=2.1.5
-    - tqdm>=4.56.0
-    - colorama
-    - omegaconf
-    
+    - wheel
+    - versioneer
+    # Only add numpy here if your build imports code that requires it.
+    # - numpy
+
   run:
     - python
-    - numpy>=1.15 # [py==311]
-    - numpy>=1.15,<1.24 # [py==39]
-    - scipy>=0.18
-    - emcee>=3
-    - astropy>=1.0.3
+    - numpy
+    - scipy >=1.9
+    - astropy
+    - pandas
+    - numexpr
+    - numba
     - matplotlib
     - uncertainties
-    - pyyaml>=5.1
-    - dill
-    - iminuit>=2
-    - astromodels>=2.3.8
-    - astroquery 
-    - corner>=1.0.2
-    - pandas>=0.23
-    - requests
-    - speclite
-    - multinest # [not arm64]
-    - pymultinest # [not arm64]
-    - ultranest # [not arm64]
-    - dynesty>=1
-    - pygmo>=2.4
-    - ipywidgets
-    - ipython
-    - ipyparallel
-    - numba
-    - xz
-    - py
-    - pytest 
-    - numexpr
-    - numdifftools
-    - tqdm>=4.56.0
-    - omegaconf
-    - asciitree
+    - tqdm >=4.56.0
     - colorama
+    - omegaconf
+    - emcee >=3
+    - iminuit >=2
+    - dynesty >=1
+    - astromodels >=2.5.1
+    - astroquery
+    - speclite
+    - ipywidgets
+    - ipyparallel
+    - ipython
+    - requests
+    - dill
+    - pyyaml >=5.1
+    - corner >=1.0.2
+    - numdifftools
+    - asciitree
     - rich
-    - versioneer
+    # samplers optionalized below
 
-#test:
-#  # Python imports
-#  commands:
-#    - python -c 'import os;os.environ["MPLBACKEND"]="Agg";from threeML import *'
+  run_constrained:
+    - multinest        # [not arm64]
+    - pymultinest      # [not arm64]
+    - ultranest        # [not arm64]
 
+test: # already uses requirements from "run"
+  requires:
+    - pytest
+    - pytest-cov
+    - coverage
+  source_files:
+    - threeML/tests
+    - threeML/data
+    - pyproject.toml # needed for pytest setup e.g. marks
+  commands:
+    - pytest -vv threeML/tests --cov=threeML --cov-report=term
 
 about:
   home: https://github.com/threeML/threeML
   license: BSD-3
-  summary: 'The Multi-Mission Maximum Likelihood framework'
+  license: BSD 3-Clause
+  license_file: LICENSE
   license_family: BSD
+  summary: The Multi-Mission Maximum Likelihood framework
+  dev_url: https://github.com/threeML/threeML
+  doc_url: https://threeml.readthedocs.io
 
 extra:
   recipe-maintainers:
-    - giacomov
+    - omodei
     - ndilalla
 
