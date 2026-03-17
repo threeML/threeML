@@ -64,11 +64,11 @@ test: # already uses requirements from "run"
     - pytest-cov
     - coverage
   source_files:
-    - threeML/tests
+    - threeML/test
     - threeML/data
     - pyproject.toml # needed for pytest setup e.g. marks
   commands:
-    - pytest -vv threeML/tests --cov=threeML --cov-report=term
+    - pytest -vv threeML/test --cov=threeML --cov-report=term
 
 about:
   home: https://github.com/threeML/threeML
