@@ -87,7 +87,7 @@ jobs:
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
 
-                  conda mambabuild conda-dist/recipes/threeml
+                  conda mambabuild conda-dist/recipe
 
                   ls -l ${CONDA}/conda-bld/*/*
 
@@ -152,7 +152,7 @@ jobs:
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
 
-                  conda mambabuild --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  conda mambabuild conda-dist/recipe
 
                   ls -l ${CONDA}/conda-bld/*/*
 
