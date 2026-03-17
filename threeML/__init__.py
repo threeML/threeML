@@ -3,39 +3,21 @@
 import os
 import traceback
 import warnings
+from pathlib import Path
 
 import pandas as pd
-
-pd.set_option("display.max_columns", None)
-
-
-# Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue
-# LEAVE THESE HERE BEFORE ANY THREEML IMPORT
-try:
-    import ROOT
-
-    ROOT.__doc__
-except ImportError:
-    pass
-try:
-    import pyLikelihood
-
-    pyLikelihood.__doc__
-except ImportError:
-    pass
-
-from pathlib import Path
 
 # Import everything from astromodels
 from astromodels import *
 
+from .config import (
+    get_current_configuration_copy,
+    show_configuration,
+    threeML_config,
+)
 from .io.logging import setup_logger
 
-from .config import (
-    threeML_config,
-    show_configuration,
-    get_current_configuration_copy,
-)
+pd.set_option("display.max_columns", None)
 
 log = setup_logger(__name__)
 log.propagate = False
@@ -64,8 +46,8 @@ from . import _version
 
 __version__ = _version.get_versions()["version"]
 
-import traceback
 import importlib.util
+import traceback
 
 # Finally import the serialization machinery
 from .io.serialization import *
@@ -231,6 +213,8 @@ from threeML.catalogs import (
     FermiPySourceCatalog,
     SwiftGRBCatalog,
 )
+
+_catalogs = {}
 from threeML.io import (
     activate_logs,
     activate_progress_bars,
@@ -304,6 +288,57 @@ from .utils.step_parameter_generator import step_generator
 
 
 # Import GBM  downloader
+
+_public = {}
+_public.update(_catalogs)
+_deprecated = {}
+_deprecated.update(_catalogs)
+DEPRECATED_TOPLEVEL = set(_deprecated.keys())
+
+# Export everything (historic behavior), plus convenience names
+__all__ = sorted(set(_public.keys()) | {"__version__"})
+
+
+def __getattr__(name: str):
+    # Lazy re-exports
+
+    try:
+        mod_name, attr = _public[name]
+    except KeyError:
+        raise AttributeError(f"module 'threeML' has no attribute {name!r}") from None
+
+    # Emit deprecation for legacy top-level function/prior/template names
+    if name in DEPRECATED_TOPLEVEL:
+        warnings.warn(
+            f"Top-level access 'threeML.{name}' is deprecated; "
+            f"use 'from {mod_name} import {name}' instead.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+
+    try:
+        mod = importlib.import_module(mod_name)
+        val = getattr(mod, attr)
+    except ImportError as e:
+        # Surface clearer message for optional dependencies or missing submodules
+        raise ImportError(
+            f"Cannot access 'astromodels.{name}' because '{mod_name}' "
+            f"could not be imported. This feature may require optional dependencies. "
+            f"Original error: {e}"
+        ) from e
+    except AttributeError as e:
+        # Defensive: module imported but symbol missing (internal mismatch)
+        raise AttributeError(
+            f"'astromodels.{name}' could not be resolved from '{mod_name}'."
+        ) from e
+
+    globals()[name] = val  # cache
+    return val
+
+
+def __dir__():
+    # List everything we export (historic behavior)
+    return sorted(__all__)
 
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
