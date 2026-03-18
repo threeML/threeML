@@ -8,9 +8,9 @@ source:
   path: ../../
 
 build:
-  script: python -m pip install --no-deps --ignore-installed .
+  # Use build env Python
+  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed .
   skip: true  # [win]
-
 
 requirements:
   host:
@@ -19,15 +19,13 @@ requirements:
     - setuptools
     - wheel
     - versioneer
-    # Only add numpy here if your build imports code that requires it.
-    # - numpy
 
   run:
     - python
     - numpy
-    - scipy >=1.9
+    - scipy >=1.11
     - astropy
-    - pandas
+    - pandas >=2.0
     - numexpr
     - numba
     - matplotlib
@@ -51,31 +49,34 @@ requirements:
     - numdifftools
     - asciitree
     - rich
-    # samplers optionalized below
 
   run_constrained:
+    - {{ pin_compatible("numpy") }}
+    # Make samplers optional to avoid solver conflicts on platforms
     - multinest        # [not arm64]
     - pymultinest      # [not arm64]
     - ultranest        # [not arm64]
 
-test: # already uses requirements from "run"
+test:
   requires:
     - pytest
     - pytest-cov
     - coverage
+    - pip
+  # Copy tests into the test workdir
   source_files:
-    - threeML/test
-    - threeML/data
-    - pyproject.toml # needed for pytest setup e.g. marks
+    - threeML/
+    - pyproject.toml
   commands:
+    # Ensure test modules are importable by ipyparallel engines
+    - export PYTHONPATH="$SRC_DIR:$PYTHONPATH"
     - pytest -vv threeML/test --cov=threeML --cov-report=term
+    - python -m pip check
 
 about:
   home: https://github.com/threeML/threeML
-  license: BSD-3
-  license: BSD 3-Clause
+  license: BSD-3-Clause
   license_file: LICENSE
-  license_family: BSD
   summary: The Multi-Mission Maximum Likelihood framework
   dev_url: https://github.com/threeML/threeML
   doc_url: https://threeml.readthedocs.io
@@ -84,4 +85,3 @@ extra:
   recipe-maintainers:
     - omodei
     - ndilalla
-

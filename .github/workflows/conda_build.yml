@@ -87,10 +87,7 @@ jobs:
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
 
-                  conda mambabuild conda-dist/recipe
-
-                  ls -l ${CONDA}/conda-bld/*/*
-
+                  conda mambabuild conda-dist/recipe --override-channels -c threeml -c conda-forge
                   conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
               env:
@@ -152,10 +149,7 @@ jobs:
                   conda config --set conda_build.pkg_format 2
                   conda config --set conda_build.zstd_compression_level 19
 
-                  conda mambabuild conda-dist/recipe
-
-                  ls -l ${CONDA}/conda-bld/*/*
-
+                  conda mambabuild conda-dist/recipe --override-channels -c threeml -c conda-forge
                   conda search -c ${CONDA}/conda-bld/ threeml --offline --use-local --info
 
 
