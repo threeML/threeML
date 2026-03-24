@@ -181,14 +181,14 @@ def __getattr__(name: str):
     if name in DEPRECATED_TOPLEVEL:
         warnings.warn(
             f"Top-level access 'threeML.{name}' is deprecated; "
-            f"use 'from {mod_name} import {name}' instead.",
+            f"use 'from {mod_name} import {attr}' instead.",
             category=DeprecationWarning,
             stacklevel=2,
         )
     if name in _astromodels:
         warnings.warn(
-            "You are importing x from astromodels as 'from threeML import x'"
-            "This is depcrated! - Please use `from astromodels import x'",
+            f"You are importing {name} from astromodels as 'from threeML import {name}'"
+            f" This is depcrated! - Please use `from {mod_name} import {attr}'",
             category=DeprecationWarning,
             stacklevel=2,
         )
