@@ -22,6 +22,40 @@ _astromodels = {
     "ExtendedSource": ("astromodels.sources", "ExtendedSource"),
 }
 _public.update(_astromodels)
+_am = import_module("astromodels")
+
+# Determine what astromodels exports
+_ast_all = getattr(
+    _am,
+    "__all__",
+    [name for name in dir(_am) if not name.startswith("_")],
+)
+_exclude = {"__version__", "__author__", "__email__"}
+_ast_all = [n for n in _ast_all if n not in _exclude]
+try:
+    # TODO: this is likely really slow
+    _am_pub_dict = getattr(_am, "_public")
+
+    _astromodels_temp = {
+        k: (_am_pub_dict[k][0], k)
+        for k in _ast_all
+        if k not in _astromodels.keys() and k in _am_pub_dict.keys()
+    }
+    _astromodels_temp.update(
+        {
+            k: ("astromodels", k)
+            for k in _ast_all
+            if k not in _astromodels.keys() and k not in _am_pub_dict.keys()
+        }
+    )
+
+except AttributeError:
+    _astromodels_temp = {
+        k: ("astromodels", k) for k in _ast_all if k not in _astromodels.keys()
+    }
+
+_public.update(_astromodels_temp)
+
 
 _config = {
     k: ("threeML.config", k)
@@ -185,7 +219,7 @@ def __getattr__(name: str):
             category=DeprecationWarning,
             stacklevel=2,
         )
-    if name in _astromodels:
+    if name in _astromodels or name in _astromodels_temp:
         warnings.warn(
             f"You are importing {name} from astromodels as 'from threeML import {name}'"
             f" This is depcrated! - Please use `from {mod_name} import {attr}'",
