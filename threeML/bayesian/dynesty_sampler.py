@@ -1,9 +1,9 @@
 import math
-from typing import Optional, Literal
-from packaging.version import Version
+from typing import Literal, Optional
 
 import numpy as np
 from astromodels import use_astromodels_memoization
+from packaging.version import Version
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
@@ -11,8 +11,8 @@ from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient
 
 try:
-    from dynesty import DynamicNestedSampler, NestedSampler
     import dynesty
+    from dynesty import DynamicNestedSampler, NestedSampler
 
     DYNESTY_DOC_URL = (
         f"https://dynesty.readthedocs.io/en/v{dynesty.__version__}/api.html"

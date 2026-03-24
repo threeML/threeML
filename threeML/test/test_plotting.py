@@ -1,8 +1,8 @@
+import matplotlib.pyplot as plt
 import pytest
 
 from threeML import display_spectrum_model_counts
 from threeML.utils.binner import NotEnoughData
-import matplotlib.pyplot as plt
 
 
 def test_OGIP_plotting(

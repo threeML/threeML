@@ -5,9 +5,7 @@ from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
 from rich.tree import Tree
 
-from threeML.io.package_data import get_path_of_user_config
-
-from .config import threeML_config
+from .config import get_path_of_user_config, threeML_config
 
 # FIXME: These lines were moved to local imports withing functions since
 # they were causing a circular import. The config module needs the logging setup,

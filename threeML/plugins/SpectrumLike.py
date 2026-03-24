@@ -3,7 +3,6 @@ import copy
 import types
 from contextlib import contextmanager
 from typing import Any, Dict, Optional, Tuple, Union
-from packaging.version import Version
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -13,6 +12,7 @@ import pandas as pd
 from astromodels import Model, PointSource, clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Truncated_gaussian, Uniform_prior
+from packaging.version import Version
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
