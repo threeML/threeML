@@ -26,7 +26,7 @@ except Exception:
 
 
 from astromodels.core.model import Model
-from astromodels.utils.exceptions import ModelAssertionViolation
+from astromodels.functions.function import ModelAssertionViolation
 
 from threeML.analysis_results import BayesianResults
 from threeML.data_list import DataList
