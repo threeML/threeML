@@ -104,6 +104,7 @@ _ios = {
     ),
     "interval_to_errors": ("threeML.io.uncertainty_formatter", "interval_to_errors"),
     "get_threeML_style": ("threeML.io", "get_threeML_style"),
+    "set_threeML_style": ("threeML.io", "set_threeML_style"),
     "calculate_point_source_flux": (
         "threeML.io.calculate_flux",
         "calculate_point_source_flux",
