@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 __author__ = "grburgess"
 
 import astropy.units as u
@@ -10,7 +13,7 @@ from threeML.io.calculate_flux import (
     _collect_sums_into_dictionaries,
     _setup_analysis_dictionaries,
 )
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 
@@ -18,7 +21,7 @@ if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
-log = setup_logger(__name__)
+
 
 
 def plot_point_source_spectra(*analysis_results, **kwargs):

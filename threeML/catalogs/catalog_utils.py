@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import os
 import os.path
 import re
@@ -18,9 +21,9 @@ from astromodels.utils.angular_distance import angular_distance
 from astropy import units as u
 from astropy.stats import circmean
 
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+
 
 _trigger_name_match = re.compile(r"^GRB\d{9}$")
 

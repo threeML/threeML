@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import math
 from typing import Optional, Literal
 from packaging.version import Version
@@ -7,7 +10,7 @@ from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.parallel.parallel_client import ParallelClient
 
 try:
@@ -23,7 +26,7 @@ except Exception:  # pragma: no cover
 else:
     has_dynesty = True
 
-log = setup_logger(__name__)
+
 
 
 def fill_docs(**kwargs):

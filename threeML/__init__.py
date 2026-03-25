@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 # We import matplotlib first, because we need control on the backend
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
@@ -29,16 +32,11 @@ from pathlib import Path
 # Import everything from astromodels
 from astromodels import *
 
-from .io.logging import setup_logger
-
 from .config import (
     threeML_config,
     show_configuration,
     get_current_configuration_copy,
 )
-
-log = setup_logger(__name__)
-log.propagate = False
 
 if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")

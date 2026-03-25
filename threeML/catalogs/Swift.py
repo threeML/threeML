@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import re
 import requests
 from requests.adapters import HTTPAdapter
@@ -11,10 +14,10 @@ import pandas as pd
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
-from threeML.io.logging import setup_logger
+
 from threeML.io.rich_display import display
 
-log = setup_logger(__name__)
+
 
 _gcn_match = re.compile(r"^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
 _trigger_name_match = re.compile(r"^GRB \d{6}[A-Z]$")

@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import collections
 import copy
 from typing import Any, Dict, Optional, Union
@@ -6,12 +9,12 @@ import numpy as np
 from speclite.filters import FilterResponse, FilterSequence
 
 from threeML.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.photometry import FilterSet, PhotometericObservation
 
-log = setup_logger(__name__)
+
 
 __instrument_name = "Generic photometric data"
 

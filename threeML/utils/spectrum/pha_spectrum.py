@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, Union
@@ -6,7 +9,7 @@ import astropy.io.fits as fits
 import numpy as np
 
 from threeML.io.fits_file import FITSFile
-from threeML.io.logging import setup_logger
+
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
 from threeML.utils.progress_bar import trange
@@ -17,7 +20,7 @@ from threeML.utils.spectrum.binned_spectrum import (
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 
-log = setup_logger(__name__)
+
 
 _required_keywords = {}
 _required_keywords["observed"] = (

@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from typing import Iterable, Optional, Tuple
 
 import numpy as np
@@ -18,7 +21,7 @@ from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import BadCovariance  # , FitFailed
-from threeML.io.logging import setup_logger, silence_console_log
+from threeML.io.logging import silence_console_log
 from threeML.minimizer.grid_minimizer import AllFitFailed
 from threeML.minimizer.minimization import (
     CannotComputeCovariance,
@@ -29,7 +32,7 @@ from threeML.minimizer.minimization import (
 from threeML.plugins.UnbinnedPoissonLike import EventObservation, UnbinnedPoissonLike
 from threeML.plugins.XYLike import XYLike
 
-log = setup_logger(__name__)
+
 
 # we include the line twice to mimic a constant
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quartic)
@@ -214,7 +217,7 @@ def polyfit(
 
     log.debug(f"starting polyfit with avg norm {avg}")
 
-    with silence_console_log():
+    with silence_console_log(log):
         xy = XYLike(
             "series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True
         )
@@ -374,7 +377,7 @@ def unbinned_polyfit(
 
     shape = _grade_model_lookup[grade]()
 
-    with silence_console_log():
+    with silence_console_log(log):
         ps = PointSource("dummy", 0, 0, spectral_shape=shape)
 
         model = Model(ps)

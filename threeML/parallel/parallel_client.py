@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 # Custom warning
 import math
 import shutil
@@ -11,10 +14,10 @@ from pathlib import Path
 from typing import Optional
 
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.utils.progress_bar import tqdm
 
-log = setup_logger(__name__)
+
 
 try:
     from subprocess import DEVNULL  # py3k

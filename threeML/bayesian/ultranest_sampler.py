@@ -1,4 +1,7 @@
 import logging
+log = logging.getLogger(__name__)
+
+import logging
 import os
 from typing import Optional
 
@@ -7,7 +10,7 @@ from astromodels import use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 
 try:
     import ultranest
@@ -39,7 +42,7 @@ except Exception:
 un_logger = logging.getLogger("ultranest")
 un_logger.propagate = False
 
-log = setup_logger(__name__)
+
 
 
 class UltraNestSampler(UnitCubeSampler):

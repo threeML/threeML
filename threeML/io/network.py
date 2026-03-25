@@ -1,9 +1,12 @@
+import logging
+log = logging.getLogger(__name__)
+
 import os
 import socket
 import requests
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+
 
 
 def internet_connection_is_active():

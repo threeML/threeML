@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 __author__ = "grburgess"
 
 import collections
@@ -5,13 +8,13 @@ import collections
 import numpy as np
 import pandas as pd
 
-from threeML.io.logging import setup_logger
+
 from threeML.utils.fitted_objects.fitted_point_sources import (
     FittedPointSourceSpectralHandler,
 )
 from threeML.utils.progress_bar import tqdm
 
-log = setup_logger(__name__)
+
 
 
 def _setup_analysis_dictionaries(

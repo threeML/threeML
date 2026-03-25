@@ -1,10 +1,13 @@
+import logging
+log = logging.getLogger(__name__)
+
 import numpy as np
 
-from threeML.io.logging import setup_logger
+
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 
-log = setup_logger(__name__)
+
 
 
 class ShareSpectrum(object):

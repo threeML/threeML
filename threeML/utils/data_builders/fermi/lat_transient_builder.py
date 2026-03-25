@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import collections
 import os
 import re
@@ -12,11 +15,11 @@ import yaml
 
 from threeML.config import threeML_config
 from threeML.io.file_utils import file_existing_and_readable
-from threeML.io.logging import setup_logger
+
 
 pd.reset_option("display.float_format")
 
-log = setup_logger(__name__)
+
 
 try:
     from GtBurst import IRFS

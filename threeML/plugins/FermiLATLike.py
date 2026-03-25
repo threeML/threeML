@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import collections
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,7 +19,7 @@ from matplotlib import gridspec
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
 from threeML.io.file_utils import get_random_unique_name
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.plugin_prototype import PluginPrototype
@@ -30,7 +33,7 @@ if threeML_config.plotting.use_threeml_style:
 __instrument_name = "Fermi LAT (standard classes)"
 
 
-log = setup_logger(__name__)
+
 
 
 class MyPointSource(LikelihoodComponent.GenericSource):

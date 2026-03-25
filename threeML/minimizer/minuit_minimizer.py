@@ -1,10 +1,13 @@
+import logging
+log = logging.getLogger(__name__)
+
 import collections
 from builtins import range
 
 import numpy as np
 from iminuit import Minuit
 
-from threeML.io.logging import setup_logger
+
 from threeML.minimizer.minimization import (
     CannotComputeCovariance,
     CannotComputeErrors,
@@ -12,7 +15,7 @@ from threeML.minimizer.minimization import (
     LocalMinimizer,
 )
 
-log = setup_logger(__name__)
+
 
 
 class MINOSFailed(Exception):

@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 """Define the interface for a plugin class."""
 
 import abc
@@ -6,9 +9,9 @@ from typing import Dict
 from astromodels import IndependentVariable, Model
 from astromodels.core.parameter import Parameter
 
-from threeML.io.logging import invalid_plugin_name, setup_logger
+from threeML.io.logging import invalid_plugin_name
 
-log = setup_logger(__name__)
+
 # def set_external_property(method):
 #     """
 #     Sets external property values if they exist

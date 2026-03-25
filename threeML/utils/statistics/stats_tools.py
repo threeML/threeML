@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 from math import sqrt
 
 import numpy as np
@@ -5,12 +8,12 @@ import scipy.interpolate
 import scipy.stats
 from scipy.special import erfinv
 
-from threeML.io.logging import setup_logger
+
 
 # Provides some universal statistical utilities and stats comparison tools
 
 
-log = setup_logger(__name__)
+
 
 
 def aic(log_like, n_parameters, n_data_points):

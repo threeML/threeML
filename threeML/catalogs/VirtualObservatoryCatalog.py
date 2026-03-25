@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import warnings
 
 import astropy
@@ -11,10 +14,10 @@ from astroquery.vo_conesearch.exceptions import VOSError
 # from astropy.vo.client.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 
-from threeML.io.logging import setup_logger
+
 from threeML.io.network import internet_connection_is_active
 
-log = setup_logger(__name__)
+
 
 # Workaround to support astropy 4.1+
 astropy_old = True

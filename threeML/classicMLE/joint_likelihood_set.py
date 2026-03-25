@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import warnings
 from builtins import object, range
 
@@ -8,12 +11,12 @@ from astromodels import Model
 from threeML.analysis_results import AnalysisResultsSet
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger, silence_console_log
+from threeML.io.logging import silence_console_log
 from threeML.minimizer.minimization import LocalMinimization, _Minimization, _minimizers
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import trange
 
-log = setup_logger(__name__)
+
 
 
 class JointLikelihoodSet(object):
@@ -226,7 +229,7 @@ class JointLikelihoodSet(object):
         if threeML_config["parallel"]["use_parallel"]:
             # Parallel computation
 
-            with silence_console_log(and_progress_bars=False):
+            with silence_console_log(log, and_progress_bars=False):
                 client = ParallelClient(**options_for_parallel_computation)
 
                 results = client.execute_with_progress_bar(
@@ -238,7 +241,7 @@ class JointLikelihoodSet(object):
 
             results = []
 
-            with silence_console_log(and_progress_bars=False):
+            with silence_console_log(log, and_progress_bars=False):
                 for i in trange(self._n_iterations, desc="Goodness of fit computation"):
                     results.append(self.worker(i))
 

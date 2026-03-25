@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import ctypes
 from builtins import range, zip
 
@@ -10,9 +13,9 @@ from threeML.minimizer.minimization import (
     FitFailed,
     LocalMinimizer,
 )
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+
 
 # These are the status returned by Minuit
 #     status = 1    : Covariance was made pos defined

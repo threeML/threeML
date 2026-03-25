@@ -1,15 +1,18 @@
+import logging
+log = logging.getLogger(__name__)
+
 import collections
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 
-from threeML.io.logging import setup_logger
+
 from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
 
-log = setup_logger(__name__)
+
 
 
 class LLEFile(object):

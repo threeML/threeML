@@ -1,15 +1,18 @@
+import logging
+log = logging.getLogger(__name__)
+
 from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 
-from threeML.io.logging import setup_logger
+
 from threeML.utils.histogram import Histogram
 from threeML.utils.interval import Interval, IntervalSet
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
 
-log = setup_logger(__name__)
+
 
 
 class Channel(Interval):

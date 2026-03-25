@@ -1,11 +1,14 @@
+import logging
+log = logging.getLogger(__name__)
+
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
-from threeML.io.logging import setup_logger
+
 
 from .catalog_utils import _gbm_and_lle_valid_source_check
 from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
-log = setup_logger(__name__)
+
 
 
 class FermiLLEBurstCatalog(VirtualObservatoryCatalog):

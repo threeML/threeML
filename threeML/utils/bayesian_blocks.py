@@ -1,15 +1,15 @@
 # Author: Giacomo Vianello (giacomov@stanford.edu)
 
+import logging
+logger = logging.getLogger(__name__)
 
 import sys
 
 import numexpr
 import numpy as np
 
-from threeML.io.logging import setup_logger
-from threeML.utils.progress_bar import tqdm
 
-logger = setup_logger(__name__)
+from threeML.utils.progress_bar import tqdm
 
 __all__ = ["bayesian_blocks", "bayesian_blocks_not_unique"]
 

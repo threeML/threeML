@@ -1,11 +1,14 @@
+import logging
+log = logging.getLogger(__name__)
+
 import re
 
 import numpy as np
 import uncertainties
 
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+
 
 
 def interval_to_errors(value, low_bound, hi_bound):

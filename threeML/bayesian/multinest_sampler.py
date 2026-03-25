@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import shutil
 from pathlib import Path
 from typing import Optional
@@ -9,7 +12,7 @@ from astromodels.core.model import Model
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
+
 
 try:
     import pymultinest
@@ -37,7 +40,7 @@ try:
 except Exception:
     using_mpi = False
 
-log = setup_logger(__name__)
+
 
 
 class MultiNestSampler(UnitCubeSampler):

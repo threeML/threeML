@@ -1,3 +1,6 @@
+import logging
+log = logging.getLogger(__name__)
+
 import numpy as np
 import pytest
 
@@ -5,12 +8,8 @@ from threeML import is_plugin_available
 from threeML.catalogs.FermiLAT import FermiLATSourceCatalog, FermiPySourceCatalog
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger, update_logging_level
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
-
-log = setup_logger(__name__)
-update_logging_level("INFO")
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
