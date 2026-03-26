@@ -7,12 +7,9 @@ import scipy.interpolate
 import scipy.stats
 from scipy.special import erfinv
 
-
+log = logging.getLogger(__name__)
 
 # Provides some universal statistical utilities and stats comparison tools
-
-
-log = logging.getLogger(__name__)
 
 
 def aic(log_like, n_parameters, n_data_points):

@@ -9,6 +9,7 @@ threeML_config: Config = OmegaConf.structured(Config)
 
 # now glob the config directory
 
+
 def get_path_of_user_config() -> Path:
     if os.environ.get("THREEML_CONFIG") is not None:
         config_path: Path = Path(os.environ.get("THREEML_CONFIG"))

@@ -5,8 +5,6 @@ import numpy as np
 from astropy.io import fits
 from importlib.metadata import version
 
-
-
 log = logging.getLogger(__name__)
 
 # From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html

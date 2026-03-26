@@ -8,8 +8,6 @@ from builtins import str
 from contextlib import contextmanager
 from pathlib import Path
 
-
-
 log = logging.getLogger(__name__)
 
 

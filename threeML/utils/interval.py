@@ -6,8 +6,6 @@ from operator import attrgetter, itemgetter
 
 import numpy as np
 
-
-
 log = logging.getLogger(__name__)
 
 

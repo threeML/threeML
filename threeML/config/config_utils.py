@@ -11,6 +11,7 @@ from .config import threeML_config, get_path_of_user_config
 
 log = logging.getLogger(__name__)
 
+
 def recurse_dict(d, tree):
     for k, v in d.items():
         if isinstance(v, dict) or isinstance(v, DictConfig):

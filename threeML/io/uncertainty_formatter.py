@@ -5,8 +5,6 @@ import re
 import numpy as np
 import uncertainties
 
-
-
 log = logging.getLogger(__name__)
 
 
