@@ -37,6 +37,8 @@ from .config import (
     get_current_configuration_copy,
 )
 
+log = logging.getLogger(__name__)
+
 if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
     log.warning("WARNINGs here are [red]NOT[/red] errors")
