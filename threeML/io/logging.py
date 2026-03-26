@@ -358,7 +358,4 @@ def setup_logger(name: str) -> logging.Logger:
     if threeML_config["logging"]["usr"]:
         log.addHandler(threeML_usr_log_handler)
 
-    # we do not want to duplicate teh messages in the parents
-    log.propagate = False
-
     return log
