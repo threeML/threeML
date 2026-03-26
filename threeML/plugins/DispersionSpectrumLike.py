@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 from typing import Optional, Union
@@ -18,7 +17,7 @@ from threeML.utils.spectrum.binned_spectrum import (
     ChannelSet,
 )
 
-
+log = logging.getLogger(__name__)
 
 __instrument_name = "General binned spectral data with energy dispersion"
 

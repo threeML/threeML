@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import os
 import shutil
@@ -11,7 +10,7 @@ from pathlib import Path
 
 
 
-
+log = logging.getLogger(__name__)
 
 
 def sanitize_filename(filename, abspath: bool = False) -> Path:

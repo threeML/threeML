@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from pathlib import Path
 from typing import Optional
@@ -13,7 +12,7 @@ from threeML.io.fits_file import FITSExtension, FITSFile
 
 from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 
-
+log = logging.getLogger(__name__)
 
 
 class PHAWrite:

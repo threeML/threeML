@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from math import sqrt
 
@@ -13,7 +12,7 @@ from scipy.special import erfinv
 # Provides some universal statistical utilities and stats comparison tools
 
 
-
+log = logging.getLogger(__name__)
 
 
 def aic(log_like, n_parameters, n_data_points):

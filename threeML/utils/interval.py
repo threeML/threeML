@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 import re
@@ -9,7 +8,7 @@ import numpy as np
 
 
 
-
+log = logging.getLogger(__name__)
 
 
 class IntervalsDoNotOverlap(RuntimeError):

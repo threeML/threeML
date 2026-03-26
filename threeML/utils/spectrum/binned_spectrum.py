@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from typing import Optional, Union
 
@@ -12,7 +11,7 @@ from threeML.utils.interval import Interval, IntervalSet
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
 
-
+log = logging.getLogger(__name__)
 
 
 class Channel(Interval):

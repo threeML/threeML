@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from typing import Dict, Optional
 
@@ -13,7 +12,7 @@ from threeML.config import threeML_config
 from threeML.data_list import DataList
 
 
-
+log = logging.getLogger(__name__)
 
 
 _possible_samplers = {

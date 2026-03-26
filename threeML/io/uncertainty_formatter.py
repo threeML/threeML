@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import re
 
@@ -8,7 +7,7 @@ import uncertainties
 
 
 
-
+log = logging.getLogger(__name__)
 
 
 def interval_to_errors(value, low_bound, hi_bound):

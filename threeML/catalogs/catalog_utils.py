@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import os
 import os.path
@@ -23,7 +22,7 @@ from astropy.stats import circmean
 
 
 
-
+log = logging.getLogger(__name__)
 
 _trigger_name_match = re.compile(r"^GRB\d{9}$")
 

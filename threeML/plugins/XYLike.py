@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 from typing import Optional
@@ -28,7 +27,7 @@ if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
-
+log = logging.getLogger(__name__)
 
 __instrument_name = "n.a."
 

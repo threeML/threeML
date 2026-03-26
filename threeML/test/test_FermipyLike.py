@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import numpy as np
 import pytest
@@ -10,6 +9,8 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.io.network import internet_connection_is_active
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
+
+log = logging.getLogger(__name__)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"

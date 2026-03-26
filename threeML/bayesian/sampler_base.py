@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import abc
 import collections
@@ -38,7 +37,7 @@ from threeML.utils.numba_utils import nb_sum
 from threeML.utils.spectrum.share_spectrum import ShareSpectrum
 from threeML.utils.statistics.stats_tools import aic, bic, dic
 
-
+log = logging.getLogger(__name__)
 
 
 class SamplerBase(metaclass=abc.ABCMeta):

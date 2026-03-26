@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import copy
@@ -45,7 +44,7 @@ if threeML_config.plotting.use_threeml_style:
 
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-
+log = logging.getLogger(__name__)
 
 NO_REBIN = 1e-99
 

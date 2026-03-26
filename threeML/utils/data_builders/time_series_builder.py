@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 import re
@@ -42,7 +41,7 @@ from threeML.utils.time_series.event_list import (
 )
 from threeML.utils.time_series.time_series import TimeSeries
 
-
+log = logging.getLogger(__name__)
 
 try:
     from polarpy.polar_data import POLARData

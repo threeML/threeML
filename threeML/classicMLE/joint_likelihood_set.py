@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import warnings
 from builtins import object, range
@@ -16,7 +15,7 @@ from threeML.minimizer.minimization import LocalMinimization, _Minimization, _mi
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import trange
 
-
+log = logging.getLogger(__name__)
 
 
 class JointLikelihoodSet(object):

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import shutil
 from pathlib import Path
@@ -40,7 +39,7 @@ try:
 except Exception:
     using_mpi = False
 
-
+log = logging.getLogger(__name__)
 
 
 class MultiNestSampler(UnitCubeSampler):

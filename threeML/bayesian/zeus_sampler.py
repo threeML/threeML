@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import numpy as np
 from astromodels import use_astromodels_memoization
@@ -37,7 +36,7 @@ try:
 except Exception:
     using_mpi = False
 
-
+log = logging.getLogger(__name__)
 
 
 class ZeusSampler(MCMCSampler):

@@ -1,7 +1,6 @@
 # Author: Giacomo Vianello (giacomov@stanford.edu)
 
 import logging
-logger = logging.getLogger(__name__)
 
 import sys
 
@@ -10,6 +9,8 @@ import numpy as np
 
 
 from threeML.utils.progress_bar import tqdm
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["bayesian_blocks", "bayesian_blocks_not_unique"]
 

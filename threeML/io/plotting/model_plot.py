@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 __author__ = "grburgess"
 
@@ -21,7 +20,7 @@ if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
-
+log = logging.getLogger(__name__)
 
 
 def plot_point_source_spectra(*analysis_results, **kwargs):

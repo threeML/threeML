@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,7 +32,7 @@ from threeML.io.plotting.data_residual_plot import ResidualPlot
 if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-
+log = logging.getLogger(__name__)
 
 # This file contains plots which are plotted in data space after a model has been
 # assigned to the plugin.

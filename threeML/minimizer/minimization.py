@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import math
@@ -19,7 +18,7 @@ from threeML.utils.progress_bar import tqdm
 
 custom_warnings.simplefilter("always", RuntimeWarning)
 
-
+log = logging.getLogger(__name__)
 
 # Special constants
 FIT_FAILED = 1e12

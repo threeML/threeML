@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 __author__ = "grburgess"
 
@@ -15,7 +14,7 @@ from threeML.config import threeML_config
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import tqdm
 
-
+log = logging.getLogger(__name__)
 
 
 class GenericFittedSourceHandler(object):

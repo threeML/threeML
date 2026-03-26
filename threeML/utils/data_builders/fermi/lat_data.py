@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 
@@ -12,7 +11,7 @@ from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
 
-
+log = logging.getLogger(__name__)
 
 
 class LLEFile(object):

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import numpy as np
 
@@ -7,7 +6,7 @@ import numpy as np
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 
-
+log = logging.getLogger(__name__)
 
 
 class ShareSpectrum(object):

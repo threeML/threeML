@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from pathlib import Path
 from typing import Optional, Union
@@ -15,7 +14,7 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 __instrument_name = "All OGIP-compliant instruments"
 
-
+log = logging.getLogger(__name__)
 
 _valid_obs_types = (str, Path, PHASpectrum, PHAII)
 _valid_bkg_types = (str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike)

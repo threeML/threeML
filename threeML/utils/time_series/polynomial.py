@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from typing import Iterable, Optional, Tuple
 
@@ -32,7 +31,7 @@ from threeML.minimizer.minimization import (
 from threeML.plugins.UnbinnedPoissonLike import EventObservation, UnbinnedPoissonLike
 from threeML.plugins.XYLike import XYLike
 
-
+log = logging.getLogger(__name__)
 
 # we include the line twice to mimic a constant
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quartic)

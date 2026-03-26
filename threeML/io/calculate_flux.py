@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 __author__ = "grburgess"
 
@@ -14,7 +13,7 @@ from threeML.utils.fitted_objects.fitted_point_sources import (
 )
 from threeML.utils.progress_bar import tqdm
 
-
+log = logging.getLogger(__name__)
 
 
 def _setup_analysis_dictionaries(

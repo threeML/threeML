@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import logging
 import os
@@ -42,7 +41,7 @@ except Exception:
 un_logger = logging.getLogger("ultranest")
 un_logger.propagate = False
 
-
+log = logging.getLogger(__name__)
 
 
 class UltraNestSampler(UnitCubeSampler):

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import re
 import os
@@ -29,7 +28,7 @@ except Exception:
     have_fermipy = False
 
 
-
+log = logging.getLogger(__name__)
 
 fgl_types = {
     "agn": "other non-blazar active galaxy",

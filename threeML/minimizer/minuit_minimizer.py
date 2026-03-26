@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 from builtins import range
@@ -15,7 +14,7 @@ from threeML.minimizer.minimization import (
     LocalMinimizer,
 )
 
-
+log = logging.getLogger(__name__)
 
 
 class MINOSFailed(Exception):

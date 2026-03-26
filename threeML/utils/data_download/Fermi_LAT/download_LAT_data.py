@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import html.parser
 import os
@@ -21,7 +20,7 @@ from threeML.io.file_utils import sanitize_filename
 
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
-
+log = logging.getLogger(__name__)
 
 # Set default timeout for operations
 socket.setdefaulttimeout(180)

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import re
@@ -15,7 +14,7 @@ from threeML.utils.fermi_relative_mission_time import (
 )
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
-
+log = logging.getLogger(__name__)
 
 
 class GBMTTEFile(object):

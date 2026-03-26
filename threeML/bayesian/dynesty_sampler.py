@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import math
 from typing import Optional, Literal
@@ -26,7 +25,7 @@ except Exception:  # pragma: no cover
 else:
     has_dynesty = True
 
-
+log = logging.getLogger(__name__)
 
 
 def fill_docs(**kwargs):

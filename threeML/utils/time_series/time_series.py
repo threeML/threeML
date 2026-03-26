@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 __author__ = "grburgess"
 
@@ -24,7 +23,7 @@ from threeML.utils.spectrum.binned_spectrum import Quality
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import Polynomial, polyfit, unbinned_polyfit
 
-
+log = logging.getLogger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):

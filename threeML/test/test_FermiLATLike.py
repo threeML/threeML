@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import astropy.units as u
 import matplotlib.pyplot as plt
@@ -17,7 +16,7 @@ from threeML.utils.data_builders.fermi.lat_transient_builder import (
 )
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import LAT_dataset
 
-
+log = logging.getLogger(__name__)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"

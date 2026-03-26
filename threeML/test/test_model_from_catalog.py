@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 
@@ -22,7 +21,7 @@ from threeML.catalogs.catalog_utils import _sanitize_fgl_name
 from threeML.io.network import internet_connection_is_active
 from threeML.plugins.FermipyLike import FermipyLike
 
-
+log = logging.getLogger(__name__)
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"

@@ -1,12 +1,11 @@
 import logging
-log = logging.getLogger(__name__)
 
 import os
 import socket
 import requests
 
 
-
+log = logging.getLogger(__name__)
 
 
 def internet_connection_is_active():

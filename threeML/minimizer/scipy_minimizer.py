@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from builtins import zip
 
@@ -11,7 +10,7 @@ import scipy.optimize
 from threeML.minimizer.minimization import FitFailed, LocalMinimizer
 from threeML.utils.differentiation import get_jacobian
 
-
+log = logging.getLogger(__name__)
 
 
 _SUPPORTED_ALGORITHMS = ["L-BFGS-B", "TNC", "SLSQP"]

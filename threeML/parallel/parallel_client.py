@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 # Custom warning
 import math
@@ -17,7 +16,7 @@ from threeML.config.config import threeML_config
 
 from threeML.utils.progress_bar import tqdm
 
-
+log = logging.getLogger(__name__)
 
 try:
     from subprocess import DEVNULL  # py3k

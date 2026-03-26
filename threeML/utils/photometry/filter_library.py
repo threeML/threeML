@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from pathlib import Path
 
@@ -12,7 +11,7 @@ import yaml
 from threeML.io.package_data import get_path_of_data_dir
 from threeML.utils.progress_bar import tqdm
 
-
+log = logging.getLogger(__name__)
 
 
 def get_speclite_filter_path() -> Path:

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 from builtins import object
@@ -16,7 +15,7 @@ from threeML.utils.statistics.likelihood_functions import (
     poisson_observed_poisson_background,
 )
 
-
+log = logging.getLogger(__name__)
 
 # These classes provide likelihood evaluation to SpectrumLike and children
 

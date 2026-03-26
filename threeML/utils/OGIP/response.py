@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import copy
 from collections.abc import Callable
@@ -29,7 +28,7 @@ from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-
+log = logging.getLogger(__name__)
 
 
 class NoCoverageIntervals(RuntimeError):

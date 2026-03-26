@@ -1,7 +1,5 @@
 import logging
 
-log = logging.getLogger(__name__)
-
 from pathlib import Path
 from typing import Optional
 
@@ -11,6 +9,7 @@ from rich.tree import Tree
 
 from .config import threeML_config, get_path_of_user_config
 
+log = logging.getLogger(__name__)
 
 def recurse_dict(d, tree):
     for k, v in d.items():

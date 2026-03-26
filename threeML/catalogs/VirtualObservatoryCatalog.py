@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import warnings
 
@@ -17,7 +16,7 @@ from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 
 from threeML.io.network import internet_connection_is_active
 
-
+log = logging.getLogger(__name__)
 
 # Workaround to support astropy 4.1+
 astropy_old = True

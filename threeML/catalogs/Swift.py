@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import re
 import requests
@@ -17,7 +16,7 @@ from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 
 from threeML.io.rich_display import display
 
-
+log = logging.getLogger(__name__)
 
 _gcn_match = re.compile(r"^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
 _trigger_name_match = re.compile(r"^GRB \d{6}[A-Z]$")

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 __author__ = "grburgess"
 
@@ -18,7 +17,7 @@ from threeML.utils.fitted_objects.fitted_source_handler import (
     GenericFittedSourceHandler,
 )
 
-
+log = logging.getLogger(__name__)
 
 np_version = Version(np.__version__)
 if np_version < Version("2.0.0"):

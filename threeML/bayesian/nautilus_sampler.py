@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import inspect
 
@@ -35,7 +34,7 @@ try:
 except ModuleNotFoundError:
     using_mpi: bool = False
 
-
+log = logging.getLogger(__name__)
 
 
 class NautilusSampler(UnitCubeSampler):

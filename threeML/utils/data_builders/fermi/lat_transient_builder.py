@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import os
@@ -19,7 +18,7 @@ from threeML.io.file_utils import file_existing_and_readable
 
 pd.reset_option("display.float_format")
 
-
+log = logging.getLogger(__name__)
 
 try:
     from GtBurst import IRFS

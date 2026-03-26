@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import copy
@@ -14,7 +13,7 @@ from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.photometry import FilterSet, PhotometericObservation
 
-
+log = logging.getLogger(__name__)
 
 __instrument_name = "Generic photometric data"
 

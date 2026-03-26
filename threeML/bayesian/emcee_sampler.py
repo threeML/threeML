@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from typing import Optional
 
@@ -13,7 +12,7 @@ from threeML.io.detect_notebook import is_inside_notebook
 
 from threeML.parallel.parallel_client import ParallelClient
 
-
+log = logging.getLogger(__name__)
 
 
 class EmceeSampler(MCMCSampler):

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from builtins import range, zip
 
@@ -15,7 +14,7 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
 from threeML.utils.time_series.time_series import TimeSeries
 
-
+log = logging.getLogger(__name__)
 
 
 class BinnedSpectrumSeries(TimeSeries):

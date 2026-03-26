@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import os
@@ -29,7 +28,7 @@ from threeML.utils.statistics.gammaln import logfactorial
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
-
+log = logging.getLogger(__name__)
 
 __instrument_name = "Fermi LAT (with fermipy)"
 

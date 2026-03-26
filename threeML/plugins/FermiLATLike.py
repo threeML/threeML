@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 from dataclasses import dataclass
@@ -33,7 +32,7 @@ if threeML_config.plotting.use_threeml_style:
 __instrument_name = "Fermi LAT (standard classes)"
 
 
-
+log = logging.getLogger(__name__)
 
 
 class MyPointSource(LikelihoodComponent.GenericSource):

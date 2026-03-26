@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import astropy.units as u
 import numpy as np
@@ -8,7 +7,7 @@ from importlib.metadata import version
 
 
 
-
+log = logging.getLogger(__name__)
 
 # From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html
 # Codes for the data type of binary table columns and/or for the

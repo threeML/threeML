@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import collections
 import itertools
@@ -13,7 +12,7 @@ from threeML.config.config import threeML_config
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.utils.progress_bar import tqdm
 
-
+log = logging.getLogger(__name__)
 
 
 class AllFitFailed(RuntimeError):

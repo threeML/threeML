@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 import types
 from collections.abc import Iterable
@@ -15,7 +14,7 @@ from threeML.plugin_prototype import PluginPrototype
 __instrument_name = "n.a."
 
 
-
+log = logging.getLogger(__name__)
 
 _tiny = np.float64(np.finfo(1.0).tiny)
 

@@ -1,5 +1,4 @@
 import logging
-log = logging.getLogger(__name__)
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -20,7 +19,7 @@ from threeML.utils.spectrum.binned_spectrum import (
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 
-
+log = logging.getLogger(__name__)
 
 _required_keywords = {}
 _required_keywords["observed"] = (
