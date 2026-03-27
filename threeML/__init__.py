@@ -152,11 +152,11 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-    add_startup_warning("#############################################################")
-    add_startup_warning("\nCouldn't import plugin %s" % plugin)
-    add_startup_warning("\nTraceback:\n")
-    add_startup_warning(_not_working_plugins[plugin])
-    add_startup_warning("#############################################################")
+    add_startup_warning(log, "#############################################################")
+    add_startup_warning(log, "\nCouldn't import plugin %s" % plugin)
+    add_startup_warning(log, "\nTraceback:\n")
+    add_startup_warning(log, _not_working_plugins[plugin])
+    add_startup_warning(log, "#############################################################")
 
 def is_plugin_available(plugin):
     """Test whether the plugin for the provided instrument is available.
