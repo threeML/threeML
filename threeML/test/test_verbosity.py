@@ -24,6 +24,9 @@ from threeML.io.logging import (
 )
 from threeML.utils.progress_bar import tqdm, trange
 
+from threeML.io.logging import add_startup_warning, log_threeml_startup_warnings
+
+logger = logging.getLogger(__name__)
 
 def test_all_toggles():
     toggle_progress_bars()
@@ -159,3 +162,14 @@ def test_logging_toggles():
     assert astromodels_console_log_handler.level == logging.DEBUG
 
     assert astromodels_usr_log_handler.level == logging.CRITICAL
+
+def test_startup_warnings(caplog):
+
+    msg = "TEST_STARTUP_WARNINGS"
+
+    add_startup_warning(logger, msg)
+
+    with caplog.at_level(logging.WARNING):
+        log_threeml_startup_warnings(logger)
+
+    assert msg in caplog.text
