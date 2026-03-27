@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import scipy.optimize
 
+from threeML import add_startup_warning
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 
@@ -1196,8 +1197,7 @@ try:
     from threeML.minimizer.minuit_minimizer import MinuitMinimizer
 
 except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning("Minuit minimizer not available")
+    add_startup_warning(log, "Minuit minimizer not available")
 
 else:
     _minimizers["MINUIT"] = MinuitMinimizer
@@ -1206,8 +1206,7 @@ try:
     from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 
 except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning("ROOT minimizer not available")
+    add_startup_warning(log, "ROOT minimizer not available")
 
 else:
     _minimizers["ROOT"] = ROOTMinimizer
@@ -1216,8 +1215,7 @@ try:
     from threeML.minimizer.multinest_minimizer import MultinestMinimizer
 
 except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning("Multinest minimizer not available")
+    add_startup_warning(log, "Multinest minimizer not available")
 
 else:
     _minimizers["MULTINEST"] = MultinestMinimizer
@@ -1226,8 +1224,7 @@ try:
     from threeML.minimizer.pagmo_minimizer import PAGMOMinimizer
 
 except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning("PyGMO is not available")
+    add_startup_warning(log, "PyGMO is not available")
 
 else:
     _minimizers["PAGMO"] = PAGMOMinimizer
@@ -1236,8 +1233,7 @@ try:
     from threeML.minimizer.scipy_minimizer import ScipyMinimizer
 
 except ImportError:
-    if threeML_config.logging.startup_warnings:
-        log.warning("Scipy minimizer is not available")
+    add_startup_warning(log, "Scipy minimizer is not available")
 
 else:
     _minimizers["SCIPY"] = ScipyMinimizer

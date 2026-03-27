@@ -14,7 +14,7 @@ import yaml
 
 from threeML.config import threeML_config
 from threeML.io.file_utils import file_existing_and_readable
-
+from threeML.io.logging import add_startup_warning
 
 pd.reset_option("display.float_format")
 
@@ -42,9 +42,7 @@ except Exception as e:
     irfs = None
     spectra = None
 
-    if threeML_config.logging.startup_warnings:
-        log.warning("No fermitools installed")
-
+    add_startup_warning(log, "No fermitools installed")
 
 class LATLikelihoodParameter(object):
     def __init__(

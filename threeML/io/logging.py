@@ -20,6 +20,8 @@ from rich.theme import Theme
 
 from threeML.config.config import threeML_config
 
+logger = logging.getLogger(__name__)
+
 # set up the console logging
 
 
@@ -359,3 +361,15 @@ def setup_logger(name: str) -> logging.Logger:
         log.addHandler(threeML_usr_log_handler)
 
     return log
+
+# Capture all startup warnings and log them on demand
+_startup_warnings = []
+
+def add_startup_warning(logger, msg, level = logging.WARNING):
+    fn, lno, func, sinfo = logger.findCaller(stacklevel=2)
+    record = logger.makeRecord(logger.name, level, fn, lno, msg, (), None, func=func, sinfo=sinfo)
+    _startup_warnings.append(record)
+
+def log_startup_warnings(logger):
+    for w in _startup_warnings:
+        logger.handle(w)
