@@ -370,6 +370,6 @@ def add_startup_warning(logger, msg, level = logging.WARNING):
     record = logger.makeRecord(logger.name, level, fn, lno, msg, (), None, func=func, sinfo=sinfo)
     _startup_warnings.append(record)
 
-def log_startup_warnings(logger):
+def log_threeml_startup_warnings(logger):
     for w in _startup_warnings:
         logger.handle(w)
