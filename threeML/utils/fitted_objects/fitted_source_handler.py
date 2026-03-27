@@ -1,3 +1,5 @@
+import logging
+
 __author__ = "grburgess"
 
 import functools
@@ -8,11 +10,11 @@ from astromodels import use_astromodels_memoization
 from joblib import Parallel, delayed
 
 from threeML.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import tqdm
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class GenericFittedSourceHandler(object):

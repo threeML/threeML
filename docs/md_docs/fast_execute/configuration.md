@@ -66,7 +66,6 @@ plugins:
 ```yaml
 logging:
   developer: on
-  startup_warnings: off
 ```
 
 ```python
@@ -84,7 +83,6 @@ logging:
   path: ${env:USER_LOG_DIR}
   developer: off
   console: off
-  startup_warnings: off
 ```
 
 where ```USER_LOG_DIR``` could be a directory where you are allowed to write to disk. At run time, we convert this variable to a path. However, any value can be set. Thus, you can make an adaptable configuration that mutates based on your local workstation. 

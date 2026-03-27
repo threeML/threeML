@@ -1,3 +1,5 @@
+import logging
+
 import os
 import re
 from builtins import map
@@ -15,9 +17,9 @@ from threeML.io.file_utils import (
     if_directory_not_existing_then_make,
     sanitize_filename,
 )
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+log = logging.getLogger(__name__)
 
 
 def _validate_fermi_date(year: str, month: str, day: str) -> str:

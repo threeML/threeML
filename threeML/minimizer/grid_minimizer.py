@@ -1,3 +1,5 @@
+import logging
+
 import collections
 import itertools
 from builtins import str
@@ -6,11 +8,11 @@ import numpy as np
 from astromodels import Parameter
 
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.utils.progress_bar import tqdm
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class AllFitFailed(RuntimeError):

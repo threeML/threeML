@@ -1,3 +1,5 @@
+import logging
+
 import collections
 import re
 
@@ -6,13 +8,13 @@ import numpy as np
 import pandas as pd
 import requests
 
-from threeML.io.logging import setup_logger
+
 from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class GBMTTEFile(object):

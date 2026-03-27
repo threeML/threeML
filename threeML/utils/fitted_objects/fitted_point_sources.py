@@ -1,3 +1,5 @@
+import logging
+
 __author__ = "grburgess"
 
 import collections
@@ -10,12 +12,12 @@ from astropy import units as u
 
 from threeML.config import threeML_config
 from threeML.config.point_source_structure import IntegrateMethod
-from threeML.io.logging import setup_logger
+
 from threeML.utils.fitted_objects.fitted_source_handler import (
     GenericFittedSourceHandler,
 )
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 np_version = Version(np.__version__)
 if np_version < Version("2.0.0"):

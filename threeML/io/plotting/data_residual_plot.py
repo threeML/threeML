@@ -1,9 +1,11 @@
+import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
 
 from threeML.config.config import threeML_config
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.step_plot import step_plot
 
@@ -11,7 +13,7 @@ if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class ResidualPlot:

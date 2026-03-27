@@ -1,10 +1,12 @@
+import logging
+
 import copy
 from builtins import object
 from typing import Optional
 
 import numpy as np
 
-from threeML.io.logging import setup_logger
+
 from threeML.utils.numba_utils import nb_sum
 from threeML.utils.statistics.likelihood_functions import (
     half_chi2,
@@ -13,7 +15,7 @@ from threeML.utils.statistics.likelihood_functions import (
     poisson_observed_poisson_background,
 )
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 # These classes provide likelihood evaluation to SpectrumLike and children
 

@@ -1,3 +1,5 @@
+import logging
+
 import copy
 import re
 from pathlib import Path
@@ -9,7 +11,7 @@ import numpy as np
 from threeML.config.config import threeML_config
 from threeML.config.config_utils import get_value_kwargs
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.io.logging import setup_logger, silence_console_log
+from threeML.io.logging import silence_console_log
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
@@ -39,7 +41,7 @@ from threeML.utils.time_series.event_list import (
 )
 from threeML.utils.time_series.time_series import TimeSeries
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 try:
     from polarpy.polar_data import POLARData
@@ -387,7 +389,7 @@ class TimeSeriesBuilder(object):
 
         file_name: Path = sanitize_filename(file_name)
 
-        with silence_console_log(and_progress_bars=False):
+        with silence_console_log(log, and_progress_bars=False):
             ogip_list = [
                 OGIPLike.from_general_dispersion_spectrum(sl)
                 for sl in self.to_spectrumlike(
@@ -762,7 +764,7 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            with silence_console_log(and_progress_bars=False):
+            with silence_console_log(log, and_progress_bars=False):
                 for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
                     self.set_active_time_interval(interval.to_string())
 

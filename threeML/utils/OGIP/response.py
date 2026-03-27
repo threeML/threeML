@@ -1,3 +1,5 @@
+import logging
+
 import copy
 from collections.abc import Callable
 from operator import attrgetter, itemgetter
@@ -19,14 +21,14 @@ from threeML.io.file_utils import (
     sanitize_filename,
 )
 from threeML.io.fits_file import FITSExtension, FITSFile
-from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
 if threeML_config.plotting.use_threeml_style:
     plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class NoCoverageIntervals(RuntimeError):

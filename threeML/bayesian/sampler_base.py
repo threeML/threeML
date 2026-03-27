@@ -1,3 +1,5 @@
+import logging
+
 import abc
 import collections
 import math
@@ -30,12 +32,12 @@ from astromodels.functions.function import ModelAssertionViolation
 
 from threeML.analysis_results import BayesianResults
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
+
 from threeML.utils.numba_utils import nb_sum
 from threeML.utils.spectrum.share_spectrum import ShareSpectrum
 from threeML.utils.statistics.stats_tools import aic, bic, dic
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class SamplerBase(metaclass=abc.ABCMeta):

@@ -1,3 +1,5 @@
+import logging
+
 from typing import Optional
 
 import emcee
@@ -7,10 +9,10 @@ from astromodels import use_astromodels_memoization
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config import threeML_config
 from threeML.io.detect_notebook import is_inside_notebook
-from threeML.io.logging import setup_logger
+
 from threeML.parallel.parallel_client import ParallelClient
 
-log = setup_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class EmceeSampler(MCMCSampler):

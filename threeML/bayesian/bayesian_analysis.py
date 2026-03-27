@@ -1,3 +1,5 @@
+import logging
+
 from typing import Dict, Optional
 
 import numpy as np
@@ -8,9 +10,9 @@ from threeML.analysis_results import BayesianResults
 from threeML.bayesian.sampler_base import SamplerBase
 from threeML.config import threeML_config
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
 
-log = setup_logger(__name__)
+
+log = logging.getLogger(__name__)
 
 
 _possible_samplers = {
