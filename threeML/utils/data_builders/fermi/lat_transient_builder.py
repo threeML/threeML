@@ -12,7 +12,6 @@ from glob import glob
 import pandas as pd
 import yaml
 
-from threeML.config import threeML_config
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.io.logging import add_startup_warning
 
@@ -43,6 +42,7 @@ except Exception as e:
     spectra = None
 
     add_startup_warning(log, "No fermitools installed")
+
 
 class LATLikelihoodParameter(object):
     def __init__(
