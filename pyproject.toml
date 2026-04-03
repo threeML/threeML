@@ -9,13 +9,13 @@ description = "The Multi-Mission Maximum Likelihood framework"
 readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
-requires-python = ">=3.9.0"
+requires-python = ">=3.11.0"
 authors = [
     {name = "Giacomo Vianello", email = "io@tu.com"}
 ]
 maintainers = [
-	    {name = "Niccolò Di Lalla", email = "niccolo.dilalla@stanford.edu"},
-        {name = "Nicola Omodei", email = "nicola.omodei@stanford.edu"}
+    {name = "Niccolò Di Lalla", email = "niccolo.dilalla@stanford.edu"},
+    {name = "Nicola Omodei", email = "nicola.omodei@stanford.edu"}
 ]
 keywords = [
     "Likelihood",
@@ -33,13 +33,14 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Astronomy",
     "Intended Audience :: Science/Research",
     "Operating System :: POSIX",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Environment :: Console",
 ]
 dependencies = [
     "numpy>=1.16",
-    "scipy>=1.4",
-    "emcee>=3",
+    "scipy>=1.11",
     "astropy",
     "matplotlib",
     "uncertainties",
@@ -56,17 +57,23 @@ dependencies = [
     "ipyparallel",
     "joblib",
     "numexpr",
-    "dynesty",
     "numba",
     "numdifftools",
     "tqdm>=4.56.0",
     "omegaconf",
-    "ipywidgets",
     "rich",
     "packaging"
 ]
 
 [project.optional-dependencies]
+samplers = [
+    "dynesty",
+    "pymultinest",
+    "chainconsumer",
+    "zeus-mcmc",
+    "ultranest",
+]
+
 tests = [
     "pytest",
     "pytest-codecov",
