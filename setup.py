@@ -96,33 +96,3 @@ setup(
     #         "": extra_files,
     #     },
 )  # End of setup()
-
-# Check for optional dependencies
-
-optional_dependencies = {
-    "pymultinest": [False, "provides the Multinest sampler for Bayesian analysis"],
-    "ultranest": [False, "provides the UltraNest sampler for Bayesian Analysis"],
-    "zeus": [False, "provides the zeus sampler for Bayesian Analysis"],
-    "pyOpt": [False, "provides more optimizers"],
-    "ROOT": [False, "provides the ROOT optimizer"],
-    "ipywidgets": [False, "provides widget for jypyter (like the HTML progress bar)"],
-    "chainconsumer": [False, "consumes the chains output from Monte Carlo processes"],
-}
-
-for dep_name in optional_dependencies:
-    optional_dependencies[dep_name][0] = is_module_available(dep_name)
-
-# Now print the final messages
-
-print("\n\n##################")
-print("OPTIONAL FEATURES:")
-print("##################\n\n")
-
-for dep_name in optional_dependencies:
-    if optional_dependencies[dep_name][0]:
-        status = "available"
-
-    else:
-        status = "*NOT* available"
-
-    print(" * %s is %s (%s)\n" % (dep_name, status, optional_dependencies[dep_name][1]))
