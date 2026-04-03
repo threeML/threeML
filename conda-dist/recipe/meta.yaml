@@ -32,15 +32,12 @@ requirements:
     - matplotlib
     - uncertainties
     - tqdm >=4.56.0
-    - colorama
     - omegaconf
     - emcee >=3
     - iminuit >=2
-    - dynesty >=1
     - astromodels >=2.5.1
     - astroquery
     - speclite
-    - ipywidgets
     - ipyparallel
     - ipython
     - requests
@@ -54,9 +51,12 @@ requirements:
   run_constrained:
     - {{ pin_compatible("numpy") }}
     # Make samplers optional to avoid solver conflicts on platforms
-    - multinest        # [not arm64]
-    - pymultinest      # [not arm64]
-    - ultranest        # [not arm64]
+    - multinest       # [not arm64]
+    - pymultinest     # [not arm64]
+    - ultranest       # [not arm64]
+    - dynesty
+    - chainconsumer
+    - zeus-mcmc
 
 test:
   requires:
