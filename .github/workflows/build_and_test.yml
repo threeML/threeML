@@ -41,7 +41,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11"]
+                python-version: ["3.11","3.12","3.13"]
                 os: ["ubuntu-latest", "macos-latest", "macos-15-intel"]
         runs-on:  ${{ matrix.os }}
         steps:
@@ -69,6 +69,8 @@ jobs:
                   
                   pip install --upgrade flake8 coverage pytest-cov 
 
+                  pip install ultranest autoemcee zeus-mcmc
+ 
                   pip install -e .
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
@@ -94,7 +96,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                python-version: ["3.9","3.10","3.11"]
+                python-version: ["3.11","3.12","3.13"]
                 os: [ "ubuntu-latest", "macos-latest", "macos-15-intel"]
         runs-on: ${{ matrix.os }}
         steps:
@@ -117,6 +119,7 @@ jobs:
                   # install astromodels dev directly without cloning
                   pip install git+https://github.com/threeML/astromodels.git@dev
                   pip install --upgrade flake8 coverage pytest-cov 
+                  pip install ultranest autoemcee zeus-mcmc
 
                   pip install -e .
             - name: Lint with flake8
