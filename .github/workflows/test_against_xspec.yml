@@ -123,7 +123,7 @@ jobs:
                   conda install pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  conda install flake8 coverage pytest-cov 
+                  conda install flake8 coverage pytest-cov pytest
                   conda install ultranest dynest pymultinest
                   pip install -e .
 
@@ -186,7 +186,7 @@ jobs:
                   python -m pip install --upgrade pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  pip install --upgrade flake8 coverage pytest-cov 
+                  pip install --upgrade flake8 coverage pytest-cov pytest
                   pip install -e .
               env:
                   ASTRO_XSPEC_VERSION: 12.15.1
