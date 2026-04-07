@@ -147,17 +147,13 @@ jobs:
             fail-fast: false
             matrix:
                 os: ["ubuntu-latest", "macos-15-intel", "macos-latest"]
-                python-version: [3.9, 3.11]
+                python-version: ["3.11", "3.12", "3.13"]
                 include:
                   - environment: ci/environment_fermi.yml
                     architecture: x64
                   - environment: ci/environment_macos-latest.yml
                     architecture: arm64
                     os: macos-latest
-                  - environment: ci/environment.yml
-                    os: macos-15-intel
-                    python-version: 3.9
-                    architecture: x64
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -198,10 +194,6 @@ jobs:
                   #pip install --upgrade speclite
                   #pip install fermipy 
 
-                  if [[ ${{matrix.python-version}} == 3.9 ]];
-                  then
-                    mamba install -c conda-forge "numpy<1.24"
-                  fi
               env:
                   ISDEV: ${{contains(github.ref, 'dev') || contains(github.base_ref, 'dev')}}
             - name: Conda list
@@ -221,13 +213,6 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
-                  if [[ ${{matrix.python-version}} != 3.9 || ${{matrix.os}} != macos-15-intel ]]; then
-
-                    wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                    python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-                  
-                  fi
-
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
