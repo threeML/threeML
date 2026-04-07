@@ -154,6 +154,10 @@ jobs:
                   - environment: ci/environment_macos-latest.yml
                     architecture: arm64
                     os: macos-latest
+                  - environment: ci/environment.yml
+                    python-version: "3.12"
+                  - environment: ci/environment.yml
+                    python-version: "3.13"
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
