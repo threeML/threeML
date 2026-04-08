@@ -123,8 +123,8 @@ jobs:
                   conda install pip wheel
                   ${{ matrix.extra_deps }}
                   ${{ matrix.astro_install }}
-                  conda install flake8 coverage pytest-cov pytest
-                  conda install ultranest dynesty pymultinest
+                  pip install --upgrade ultranest dynesty
+                  pip install --upgrade flake8 coverage pytest-cov pytest
                   pip install -e .
 
             - name: Test xspec
