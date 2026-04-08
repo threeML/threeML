@@ -151,13 +151,18 @@ jobs:
                 include:
                   - environment: ci/environment_fermi.yml
                     architecture: x64
+                    channels: threeml, conda-forge,fermi
                   - environment: ci/environment_macos-latest.yml
                     architecture: arm64
                     os: macos-latest
+                    channels: threeml, conda-forge
                   - environment: ci/environment.yml
                     python-version: "3.12"
+                    channels: threeml/label/dev, conda-forge
                   - environment: ci/environment.yml
                     python-version: "3.13"
+                    channels: threeml/label/dev, conda-forge
+
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -176,7 +181,7 @@ jobs:
                   architecture: ${{ matrix.architecture }}
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: threeml, conda-forge, fermi
+                  channels: ${{ matrix.channels }}
                   environment-file: ${{ matrix.environment }}
                   use-only-tar-bz2: false
             - name: Init Env
@@ -191,10 +196,9 @@ jobs:
                   echo "Running on development branch: ${ISDEV} "
 
                   if [[ "${ISDEV}" == "true" ]]; then
-                  
-                  mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
-                  
+                    mamba install -c conda-forge -c threeml/label/dev "threeml/label/dev::astromodels"
                   fi
+
                   #pip install --upgrade speclite
                   #pip install fermipy 
 
