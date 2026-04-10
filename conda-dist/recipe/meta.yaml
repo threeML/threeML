@@ -12,7 +12,7 @@ source:
 
 build:
   # Use build env Python
-  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed .
+  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed  --no-cache-dir --no-build-isolation -vvv
   skip: true  # [win]
 
 requirements:
