@@ -1,11 +1,8 @@
-source:
-  git_url: ../../    # path to your local git repo OR a remote URL
-  git_rev: HEAD
-  git_depth: 0       # make sure tags are available for describe
+{% set name = "threeml" %}
 
 package:
-  name: threeml
-  version: {{ (GIT_DESCRIBE_TAG | default("", true) | replace("v", "", 1)) or "0.0.0" }}
+  name: {{ name }}
+  version: {{ os.environ.get('PKG_VERSION') }}
 
 build:
   # Use build env Python
