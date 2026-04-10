@@ -7,9 +7,6 @@ package:
   name: threeml
   version: {{ (GIT_DESCRIBE_TAG | default("", true) | replace("v", "", 1)) or "0.0.0" }}
 
-source:
-  path: ../../
-
 build:
   # Use build env Python
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed  --no-cache-dir --no-build-isolation -vvv
