@@ -158,10 +158,10 @@ jobs:
                     channels: threeml, conda-forge
                   - environment: ci/environment.yml
                     python-version: "3.12"
-                    channels: threeml/label/dev, conda-forge
+                    channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
                   - environment: ci/environment.yml
                     python-version: "3.13"
-                    channels: threeml/label/dev, conda-forge
+                    channels: threeml/label/dev, conda-forge, https://heasarc.gsfc.nasa.gov/FTP/software/conda
 
         runs-on: ${{ matrix.os }}
         steps:
