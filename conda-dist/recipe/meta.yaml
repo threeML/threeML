@@ -4,6 +4,11 @@ package:
   name: {{ name }}
   version: {{ os.environ.get('PKG_VERSION') }}
 
+source:
+  git_url: ../../
+  git_rev: HEAD
+  git_depth: 0
+
 build:
   # Use build env Python
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed  --no-cache-dir --no-build-isolation -vvv
