@@ -270,11 +270,11 @@ jobs:
 
             - name: Install twine
               run: |
-                  python -m pip install twine
-                  pip install wheel setuptools -U
+                  pip install twine build
+                  pip install setuptools -U
             - name: Build package
               run: |
-                  python setup.py sdist bdist_wheel
+                python -m build --sdist --wheel
             - name: List result
               run: |
                   ls -lh dist
