@@ -22,11 +22,10 @@ requirements:
     - setuptools
     - wheel
     - versioneer
-    - numpy
 
   run:
-    - python
-    - numpy
+    - python >=3.11,<3.14
+    - numpy >=1.26
     - scipy >=1.11
     - astropy
     - pandas >=2.0,<3.0
@@ -38,7 +37,7 @@ requirements:
     - omegaconf
     - emcee >=3
     - iminuit >=2
-    - astromodels
+    - astromodels >=2.5.1
     - astroquery
     - speclite
     - ipyparallel
@@ -52,7 +51,6 @@ requirements:
     - joblib
 
   run_constrained:
-    - {{ pin_compatible("numpy") }}
     # Make samplers optional to avoid solver conflicts on platforms
     - multinest       # [not arm64]
     - pymultinest     # [not arm64]
