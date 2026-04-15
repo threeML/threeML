@@ -77,7 +77,7 @@ pip install astromodels threeml
 ```
 
 ```bash
-conda  install astromodels threeml -c threeml conda-forge 
+conda install astromodels threeml -c threeml -c conda-forge 
 ```
 Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html)
 for more details and trouble-shooting.
